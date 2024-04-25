@@ -2,7 +2,7 @@
 
 ## The `stepup` program and `plan.py`
 
-We strongly recommend that you follow the ["Getting Started" tutorials of StepUp Core](TODO),
+We strongly recommend that you follow the ["Getting Started" tutorials of StepUp Core](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/),
 to familiarize yourself with the `stepup` program.
 This is the build tool that orchestrates the processing of the results and compilation of the paper.
 These tutorials will give you a good understanding of how StepUp works and how to use it.

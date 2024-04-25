@@ -3,10 +3,10 @@
 StepUp RepRep contains a tool to tile panels (individual PDF figures) into one composite PDF figure.
 
 The tiling code builds on the script protocol in StepUp Core,
-which is explained in the [Getting Started tutorials](TODO) of StepUp Core.
+which is explained in the [Getting Started tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/) of StepUp Core.
 
 This tutorial provides a simple example, which you can use as a starting point.
-For a more advanced example, check out the [`tild_pdf` test case](TODO) in the unit test suite of StepUp RepRep.
+For a more advanced example, check out the [`tild_pdf` test case](https://github.com/reproducible-reporting/stepup-reprep/tree/main/tests/cases/tile_pdf) in the unit test suite of StepUp RepRep.
 
 
 ## Example

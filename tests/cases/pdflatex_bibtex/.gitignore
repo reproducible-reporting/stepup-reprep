@@ -1,0 +1,13 @@
+.stepup
+current_graph.txt
+paper.pdf
+paper.log
+paper.aux
+paper.blg
+paper.bbl
+paper.MANIFEST.txt
+paper1.pdf
+paper1.bbl
+journal_abbreviation_cache.json
+reproducibility_pdf_manifest.txt
+reproducibility_bbl_manifest.txt

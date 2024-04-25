@@ -1,0 +1,72 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:plan.py
+            supplies   file:sub/
+            supplies   step:./plan.py
+            supplies   step:reprep-make-manifest -i sub/MANIFEST.in
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:sub/
+             creates   file:sub/MANIFEST.in
+             creates   file:sub/hello.txt
+             creates   step:reprep-make-manifest -i sub/MANIFEST.in
+
+file:sub/
+                path = sub/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   file:sub/MANIFEST.in
+            supplies   file:sub/MANIFEST.txt
+            supplies   file:sub/hello.txt
+            supplies   step:reprep-make-manifest -i sub/MANIFEST.in
+
+file:sub/MANIFEST.in
+                path = sub/MANIFEST.in
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+            supplies   step:reprep-make-manifest -i sub/MANIFEST.in
+
+file:sub/hello.txt
+                path = sub/hello.txt
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+
+step:reprep-make-manifest -i sub/MANIFEST.in
+             workdir = ./
+             command = reprep-make-manifest -i sub/MANIFEST.in
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:sub/
+            consumes   file:sub/MANIFEST.in
+             creates   file:sub/MANIFEST.txt
+
+file:sub/MANIFEST.txt
+                path = sub/MANIFEST.txt
+               state = BUILT
+          created by   step:reprep-make-manifest -i sub/MANIFEST.in
+            consumes   file:sub/

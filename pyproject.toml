@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=65.0", "setuptools_scm[toml]>=7.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stepup-reprep"
+authors = [
+  { name="Toon Verstraelen", email="toon.verstraelen@ugent.be" },
+]
+description = "StepUp RepRep is the StepUp extension for Reproducible Reporting"
+readme = "README.md"
+license = {file = "COPYING"}
+requires-python = ">=3.11"
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "attrs",
+    "bibsane",
+    "beautifulsoup4",
+    "cattrs",
+    "jinja2",
+    "markdown",
+    "markdown_katex",
+    "numpy",
+    "path",
+    "pymupdf",
+    "pyyaml",
+    "scipy",
+    "setuptools",
+    "stepup",
+    "weasyprint",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-xdist",
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-macros-plugin",
+    "mkdocs-material",
+]
+
+[project.urls]
+Issues = "https://github.com/reproducible-reporting/stepup-reprep/issues"
+Source = "https://github.com/reproducible-reporting/stepup-reprep/"
+Changelog = "https://github.com/reproducible-reporting/stepup-reprep/blob/main/CHANGELOG.md"
+
+[project.scripts]
+reprep-make-manifest = "stepup.reprep.make_manifest:main"
+reprep-check-manifest = "stepup.reprep.check_manifest:main"
+
+[tool.pytest.ini_options]
+addopts = "-n auto"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "UP", "B", "I", "PGH", "PL", "RUF", "C"]
+ignore = ["PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR2004", "PLW2901", "C901"]
+
+[tool.setuptools_scm]
+write_to = "stepup/reprep/_version.py"
+version_scheme = "post-release"
+local_scheme = "no-local-version"

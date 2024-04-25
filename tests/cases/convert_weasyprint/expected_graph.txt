@@ -1,0 +1,54 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:doc.html
+            supplies   file:doc.pdf
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:weasyprint doc.html doc.pdf
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:doc.html
+             creates   step:weasyprint doc.html doc.pdf
+
+file:doc.html
+                path = doc.html
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:weasyprint doc.html doc.pdf
+
+step:weasyprint doc.html doc.pdf
+             workdir = ./
+             command = weasyprint doc.html doc.pdf
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:doc.html
+             creates   file:doc.pdf
+
+file:doc.pdf
+                path = doc.pdf
+               state = BUILT
+          created by   step:weasyprint doc.html doc.pdf
+            consumes   file:./

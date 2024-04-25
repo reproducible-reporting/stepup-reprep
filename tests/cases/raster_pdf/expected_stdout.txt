@@ -1,0 +1,18 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ mkdir -p rastered/
+   SUCCESS │ mkdir -p rastered/
+     START │ python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+   SUCCESS │ python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ rastered/smile.pdf
+     PHASE │ run
+     START │ python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+   SUCCESS │ python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

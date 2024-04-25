@@ -1,0 +1,145 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   (file:BROKEN.md)
+            supplies   file:README.md
+            supplies   file:check_hrefs.yaml
+            supplies   file:main.MANIFEST.txt
+            supplies   file:main.aux
+            supplies   file:main.log
+            supplies   file:main.out
+            supplies   file:main.pdf
+            supplies   file:main.sh
+            supplies   file:main.tex
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:README.md
+             creates   file:check_hrefs.yaml
+             creates   file:main.tex
+             creates   step:python -m stepup.reprep.check_hrefs main.pdf
+             creates   step:python -m stepup.reprep.latex main.tex --run-bibtex
+
+file:README.md
+                path = README.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+
+file:check_hrefs.yaml
+                path = check_hrefs.yaml
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+
+file:main.tex
+                path = main.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex
+
+step:python -m stepup.reprep.latex main.tex --run-bibtex
+             workdir = ./
+             command = python -m stepup.reprep.latex main.tex --run-bibtex
+               state = SUCCEEDED
+   creates (amended) = file:main.log
+                     = file:main.out
+                     = file:main.sh
+   env_var (amended) = REPREP_LATEX
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:main.tex
+             creates   file:main.MANIFEST.txt
+             creates   file:main.aux
+             creates   file:main.log
+             creates   file:main.out
+             creates   file:main.pdf
+             creates   file:main.sh
+
+file:main.MANIFEST.txt
+                path = main.MANIFEST.txt
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+
+file:main.aux
+                path = main.aux
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+
+file:main.pdf
+                path = main.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+
+step:python -m stepup.reprep.check_hrefs main.pdf
+             workdir = ./
+             command = python -m stepup.reprep.check_hrefs main.pdf
+               state = PENDING
+  consumes (amended) = file:BROKEN.md
+                     = file:README.md
+                     = file:check_hrefs.yaml
+                     = file:plan.py
+   env_var (amended) = REPREP_CHECK_HREFS_CONFIG
+                     = ROOT
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   (file:BROKEN.md)
+            consumes   file:README.md
+            consumes   file:check_hrefs.yaml
+            consumes   file:main.pdf
+            consumes   file:plan.py
+
+file:main.log
+                path = main.log
+               state = VOLATILE
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+
+file:main.out
+                path = main.out
+               state = VOLATILE
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+
+file:main.sh
+                path = main.sh
+               state = VOLATILE
+          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   file:./
+
+(file:BROKEN.md)
+                path = BROKEN.md
+               state = PENDING
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs main.pdf

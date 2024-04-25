@@ -1,0 +1,25 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
+   SUCCESS │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
+     START │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+     START │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ final.pdf
+   DELETED │ glasses.png
+     PHASE │ run
+     START │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

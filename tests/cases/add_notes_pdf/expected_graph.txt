@@ -1,0 +1,64 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:dst.pdf
+            supplies   file:notes.pdf
+            supplies   file:plan.py
+            supplies   file:src.pdf
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:notes.pdf
+             creates   file:src.pdf
+             creates   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+
+file:notes.pdf
+                path = notes.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+
+file:src.pdf
+                path = src.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+
+step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+             workdir = ./
+             command = python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:notes.pdf
+            consumes   file:src.pdf
+             creates   file:dst.pdf
+
+file:dst.pdf
+                path = dst.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
+            consumes   file:./

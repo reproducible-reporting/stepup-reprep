@@ -1,0 +1,30 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.check_hrefs test.md
+RESCHEDULE │ python -m stepup.reprep.check_hrefs test.md
+────────────────────────────────── Step info ───────────────────────────────────
+Command               python -m stepup.reprep.check_hrefs test.md
+Return code           1
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+BROKEN.md
+──────────────────────────────── Standard error ────────────────────────────────
+FAILED LINK: https://www.speedtest.net/
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ 1 step remains pending due to incomplete requirements
+───────────────────────────────── PENDING Step ─────────────────────────────────
+Command               python -m stepup.reprep.check_hrefs test.md
+Working directory     ./
+Inputs        STATIC  ./
+             PENDING  (BROKEN.md)
+              STATIC  README.md
+              STATIC  check_hrefs.yaml
+              STATIC  plan.py
+              STATIC  test.md
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ Skipping cleanup due to incomplete build.
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

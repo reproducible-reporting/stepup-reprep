@@ -1,0 +1,30 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.latex paper.tex --run-bibtex
+RESCHEDULE │ python -m stepup.reprep.latex paper.tex --run-bibtex
+────────────────────────────────── Step info ───────────────────────────────────
+Command               python -m stepup.reprep.latex paper.tex --run-bibtex
+Return code           0
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+generated.tex
+────────────────────────────────────────────────────────────────────────────────
+     START │ echo 'Hi there!' > generated.tex
+   SUCCESS │ echo 'Hi there!' > generated.tex
+     START │ python -m stepup.reprep.latex paper.tex --run-bibtex
+   SUCCESS │ python -m stepup.reprep.latex paper.tex --run-bibtex
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ generated.tex
+   DELETED │ paper.aux
+   DELETED │ paper.pdf
+     PHASE │ run
+     START │ echo 'Hi there!' > generated.tex
+   SUCCESS │ echo 'Hi there!' > generated.tex
+     START │ python -m stepup.reprep.latex paper.tex --run-bibtex
+   SUCCESS │ python -m stepup.reprep.latex paper.tex --run-bibtex
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

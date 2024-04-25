@@ -1,0 +1,16 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ weasyprint doc.html doc.pdf
+   SUCCESS │ weasyprint doc.html doc.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ doc.pdf
+     PHASE │ run
+     START │ weasyprint doc.html doc.pdf
+   SUCCESS │ weasyprint doc.html doc.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

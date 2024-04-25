@@ -1,0 +1,10 @@
+.stepup
+generated.tex
+current_graph.txt
+paper.pdf
+paper.log
+paper.aux
+paper.MANIFEST.txt
+paper1.pdf
+journal_abbreviation_cache.json
+reproducibility_manifest.txt

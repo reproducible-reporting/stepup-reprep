@@ -1,0 +1,16 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+   SUCCESS │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ dst.pdf
+     PHASE │ run
+     START │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+   SUCCESS │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

@@ -1,0 +1,17 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.latex paper.tex --run-bibtex
+   SUCCESS │ python -m stepup.reprep.latex paper.tex --run-bibtex
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ paper.aux
+   DELETED │ paper.pdf
+     PHASE │ run
+     START │ python -m stepup.reprep.latex paper.tex --run-bibtex
+   SUCCESS │ python -m stepup.reprep.latex paper.tex --run-bibtex
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

@@ -1,0 +1,16 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ mutool merge -o cat.pdf doc1.pdf doc2.pdf
+   SUCCESS │ mutool merge -o cat.pdf doc1.pdf doc2.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ cat.pdf
+     PHASE │ run
+     START │ mutool merge -o cat.pdf doc1.pdf doc2.pdf
+   SUCCESS │ mutool merge -o cat.pdf doc1.pdf doc2.pdf
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

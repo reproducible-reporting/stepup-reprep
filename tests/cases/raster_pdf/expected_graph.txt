@@ -1,0 +1,75 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:plan.py
+            supplies   file:rastered/
+            supplies   file:smile.pdf
+            supplies   step:./plan.py
+            supplies   step:mkdir -p rastered/
+            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:smile.pdf
+             creates   step:mkdir -p rastered/
+             creates   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+
+file:smile.pdf
+                path = smile.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+
+step:mkdir -p rastered/
+             workdir = ./
+             command = mkdir -p rastered/
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:rastered/
+
+file:rastered/
+                path = rastered/
+               state = BUILT
+          created by   step:mkdir -p rastered/
+            consumes   file:./
+            supplies   file:rastered/smile.pdf
+            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+
+step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+             workdir = ./
+             command = python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+               state = SUCCEEDED
+   env_var (amended) = REPREP_RASTER_QUALITY
+                     = REPREP_RASTER_RESOLUTION
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:rastered/
+            consumes   file:smile.pdf
+             creates   file:rastered/smile.pdf
+
+file:rastered/smile.pdf
+                path = rastered/smile.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+            consumes   file:rastered/

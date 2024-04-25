@@ -1,0 +1,79 @@
+site_name: StepUp RepRep
+repo_url: https://github.com/reproducible-reporting/stepup-reprep
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  font:
+    text: IBM Plex Sans
+    code: Source Code Pro
+  features:
+  - search.highlight
+  - search.suggest
+  - search.share
+  - navigation.instant
+  - navigation.instant.prefetch
+  - content.code.copy
+  - content.action.edit
+  palette:
+  - media: "(prefers-color-scheme)"
+    toggle:
+      icon: material/link
+      name: Switch to light mode
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    primary: black
+    accent: indigo
+    toggle:
+      icon: material/toggle-switch
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: black
+    accent: indigo
+    toggle:
+      icon: material/toggle-switch-off
+      name: Switch to system preference
+
+nav:
+  - Home: index.md
+  - installation.md
+  - Tutorials:
+    - tutorials/before_you_begin.md
+    - tutorials/initialize_project.md
+    - tutorials/usage.md
+    - tutorials/template_conventions.md
+    - tutorials/manifest_files.md
+    - tutorials/tiling_pdfs.md
+  - Reference:
+    - reference/stepup.reprep.api.md
+    - reference/stepup.reprep.tile_pdf.md
+  - changelog.md
+  - development.md
+  - license.md
+
+exclude_docs: |
+  */*/ch*/*.md
+  */*/public/*.md
+
+plugins:
+- search
+- macros
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        paths: ["stepup-reprep"]
+        options:
+          docstring_style: numpy
+          docstring_section_style: list
+
+markdown_extensions:
+  - smarty
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences

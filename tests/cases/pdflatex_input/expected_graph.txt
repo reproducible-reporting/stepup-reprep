@@ -1,0 +1,111 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:generated.tex
+            supplies   file:paper.MANIFEST.txt
+            supplies   file:paper.aux
+            supplies   file:paper.log
+            supplies   file:paper.pdf
+            supplies   file:paper.tex
+            supplies   file:plan.py
+            supplies   file:smile.pdf
+            supplies   step:./plan.py
+            supplies   step:echo 'Hi there!' > generated.tex
+            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:paper.tex
+             creates   file:smile.pdf
+             creates   step:echo 'Hi there!' > generated.tex
+             creates   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+
+file:paper.tex
+                path = paper.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+
+file:smile.pdf
+                path = smile.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+
+step:python -m stepup.reprep.latex paper.tex --run-bibtex
+             workdir = ./
+             command = python -m stepup.reprep.latex paper.tex --run-bibtex
+               state = SUCCEEDED
+  consumes (amended) = file:generated.tex
+                     = file:smile.pdf
+   creates (amended) = file:paper.log
+   env_var (amended) = REPREP_LATEX
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:generated.tex
+            consumes   file:paper.tex
+            consumes   file:smile.pdf
+             creates   file:paper.MANIFEST.txt
+             creates   file:paper.aux
+             creates   file:paper.log
+             creates   file:paper.pdf
+
+file:paper.MANIFEST.txt
+                path = paper.MANIFEST.txt
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   file:./
+
+file:paper.aux
+                path = paper.aux
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   file:./
+
+file:paper.pdf
+                path = paper.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   file:./
+
+step:echo 'Hi there!' > generated.tex
+             workdir = ./
+             command = echo 'Hi there!' > generated.tex
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:generated.tex
+
+file:generated.tex
+                path = generated.tex
+               state = BUILT
+          created by   step:echo 'Hi there!' > generated.tex
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+
+file:paper.log
+                path = paper.log
+               state = VOLATILE
+          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   file:./

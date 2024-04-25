@@ -1,0 +1,25 @@
+\documentclass{article}
+
+% Make PDFLaTeX builds reproducible
+\special{pdf:trailerid [
+    <00112233445566778899aabbccddeeff>
+    <00112233445566778899aabbccddeeff>
+]}
+
+\usepackage{verbatim}
+\usepackage{graphics}
+\usepackage{import}
+
+% Must be last
+\usepackage{hyperref}
+\hypersetup{allcolors=tab.blue,colorlinks=true,linktoc=none,pdfcreator={},pdfproducer={}}
+
+% Title info
+\title{Smile}
+\author{You}
+\date{Some day}
+
+\begin{document}
+    \maketitle
+    \import{subdir}{generated.tex}
+\end{document}

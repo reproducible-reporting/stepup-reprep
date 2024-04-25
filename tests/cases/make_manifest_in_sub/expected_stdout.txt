@@ -1,0 +1,10 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ reprep-make-manifest -i sub/MANIFEST.in
+   SUCCESS │ reprep-make-manifest -i sub/MANIFEST.in
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

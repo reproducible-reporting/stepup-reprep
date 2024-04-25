@@ -1,0 +1,24 @@
+\documentclass{article}
+
+% Make PDFLaTeX builds reproducible
+\pdfinfoomitdate=1
+\pdfsuppressptexinfo=-1
+\pdftrailerid{}
+
+\usepackage{hyperref}
+
+% Title info
+\title{Test for check hrefs}
+\author{Me}
+\date{Some day}
+
+\begin{document}
+    \maketitle
+    A working local link: \href{README.md}{README.md}.
+    A broken local link: \href{BROKEN.md}{BROKEN.md}.
+    A working https link: \href{https://www.iana.org/help/example-domains}{example.com}.
+    A https link that is not allowed: \href{https://www.speedtest.net/}{speedtest.net}.
+    An allowed rewritten https link: \href{https://users.ugent.be/~tovrstra/plan.py}{plan.py}.
+    Repeating the last link: \href{https://users.ugent.be/~tovrstra/plan.py}{plan.py}.
+    A link to a directory that is already a supplier: \href{https://users.ugent.be/~tovrstra/}{./}.
+\end{document}

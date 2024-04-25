@@ -1,0 +1,42 @@
+     PHASE │ run
+  DIRECTOR │ Launched worker 0
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+     START │ inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+   SUCCESS │ inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+     START │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+     START │ inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+   SUCCESS │ inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+     START │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+     START │ inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+   SUCCESS │ inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+     START │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
+     START │ inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+   SUCCESS │ inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+     START │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+     START │ inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+   SUCCESS │ inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+     START │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+     START │ inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+   SUCCESS │ inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+     START │ ./tile.py plan
+   SUCCESS │ ./tile.py plan
+     START │ ./tile.py run
+   SUCCESS │ ./tile.py run
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+   DELETED │ figure.pdf
+     PHASE │ run
+     START │ ./tile.py run
+   SUCCESS │ ./tile.py run
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

@@ -1,0 +1,22 @@
+\documentclass{article}
+
+% Make PDFLaTeX builds reproducible
+\pdfinfoomitdate=1
+\pdfsuppressptexinfo=-1
+\pdftrailerid{}
+
+\usepackage{graphics}
+
+% Title info
+\title{Use BibTeX}
+\author{You}
+\date{Some day}
+
+\begin{document}
+    \maketitle
+
+    Some sentence. \cite{knuth:1984}
+
+    \bibliography{references}
+    \bibliographystyle{unsrt}
+\end{document}

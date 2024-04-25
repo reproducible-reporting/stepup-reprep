@@ -1,0 +1,82 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.check_hrefs test.md
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   (file:BROKEN.md)
+            supplies   file:README.md
+            supplies   file:check_hrefs.yaml
+            supplies   file:plan.py
+            supplies   file:test.md
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.check_hrefs test.md
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:README.md
+             creates   file:check_hrefs.yaml
+             creates   file:test.md
+             creates   step:python -m stepup.reprep.check_hrefs test.md
+
+file:README.md
+                path = README.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.md
+
+file:check_hrefs.yaml
+                path = check_hrefs.yaml
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.md
+
+file:test.md
+                path = test.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.md
+
+step:python -m stepup.reprep.check_hrefs test.md
+             workdir = ./
+             command = python -m stepup.reprep.check_hrefs test.md
+               state = PENDING
+  consumes (amended) = file:BROKEN.md
+                     = file:README.md
+                     = file:check_hrefs.yaml
+                     = file:plan.py
+   env_var (amended) = REPREP_CHECK_HREFS_CONFIG
+                     = ROOT
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   (file:BROKEN.md)
+            consumes   file:README.md
+            consumes   file:check_hrefs.yaml
+            consumes   file:plan.py
+            consumes   file:test.md
+
+(file:BROKEN.md)
+                path = BROKEN.md
+               state = PENDING
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.md

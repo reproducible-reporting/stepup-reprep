@@ -74,7 +74,7 @@ class Figure:
         None or the path to a ttf file.
         When used, specify a corresponding fontname (of your choice).
     fontsize
-        The fontsize to use for the labels in points.
+        The font size to use for the labels in points.
     label_height
         The height to use for the labels in mm.
     padding
@@ -101,13 +101,7 @@ class Figure:
         return {"inp": inp, "out": self.path_out}
 
     def run(self):
-        """Combine PDF figures into a single PDF with labels on top of each panel
-
-        Parameters
-        ----------
-        figure
-            A Figure instance defined the layout and contents of the panels
-        """
+        """Combine PDF figures into a single PDF with labels on top of each panel."""
         _load_pdfs(self.panels)
         for panel in self.panels:
             _add_label(panel, self)

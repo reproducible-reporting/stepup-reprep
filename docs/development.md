@@ -9,7 +9,7 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 - Trigger the PyPI GitHub Action: `git push origin main --tags`.
 
 
-## Local development installation
+## Development install and unit tests
 
 ```bash
 git clone git@github.com:reproducible-reporting/stepup-reprep.git
@@ -22,3 +22,16 @@ pip install -U pip
 pip install -e .[dev]
 pytest -vv
 ```
+
+## Documentation
+
+The documentation is created with [MkDocs](https://www.mkdocs.org/).
+
+Edit the documentation markdown files with a live preview by running:
+
+```bash
+mkdocs serve --watch stepup/reprep/
+```
+
+(Keep this running.)
+Then open the live preview in your browser: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)

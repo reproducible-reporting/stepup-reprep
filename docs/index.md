@@ -14,6 +14,12 @@ StepUp RepRep will be installed in your instance of the template, as part of the
 If you want to get a more in-depth understanding of how StepUp works, the [tutorials of StepUp Core](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/) will take you through all the basics.
 
 
+## Quick demo
+
+The following screen cast shows StepUp RepRep in action:
+
+[![asciicast](https://asciinema.org/a/656515.svg)](https://asciinema.org/a/656515)
+
 ## Why was StepUp RepRep created?
 
 The goal of StepUp RepRep is to facilitate the reproducibility and data management of scientific publications.

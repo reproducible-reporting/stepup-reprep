@@ -14,6 +14,7 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 ```bash
 git clone git@github.com:reproducible-reporting/stepup-reprep.git
 cd stepup-reprep
+pre-commit install
 python -m venv venv
 echo 'source venv/bin/activate' > .envrc
 direnv allow

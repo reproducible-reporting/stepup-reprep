@@ -9,3 +9,7 @@
 StepUp RepRep is the StepUp extension for [Reproducible Reporting](https://github.com/reproducible-reporting).
 
 For more information, consult the [documentation](http://reproducible-reporting.github.io/stepup-reprep).
+
+A screen recording for a quick visual impression of StepUp RepRep in action:
+
+[![asciicast](https://asciinema.org/a/656515.svg)](https://asciinema.org/a/656515)

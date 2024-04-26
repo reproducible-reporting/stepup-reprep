@@ -20,19 +20,19 @@ ideally using your operating system's software installation tool
 (app store, package manager, pip, ...).
 
 - Required:
-  - [Python](https://www.python.org/) >= 3.11
-  - [Git](https://git-scm.com/)
-  - [Git LFS](https://git-lfs.com/)
-  - [The cookiecutter](https://www.cookiecutter.io/)
-    (Only needed to initialize a new publication.)
+    - [Python](https://www.python.org/) >= 3.11
+    - [Git](https://git-scm.com/)
+    - [Git LFS](https://git-lfs.com/)
+    - [The cookiecutter](https://www.cookiecutter.io/)
+      (Only needed to initialize a new publication.)
 - Recommended:
-  - [Inkscape](https://inkscape.org/) >= 1.2
-    (Only needed when the source contains SVG files.
-    [It must be executable as `inkscape` on the command-line](https://stackoverflow.com/a/22085247/494584).)
-  - `mutool` from [MuPDF](https://mupdf.com/)
-  - [TexLive](https://tug.org/texlive/) >= 2022
-  - [direnv](https://direnv.net/)
-  - A Text editor compatible with [editorconfig](https://editorconfig.org/)
+    - [Inkscape](https://inkscape.org/) >= 1.2
+      (Only needed when the source contains SVG files.
+      [It must be executable as `inkscape` on the command-line](https://stackoverflow.com/a/22085247/494584).)
+    - `mutool` from [MuPDF](https://mupdf.com/)
+    - [TexLive](https://tug.org/texlive/) >= 2022
+    - [direnv](https://direnv.net/)
+    - A Text editor compatible with [editorconfig](https://editorconfig.org/)
 
 Installation instructions for ...
 

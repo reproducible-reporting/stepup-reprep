@@ -11,9 +11,6 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v4"
-      - uses: xu-cheng/texlive-action@v2
-        with:
-          scheme: small
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
@@ -22,4 +19,7 @@ jobs:
       - name: Install development version
         run: pip install -e .[dev]
       - name: Run pytest
-        run: pytest -vv
+        uses: xu-cheng/texlive-action@v2
+        with:
+          scheme: small
+          run: pytest -vv

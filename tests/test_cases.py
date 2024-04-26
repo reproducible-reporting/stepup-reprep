@@ -38,7 +38,6 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "add_notes_pdf",
         "check_hrefs_html",
         "check_hrefs_md",
-        "check_hrefs_pdf",
         "convert_markdown",
         "convert_weasyprint",
         "latex_flat",
@@ -88,6 +87,7 @@ def has_texlive_2023():
 @pytest.mark.parametrize(
     "name",
     [
+        "check_hrefs_pdf",
         "latex_diff",
         "lualatex_simple",
         "pdflatex_bbl",

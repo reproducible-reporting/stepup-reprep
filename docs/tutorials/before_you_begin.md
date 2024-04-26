@@ -19,24 +19,38 @@ It is assumed that you have installed and configured the following software,
 ideally using your operating system's software installation tool
 (app store, package manager, pip, ...).
 
-- [Python](https://www.python.org/) >= 3.11
-- [Git](https://git-scm.com/)
-- [Git LFS](https://git-lfs.com/)
-- [The cookiecutter](https://www.cookiecutter.io/)
-  (Only needed to initialize a new publication.)
-- [Inkscape](https://inkscape.org/) >= 1.2
-  (Only needed when the source contains SVG files.
-  [It must be executable as `inkscape` on the command-line](https://stackoverflow.com/a/22085247/494584).)
-- [TexLive](https://tug.org/texlive/) >= 2022
-- [direnv](https://direnv.net/)
-- A Text editor compatible with [editorconfig](https://editorconfig.org/)
+- Required:
+  - [Python](https://www.python.org/) >= 3.11
+  - [Git](https://git-scm.com/)
+  - [Git LFS](https://git-lfs.com/)
+  - [The cookiecutter](https://www.cookiecutter.io/)
+    (Only needed to initialize a new publication.)
+- Recommended:
+  - [Inkscape](https://inkscape.org/) >= 1.2
+    (Only needed when the source contains SVG files.
+    [It must be executable as `inkscape` on the command-line](https://stackoverflow.com/a/22085247/494584).)
+  - `mutool` from [MuPDF](https://mupdf.com/)
+  - [TexLive](https://tug.org/texlive/) >= 2022
+  - [direnv](https://direnv.net/)
+  - A Text editor compatible with [editorconfig](https://editorconfig.org/)
 
 Installation instructions for ...
 
 - ... Ubuntu 22:
 
     ```bash
-    sudo apt install python3 python3.11 python3.11-venv  python3-pip python3-cookiecutter inkscape texlive-full git git-lfs direnv libreoffice
+    sudo apt install \
+      python3.11 \
+      python3.11-venv \
+      python3-pip \
+      python3-cookiecutter \
+      inkscape \
+      texlive-full \
+      git \
+      git-lfs \
+      direnv \
+      mupdf-tools \
+      libreoffice
     ```
 
     Fira fonts (used for presentations) must be installed manually:
@@ -63,7 +77,20 @@ Installation instructions for ...
 - ... Fedora:
 
     ```bash
-    sudo dnf install python python3-pip python3-virtualenv python3-cookiecutter inkscape texlive-scheme-full git git-lfs direnv mozilla-fira* texlive-fira*
+    sudo dnf install \
+      python \
+      python3-pip \
+      python3-virtualenv \
+      python3-cookiecutter \
+      inkscape \
+      texlive-scheme-full \
+      git \
+      git-lfs \
+      direnv \
+      mupdf \
+      libreoffice \
+      mozilla-fira* \
+      texlive-fira*
     ```
 
 A new dedicated

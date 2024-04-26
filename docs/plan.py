@@ -17,7 +17,7 @@ def plan_tutorial(tutdir: str, out: list[str]):
 
 static("tutorials/")
 tutout = [
-    *plan_tutorial("tutorials/tile_pdf/", ["stdout.txt"]),
+    *plan_tutorial("tutorials/tiling_pdf/", ["stdout.txt"]),
 ]
 
 # step("mkdocs build", workdir="../", inp=tutout)

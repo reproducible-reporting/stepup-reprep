@@ -48,9 +48,11 @@ step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp 
             consumes   file:./
             consumes   file:slide.odp
              creates   file:slide.pdf
+            supplies   file:slide.pdf
 
 file:slide.pdf
                 path = slide.pdf
                state = BUILT
           created by   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
             consumes   file:./
+            consumes   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}

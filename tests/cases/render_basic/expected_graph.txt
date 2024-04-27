@@ -57,9 +57,11 @@ step:python -m stepup.reprep.render template.md variables.py rendered.md
             consumes   file:template.md
             consumes   file:variables.py
              creates   file:rendered.md
+            supplies   file:rendered.md
 
 file:rendered.md
                 path = rendered.md
                state = BUILT
           created by   step:python -m stepup.reprep.render template.md variables.py rendered.md
             consumes   file:./
+            consumes   step:python -m stepup.reprep.render template.md variables.py rendered.md

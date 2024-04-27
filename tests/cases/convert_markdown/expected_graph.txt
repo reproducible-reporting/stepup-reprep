@@ -47,9 +47,11 @@ step:python -m stepup.reprep.convert_markdown demo.md demo.html
             consumes   file:./
             consumes   file:demo.md
              creates   file:demo.html
+            supplies   file:demo.html
 
 file:demo.html
                 path = demo.html
                state = BUILT
           created by   step:python -m stepup.reprep.convert_markdown demo.md demo.html
             consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown demo.md demo.html

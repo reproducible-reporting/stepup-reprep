@@ -55,7 +55,7 @@ step:python -m stepup.reprep.latex paper.tex
              command = python -m stepup.reprep.latex paper.tex
                state = SUCCEEDED
   consumes (amended) = file:paper.bbl
-   creates (amended) = file:paper.log
+  supplies (amended) = file:paper.log
    env_var (amended) = REPREP_LATEX
           created by   step:./plan.py
             consumes   file:./
@@ -65,27 +65,35 @@ step:python -m stepup.reprep.latex paper.tex
              creates   file:paper.aux
              creates   file:paper.log
              creates   file:paper.pdf
+            supplies   file:paper.MANIFEST.txt
+            supplies   file:paper.aux
+            supplies   file:paper.log
+            supplies   file:paper.pdf
 
 file:paper.MANIFEST.txt
                 path = paper.MANIFEST.txt
                state = BUILT
           created by   step:python -m stepup.reprep.latex paper.tex
             consumes   file:./
+            consumes   step:python -m stepup.reprep.latex paper.tex
 
 file:paper.aux
                 path = paper.aux
                state = BUILT
           created by   step:python -m stepup.reprep.latex paper.tex
             consumes   file:./
+            consumes   step:python -m stepup.reprep.latex paper.tex
 
 file:paper.pdf
                 path = paper.pdf
                state = BUILT
           created by   step:python -m stepup.reprep.latex paper.tex
             consumes   file:./
+            consumes   step:python -m stepup.reprep.latex paper.tex
 
 file:paper.log
                 path = paper.log
                state = VOLATILE
           created by   step:python -m stepup.reprep.latex paper.tex
             consumes   file:./
+            consumes   step:python -m stepup.reprep.latex paper.tex

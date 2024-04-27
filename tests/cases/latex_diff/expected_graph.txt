@@ -57,9 +57,11 @@ step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,fund
             consumes   file:new.tex
             consumes   file:old.tex
              creates   file:diff.tex
+            supplies   file:diff.tex
 
 file:diff.tex
                 path = diff.tex
                state = BUILT
           created by   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
             consumes   file:./
+            consumes   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex

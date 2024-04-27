@@ -86,12 +86,14 @@ step:inkscape glasses.svg  --export-filename=glasses.png --export-type=png
             consumes   file:./
             consumes   file:glasses.svg
              creates   file:glasses.png
+            supplies   file:glasses.png
 
 file:glasses.png
                 path = glasses.png
                state = BUILT
           created by   step:inkscape glasses.svg  --export-filename=glasses.png --export-type=png
             consumes   file:./
+            consumes   step:inkscape glasses.svg  --export-filename=glasses.png --export-type=png
             supplies   step:inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
 
 step:inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
@@ -104,9 +106,11 @@ step:inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
             consumes   file:glasses.png
             consumes   file:smile.svg
              creates   file:final.pdf
+            supplies   file:final.pdf
 
 file:final.pdf
                 path = final.pdf
                state = BUILT
           created by   step:inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape smile.svg  --export-filename=final.pdf --export-type=pdf

@@ -78,9 +78,11 @@ step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.t
             consumes   file:sub/part1.tex
             consumes   file:sub/part2.tex
              creates   file:sub/article.tex
+            supplies   file:sub/article.tex
 
 file:sub/article.tex
                 path = sub/article.tex
                state = BUILT
           created by   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
             consumes   file:sub/
+            consumes   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex

@@ -57,9 +57,11 @@ step:mutool merge -o cat.pdf doc1.pdf doc2.pdf
             consumes   file:doc1.pdf
             consumes   file:doc2.pdf
              creates   file:cat.pdf
+            supplies   file:cat.pdf
 
 file:cat.pdf
                 path = cat.pdf
                state = BUILT
           created by   step:mutool merge -o cat.pdf doc1.pdf doc2.pdf
             consumes   file:./
+            consumes   step:mutool merge -o cat.pdf doc1.pdf doc2.pdf

@@ -62,9 +62,11 @@ step:reprep-make-manifest -i MANIFEST.in
             consumes   file:./
             consumes   file:MANIFEST.in
              creates   file:MANIFEST.txt
+            supplies   file:MANIFEST.txt
 
 file:MANIFEST.txt
                 path = MANIFEST.txt
                state = BUILT
           created by   step:reprep-make-manifest -i MANIFEST.in
             consumes   file:./
+            consumes   step:reprep-make-manifest -i MANIFEST.in

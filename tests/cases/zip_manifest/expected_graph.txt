@@ -51,12 +51,14 @@ step:echo hello > built.txt
           created by   step:./plan.py
             consumes   file:./
              creates   file:built.txt
+            supplies   file:built.txt
 
 file:built.txt
                 path = built.txt
                state = BUILT
           created by   step:echo hello > built.txt
             consumes   file:./
+            consumes   step:echo hello > built.txt
             supplies   step:reprep-make-manifest static.txt built.txt -o MANIFEST.txt
 
 step:reprep-make-manifest static.txt built.txt -o MANIFEST.txt
@@ -68,12 +70,14 @@ step:reprep-make-manifest static.txt built.txt -o MANIFEST.txt
             consumes   file:built.txt
             consumes   file:static.txt
              creates   file:MANIFEST.txt
+            supplies   file:MANIFEST.txt
 
 file:MANIFEST.txt
                 path = MANIFEST.txt
                state = BUILT
           created by   step:reprep-make-manifest static.txt built.txt -o MANIFEST.txt
             consumes   file:./
+            consumes   step:reprep-make-manifest static.txt built.txt -o MANIFEST.txt
             supplies   step:python -m stepup.reprep.zip_manifest MANIFEST.txt upload.zip
 
 step:python -m stepup.reprep.zip_manifest MANIFEST.txt upload.zip
@@ -84,9 +88,11 @@ step:python -m stepup.reprep.zip_manifest MANIFEST.txt upload.zip
             consumes   file:./
             consumes   file:MANIFEST.txt
              creates   file:upload.zip
+            supplies   file:upload.zip
 
 file:upload.zip
                 path = upload.zip
                state = BUILT
           created by   step:python -m stepup.reprep.zip_manifest MANIFEST.txt upload.zip
             consumes   file:./
+            consumes   step:python -m stepup.reprep.zip_manifest MANIFEST.txt upload.zip

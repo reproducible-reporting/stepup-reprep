@@ -47,12 +47,14 @@ step:mkdir -p rastered/
           created by   step:./plan.py
             consumes   file:./
              creates   file:rastered/
+            supplies   file:rastered/
 
 file:rastered/
                 path = rastered/
                state = BUILT
           created by   step:mkdir -p rastered/
             consumes   file:./
+            consumes   step:mkdir -p rastered/
             supplies   file:rastered/smile.pdf
             supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
 
@@ -67,9 +69,11 @@ step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
             consumes   file:rastered/
             consumes   file:smile.pdf
              creates   file:rastered/smile.pdf
+            supplies   file:rastered/smile.pdf
 
 file:rastered/smile.pdf
                 path = rastered/smile.pdf
                state = BUILT
           created by   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
             consumes   file:rastered/
+            consumes   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf

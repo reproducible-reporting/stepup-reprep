@@ -15,6 +15,8 @@ jobs:
         with:
           python-version: 3.x
       - name: Install development version
-        run: pip install -e .[dev]
+        run: |
+          pip install -e .[dev]
+          pip install git+https://github.com/reproducible-reporting/stepup-core.git@main
       - name: Run pytest
         run: pytest -vv

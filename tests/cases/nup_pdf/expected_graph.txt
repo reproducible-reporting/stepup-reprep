@@ -49,9 +49,11 @@ step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
             consumes   file:./
             consumes   file:src.pdf
              creates   file:dst.pdf
+            supplies   file:dst.pdf
 
 file:dst.pdf
                 path = dst.pdf
                state = BUILT
           created by   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
             consumes   file:./
+            consumes   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4

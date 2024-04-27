@@ -12,7 +12,7 @@ Return code           1
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 BROKEN.md
 ──────────────────────────────── Standard error ────────────────────────────────
-FAILED LINK: https://www.speedtest.net/
+(stripped)
 ────────────────────────────────────────────────────────────────────────────────
    WARNING │ 1 step remains pending due to incomplete requirements
 ───────────────────────────────── PENDING Step ─────────────────────────────────

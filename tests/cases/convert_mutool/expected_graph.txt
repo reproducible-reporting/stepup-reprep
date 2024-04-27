@@ -47,9 +47,11 @@ step:mutool draw -q -o example.png -r 100 example.pdf
             consumes   file:./
             consumes   file:example.pdf
              creates   file:example.png
+            supplies   file:example.png
 
 file:example.png
                 path = example.png
                state = BUILT
           created by   step:mutool draw -q -o example.png -r 100 example.pdf
             consumes   file:./
+            consumes   step:mutool draw -q -o example.png -r 100 example.pdf

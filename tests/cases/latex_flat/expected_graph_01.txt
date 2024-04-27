@@ -71,12 +71,14 @@ step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
             consumes   file:part2.tex
             consumes   (file:sub/other.tex)
              creates   file:article.tex
+            supplies   file:article.tex
 
 file:article.tex
                 path = article.tex
                state = PENDING
           created by   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
             consumes   file:./
+            consumes   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
 
 (file:sub/other.tex)
                 path = sub/other.tex

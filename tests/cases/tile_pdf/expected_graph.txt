@@ -218,12 +218,14 @@ step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             consumes   file:./
             consumes   file:hexagon.svg
              creates   file:hexagon.pdf
+            supplies   file:hexagon.pdf
 
 file:hexagon.pdf
                 path = hexagon.pdf
                state = BUILT
           created by   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
@@ -235,12 +237,14 @@ step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             consumes   file:./
             consumes   file:horizontal.svg
              creates   file:horizontal.pdf
+            supplies   file:horizontal.pdf
 
 file:horizontal.pdf
                 path = horizontal.pdf
                state = BUILT
           created by   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
@@ -252,12 +256,14 @@ step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             consumes   file:./
             consumes   file:pentagon.svg
              creates   file:pentagon.pdf
+            supplies   file:pentagon.pdf
 
 file:pentagon.pdf
                 path = pentagon.pdf
                state = BUILT
           created by   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
@@ -269,12 +275,14 @@ step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             consumes   file:./
             consumes   file:square.svg
              creates   file:square.pdf
+            supplies   file:square.pdf
 
 file:square.pdf
                 path = square.pdf
                state = BUILT
           created by   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
@@ -286,12 +294,14 @@ step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             consumes   file:./
             consumes   file:triangle.svg
              creates   file:triangle.pdf
+            supplies   file:triangle.pdf
 
 file:triangle.pdf
                 path = triangle.pdf
                state = BUILT
           created by   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
@@ -303,12 +313,14 @@ step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             consumes   file:./
             consumes   file:vertical.svg
              creates   file:vertical.pdf
+            supplies   file:vertical.pdf
 
 file:vertical.pdf
                 path = vertical.pdf
                state = BUILT
           created by   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             consumes   file:./
+            consumes   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:./tile.py run
@@ -326,9 +338,11 @@ step:./tile.py run
             consumes   file:vera.ttf
             consumes   file:vertical.pdf
              creates   file:figure.pdf
+            supplies   file:figure.pdf
 
 file:figure.pdf
                 path = figure.pdf
                state = BUILT
           created by   step:./tile.py run
             consumes   file:./
+            consumes   step:./tile.py run

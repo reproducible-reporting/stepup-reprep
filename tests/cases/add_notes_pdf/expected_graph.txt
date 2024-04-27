@@ -56,9 +56,11 @@ step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
             consumes   file:notes.pdf
             consumes   file:src.pdf
              creates   file:dst.pdf
+            supplies   file:dst.pdf
 
 file:dst.pdf
                 path = dst.pdf
                state = BUILT
           created by   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf
             consumes   file:./
+            consumes   step:python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf

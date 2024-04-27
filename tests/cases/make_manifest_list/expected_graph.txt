@@ -46,9 +46,11 @@ step:reprep-make-manifest README.md -o MANIFEST.txt
             consumes   file:./
             consumes   file:README.md
              creates   file:MANIFEST.txt
+            supplies   file:MANIFEST.txt
 
 file:MANIFEST.txt
                 path = MANIFEST.txt
                state = BUILT
           created by   step:reprep-make-manifest README.md -o MANIFEST.txt
             consumes   file:./
+            consumes   step:reprep-make-manifest README.md -o MANIFEST.txt

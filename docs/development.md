@@ -11,6 +11,9 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 
 ## Development install and unit tests
 
+First create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
+The following commands assume you create `stepup-core` and `step-reprep` source trees as subdirectories of the same parent.
+
 ```bash
 git clone git@github.com:reproducible-reporting/stepup-reprep.git
 cd stepup-reprep
@@ -20,6 +23,7 @@ echo 'source venv/bin/activate' > .envrc
 direnv allow
 pip install -U pip
 pip install -e .[dev]
+pip install -e ../stepup-core
 pytest -vv
 ```
 

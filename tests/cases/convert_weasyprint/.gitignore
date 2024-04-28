@@ -1,5 +1,5 @@
 .stepup
-current_graph.txt
+current_*
 doc.pdf
 doc1.pdf
 reproducibility_manifest.txt

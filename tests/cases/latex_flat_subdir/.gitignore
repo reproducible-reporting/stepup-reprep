@@ -1,4 +1,3 @@
 .stepup
-current_graph.txt
+current_*
 sub/article.tex
-current_article.tex

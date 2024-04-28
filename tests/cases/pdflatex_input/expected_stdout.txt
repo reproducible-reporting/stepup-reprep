@@ -1,5 +1,5 @@
-     PHASE │ run
   DIRECTOR │ Launched worker 0
+     PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
      START │ python -m stepup.reprep.latex paper.tex --run-bibtex
@@ -16,8 +16,8 @@ generated.tex
    SUCCESS │ python -m stepup.reprep.latex paper.tex --run-bibtex
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
-   DELETED │ generated.tex
    DELETED │ paper.aux
+   DELETED │ generated.tex
    DELETED │ paper.pdf
      PHASE │ run
      START │ echo 'Hi there!' > generated.tex

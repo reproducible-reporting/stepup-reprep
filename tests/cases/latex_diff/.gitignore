@@ -1,5 +1,5 @@
 .stepup
-current_graph.txt
+current_*
 diff.tex
 diff1.tex
 reproducibility_manifest.txt

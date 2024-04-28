@@ -1,5 +1,5 @@
-     PHASE │ run
   DIRECTOR │ Launched worker 0
+     PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
      START │ mkdir -p subdir/
@@ -21,9 +21,9 @@ subdir/generated.tex
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
    DELETED │ paper.aux
-   DELETED │ paper.pdf
-   DELETED │ subdir/code.txt
    DELETED │ subdir/generated.tex
+   DELETED │ subdir/code.txt
+   DELETED │ paper.pdf
      PHASE │ run
      START │ echo '2 + 2' > subdir/code.txt
    SUCCESS │ echo '2 + 2' > subdir/code.txt

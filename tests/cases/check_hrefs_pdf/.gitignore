@@ -1,5 +1,5 @@
 .stepup
-current_graph.txt
+current_*
 main.pdf
 main.log
 main.aux

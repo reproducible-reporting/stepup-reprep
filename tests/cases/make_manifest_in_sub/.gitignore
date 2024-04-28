@@ -1,4 +1,3 @@
 .stepup
-current_graph.txt
-current_manifest.txt
+current_*
 MANIFEST.txt

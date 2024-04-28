@@ -1,5 +1,5 @@
 .stepup
-current_graph.txt
+current_*
 demo.html
 demo1.html
 reproducibility_manifest.txt

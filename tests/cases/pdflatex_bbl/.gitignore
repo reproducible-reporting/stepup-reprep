@@ -1,6 +1,6 @@
 .stepup
 generated.tex
-current_graph.txt
+current_*
 paper.pdf
 paper.log
 paper.aux

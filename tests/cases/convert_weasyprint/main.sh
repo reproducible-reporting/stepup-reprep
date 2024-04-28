@@ -12,7 +12,7 @@ stepup -w 1 plan.py & # > current_stdout.txt &
 python3 - << EOD
 from stepup.core.interact import *
 wait()
-graph("current_graph.txt")
+graph("current_graph")
 EOD
 
 # Reproducibility test
@@ -20,7 +20,7 @@ mv doc.pdf doc1.pdf
 python3 - << EOD
 from stepup.core.interact import *
 from stepup.reprep.make_manifest import write_manifest
-watch_del("doc.pdf")
+watch_delete("doc.pdf")
 run()
 join()
 write_manifest("reproducibility_manifest.txt", ["doc.pdf", "doc1.pdf"])

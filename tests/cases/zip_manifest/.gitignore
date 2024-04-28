@@ -1,5 +1,5 @@
 .stepup
-current_graph.txt
+current_*
 built.txt
 MANIFEST.txt
 upload.zip

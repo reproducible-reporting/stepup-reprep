@@ -1,5 +1,5 @@
-     PHASE │ run
   DIRECTOR │ Launched worker 0
+     PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
      START │ python -m stepup.reprep.add_notes_pdf src.pdf notes.pdf dst.pdf

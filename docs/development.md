@@ -1,17 +1,17 @@
-# Developer notes
+# Developer Notes
 
 If you would like to contribute, please read [CONTRIBUTING.md](https://github.com/reproducible-reporting/.github/blob/main/CONTRIBUTING.md).
 
-## How to make releases
+## How to Make Releases
 
-- Mark release in `changelog.md`.
+- Mark the release in `changelog.md`.
 - Make a new commit and tag it with `vX.Y.Z`.
 - Trigger the PyPI GitHub Action: `git push origin main --tags`.
 
 
-## Development install and unit tests
+## Development Install and Unit Tests
 
-First create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
+First, create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
 The following commands assume you create `stepup-core` and `step-reprep` source trees as subdirectories of the same parent.
 
 ```bash

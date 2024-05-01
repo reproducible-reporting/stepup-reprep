@@ -40,8 +40,8 @@ nav:
   - installation.md
   - Tutorials:
     - tutorials/before_you_begin.md
-    - tutorials/initialize_project.md
-    - tutorials/usage.md
+    - tutorials/create_or_clone_a_project.md
+    - tutorials/working_on_a_project.md
     - tutorials/template_conventions.md
     - tutorials/manifest_files.md
     - tutorials/tiling_pdfs.md

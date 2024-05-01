@@ -118,7 +118,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     path_src
         The source Markdown, HTML or PDF to check.
     path_config
-        The confiration file.
+        The configuration file.
         Defaults to `${REPREP_CHECK_HREFS_CONFIG}` variable or `check_hrefs.yaml` if it is not set.
     block
         When `True`, the step will always remain pending.
@@ -548,7 +548,7 @@ def latex_diff(
     latexdiff_args
         Additional arguments for latexdiff.
         Defaults to `${REPREP_LATEXDIFF_ARG}` variable.
-        if this variable is unset, the following default is used:
+        If this variable is unset, the following default is used:
 
         ```
         --append-context2cmd=abstract,supplementary,dataavailability,funding, \\

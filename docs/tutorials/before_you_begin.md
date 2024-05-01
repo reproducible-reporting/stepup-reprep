@@ -1,6 +1,6 @@
-# Before you begin
+# Before You Begin
 
-## Initial competences
+## Initial Competences
 
 The following competences are required (at a basic level) for this template to be useful.
 
@@ -13,7 +13,7 @@ Without these competences, it is still possible to contribute to a publication
 created with StepUp RepRep, but it will be difficult to take the lead.
 
 
-## Required software and configuration
+## Required Software and Configuration
 
 It is assumed that you have installed and configured the following software,
 ideally using your operating system's software installation tool
@@ -36,7 +36,11 @@ ideally using your operating system's software installation tool
 
 Installation instructions for ...
 
-- ... Ubuntu 22:
+### Ubuntu
+
+On Ubuntu 22, the required and recommended software can be installed using the following steps:
+
+1. Install the following packages:
 
     ```bash
     sudo apt install \
@@ -53,7 +57,9 @@ Installation instructions for ...
       libreoffice
     ```
 
-    Fira fonts (used for presentations) must be installed manually:
+2. Fira fonts (used for presentations) must be installed manually,
+   because they have not been packaged for Ubuntu yet.
+   This can be achieved as follows:
 
     ```bash
     mkdir -p ~/.local/share/fonts
@@ -74,43 +80,47 @@ Installation instructions for ...
     cd
     ```
 
-- ... Fedora:
+### Fedora
 
-    ```bash
-    sudo dnf install \
-      python \
-      python3-pip \
-      python3-virtualenv \
-      python3-cookiecutter \
-      inkscape \
-      texlive-scheme-full \
-      git \
-      git-lfs \
-      direnv \
-      mupdf \
-      libreoffice \
-      mozilla-fira* \
-      texlive-fira*
-    ```
+On Fedora (>= 38), the required and recommended software can be installed using the following command:
+
+```bash
+sudo dnf install \
+  python \
+  python3-pip \
+  python3-virtualenv \
+  python3-cookiecutter \
+  inkscape \
+  texlive-scheme-full \
+  git \
+  git-lfs \
+  direnv \
+  mupdf \
+  libreoffice \
+  mozilla-fira* \
+  texlive-fira*
+```
+
+### Conda or Pip
 
 A new dedicated
 [pip](https://pip.pypa.io/en/stable/) or [micromamba](https://mamba.readthedocs.io/)
 software environment is created for each publication.
-It is up to each co-author which of the two they prefer:
+It is up to each co-author to decide which one they prefer:
 
 1. A virtual environment with **pip** can install the dependencies
    with low time, bandwidth and storage overheads.
-   You must already have a sufficiently recent Python version installed.
-2. A **micromamba** environment (the fastest and lightest way of using conda)
+   A sufficiently recent Python version must already be installed.
+2. A **micromamba** environment (the fastest and lightest way to use conda)
    is a bit more powerful than pip.
    In principle, you can use it on a system without (a recent version of) Python.
    It can also install non-Python dependencies.
-   The main disadvantage is the time to install it, consumed bandwidth during the installation, and the high disk usage.
-   Also, the cookiecutter requires Python >= 3.7 to work, so you will need Python when
-   initializing a new publication from the template.
+   The main drawbacks are the time it takes to install, the bandwidth consumed during installation, and the amount of diskspace used.
+   Because the cookiecutter requires Python >= 3.7, you already need a working Python version
+   before installing micromamba.
 
-The goal is to isolate this software environment from your operating system as much as possible.
-This may be hampered by your local configuration, e.g.:
+The aim is to isolate this software environment from your operating system as much as possible.
+This may be hampered by your local configuration, for example:
 
 - Another always-on pip environment (activated in your shell profile, like `.bashrc`)
   may not work well when pip is used for the publication.
@@ -118,5 +128,5 @@ This may be hampered by your local configuration, e.g.:
 - Similarly, another always-on conda environment (activated in your shell profile)
   may not work well when micromamba is used for the publication.
 
-- Using pip for the publication, on top of your default conda can work well.
+- Using pip for the publication on top of your default conda can work well.
   (Needs more testing.)

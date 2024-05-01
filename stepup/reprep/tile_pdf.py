@@ -197,18 +197,18 @@ def _combine_figures(panels: list[Panel]):
 
     # Optimize the layout
     res = optimize.linprog(c, a_ub, b_ub, method="highs")
-    rowres = np.concatenate([[0.0], res.x[:nrow]])
-    colres = np.concatenate([[0.0], res.x[nrow:]])
+    row_pos = np.concatenate([[0.0], res.x[:nrow]])
+    col_pos = np.concatenate([[0.0], res.x[nrow:]])
 
     # Put everything in one PDF
     out = fitz.open()
-    page = out.new_page(width=colres[-1], height=rowres[-1])
+    page = out.new_page(width=col_pos[-1], height=row_pos[-1])
     for sf in panels:
         dst_rect = fitz.Rect(
-            colres[sf.icol],
-            rowres[sf.irow],
-            colres[sf.icol + sf.ncol],
-            rowres[sf.irow + sf.nrow],
+            col_pos[sf.icol],
+            row_pos[sf.irow],
+            col_pos[sf.icol + sf.ncol],
+            row_pos[sf.irow + sf.nrow],
         )
         page.show_pdf_page(dst_rect, sf.pdf, 0)
     return out

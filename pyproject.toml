@@ -50,9 +50,10 @@ dev = [
 ]
 
 [project.urls]
+Documentation = "https://reproducible-reporting.github.io/stepup-reprep/"
 Issues = "https://github.com/reproducible-reporting/stepup-reprep/issues"
 Source = "https://github.com/reproducible-reporting/stepup-reprep/"
-Changelog = "https://github.com/reproducible-reporting/stepup-reprep/blob/main/CHANGELOG.md"
+Changelog = "https://reproducible-reporting.github.io/stepup-reprep/changelog/"
 
 [project.scripts]
 reprep-make-manifest = "stepup.reprep.make_manifest:main"

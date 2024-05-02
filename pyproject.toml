@@ -33,7 +33,7 @@ dependencies = [
     "pyyaml",
     "scipy",
     "setuptools",
-    "stepup",
+    "stepup>=1.2.0",
     "weasyprint",
 ]
 dynamic = ["version"]

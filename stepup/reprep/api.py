@@ -310,9 +310,6 @@ def convert_pdf_png(
     )
 
 
-pool("inkscape", 1)
-
-
 def convert_svg(
     path_svg: str,
     path_out: str,

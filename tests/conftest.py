@@ -22,8 +22,7 @@
 import pytest
 from path import Path
 
-pytest.register_assert_rewrite("stepup.core.pytest")
-pytest.register_assert_rewrite("stepup.reprep.pytest")
+pytest.register_assert_rewrite("stepup.core.pytest", "stepup.reprep.pytest")
 
 
 @pytest.fixture

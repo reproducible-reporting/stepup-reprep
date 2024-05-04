@@ -6,10 +6,10 @@
    SUCCESS │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
      START │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
-     START │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-   SUCCESS │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-     START │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
-   SUCCESS │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+     START │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
    UPDATED │ glasses.svg
    UPDATED │ smile.svg
@@ -19,10 +19,10 @@
      PHASE │ run
       SKIP │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
       SKIP │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
-     START │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-   SUCCESS │ inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-     START │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
-   SUCCESS │ inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+     START │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
   DIRECTOR │ Stopping workers.

@@ -105,7 +105,7 @@ async def test_latex_example(tmpdir, name: str):
 @pytest.mark.skipif(not shutil.which("inkscape"), reason="No Inkscape")
 @pytest.mark.parametrize(
     "name",
-    ["convert_inkscape", "tile_pdf"],
+    ["convert_inkscape", "convert_inkscape_concurrency", "tile_pdf"],
 )
 @pytest.mark.asyncio
 async def test_inkscape_example(tmpdir, name: str):

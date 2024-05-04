@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Inkscape SVG to PDF or PNG conversion now also works in parallel,
+  thanks to the workaround posted here:
+  https://gitlab.com/inkscape/inkscape/-/issues/4716
+
+
 ## [1.1.0] - 2024-05-02
 
 ### Changed

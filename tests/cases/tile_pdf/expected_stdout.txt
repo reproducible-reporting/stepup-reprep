@@ -4,30 +4,30 @@
    SUCCESS │ ./plan.py
      START │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-     START │ inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-   SUCCESS │ inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
      START │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-     START │ inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-   SUCCESS │ inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
      START │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-     START │ inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-   SUCCESS │ inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
      START │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
-     START │ inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-   SUCCESS │ inkscape square.svg  --export-filename=square.pdf --export-type=pdf
      START │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-     START │ inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-   SUCCESS │ inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
      START │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
-     START │ inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
-   SUCCESS │ inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
      START │ ./tile.py plan
    SUCCESS │ ./tile.py plan
+     START │ unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+     START │ unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+     START │ unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+     START │ unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+     START │ unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+     START │ unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+   SUCCESS │ unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
      START │ ./tile.py run
    SUCCESS │ ./tile.py run
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
@@ -46,12 +46,12 @@
       SKIP │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
       SKIP │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
       SKIP │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
-      SKIP │ inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-      SKIP │ inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-      SKIP │ inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-      SKIP │ inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-      SKIP │ inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-      SKIP │ inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+      SKIP │ unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
      START │ ./tile.py run
    SUCCESS │ ./tile.py run
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz

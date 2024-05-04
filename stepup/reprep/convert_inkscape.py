@@ -86,10 +86,10 @@ def convert_svg_pdf(
     inp_paths = search_svg_deps(path_svg)
     ffmt = path_out.suffix[1:]
     step(
-        f"{inkscape} {path_svg} {inkscape_args} --export-filename={path_out} --export-type={ffmt}",
+        f"unshare --user {inkscape} {path_svg} {inkscape_args} "
+        f"--export-filename={path_out} --export-type={ffmt}",
         inp=[path_svg, *inp_paths],
         out=path_out,
-        pool="inkscape",
         optional=optional,
     )
 

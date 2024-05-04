@@ -34,18 +34,18 @@ file:./
             supplies   step:./plan.py
             supplies   step:./tile.py plan
             supplies   step:./tile.py run
-            supplies   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-            supplies   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-            supplies   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-            supplies   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-            supplies   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-            supplies   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            supplies   step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+            supplies   step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+            supplies   step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+            supplies   step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+            supplies   step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+            supplies   step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
 
 step:./plan.py
              workdir = ./
@@ -76,48 +76,48 @@ file:hexagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+            supplies   step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
 
 file:horizontal.svg
                 path = horizontal.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+            supplies   step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
 
 file:pentagon.svg
                 path = pentagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+            supplies   step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
 
 file:square.svg
                 path = square.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+            supplies   step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
 
 file:triangle.svg
                 path = triangle.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+            supplies   step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
 
 file:vertical.svg
                 path = vertical.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            supplies   step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
              workdir = ./
@@ -128,7 +128,7 @@ step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:hexagon.svg
-             creates   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+             creates   step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
              workdir = ./
@@ -139,7 +139,7 @@ step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:horizontal.svg
-             creates   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+             creates   step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
              workdir = ./
@@ -150,7 +150,7 @@ step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:pentagon.svg
-             creates   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+             creates   step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
              workdir = ./
@@ -161,7 +161,7 @@ step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:square.svg
-             creates   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+             creates   step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
              workdir = ./
@@ -172,7 +172,7 @@ step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:triangle.svg
-             creates   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+             creates   step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
              workdir = ./
@@ -183,7 +183,7 @@ step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:vertical.svg
-             creates   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+             creates   step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
 
 file:tile.py
                 path = tile.py
@@ -209,11 +209,10 @@ step:./tile.py plan
             consumes   file:tile.py
              creates   step:./tile.py run
 
-step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
              workdir = ./
-             command = inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+             command = unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
             consumes   file:./
             consumes   file:hexagon.svg
@@ -223,16 +222,15 @@ step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
 file:hexagon.pdf
                 path = hexagon.pdf
                state = BUILT
-          created by   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+          created by   step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             supplies   step:./tile.py run
 
-step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
              workdir = ./
-             command = inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+             command = unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
             consumes   file:./
             consumes   file:horizontal.svg
@@ -242,16 +240,15 @@ step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
 file:horizontal.pdf
                 path = horizontal.pdf
                state = BUILT
-          created by   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+          created by   step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             supplies   step:./tile.py run
 
-step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
              workdir = ./
-             command = inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+             command = unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
             consumes   file:./
             consumes   file:pentagon.svg
@@ -261,16 +258,15 @@ step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
 file:pentagon.pdf
                 path = pentagon.pdf
                state = BUILT
-          created by   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+          created by   step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             supplies   step:./tile.py run
 
-step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
              workdir = ./
-             command = inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+             command = unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
             consumes   file:./
             consumes   file:square.svg
@@ -280,16 +276,15 @@ step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
 file:square.pdf
                 path = square.pdf
                state = BUILT
-          created by   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+          created by   step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             supplies   step:./tile.py run
 
-step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
              workdir = ./
-             command = inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+             command = unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
             consumes   file:./
             consumes   file:triangle.svg
@@ -299,16 +294,15 @@ step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
 file:triangle.pdf
                 path = triangle.pdf
                state = BUILT
-          created by   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+          created by   step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             supplies   step:./tile.py run
 
-step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
              workdir = ./
-             command = inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+             command = unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
                state = SUCCEEDED
-                pool = inkscape
           created by   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
             consumes   file:./
             consumes   file:vertical.svg
@@ -318,9 +312,9 @@ step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
 file:vertical.pdf
                 path = vertical.pdf
                state = BUILT
-          created by   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+          created by   step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+            consumes   step:unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:./tile.py run
 
 step:./tile.py run

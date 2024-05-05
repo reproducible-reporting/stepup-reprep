@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Inkscape SVG to PDF or PNG conversion now also works in parallel,
+- Inkscape SVG to PDF or PNG conversion now works also in parallel,
   thanks to the workaround posted here:
   https://gitlab.com/inkscape/inkscape/-/issues/4716
+- Libroffice PDF conversion now works also in parallel,
+  thanks to the workaround posted here:
+  https://bugs.documentfoundation.org/show_bug.cgi?id=106134
 
 
 ## [1.1.0] - 2024-05-02

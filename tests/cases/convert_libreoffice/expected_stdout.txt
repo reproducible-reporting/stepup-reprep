@@ -2,14 +2,14 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
-   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
    DELETED │ slide.pdf
      PHASE │ run
-     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
-   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
   DIRECTOR │ Stopping workers.

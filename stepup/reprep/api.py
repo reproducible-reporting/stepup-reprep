@@ -197,9 +197,6 @@ def convert_weasyprint(
     step(command, inp=path_html, out=path_pdf, optional=optional, block=block)
 
 
-pool("libreoffice", 1)
-
-
 def convert_odf_pdf(
     path_odf: str,
     out: str | None = None,
@@ -238,12 +235,17 @@ def convert_odf_pdf(
     if libreoffice is None:
         libreoffice = getenv("REPREP_LIBREOFFICE", "libreoffice")
     command = (
-        # Hacky workaround for the poor CLI of libreoffice ...
-        f"WORK=`mktemp -d --suffix=reprep` && {libreoffice} --convert-to pdf "
-        "${inp} --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
+        # Simple things should be simple! ;) See:
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
+        # Not solved yet:
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
+        f"WORK=`mktemp -d --suffix=reprep` && {libreoffice} "
+        "-env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
+        "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
     path_pdf = make_path_out(path_odf, out, ".pdf")
-    step(command, inp=path_odf, out=path_pdf, pool="libreoffice", optional=optional, block=block)
+    step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
 
 
 def convert_pdf(

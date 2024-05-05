@@ -125,7 +125,7 @@ async def test_mutool_example(tmpdir, name: str):
 @pytest.mark.skipif(not shutil.which("libreoffice"), reason="No LibreOffice")
 @pytest.mark.parametrize(
     "name",
-    ["convert_libreoffice"],
+    ["convert_libreoffice", "convert_libreoffice_concurrency"],
 )
 @pytest.mark.asyncio
 async def test_libreoffice_example(tmpdir, name: str):

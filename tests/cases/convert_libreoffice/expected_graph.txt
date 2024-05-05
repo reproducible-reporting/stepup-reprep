@@ -19,7 +19,7 @@ file:./
             supplies   file:slide.odp
             supplies   file:slide.pdf
             supplies   step:./plan.py
-            supplies   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+            supplies   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
 step:./plan.py
              workdir = ./
@@ -30,20 +30,19 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:slide.odp
-             creates   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+             creates   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
 file:slide.odp
                 path = slide.odp
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+            supplies   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
-step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
              workdir = ./
-             command = WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+             command = WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
                state = SUCCEEDED
-                pool = libreoffice
           created by   step:./plan.py
             consumes   file:./
             consumes   file:slide.odp
@@ -53,6 +52,6 @@ step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp 
 file:slide.pdf
                 path = slide.pdf
                state = BUILT
-          created by   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+          created by   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
             consumes   file:./
-            consumes   step:WORK=`mktemp -d --suffix=reprep` && libreoffice --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+            consumes   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}

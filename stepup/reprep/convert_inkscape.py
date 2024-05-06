@@ -22,7 +22,6 @@
 import argparse
 import re
 import sys
-from mmap import mmap
 
 from path import Path
 
@@ -107,9 +106,8 @@ def search_svg_deps(src: str) -> list[str]:
         path_svg = Path(todo[idep])
         # It is generally a poor practice to parse XML with a regular expression,
         # unless performance becomes an issue...
-        with open(path_svg, "rb+") as fh:
-            data = mmap(fh.fileno(), 0)
-            hrefs = re.findall(RE_SVG_HREF, data)
+        with open(path_svg, "rb") as fh:
+            hrefs = re.findall(RE_SVG_HREF, fh.read())
 
         # Process hrefs
         for href in hrefs:

@@ -19,7 +19,6 @@
 # --
 r"""Identification of dependencies from LaTeX sources."""
 
-
 import re
 
 from path import Path
@@ -110,10 +109,7 @@ def scan_latex_deps(path_tex, tex_root=None):
 
     path_tex = Path(path_tex)
     if path_tex.is_file():
-        if tex_root is None:
-            tex_root = path_tex.parent.normpath()
-        else:
-            tex_root = Path(tex_root)
+        tex_root = path_tex.parent.normpath() if tex_root is None else Path(tex_root)
         with open(path_tex) as fh:
             stripped = []
             for line in fh:

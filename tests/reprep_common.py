@@ -19,7 +19,6 @@
 # --
 """Utilities shared by several unit test modules."""
 
-
 import contextlib
 
 

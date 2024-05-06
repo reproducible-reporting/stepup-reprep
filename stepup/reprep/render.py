@@ -23,7 +23,6 @@ Parameters for the template can be defined in a "variables" Python file,
 from which all variables that are strings, integers or floats are imported.
 """
 
-
 import argparse
 import contextlib
 import sys

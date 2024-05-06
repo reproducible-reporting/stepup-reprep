@@ -26,7 +26,6 @@ There are two kinds of MANIFEST files:
   It contains every individual file, together with its size in bytes and its blake2b hexdigest.
 """
 
-
 import argparse
 import sys
 from collections.abc import Iterator

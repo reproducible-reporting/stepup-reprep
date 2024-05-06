@@ -19,7 +19,6 @@
 # --
 """Unit tests for stepup.reprep.bibtex_log"""
 
-
 from reprep_common import local_file
 
 from stepup.reprep.bibtex_log import DEFAULT_MESSAGE, parse_bibtex_log

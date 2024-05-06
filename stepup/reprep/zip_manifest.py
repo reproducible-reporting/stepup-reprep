@@ -19,7 +19,6 @@
 # --
 """Create ZIP with all files listed in a MANIFEST.txt file."""
 
-
 import argparse
 import datetime
 import sys

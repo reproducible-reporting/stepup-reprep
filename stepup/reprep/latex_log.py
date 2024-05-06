@@ -19,7 +19,6 @@
 # --
 r"""Identification of errors in LaTeX logs."""
 
-
 import re
 import sys
 

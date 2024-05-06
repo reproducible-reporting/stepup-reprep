@@ -19,7 +19,6 @@
 # --
 r"""Identification of errors in BibTeX logs."""
 
-
 from .latex_log import DEFAULT_MESSAGE, ErrorInfo
 
 

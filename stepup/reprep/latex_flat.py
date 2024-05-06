@@ -37,7 +37,6 @@ The script also assumes the ``\includgraphics``, ``\thebibliography`` and ``\ver
 commands are contained within a single line.
 """
 
-
 import argparse
 import re
 import sys
@@ -103,10 +102,7 @@ def flatten_latex(
     """
     inp_paths = []
     path_tex = Path(path_tex)
-    if tex_root is None:
-        tex_root = path_tex.parent.normpath()
-    else:
-        tex_root = Path(tex_root)
+    tex_root = path_tex.parent.normpath() if tex_root is None else Path(tex_root)
     with open(path_tex) as fh:
         for iline, line in enumerate(fh):
             # Reduce line to standard form

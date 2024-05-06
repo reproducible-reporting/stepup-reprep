@@ -19,7 +19,6 @@
 # --
 """Markdown to HTML conversion."""
 
-
 import argparse
 import re
 import sys

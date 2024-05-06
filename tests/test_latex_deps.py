@@ -19,7 +19,6 @@
 # --
 """Unit tests for stepup.reprep.latex_deps"""
 
-
 from stepup.reprep.latex_deps import scan_latex_deps
 
 SCAN_LATEX_DEPS_EXAMPLE = r"""

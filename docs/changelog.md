@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   https://bugs.documentfoundation.org/show_bug.cgi?id=106134
 - Inkscape conversion no longer opens files in write mode,
   which triggered the watcher of StepUp Core.
+- Fixed packaging mistake that confused PyCharm and Pytest.
 
 
 ## [1.1.0] - 2024-05-02

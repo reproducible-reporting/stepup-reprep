@@ -126,13 +126,15 @@ Commit the following:
 
 ### Must
 
-- Use `dataset-{name}` directories for data that cannot be (easily) generated from scratch:
+- Use `dataset-{name}` directories for data that cannot be (easily) generated from scratch.
+  For example.
 
     - External data sets.
     - Expensive calculations done previously.
+    - (Large amounts of) experimental measurements.
     - Data generated with closed-source software.
       (Avoid closed-source software when you have the choice.)
-    - Data requiring specialized hardware not generally available.
+    - Data created with specialized hardware not generally available.
     - Manually curated data.
 
 - Add scripts and implementations to regenerate the data,

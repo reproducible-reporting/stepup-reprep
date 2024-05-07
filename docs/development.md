@@ -23,7 +23,7 @@ echo 'source venv/bin/activate' > .envrc
 direnv allow
 pip install -U pip
 pip install -e .[dev]
-pip install -e ../stepup-core
+pip install -e ../stepup-core  # optional
 pytest -vv
 ```
 

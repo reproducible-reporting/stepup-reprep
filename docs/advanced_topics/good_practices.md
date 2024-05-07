@@ -1,4 +1,4 @@
-# Template Conventions
+# Good Practices
 
 This tutorial lists some recommendations that facilitate data reuse and reproducibility.
 

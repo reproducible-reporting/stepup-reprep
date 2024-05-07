@@ -38,13 +38,17 @@ theme:
 nav:
   - Home: index.md
   - installation.md
-  - Tutorials:
-    - tutorials/before_you_begin.md
-    - tutorials/create_or_clone_a_project.md
-    - tutorials/working_on_a_project.md
-    - tutorials/template_conventions.md
-    - tutorials/manifest_files.md
-    - tutorials/tiling_pdfs.md
+  - Template Tutorial:
+    - from_template/introduction.md
+    - from_template/before_you_begin.md
+    - from_template/create_or_clone_a_project.md
+    - from_template/working_on_a_project.md
+  - From Scratch:
+    - from_scratch/introduction.md
+  - Advanced Topics:
+    - advanced_topics/manifest_files.md
+    - advanced_topics/tiling_pdfs.md
+    - advanced_topics/good_practices.md
   - Reference:
     - reference/stepup.reprep.api.md
     - reference/stepup.reprep.tile_pdf.md
@@ -69,6 +73,7 @@ plugins:
           docstring_section_style: list
 
 markdown_extensions:
+  - admonition
   - smarty
   - pymdownx.highlight:
       anchor_linenums: true

@@ -3,12 +3,7 @@
 StepUp RepRep is the publication build tool for [Reproducible Reporting](https://github.com/reproducible-reporting).
 It is a domain-specific extension of a powerful universal build tool called [StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
 
-To get started, follow the tutorials in this documentation:
-
-- [Before You Begin](tutorials/before_you_begin.md)
-- [Create or Clone a Project](tutorials/create_or_clone_a_project.md)
-- [Working on a Project](tutorials/working_on_a_project.md)
-
+To get started, we recommend to follow the [Template Tutorial](from_template/introduction.md) in this documentation.
 StepUp RepRep will be installed in your instance of the template, as part of the setup.
 
 If you want to gain a more in-depth understanding of how StepUp works, the [StepUp Core tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/) will take you through all the basics.

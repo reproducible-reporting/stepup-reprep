@@ -11,18 +11,18 @@ For a more advanced example, see the [`tild_pdf` test case](https://github.com/r
 
 ## Example
 
-Example source files: [tutorials/tiling_pdfs/](https://github.com/reproducible-reporting/stepup-reprep/tree/main/docs/tutorials/tiling_pdfs)
+Example source files: [tutorials/tiling_pdfs/](https://github.com/reproducible-reporting/stepup-reprep/tree/main/docs/advanced_topics/tiling_pdfs)
 
 Create a `tile.py` script with the following code:
 
 ```python
-{% include 'tutorials/tiling_pdfs/tile.py' %}
+{% include 'advanced_topics/tiling_pdfs/tile.py' %}
 ```
 
 Next, create a script `plan.py` as follows:
 
 ```python
-{% include 'tutorials/tiling_pdfs/plan.py' %}
+{% include 'advanced_topics/tiling_pdfs/plan.py' %}
 ```
 
 For this example to work, you also need to create four SVG figures of the same size: `triangle.svg`, `square.svg`, `pentagon.svg` and  `hexagon.svg`.
@@ -37,7 +37,7 @@ stepup -n -w1
 You should see the following terminal output:
 
 ```
-{% include 'tutorials/tiling_pdfs/stdout.txt' %}
+{% include 'advanced_topics/tiling_pdfs/stdout.txt' %}
 ```
 
 This is the PNG conversion of the resulting PDF figure:

@@ -2,13 +2,6 @@
 
 If you would like to contribute, please read [CONTRIBUTING.md](https://github.com/reproducible-reporting/.github/blob/main/CONTRIBUTING.md).
 
-## How to Make Releases
-
-- Mark the release in `changelog.md`.
-- Make a new commit and tag it with `vX.Y.Z`.
-- Trigger the PyPI GitHub Action: `git push origin main --tags`.
-
-
 ## Development Install and Unit Tests
 
 First, create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
@@ -43,3 +36,9 @@ and edit Markdown files in your IDE.
 
 Please, use [Semantic Line Breaks](https://sembr.org/)
 because it results in cleaner file diffs when editing documentation.
+
+## How to Make A Release
+
+- Mark the release in `changelog.md`.
+- Make a new commit and tag it with `vX.Y.Z`.
+- Trigger the PyPI GitHub Action: `git push origin main --tags`.

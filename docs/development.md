@@ -37,7 +37,8 @@ and edit Markdown files in your IDE.
 Please, use [Semantic Line Breaks](https://sembr.org/)
 because it results in cleaner file diffs when editing documentation.
 
-## How to Make A Release
+
+## How to Make a Release
 
 - Mark the release in `changelog.md`.
 - Make a new commit and tag it with `vX.Y.Z`.

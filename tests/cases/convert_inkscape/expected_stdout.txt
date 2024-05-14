@@ -6,19 +6,19 @@
    SUCCESS │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
      START │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
    SUCCESS │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
-     START │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-   SUCCESS │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-     START │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
    DELETED │ final.pdf
    DELETED │ glasses.png
      PHASE │ run
-     START │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-   SUCCESS │ unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-     START │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
   DIRECTOR │ Stopping workers.

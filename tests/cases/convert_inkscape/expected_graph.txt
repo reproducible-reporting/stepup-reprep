@@ -21,10 +21,10 @@ file:./
             supplies   file:plan.py
             supplies   file:smile.svg
             supplies   step:./plan.py
+            supplies   step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+            supplies   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
             supplies   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
-            supplies   step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-            supplies   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
 
 step:./plan.py
              workdir = ./
@@ -43,16 +43,16 @@ file:glasses.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
+            supplies   step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
             supplies   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
-            supplies   step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
 
 file:smile.svg
                 path = smile.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
+            supplies   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
-            supplies   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
 
 step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
              workdir = ./
@@ -63,7 +63,7 @@ step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
           created by   step:./plan.py
             consumes   file:./
             consumes   file:glasses.svg
-             creates   step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+             creates   step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
 
 step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
              workdir = ./
@@ -74,11 +74,11 @@ step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
           created by   step:./plan.py
             consumes   file:./
             consumes   file:smile.svg
-             creates   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+             creates   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
 
-step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
              workdir = ./
-             command = unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+             command = SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
                state = SUCCEEDED
            mandatory = IMPLIED
           created by   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
@@ -90,14 +90,14 @@ step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export
 file:glasses.png
                 path = glasses.png
                state = BUILT
-          created by   step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+          created by   step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
             consumes   file:./
-            consumes   step:unshare --user inkscape glasses.svg  --export-filename=glasses.png --export-type=png
-            supplies   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+            consumes   step:SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+            supplies   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
 
-step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
              workdir = ./
-             command = unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+             command = SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
                state = SUCCEEDED
           created by   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
             consumes   file:./
@@ -109,6 +109,6 @@ step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-typ
 file:final.pdf
                 path = final.pdf
                state = BUILT
-          created by   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+          created by   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
             consumes   file:./
-            consumes   step:unshare --user inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+            consumes   step:SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf

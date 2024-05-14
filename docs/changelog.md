@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Nicer fix for concurrent Inkscape SVG to PDF or PNG conversion
+  (with `SELF_CALL=x`).
+  See: https://gitlab.com/inkscape/inkscape/-/issues/4716
+
+
 ## [1.1.1] - 2024-05-07
 
 ### Fixed

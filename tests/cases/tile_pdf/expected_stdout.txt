@@ -16,18 +16,18 @@
    SUCCESS │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
      START │ ./tile.py plan
    SUCCESS │ ./tile.py plan
-     START │ unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-     START │ unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-     START │ unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-     START │ unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-     START │ unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-     START │ unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
-   SUCCESS │ unshare --user inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+     START │ SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
      START │ ./tile.py run
    SUCCESS │ ./tile.py run
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz

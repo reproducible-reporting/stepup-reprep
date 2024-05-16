@@ -8,6 +8,11 @@ xargs rm -rvf < .gitignore
 cp plan_01.py plan.py
 stepup -w 1 plan.py & # > current_stdout_01.txt &
 
+# Wait for the director and get its socket.
+export STEPUP_DIRECTOR_SOCKET=$(
+  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
+)
+
 # Get the graph after completion of the pending steps.
 python3 - << EOD
 from stepup.core.interact import *
@@ -23,12 +28,17 @@ EOD
 [[ ! -f article.tex ]] || exit -1
 
 # Wait for background processes, if any.
-wait $(jobs -p)
+wait
 
 # Add the missing file and run again
 cp plan_02.py plan.py
 cp sub/original.tex sub/other.tex
 stepup -w 1 plan.py & # > current_stdout_02.txt &
+
+# Wait for the director and get its socket.
+export STEPUP_DIRECTOR_SOCKET=$(
+  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
+)
 python3 - << EOD
 from stepup.core.interact import *
 wait()
@@ -42,4 +52,4 @@ EOD
 [[ -f article.tex ]] || exit -1
 
 # Wait for background processes, if any.
-wait $(jobs -p)
+wait

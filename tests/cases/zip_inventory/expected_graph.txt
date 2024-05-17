@@ -1,0 +1,98 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:built.txt
+            supplies   file:inventory.txt
+            supplies   file:plan.py
+            supplies   file:static.txt
+            supplies   file:upload.zip
+            supplies   step:./plan.py
+            supplies   step:echo hello > built.txt
+            supplies   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:static.txt
+             creates   step:echo hello > built.txt
+             creates   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+             creates   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+
+file:static.txt
+                path = static.txt
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+
+step:echo hello > built.txt
+             workdir = ./
+             command = echo hello > built.txt
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:built.txt
+            supplies   file:built.txt
+
+file:built.txt
+                path = built.txt
+               state = BUILT
+          created by   step:echo hello > built.txt
+            consumes   file:./
+            consumes   step:echo hello > built.txt
+            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+
+step:reprep-make-inventory static.txt built.txt -o inventory.txt
+             workdir = ./
+             command = reprep-make-inventory static.txt built.txt -o inventory.txt
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:built.txt
+            consumes   file:static.txt
+             creates   file:inventory.txt
+            supplies   file:inventory.txt
+
+file:inventory.txt
+                path = inventory.txt
+               state = BUILT
+          created by   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+            consumes   file:./
+            consumes   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+
+step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+             workdir = ./
+             command = python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:inventory.txt
+             creates   file:upload.zip
+            supplies   file:upload.zip
+
+file:upload.zip
+                path = upload.zip
+               state = BUILT
+          created by   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip

@@ -25,13 +25,13 @@ mv final.pdf final1.pdf
 mv glasses.png glasses1.png
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("final.pdf")
 watch_delete("glasses.png")
 run()
 join()
-write_manifest("reproducibility_png_manifest.txt", ["glasses.png", "glasses1.png"])
-write_manifest("reproducibility_pdf_manifest.txt", ["final.pdf", "final1.pdf"])
+write_inventory("reproducibility_png_inventory.txt", ["glasses.png", "glasses1.png"])
+write_inventory("reproducibility_pdf_inventory.txt", ["final.pdf", "final1.pdf"])
 EOD
 
 # Wait for background processes, if any.
@@ -42,5 +42,5 @@ wait
 [[ -f smile.svg ]] || exit -1
 [[ -f final.pdf ]] || exit -1
 [[ -f final1.pdf ]] || exit -1
-[[ -f reproducibility_pdf_manifest.txt ]] || exit -1
-[[ -f reproducibility_png_manifest.txt ]] || exit -1
+[[ -f reproducibility_pdf_inventory.txt ]] || exit -1
+[[ -f reproducibility_png_inventory.txt ]] || exit -1

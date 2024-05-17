@@ -42,13 +42,11 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "convert_weasyprint",
         "latex_flat",
         "latex_flat_subdir",
-        "make_manifest_in",
-        "make_manifest_in_sub",
-        "make_manifest_list",
+        "make_inventory_list",
         "nup_pdf",
         "raster_pdf",
         "render_basic",
-        "zip_manifest",
+        "zip_inventory",
     ],
 )
 @pytest.mark.asyncio

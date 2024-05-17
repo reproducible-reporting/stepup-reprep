@@ -9,7 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `reprep-zip-manifest` command to manually create a reproducible ZIP file from a MANIFEST file.
+- `reprep-zip-inventory` command to manually create a reproducible ZIP file from an `inventory.txt` file.
+- More documentation on how to work with inventory files.
+- Tutorial for archiving StepUp publication Git repositories.
+
+### Changed
+
+- Renamed all `MANIFEST` and `manifest` occurrences to `inventory`
+  and removed dependency of setuptools for processing such files.
+- The API of `make_inventory` is made simpler than that of `make_manifest`.
+- The commands supported in `inventory.def` files now differ from those in setuptools:
+  `include`, `exclude`, `include-git`, `exclude-git`, `include-workflow` and `exclude-workflow`.
+
+### Fixed
+
+- An error message is raised when trying to a put a directory in an inventory file.
+- Symbolic links are no longer dereferenced when they are listed in an inventory file.
+- Symbolic links are archived in ZIP files without dereferencing.
+
 
 ## [1.1.2] - 2024-05-16
 

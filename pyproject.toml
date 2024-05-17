@@ -32,8 +32,7 @@ dependencies = [
     "pymupdf",
     "pyyaml",
     "scipy",
-    "setuptools",
-    "stepup>=1.2.2",
+    "stepup>=1.2.3",
     "weasyprint",
 ]
 dynamic = ["version"]
@@ -56,9 +55,9 @@ Source = "https://github.com/reproducible-reporting/stepup-reprep/"
 Changelog = "https://reproducible-reporting.github.io/stepup-reprep/changelog/"
 
 [project.scripts]
-reprep-check-manifest = "stepup.reprep.check_manifest:main"
-reprep-make-manifest = "stepup.reprep.make_manifest:main"
-reprep-zip-manifest = "stepup.reprep.zip_manifest:main"
+reprep-check-inventory = "stepup.reprep.check_inventory:main"
+reprep-make-inventory = "stepup.reprep.make_inventory:main"
+reprep-zip-inventory = "stepup.reprep.zip_inventory:main"
 
 [tool.pytest.ini_options]
 addopts = "-n auto"

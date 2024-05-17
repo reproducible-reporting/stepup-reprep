@@ -4,7 +4,7 @@ current_*
 paper.pdf
 paper.log
 paper.aux
-paper.MANIFEST.txt
+paper-inventory.txt
 paper1.pdf
 journal_abbreviation_cache.json
-reproducibility_manifest.txt
+reproducibility_inventory.txt

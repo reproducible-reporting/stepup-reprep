@@ -24,11 +24,11 @@ EOD
 mv slide.pdf slide1.pdf
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("slide.pdf")
 run()
 join()
-write_manifest("reproducibility_manifest_skip.txt", ["slide.pdf", "slide1.pdf"])
+write_inventory("reproducibility_inventory_skip.txt", ["slide.pdf", "slide1.pdf"])
 EOD
 
 # Wait for background processes, if any.
@@ -39,4 +39,4 @@ wait
 [[ -f slide.odp ]] || exit -1
 [[ -f slide.pdf ]] || exit -1
 [[ -f slide1.pdf ]] || exit -1
-[[ -f reproducibility_manifest_skip.txt ]] || exit -1
+[[ -f reproducibility_inventory_skip.txt ]] || exit -1

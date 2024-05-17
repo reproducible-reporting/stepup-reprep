@@ -5,7 +5,7 @@ current_*
 paper.pdf
 paper.log
 paper.aux
-paper.MANIFEST.txt
+paper-inventory.txt
 paper.out
 paper1.pdf
-reproducibility_manifest.txt
+reproducibility_inventory.txt

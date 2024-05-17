@@ -15,7 +15,7 @@ file:./
                 path = ./
                state = STATIC
           created by   root:
-            supplies   file:paper.MANIFEST.txt
+            supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.bbl
             supplies   file:paper.log
@@ -61,17 +61,17 @@ step:python -m stepup.reprep.latex paper.tex
             consumes   file:./
             consumes   file:paper.bbl
             consumes   file:paper.tex
-             creates   file:paper.MANIFEST.txt
+             creates   file:paper-inventory.txt
              creates   file:paper.aux
              creates   file:paper.log
              creates   file:paper.pdf
-            supplies   file:paper.MANIFEST.txt
+            supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.log
             supplies   file:paper.pdf
 
-file:paper.MANIFEST.txt
-                path = paper.MANIFEST.txt
+file:paper-inventory.txt
+                path = paper-inventory.txt
                state = BUILT
           created by   step:python -m stepup.reprep.latex paper.tex
             consumes   file:./

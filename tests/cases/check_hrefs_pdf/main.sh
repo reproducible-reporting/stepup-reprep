@@ -30,4 +30,4 @@ wait
 [[ -f main.log ]] || exit -1
 [[ -f main.aux ]] || exit -1
 [[ -f README.md ]] || exit -1
-reprep-check-manifest main.MANIFEST.txt
+reprep-check-inventory main-inventory.txt

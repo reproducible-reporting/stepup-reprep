@@ -1,4 +1,4 @@
-# Git Repository Archival
+# Archive a Git Repository (of a StepUp project)
 
 ## Git Repositories Versus Long-term Archival
 
@@ -45,7 +45,7 @@ you don't have to download all versions of those large files.
 Instead, LFS will only download the versions of the large files that you are working on.
 
 
-### Downloading Large Files from LFS
+### Download Large Files from LFS
 
 If you just want to download and check out the large files in the current Git commit, run:
 
@@ -70,7 +70,7 @@ git lfs checkout
 ```
 
 
-### Migration from an LFS-enabled Git Repository to a Normal One.
+### Migrate from an LFS-enabled Git Repository
 
 If you want to archive the entire history including the large files,
 you will need to migrate your Git repository back to a normal one without LFS.
@@ -97,7 +97,7 @@ The migration can be performed in two steps:
     ```
 
 
-## How to Archive a Git repository
+## Archival Recipes
 
 The subsections below show how to archive a Git repository in different ways.
 Depending on your use case, you may want to combine several archiving methods.
@@ -147,59 +147,59 @@ git clone main.bundle
 There are two options, the latter of which is preferable:
 
 1. You can create a Git bundle with a single commit,
-which is subject to the same LFS considerations mentioned above:
+   which is subject to the same LFS considerations mentioned above:
 
     ```bash
     git bundle create main.bundle -1 main
     ```
 
-2. You can create a ZIP file containing all the source files as follows:
+2. You can create a ZIP file containing all the source files
+   using StepUp RepRep's [Inventory Files](inventory_files.md):
 
     - Make sure that the working tree is clean.
       The `git status` command should print
       `nothing to commit, working tree clean`.
 
-    - Create a [manifest TXT file](manifest_files.md) of the entire source tree:
+    - Write an `inventory-main.def` file with the following line,
+      to include all files recorded by Git:
 
-        ```bash
-        reprep-make-manifest $(git ls-files) -o MANIFEST-main.txt
+        ```
+        include-git
         ```
 
-    - Then create a (reproducible) ZIP file from the manifest file:
+    - Create an `inventory-main.txt` file of the entire source tree,
+      using the following command in the terminal:
 
         ```bash
-        reprep-zip-manifest MANIFEST-main.txt main.zip
+        reprep-make-inventory -i inventory-main-latest.def
+        ```
+
+        This will write a complete listing to `inventory-main.txt`
+
+    - Then create a (reproducible) ZIP file from the `.txt` file
+      by running the following command:
+
+        ```bash
+        reprep-zip-inventory inventory-main-latest.txt main-latest.zip
         ```
 
 
 ### Archiving Source and Output Files from the Last Commit
 
 This is similar to the previous section, but now with a larger set of files.
-To list all the output files of the StepUp workflow,
-we use StepUp's built-in `lookup` command.
-It will print out all static and built files in the workflow.
+Create an `inventory-main-latest-with-outputs.def` file
+that will include all files recorded by Git and all outputs of the StepUp workflows:
 
-- Create a [manifest TXT file](manifest_files.md):
+```
+include-git
+include-workflow BUILT */.stepup/workflow.mpk.gz
+```
 
-    ```bash
-    reprep-make-manifest \
-        $(git ls-files) $(lookup */.stepup/workflow.mpk.gz) \
-        -o MANIFEST-main-with-outputs.txt
-    ```
-
-    Note that the `*/.stepup/workflow.mpk.gz` part is suitable for the recommended
-    [repository template](../from_template/index.md).
-    If you use StepUp with a different directory layout,
-    you should also adjust the path(s) of the workflow file(s).
-
-- Then create a (reproducible) ZIP file from the manifest file:
-
-    ```bash
-    reprep-zip-manifest MANIFEST-main-with-outputs.txt main-with-outputs.zip
-    ```
+(It is assumed that all STATIC files are already checked into the Git repository.)
+With this file, just follow the same steps as in option 2 of the previous subsection.
 
 
-## A `README.md` for the Archives
+## Create a `README.md` for the Archives
 
 Archives created using the instructions above must be accompanied by a `README.md`
 file that includes the following:

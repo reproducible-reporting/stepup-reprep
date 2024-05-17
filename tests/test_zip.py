@@ -17,13 +17,13 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""Unit tests for stepup.reprep.zip_manifest."""
+"""Unit tests for stepup.reprep.zip_inventory."""
 
 import contextlib
 import zipfile
 
-from stepup.reprep.make_manifest import write_manifest
-from stepup.reprep.zip_manifest import zip_manifest
+from stepup.reprep.make_inventory import write_inventory
+from stepup.reprep.zip_inventory import zip_inventory
 
 
 def test_simple_chdir(path_tmp):
@@ -32,15 +32,15 @@ def test_simple_chdir(path_tmp):
             fh.write("Aaa")
         with open("b.txt", "w") as fh:
             fh.write("Bbb")
-        write_manifest("MANIFEST.txt", ["a.txt", "b.txt"])
-        zip_manifest("MANIFEST.txt", "test.zip")
+        write_inventory("inventory.txt", ["a.txt", "b.txt"])
+        zip_inventory("inventory.txt", "test.zip")
         contents = {}
         with zipfile.ZipFile("test.zip", "r") as fz:
             for name in fz.namelist():
                 contents[name] = fz.read(name).decode("utf-8")
         assert contents["a.txt"] == "Aaa"
         assert contents["b.txt"] == "Bbb"
-        assert "MANIFEST.txt" in contents
+        assert "inventory.txt" in contents
 
 
 def test_simple(path_tmp):
@@ -48,12 +48,12 @@ def test_simple(path_tmp):
         fh.write("Aaa")
     with open(path_tmp / "b.txt", "w") as fh:
         fh.write("Bbb")
-    write_manifest(path_tmp / "MANIFEST.txt", [path_tmp / "a.txt", path_tmp / "b.txt"])
-    zip_manifest(path_tmp / "MANIFEST.txt", path_tmp / "test.zip")
+    write_inventory(path_tmp / "inventory.txt", [path_tmp / "a.txt", path_tmp / "b.txt"])
+    zip_inventory(path_tmp / "inventory.txt")
     contents = {}
-    with zipfile.ZipFile(path_tmp / "test.zip", "r") as fz:
+    with zipfile.ZipFile(path_tmp / "inventory.zip", "r") as fz:
         for name in fz.namelist():
             contents[name] = fz.read(name).decode("utf-8")
     assert contents["a.txt"] == "Aaa"
     assert contents["b.txt"] == "Bbb"
-    assert "MANIFEST.txt" in contents
+    assert "inventory.txt" in contents

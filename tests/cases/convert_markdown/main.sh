@@ -24,11 +24,11 @@ EOD
 mv demo.html demo1.html
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("demo.html")
 run()
 join()
-write_manifest("reproducibility_manifest.txt", ["demo.html", "demo1.html"])
+write_inventory("reproducibility_inventory.txt", ["demo.html", "demo1.html"])
 EOD
 
 # Wait for background processes, if any.
@@ -39,4 +39,4 @@ wait
 [[ -f demo.md ]] || exit -1
 [[ -f demo.html ]] || exit -1
 [[ -f demo1.html ]] || exit -1
-[[ -f reproducibility_manifest.txt ]] || exit -1
+[[ -f reproducibility_inventory.txt ]] || exit -1

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `reprep-zip-manifest` command to manually create a reproducible ZIP file from a MANIFEST file.
+
 ## [1.1.2] - 2024-05-16
 
 ### Fixed

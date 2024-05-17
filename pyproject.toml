@@ -56,8 +56,9 @@ Source = "https://github.com/reproducible-reporting/stepup-reprep/"
 Changelog = "https://reproducible-reporting.github.io/stepup-reprep/changelog/"
 
 [project.scripts]
-reprep-make-manifest = "stepup.reprep.make_manifest:main"
 reprep-check-manifest = "stepup.reprep.check_manifest:main"
+reprep-make-manifest = "stepup.reprep.make_manifest:main"
+reprep-zip-manifest = "stepup.reprep.zip_manifest:main"
 
 [tool.pytest.ini_options]
 addopts = "-n auto"

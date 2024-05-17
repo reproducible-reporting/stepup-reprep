@@ -48,6 +48,7 @@ nav:
   - Advanced Topics:
     - advanced_topics/manifest_files.md
     - advanced_topics/tiling_pdfs.md
+    - advanced_topics/archive_git.md
     - advanced_topics/good_practices.md
   - Reference:
     - reference/stepup.reprep.api.md

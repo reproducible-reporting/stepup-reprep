@@ -75,7 +75,7 @@ This tutorial lists some recommendations that facilitate data reuse and reproduc
   when finalizing the manuscript.
 - Define as few commands as possible.
 - Avoid low-quality publisher article classes. (ACS has a decent one.)
-- Avoid `\subfigure`. Merge panels into one PDF instead. (See [Tiling PDFs](tiling_pdfs.md).)
+- Avoid `\subfigure`. Merge panels into one PDF instead. (See [Tile PDFs](tile_pdfs.md).)
 
 
 ## Figures

@@ -46,9 +46,10 @@ nav:
   - From Scratch:
     - from_scratch/introduction.md
   - Advanced Topics:
-    - advanced_topics/manifest_files.md
-    - advanced_topics/tiling_pdfs.md
+    - advanced_topics/inventory_files.md
+    - advanced_topics/tile_pdfs.md
     - advanced_topics/good_practices.md
+    - advanced_topics/archive_git.md
   - Reference:
     - reference/stepup.reprep.api.md
     - reference/stepup.reprep.tile_pdf.md

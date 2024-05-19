@@ -22,7 +22,7 @@
 from path import Path
 
 from stepup.core.pytest import run_example as run_example_core
-from stepup.reprep.check_manifest import iter_manifest
+from stepup.reprep.check_inventory import iter_inventory
 
 __all__ = ("run_example",)
 
@@ -36,11 +36,11 @@ async def run_example(srcdir, tmpdir, overwrite_expected=False):
 
     # Reproducibility check
     workdir = Path(tmpdir) / "example"
-    for path_manifest in sorted(workdir.glob("reproducibility_*manifest.txt")):
-        records = list(iter_manifest(path_manifest))
-        sizes = {record[0] for record in records}
+    for path_inventory in sorted(workdir.glob("reproducibility_*inventory.txt")):
+        records = list(iter_inventory(path_inventory))
+        sizes = {record.size for record in records}
         if not len(sizes) == 1:
-            raise AssertionError(f"Not all file sizes in {path_manifest} are the same.")
-        digests = {record[1] for record in records}
+            raise AssertionError(f"Not all file sizes in {path_inventory} are the same.")
+        digests = {record.digest for record in records}
         if not len(digests) == 1:
-            raise AssertionError(f"Not all file digests in {path_manifest} are the same.")
+            raise AssertionError(f"Not all file digests in {path_inventory} are the same.")

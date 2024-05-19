@@ -23,11 +23,11 @@ EOD
 mv example.png example1.png
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("example.png")
 run()
 join()
-write_manifest("reproducibility_manifest.txt", ["example.png", "example1.png"])
+write_inventory("reproducibility_inventory.txt", ["example.png", "example1.png"])
 EOD
 
 # Wait for background processes, if any.
@@ -38,4 +38,4 @@ wait
 [[ -f example.pdf ]] || exit -1
 [[ -f example.png ]] || exit -1
 [[ -f example1.png ]] || exit -1
-[[ -f reproducibility_manifest.txt ]] || exit -1
+[[ -f reproducibility_inventory.txt ]] || exit -1

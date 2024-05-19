@@ -19,7 +19,7 @@ file:./
             supplies   (file:BROKEN.md)
             supplies   file:README.md
             supplies   file:check_hrefs.yaml
-            supplies   file:main.MANIFEST.txt
+            supplies   file:main-inventory.txt
             supplies   file:main.aux
             supplies   file:main.log
             supplies   file:main.out
@@ -76,21 +76,21 @@ step:python -m stepup.reprep.latex main.tex --run-bibtex
           created by   step:./plan.py
             consumes   file:./
             consumes   file:main.tex
-             creates   file:main.MANIFEST.txt
+             creates   file:main-inventory.txt
              creates   file:main.aux
              creates   file:main.log
              creates   file:main.out
              creates   file:main.pdf
              creates   file:main.sh
-            supplies   file:main.MANIFEST.txt
+            supplies   file:main-inventory.txt
             supplies   file:main.aux
             supplies   file:main.log
             supplies   file:main.out
             supplies   file:main.pdf
             supplies   file:main.sh
 
-file:main.MANIFEST.txt
-                path = main.MANIFEST.txt
+file:main-inventory.txt
+                path = main-inventory.txt
                state = BUILT
           created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
             consumes   file:./

@@ -40,11 +40,11 @@ __all__ = (
     "latex",
     "latex_diff",
     "latex_flat",
-    "make_manifest",
+    "make_inventory",
     "nup_pdf",
     "raster_pdf",
     "render",
-    "zip_manifest",
+    "zip_inventory",
 )
 
 
@@ -507,7 +507,7 @@ def latex(
     step(
         command,
         inp=inp_paths,
-        out=[workdir / path_pdf, workdir / f"{prefix}.aux", workdir / f"{prefix}.MANIFEST.txt"],
+        out=[workdir / path_pdf, workdir / f"{prefix}.aux", workdir / f"{prefix}-inventory.txt"],
         workdir=workdir,
         optional=optional,
         block=block,
@@ -598,46 +598,29 @@ def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: 
     )
 
 
-def make_manifest(
-    path_manifest: str, paths: Collection[str] = (), *, optional: bool = False, block: bool = False
+def make_inventory(
+    paths: Collection[str], path_inventory: str, *, optional: bool = False, block: bool = False
 ):
-    """Create a `MANIFEST.txt` file.
+    """Create an `inventory.txt` file.
 
     Parameters
     ----------
-    path_manifest
-        This can be either a `MANIFEST.in` file, in which case it is processed and a corresponding
-        `MANIFEST.out` is created. The same syntax is used as in setuptools.
-        See https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html
-        The other option is to provide a `MANIFEST.txt` file, which serves as output.
-        In this case, no `MANIFEST.in` is processed.
-        The distinction between the two is based on the file extension.
     paths
-        (Additional) paths to include in the `MANIFEST.txt` file.
+        Paths to include in the `inventory.txt` file.
+    path_inventory
+        The inventory file to write.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
     """
-    if path_manifest.endswith(".in"):
-        path_txt = path_manifest[:-3] + ".txt"
-        step(
-            "reprep-make-manifest -i ${inp}",
-            inp=[path_manifest, *paths],
-            out=[path_txt],
-            optional=optional,
-            block=block,
-        )
-    elif path_manifest.endswith(".txt"):
-        step(
-            "reprep-make-manifest ${inp} -o ${out}",
-            inp=paths,
-            out=[path_manifest],
-            optional=optional,
-            block=block,
-        )
-    else:
-        raise ValueError("The path_manifest argument must either have the .in or .txt suffix")
+    step(
+        "reprep-make-inventory ${inp} -o ${out}",
+        inp=paths,
+        out=[path_inventory],
+        optional=optional,
+        block=block,
+    )
 
 
 def nup_pdf(
@@ -772,14 +755,16 @@ def render(
     )
 
 
-def zip_manifest(path_manifest: str, path_zip: str, *, optional: bool = False, block: bool = False):
-    """Create a ZIP file with all files listed in a `MANIFEST.txt` file + check digests before zip.
+def zip_inventory(
+    path_inventory: str, path_zip: str, *, optional: bool = False, block: bool = False
+):
+    """Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.
 
     Parameters
     ----------
-    path_manifest
-        A file created with the `make_manifest` API or with the command-line script
-        `reprep-make-manifest`.
+    path_inventory
+        A file created with the `make_inventory` API or with the command-line script
+        `reprep-make-inventory`.
     path_zip
         The output ZIP file
     optional
@@ -788,8 +773,8 @@ def zip_manifest(path_manifest: str, path_zip: str, *, optional: bool = False, b
         When `True`, the step will always remain pending.
     """
     step(
-        "python -m stepup.reprep.zip_manifest ${inp} ${out}",
-        inp=path_manifest,
+        "python -m stepup.reprep.zip_inventory ${inp} ${out}",
+        inp=path_inventory,
         out=path_zip,
         optional=optional,
         block=block,

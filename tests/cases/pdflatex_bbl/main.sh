@@ -25,11 +25,11 @@ rm paper.aux paper.log
 mv paper.pdf paper1.pdf
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("paper.pdf")
 run()
 join()
-write_manifest("reproducibility_manifest.txt", ["paper.pdf", "paper1.pdf"])
+write_inventory("reproducibility_inventory.txt", ["paper.pdf", "paper1.pdf"])
 EOD
 
 # Wait for background processes, if any.
@@ -41,5 +41,5 @@ wait
 [[ -f paper.log ]] || exit -1
 [[ -f paper.aux ]] || exit -1
 [[ -f paper1.pdf ]] || exit -1
-[[ -f reproducibility_manifest.txt ]] || exit -1
-reprep-check-manifest paper.MANIFEST.txt
+[[ -f reproducibility_inventory.txt ]] || exit -1
+reprep-check-inventory paper-inventory.txt

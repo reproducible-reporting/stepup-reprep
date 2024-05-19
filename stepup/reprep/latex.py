@@ -27,7 +27,7 @@ from path import Path
 
 from stepup.core.api import amend, getenv
 from stepup.core.hash import compute_file_digest
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 
 from .bibtex_log import parse_bibtex_log
 from .latex_deps import scan_latex_deps
@@ -65,7 +65,7 @@ def main() -> int:
     if len(bib) == 0:
         if not amend(inp=implicit):
             return 0
-        manifest_files = list(implicit)
+        inventory_files = list(implicit)
     elif args.run_bibtex:
         # Get other executables and files
         if args.bibtex is None:
@@ -82,7 +82,7 @@ def main() -> int:
             out=[f"{stem}.bbl"],
         ):
             return 0
-        manifest_files = [*implicit, *bib, f"{stem}.bbl"]
+        inventory_files = [*implicit, *bib, f"{stem}.bbl"]
 
         # LaTeX
         cp = subprocess.run(
@@ -139,7 +139,7 @@ def main() -> int:
     else:
         if not amend(inp=[*implicit, f"{stem}.bbl"]):
             return 0
-        manifest_files = [*implicit, f"{stem}.bbl"]
+        inventory_files = [*implicit, f"{stem}.bbl"]
 
     for _ in range(args.maxrep):
         # LaTeX
@@ -169,14 +169,14 @@ def main() -> int:
             print(digest.hex(), file=sys.stderr)
         return -3
 
-    manifest_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
-    path_manifest = f"{stem}.MANIFEST.txt"
-    write_manifest(path_manifest, manifest_files)
+    inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
+    path_inventory = f"{stem}-inventory.txt"
+    write_inventory(path_inventory, inventory_files)
 
     vol_paths = []
     for path in Path(".").glob(f"{stem}.*"):
         path = path.normpath()
-        if not (path in manifest_files or path == path_manifest):
+        if not (path in inventory_files or path == path_inventory):
             vol_paths.append(path)
     amend(vol=vol_paths)
 

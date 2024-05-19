@@ -28,5 +28,8 @@ EOD
 [[ -f sub/article.tex ]] || exit -1
 cp sub/article.tex current_article.tex
 
+# Create an inventory file
+reprep-make-inventory -i inventory.def -o current_inventory.txt
+
 # Wait for background processes, if any.
 wait

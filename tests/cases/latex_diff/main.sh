@@ -23,11 +23,11 @@ EOD
 mv diff.tex diff1.tex
 python3 - << EOD
 from stepup.core.interact import *
-from stepup.reprep.make_manifest import write_manifest
+from stepup.reprep.make_inventory import write_inventory
 watch_delete("diff.tex")
 run()
 join()
-write_manifest("reproducibility_manifest.txt", ["diff.tex", "diff1.tex"])
+write_inventory("reproducibility_inventory.txt", ["diff.tex", "diff1.tex"])
 EOD
 
 # Wait for background processes, if any.
@@ -37,4 +37,4 @@ wait
 [[ -f plan.py ]] || exit -1
 [[ -f diff.tex ]] || exit -1
 [[ -f diff1.tex ]] || exit -1
-[[ -f reproducibility_manifest.txt ]] || exit -1
+[[ -f reproducibility_inventory.txt ]] || exit -1

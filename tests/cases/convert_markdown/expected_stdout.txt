@@ -2,14 +2,14 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.convert_markdown demo.md demo.html
-   SUCCESS │ python -m stepup.reprep.convert_markdown demo.md demo.html
+     START │ python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
+   SUCCESS │ python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
    DELETED │ demo.html
      PHASE │ run
-     START │ python -m stepup.reprep.convert_markdown demo.md demo.html
-   SUCCESS │ python -m stepup.reprep.convert_markdown demo.md demo.html
+     START │ python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
+   SUCCESS │ python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
   DIRECTOR │ Stopping workers.

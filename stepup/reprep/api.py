@@ -134,13 +134,15 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     step(command, inp=inp_paths, block=block)
 
 
-pool("markdown", 1)
+pool("markdown_katex", 1)
 
 
 def convert_markdown(
     path_md: str,
     out: str | None = None,
     *,
+    katex: bool = False,
+    path_macro: str | None = None,
     optional: bool = False,
     block: bool = False,
 ):
@@ -152,6 +154,10 @@ def convert_markdown(
         The markdown input file.
     out
         Output destination: `None`, a directory or a file.
+    katex
+        Set to `True` to enable KaTeX support.
+    path_macro
+        A file with macro definitions for KaTeX.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
@@ -163,8 +169,16 @@ def convert_markdown(
     if not path_md.endswith(".md"):
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, out, ".html")
-    command = "python -m stepup.reprep.convert_markdown ${inp} ${out}"
-    step(command, inp=path_md, out=path_html, pool="markdown", optional=optional, block=block)
+    inp = [path_md]
+    command = f"python -m stepup.reprep.convert_markdown {path_md} {path_html}"
+    pool = None
+    if katex:
+        command += " --katex"
+        pool = "markdown_katex"
+        if path_macro is not None:
+            command += f" --katex-macros={path_macro}"
+            inp.append(path_macro)
+    step(command, inp=inp, out=path_html, pool=pool, optional=optional, block=block)
 
 
 def convert_weasyprint(

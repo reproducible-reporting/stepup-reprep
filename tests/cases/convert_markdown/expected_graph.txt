@@ -17,9 +17,10 @@ file:./
           created by   root:
             supplies   file:demo.html
             supplies   file:demo.md
+            supplies   file:macros.tex
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html
+            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
 
 step:./plan.py
              workdir = ./
@@ -29,29 +30,38 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:demo.md
-             creates   step:python -m stepup.reprep.convert_markdown demo.md demo.html
+             creates   file:macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
 
 file:demo.md
                 path = demo.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html
+            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
 
-step:python -m stepup.reprep.convert_markdown demo.md demo.html
+file:macros.tex
+                path = macros.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
              workdir = ./
-             command = python -m stepup.reprep.convert_markdown demo.md demo.html
+             command = python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
                 pool = markdown
           created by   step:./plan.py
             consumes   file:./
             consumes   file:demo.md
+            consumes   file:macros.tex
              creates   file:demo.html
             supplies   file:demo.html
 
 file:demo.html
                 path = demo.html
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_markdown demo.md demo.html
+          created by   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_markdown demo.md demo.html
+            consumes   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex

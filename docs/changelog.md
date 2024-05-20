@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The API of `make_inventory` is made simpler than that of `make_manifest`.
 - The commands supported in `inventory.def` files now differ from those in setuptools:
   `include`, `exclude`, `include-git`, `exclude-git`, `include-workflow` and `exclude-workflow`.
+- The css style has been made customizable in `convert_markdown`.
+- KaTeX is now optional in `convert_markdown`.
 
 ### Fixed
 

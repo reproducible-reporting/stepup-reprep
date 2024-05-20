@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2024-05-20
+
 ### Added
 
 - `reprep-zip-inventory` command to manually create a reproducible ZIP file from an `inventory.txt` file.

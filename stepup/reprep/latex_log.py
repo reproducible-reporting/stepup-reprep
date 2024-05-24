@@ -76,8 +76,7 @@ class LatexSourceStack:
         """The current file to which the error message belongs."""
         if len(self.stack) == 0:
             return "(could not detect source file)"
-        else:
-            return self.stack[-1]
+        return self.stack[-1]
 
     def feed(self, line: str):
         # Check if we need to anticipate line wrapping

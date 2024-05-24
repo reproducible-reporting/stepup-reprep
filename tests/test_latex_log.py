@@ -271,7 +271,7 @@ def check_source_stack(latex_log, nline, stack, unfinished):
 
 
 @pytest.mark.parametrize(
-    "nline, stack, unfinished",
+    ("nline", "stack", "unfinished"),
     [
         (7, ["./solutions.tex"], None),
         (
@@ -380,7 +380,7 @@ Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 
 
 @pytest.mark.parametrize(
-    "nline, stack, unfinished",
+    ("nline", "stack", "unfinished"),
     [
         (2, ["./pdftexcmds.sty"], None),
         (
@@ -407,7 +407,7 @@ File: pgfcorequick.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 
 
 @pytest.mark.parametrize(
-    "nline, stack, unfinished",
+    ("nline", "stack", "unfinished"),
     [
         (
             3,
@@ -429,7 +429,7 @@ Blah
 
 
 @pytest.mark.parametrize(
-    "nline, stack, unfinished",
+    ("nline", "stack", "unfinished"),
     [
         (2, ["./first.tex"], None),
         (3, ["./first.tex"], None),

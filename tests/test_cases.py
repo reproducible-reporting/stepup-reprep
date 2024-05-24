@@ -49,7 +49,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "zip_inventory",
     ],
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_example(tmpdir, name: str):
     await run_example(Path("tests/cases") / name, tmpdir, OVERWRITE_EXPECTED)
 
@@ -95,7 +95,7 @@ def has_texlive_2023():
         "xelatex_input",
     ],
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_latex_example(tmpdir, name: str):
     await run_example(Path("tests/cases") / name, tmpdir, OVERWRITE_EXPECTED)
 
@@ -105,7 +105,7 @@ async def test_latex_example(tmpdir, name: str):
     "name",
     ["convert_inkscape", "convert_inkscape_concurrency", "tile_pdf"],
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_inkscape_example(tmpdir, name: str):
     await run_example(Path("tests/cases") / name, tmpdir, OVERWRITE_EXPECTED)
 
@@ -115,7 +115,7 @@ async def test_inkscape_example(tmpdir, name: str):
     "name",
     ["convert_mutool", "cat_pdf"],
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_mutool_example(tmpdir, name: str):
     await run_example(Path("tests/cases") / name, tmpdir, OVERWRITE_EXPECTED)
 
@@ -125,6 +125,6 @@ async def test_mutool_example(tmpdir, name: str):
     "name",
     ["convert_libreoffice", "convert_libreoffice_concurrency"],
 )
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_libreoffice_example(tmpdir, name: str):
     await run_example(Path("tests/cases") / name, tmpdir, OVERWRITE_EXPECTED)

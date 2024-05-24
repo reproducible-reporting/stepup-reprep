@@ -47,7 +47,7 @@ def parse_bibtex_log(path_blg: str) -> ErrorInfo | None:
             if line.startswith("I'm skipping whatever remains"):
                 error = True
                 break
-            elif line.startswith(r"I found no \bibstyle command"):
+            if line.startswith(r"I found no \bibstyle command"):
                 last_src = line.split()[-1]
                 recorded = [line[:-1]]
                 error = True

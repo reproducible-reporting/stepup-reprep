@@ -152,7 +152,7 @@ def flatten_latex(
                 else:
                     print("Unknown error", file=sys.stderr)
                 break
-            elif isinstance(sub_path_tex, str):
+            if isinstance(sub_path_tex, str):
                 status, sub_inp_paths = flatten_latex(sub_path_tex, fh_out, out_root, new_root)
                 inp_paths.extend(sub_inp_paths)
                 if status != 0:

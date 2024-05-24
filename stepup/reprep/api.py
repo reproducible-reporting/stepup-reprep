@@ -368,7 +368,7 @@ def convert_svg(
         path_out = subs(path_out)
     if not path_svg.endswith(".svg"):
         raise ValueError("The SVG file must have extension .svg")
-    elif not (path_out.endswith(".pdf") or path_out.endswith(".png")):
+    if not (path_out.endswith((".pdf", ".png"))):
         raise ValueError("The output file must have extension .pdf or .png")
     command = f"python -m stepup.reprep.convert_inkscape {path_svg} {path_out}"
     if inkscape is not None:

@@ -152,12 +152,11 @@ def check_hrefs(hrefs: list[HRef], root: Path, accept: set[str]) -> int:
 def check_href(href: HRef, root: Path, accept: set[str]) -> int:
     if href.url.startswith("mailto:"):
         return 0
-    elif "://" in href.translated:
+    if "://" in href.translated:
         if href.translated in accept:
             return 0
-        else:
-            print(f"FAILED LINK: {href.url}", file=sys.stderr)
-            return 1
+        print(f"FAILED LINK: {href.url}", file=sys.stderr)
+        return 1
     path = mynormpath(root / Path(href.translated))
     amend(inp=path)
     return 0

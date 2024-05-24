@@ -91,8 +91,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("-i", "--inventory-def", help="An inventory input file.", default=None)
     parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
-    args = parser.parse_args(argv)
-    return args
+    return parser.parse_args(argv)
 
 
 def get_file_list_nglob(i: int, args: list[str]) -> Collection[str]:

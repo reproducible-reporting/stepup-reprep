@@ -44,8 +44,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         prog="reprep-check-inventory", description="Check an inventory.txt."
     )
     parser.add_argument("inventory_txt", help="An inventory.txt file generated with RepRep")
-    args = parser.parse_args(argv)
-    return args
+    return parser.parse_args(argv)
 
 
 def iter_inventory(path_inventory: str) -> Iterator[FileSummary]:

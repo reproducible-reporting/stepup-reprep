@@ -249,7 +249,9 @@ Keep in mind that this section is work in progress.
 
 Jupyter Notebooks are very popular for interactive Python programming because
 you can combine documentation, code and visualization in one document.
-Despite their popularity, they also have inherent limitations that are not easy to overcome:
+However, Jupyter notebooks have also been
+[criticized for encouraging poor practices](https://doi.org/10.1007/s10664-021-09961-9).
+In short, notebooks have inherent limitations that are not easy to overcome:
 
 - Changes to Jupyter notebooks are not easily visualized with textual diffs.
 - Related to the previous point:
@@ -261,8 +263,21 @@ Despite their popularity, they also have inherent limitations that are not easy 
   The only way to reuse code from one notebook in another is to copy and paste fragments.
 
 For these reasons, we recommend avoiding them and instead working with reproducible workflows that
-combine scripts and analysis tools in Python modules (or packages) and Markdown files.
+combine scripts and analysis tools implemented in Python modules (or packages) and Markdown files.
 
+StepUp addresses the above points as follows:
+
+- Python source code is implemented in simple Python files,
+  so the output `git diff` is readable and merging is relatively easy.
+- [StepUp's script protocol](https://reproducible-reporting.github.io/stepup-core/getting_started/script_single)
+  allows you to specify the inputs and outputs of each script
+  so that StepUp executes them in the correct order.
+- If you change one or more scripts, StepUp will determine which scripts need to be re-executed,
+  as opposed to manually re-executing cells in notebooks (which is error-prone).
+- If you want to create simple reports that integrate your comments, results and figures,
+  you can write MarkDown files with figures and convert them to PDF using
+  [`convert_markdown()`][stepup.reprep.api.convert_markdown]
+  and [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint].
 
 ### HDF5
 

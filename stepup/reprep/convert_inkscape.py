@@ -17,11 +17,13 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""Wrapper for SVG to PDF convrsion."""
+"""Wrapper for SVG to PDF conversion."""
 
 import argparse
 import re
 import sys
+from collections.abc import Iterator
+from xml.etree import ElementTree
 
 from path import Path
 
@@ -83,18 +85,14 @@ def convert_svg_pdf(
     path_svg: str, path_out: Path, inkscape: str, inkscape_args: str, optional: bool
 ):
     inp_paths = search_svg_deps(path_svg)
-    ffmt = path_out.suffix[1:]
+    fmt = path_out.suffix[1:]
     step(
         f"SELF_CALL=x {inkscape} {path_svg} {inkscape_args} "
-        f"--export-filename={path_out} --export-type={ffmt}",
+        f"--export-filename={path_out} --export-type={fmt}",
         inp=[path_svg, *inp_paths],
         out=path_out,
         optional=optional,
     )
-
-
-RE_OPTIONS = re.MULTILINE | re.DOTALL
-RE_SVG_HREF = re.compile(rb"<image\s[^<]*?href=\"(?!#)(?!data:)(.*?)\"[^<]*?>", RE_OPTIONS)
 
 
 def search_svg_deps(src: str) -> list[str]:
@@ -104,14 +102,7 @@ def search_svg_deps(src: str) -> list[str]:
     idep = 0
     while idep < len(todo):
         path_svg = Path(todo[idep])
-        # It is generally a poor practice to parse XML with a regular expression,
-        # unless performance becomes an issue...
-        with open(path_svg, "rb") as fh:
-            hrefs = re.findall(RE_SVG_HREF, fh.read())
-
-        # Process hrefs
-        for href in hrefs:
-            href = href.decode("utf-8")
+        for href in iter_svg_image_hrefs(path_svg):
             if href.startswith("file://"):
                 href = href[7:]
             if "://" not in href:
@@ -122,6 +113,34 @@ def search_svg_deps(src: str) -> list[str]:
                     todo.append(href)
         idep += 1
     return implicit
+
+
+def iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
+    parser = ElementTree.iterparse(path_svg, events=("start",))
+    for event, elem in parser:
+        if event == "start":
+            tag = elem.tag.rpartition("}")[2]
+            if tag == "image":
+                for key in "href", "{http://www.w3.org/1999/xlink}href":
+                    href = elem.attrib.get(key)
+                    if href is not None and "data:image" not in href:
+                        yield href
+                        break
+        elem.clear()
+
+
+# TODO: the following can be deleted eventually
+RE_OPTIONS = re.MULTILINE | re.DOTALL
+RE_SVG_HREF = re.compile(rb"<image\s[^<]*?href=\"(?!#)(?!data:)(.*?)\"[^<]*?>", RE_OPTIONS)
+
+
+# TODO: the following can be deleted eventually
+def _iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
+    # It is generally a poor practice to parse XML with a regular expression,
+    # unless performance becomes an issue...
+    with open(path_svg, "rb") as fh:
+        for href in re.findall(RE_SVG_HREF, fh.read()):
+            yield href.decode("utf-8")
 
 
 if __name__ == "__main__":

@@ -185,6 +185,7 @@ def convert_weasyprint(
     path_html: str,
     out: str | None = None,
     *,
+    weasyprint: str | None = None,
     optional: bool = False,
     block: bool = False,
 ):
@@ -196,6 +197,9 @@ def convert_weasyprint(
         The HTML input file.
     out
         Output destination: `None`, a directory or a file.
+    weasyprint
+        The path to the weasyprint executable.
+        Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
@@ -207,8 +211,12 @@ def convert_weasyprint(
     if not path_html.endswith(".html"):
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, out, ".pdf")
-    command = "weasyprint ${inp} ${out}"
-    step(command, inp=path_html, out=path_pdf, optional=optional, block=block)
+    command = f"python -m stepup.reprep.convert_weasyprint {path_html} {path_pdf}"
+    if weasyprint is not None:
+        command += f" --weasyprint={weasyprint}"
+    if optional:
+        command += " --optional"
+    step(command, inp=path_html, block=block)
 
 
 def convert_odf_pdf(

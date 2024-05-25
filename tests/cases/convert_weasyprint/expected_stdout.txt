@@ -2,6 +2,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+   SUCCESS │ python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
      START │ weasyprint doc.html doc.pdf
    SUCCESS │ weasyprint doc.html doc.pdf
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz

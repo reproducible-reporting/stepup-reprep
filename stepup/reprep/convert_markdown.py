@@ -32,6 +32,7 @@ __all__ = ("convert_markdown",)
 
 HTML_TEMPLATE = """\
 <!DOCTYPE html>
+<html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -89,7 +90,8 @@ def convert_markdown(text_md: str, katex: bool = False, path_macro: str | None =
         "body": body,
         "title": md_ctx.Meta.get("title", ["Untitled"])[0],
         "css": "\n".join(
-            f'<link rel="stylesheet" href="{path_css}">' for path_css in md_ctx.Meta.get("css", [])
+            f'<link rel="stylesheet" href="{path_css}" />'
+            for path_css in md_ctx.Meta.get("css", [])
         ),
     }
     return render("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)

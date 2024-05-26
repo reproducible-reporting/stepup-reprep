@@ -6,7 +6,7 @@
 RESCHEDULE │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
 ────────────────────────────────── Step info ───────────────────────────────────
 Command               python -m stepup.reprep.latex_flat article_structured.tex article.tex
-Return code           255
+Return code           3
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 sub/other.tex
 ──────────────────────────────── Standard error ────────────────────────────────

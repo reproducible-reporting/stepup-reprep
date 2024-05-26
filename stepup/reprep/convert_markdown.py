@@ -30,6 +30,27 @@ from .render import render
 __all__ = ("convert_markdown",)
 
 
+def main(argv: list[str] | None = None):
+    """Main program."""
+    args = parse_args(argv)
+    if not args.markdown.endswith(".md"):
+        raise ValueError("The markdown file must end with the .md extension.")
+    with open(args.markdown) as fm, open(args.html, "w") as fh:
+        fh.write(convert_markdown(fm.read(), args.katex, args.katex_macros))
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        prog="reprep-convert-markdown", description="Convert Markdown to HTML"
+    )
+    parser.add_argument("markdown", help="A Markdown file with extension `.md`")
+    parser.add_argument("html", help="A HTML output filename")
+    parser.add_argument("--katex", default=False, action="store_true", help="Enable KaTeX")
+    parser.add_argument("--katex-macros", default=None, help="KaTeX macro file")
+    return parser.parse_args(argv)
+
+
 HTML_TEMPLATE = """\
 <!DOCTYPE html>
 <html>
@@ -97,27 +118,5 @@ def convert_markdown(text_md: str, katex: bool = False, path_macro: str | None =
     return render("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="reprep-convert-markdown", description="Convert Markdown to HTML"
-    )
-    parser.add_argument("markdown", help="A Markdown file with extension `.md`")
-    parser.add_argument("html", help="A HTML output filename")
-    parser.add_argument("--katex", default=False, action="store_true", help="Enable KaTeX")
-    parser.add_argument("--katex-macros", default=None, help="KaTeX macro file")
-    return parser.parse_args()
-
-
-def main() -> int:
-    """Main program."""
-    args = parse_args()
-    if not args.markdown.endswith(".md"):
-        raise ValueError("The markdown file must end with the .md extension.")
-    with open(args.markdown) as fm, open(args.html, "w") as fh:
-        fh.write(convert_markdown(fm.read(), args.katex, args.katex_macros))
-    return 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

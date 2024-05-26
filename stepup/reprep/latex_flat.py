@@ -38,6 +38,7 @@ commands are contained within a single line.
 """
 
 import argparse
+import enum
 import re
 import sys
 import tempfile
@@ -45,26 +46,27 @@ from typing import TextIO
 
 from path import Path
 
+from stepup.core.api import amend
 
-def main() -> int:
+
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     with tempfile.TemporaryDirectory("reprep-latex-flat") as tmpdir:
         tmpdir = Path(tmpdir)
         path_flat_tmp = tmpdir / "flat.tex"
         with open(path_flat_tmp, "w") as fh_out:
             out_root = Path(args.path_flat).parent
-            result, inp_paths = flatten_latex(args.path_tex, fh_out, out_root)
-        if len(inp_paths) > 0:
-            from stepup.core.api import amend
-
-            amend(inp=inp_paths)
-        if result == 0:
+            status, inp_paths = flatten_latex(args.path_tex, fh_out, out_root)
+        if not amend(inp=inp_paths):
+            sys.exit(3)
+        if status == FlattenStatus.SUCCESS:
             path_flat_tmp.copy(args.path_flat)
-    return result
+        else:
+            sys.exit(1)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-latex-flat",
@@ -72,12 +74,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("path_tex", help="The top-level tex file.")
     parser.add_argument("path_flat", help="The flattened output tex file.")
-    return parser.parse_args()
+    return parser.parse_args(argv)
+
+
+class FlattenStatus(enum.Enum):
+    SUCCESS = 0
+    FILE_NOT_FOUND = 1
+    ILL_FORMATTED = 2
 
 
 def flatten_latex(
     path_tex: str, fh_out: TextIO, out_root: str, tex_root: str | None = None
-) -> tuple[int, list[str]]:
+) -> tuple[FlattenStatus, list[str]]:
     """Write a flattened LaTeX file
 
     Parameters
@@ -95,8 +103,8 @@ def flatten_latex(
 
     Returns
     -------
-    returncode
-        Zero when successful.
+    success
+        True when successful.
     inp_paths
         A list of additional inputs used.
     """
@@ -110,7 +118,7 @@ def flatten_latex(
             stripped = stripped.replace(" ", "").replace("\t", "")
 
             # Try to find input or import
-            status = 0
+            status = FlattenStatus.SUCCESS
             sub_path_tex = None
             new_root = tex_root
             if r"\input{" in stripped:
@@ -119,9 +127,9 @@ def flatten_latex(
                     if not sub_path_tex.endswith(".tex"):
                         sub_path_tex = sub_path_tex.with_suffix(".tex")
                     if not sub_path_tex.is_file():
-                        status = -1
+                        status = FlattenStatus.FILE_NOT_FOUND
                 else:
-                    status = -2
+                    status = FlattenStatus.ILL_FORMATTED
             elif r"\import{" in stripped:
                 if stripped.startswith(r"\import{") and "}{" in stripped and stripped.endswith("}"):
                     new_root, sub_path_tex = stripped[8:-1].split("}{")
@@ -130,21 +138,21 @@ def flatten_latex(
                     if not sub_path_tex.endswith(".tex"):
                         sub_path_tex = sub_path_tex.with_suffix(".tex")
                     if not sub_path_tex.is_file():
-                        status = -1
+                        status = FlattenStatus.FILE_NOT_FOUND
                 else:
-                    status = -2
+                    status = FlattenStatus.ILL_FORMATTED
 
             # Handle result
             if isinstance(sub_path_tex, str):
                 inp_paths.append(sub_path_tex)
-            if status < 0:
-                if status == -1:
+            if status != FlattenStatus.SUCCESS:
+                if status == FlattenStatus.FILE_NOT_FOUND:
                     print(
                         f"Could not locate input file '{sub_path_tex}' "
                         f"on line {iline+1} in '{path_tex}'",
                         file=sys.stderr,
                     )
-                elif status == -2:
+                elif status == FlattenStatus.ILL_FORMATTED:
                     print(
                         f"Could not parse '{stripped}' on line {iline+1} in '{path_tex}'",
                         file=sys.stderr,
@@ -155,7 +163,7 @@ def flatten_latex(
             if isinstance(sub_path_tex, str):
                 status, sub_inp_paths = flatten_latex(sub_path_tex, fh_out, out_root, new_root)
                 inp_paths.extend(sub_inp_paths)
-                if status != 0:
+                if status != FlattenStatus.SUCCESS:
                     break
             else:
                 fh_out.write(rewrite_line(line, tex_root, out_root))
@@ -168,7 +176,7 @@ RE_REWRITE = re.compile(
 )
 
 
-def rewrite_line(line: str, tex_root: Path, out_root: Path) -> str:
+def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
     """Rewrite the path in a source line.
 
     Parameters
@@ -198,4 +206,4 @@ def rewrite_line(line: str, tex_root: Path, out_root: Path) -> str:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

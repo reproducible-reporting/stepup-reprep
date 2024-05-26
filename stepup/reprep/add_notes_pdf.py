@@ -27,14 +27,13 @@ import fitz
 __all__ = ("add_notes_pdf",)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     add_notes_pdf(args.path_src, args.path_notes, args.path_dst)
-    return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-add-notes-pdf",
@@ -43,15 +42,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("path_src", help="The source pdf to which notes should be added.")
     parser.add_argument("path_notes", help="The pdf with the notes page(s).")
     parser.add_argument("path_dst", help="The output pdf.")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def add_notes_pdf(path_src: str, path_notes: str, path_dst: str):
     """Insert notes pages at every even page."""
     for path_pdf in path_src, path_notes, path_dst:
         if not path_pdf.endswith(".pdf"):
-            print(f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr)
-            return 2
+            raise ValueError(f"All arguments must have a `.pdf` extension, got: {path_pdf}")
     src = fitz.open(path_src)
     notes = fitz.open(path_notes)
 

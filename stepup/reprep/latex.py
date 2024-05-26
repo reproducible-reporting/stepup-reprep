@@ -34,9 +34,9 @@ from .latex_deps import scan_latex_deps
 from .latex_log import ErrorInfo, parse_latex_log
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
 
     workdir, fn_tex = Path(args.path_tex).splitpath()
     workdir = workdir.normpath()
@@ -64,7 +64,7 @@ def main() -> int:
     aux_digest_hist = []
     if len(bib) == 0:
         if not amend(inp=implicit):
-            return 0
+            sys.exit(3)
         inventory_files = list(implicit)
     elif args.run_bibtex:
         # Get other executables and files
@@ -81,7 +81,7 @@ def main() -> int:
             inp=implicit + bib + paths_config,
             out=[f"{stem}.bbl"],
         ):
-            return 0
+            sys.exit(3)
         inventory_files = [*implicit, *bib, f"{stem}.bbl"]
 
         # LaTeX
@@ -102,7 +102,7 @@ def main() -> int:
             path_log = workdir / f"{stem}.log"
             error_info = parse_latex_log(path_log)
             error_info.print(path_log)
-            return 1
+            sys.exit(1)
 
         aux_digest_hist.append(compute_file_digest(path_aux))
 
@@ -119,7 +119,7 @@ def main() -> int:
             path_blg = workdir / f"{stem}.blg"
             error_info = parse_bibtex_log(path_blg)
             error_info.print(path_blg)
-            return 2
+            sys.exit(1)
 
         # BibSane
         cp = subprocess.run(
@@ -135,10 +135,10 @@ def main() -> int:
             error_info = ErrorInfo("BibSane", src=f"{workdir}/{stem}.aux")
             error_info.print()
             sys.stdout.write(cp.stdout)
-            return 3
+            sys.exit(1)
     else:
         if not amend(inp=[*implicit, f"{stem}.bbl"]):
-            return 0
+            sys.exit(3)
         inventory_files = [*implicit, f"{stem}.bbl"]
 
     for _ in range(args.maxrep):
@@ -155,7 +155,7 @@ def main() -> int:
         error_info = parse_latex_log(path_log)
         if cp.returncode != 0:
             error_info.print(path_log)
-            return 4
+            sys.exit(1)
         aux_digest_hist.append(compute_file_digest(path_aux))
         if len(aux_digest_hist) > 1 and aux_digest_hist[-1] == aux_digest_hist[-2]:
             break
@@ -167,7 +167,7 @@ def main() -> int:
         print(path_aux, file=sys.stderr)
         for digest in aux_digest_hist:
             print(digest.hex(), file=sys.stderr)
-        return -3
+        sys.exit(1)
 
     inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
     path_inventory = f"{stem}-inventory.txt"
@@ -181,7 +181,7 @@ def main() -> int:
     amend(vol=vol_paths)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-latex",
@@ -222,8 +222,8 @@ def parse_args() -> argparse.Namespace:
         help="The BibSane configuration file. The default is ${REPREP_BIBSANE_CONFIG} or "
         "bibsane.yaml if the variables is not defined.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

@@ -30,17 +30,15 @@ from path import Path
 from stepup.core.api import getenv, step
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     path_out = Path(args.path_out)
     allowed_extensions = [".pdf", ".png"]
     if not any(path_out.endswith(ext) for ext in allowed_extensions):
-        print(
-            f"The output must have one of the following extensions: {allowed_extensions}",
-            file=sys.stderr,
+        raise ValueError(
+            f"The output must have one of the following extensions: {allowed_extensions}"
         )
-        return -1
     if args.inkscape is None:
         args.inkscape = getenv("REPREP_INKSCAPE", "inkscape")
     if len(args.inkscape_args) == 0:
@@ -48,10 +46,9 @@ def main() -> int:
     else:
         inkscape_args = " ".join(args.inkscape_args)
     convert_svg_pdf(args.path_svg, path_out, args.inkscape, inkscape_args, args.optional)
-    return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-convert-inkscape",
@@ -78,7 +75,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="With this option, the conversion becomes optional.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def convert_svg_pdf(
@@ -144,4 +141,4 @@ def _iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

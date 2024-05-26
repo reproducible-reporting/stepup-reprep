@@ -200,4 +200,4 @@ def write_inventory(path_txt: str, paths: Collection[str]):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main(sys.argv[1:])

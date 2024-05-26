@@ -29,9 +29,9 @@ from stepup.core.api import getenv
 __all__ = ("nup_pdf",)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.nrow is None:
         args.nrow = int(getenv("REPREP_NUP_NROW", "2"))
     if args.ncol is None:
@@ -41,10 +41,9 @@ def main() -> int:
     if args.page_format is None:
         args.page_format = getenv("REPREP_NUP_PAGE_FORMAT", "A4-L")
     nup_pdf(args.path_src, args.path_dst, args.nrow, args.ncol, args.margin, args.page_format)
-    return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
@@ -78,7 +77,7 @@ def parse_args() -> argparse.Namespace:
         help="The output page format. "
         "The default is ${REPREP_NUP_PAGE_FORMAT} or A4-L if the variable is not set.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def nup_pdf(
@@ -108,8 +107,9 @@ def nup_pdf(
     """
     for path_pdf in path_src, path_dst:
         if not path_pdf.endswith(".pdf"):
-            print(f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr)
-            return 2
+            raise ValueError(
+                f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr
+            )
     src = fitz.open(path_src)
     dst = fitz.open()
 
@@ -153,4 +153,4 @@ def nup_pdf(
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

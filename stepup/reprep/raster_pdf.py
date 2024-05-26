@@ -33,9 +33,9 @@ from stepup.core.api import amend
 __all__ = ("raster_pdf",)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.resolution is None:
         amend(env=["REPREP_RASTER_RESOLUTION"])
         args.resolution = int(os.environ.get("REPREP_RASTER_RESOLUTION", "100"))
@@ -47,26 +47,24 @@ def main() -> int:
     return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(prog="reprep-raster-pdf", description="Raster a PDF file.")
     parser.add_argument("path_inp", help="The input PDF file.")
     parser.add_argument("path_out", help="The output PDF file.")
     parser.add_argument("-r", "--resolution", type=int, help="Bitmap resolution")
     parser.add_argument("-q", "--quality", type=int, help="JPEG quality")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
     """Convert a PDF into a rasterized version."""
     if not path_inp.endswith(".pdf"):
-        print(f"The input must have a `.pdf` extension, got: {path_inp}", file=sys.stderr)
-        return 2
+        raise ValueError(f"The input must have a `.pdf` extension, got: {path_inp}")
     if not path_out.endswith(".pdf"):
-        print(f"The output must have a `.pdf` extension, got: {path_out}", file=sys.stderr)
-        return 2
+        raise ValueError(f"The output must have a `.pdf` extension, got: {path_out}")
     if resolution <= 0:
-        print(f"The resolution must be strictly positive, git: {resolution}", file=sys.stderr)
+        raise ValueError(f"The resolution must be strictly positive, git: {resolution}")
     with fitz.open(path_inp) as src:
         dst = fitz.open()
         for src_page in src:
@@ -83,4 +81,4 @@ def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

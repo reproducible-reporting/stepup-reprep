@@ -30,26 +30,24 @@ from path import Path
 __all__ = ("pdf_normalize",)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    pdf_normalize(parse_args().path_pdf)
-    return 0
+    pdf_normalize(parse_args(argv).path_pdf)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-mupdf-normalize", description="Normalize a PDF file."
+        prog="reprep-normalize-pdf", description="Normalize a PDF file."
     )
     parser.add_argument("path_pdf", help="The pdf to be normalized (in place).")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def pdf_normalize(path_pdf: str):
     """Replace a PDF file by its normalized equivalent. This helps making PDFs reproducible."""
     if not path_pdf.endswith(".pdf"):
-        print(f"The input must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr)
-        return 2
+        raise ValueError(f"The input must have a `.pdf` extension, got: {path_pdf}")
     pdf = fitz.open(path_pdf)
     pdf.set_metadata({})
     pdf.del_xml_metadata()
@@ -63,4 +61,4 @@ def pdf_normalize(path_pdf: str):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

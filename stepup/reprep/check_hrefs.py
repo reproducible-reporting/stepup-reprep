@@ -35,32 +35,20 @@ from stepup.core.api import amend, getenv
 from stepup.core.utils import mynormpath
 
 
-@attrs.define
-class Config:
-    accept: set[str] = attrs.field(factory=set)
-    subs: list[tuple[str, str]] = attrs.field(factory=list)
-
-
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.path_config is None:
         args.path_config = getenv("REPREP_CHECK_HREFS_CONFIG", "check_hrefs.yaml", is_path=True)
-        amend(inp=args.path_config)
+        if not amend(inp=args.path_config):
+            sys.exit(3)
     config = load_config(args.path_config)
     hrefs = collect_hrefs(args.path_src)
     make_url_substitutions(hrefs, config.subs)
-    return check_hrefs(hrefs, Path(args.path_src).parent.normpath(), config.accept)
+    check_hrefs(hrefs, Path(args.path_src).parent.normpath(), config.accept)
 
 
-def load_config(path_config) -> Config:
-    converter = cattrs.preconf.pyyaml.PyyamlConverter(forbid_extra_keys=True)
-    with open(path_config) as fh:
-        state = yaml.safe_load(fh)
-        return converter.structure(state, Config)
-
-
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
@@ -73,7 +61,20 @@ def parse_args() -> argparse.Namespace:
         help="Configuration yaml file. "
         "The default is ${REPREP_CHECK_HREFS_CONFIG} or check_hrefs.yaml if it is not set.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
+
+
+@attrs.define
+class Config:
+    accept: set[str] = attrs.field(factory=set)
+    subs: list[tuple[str, str]] = attrs.field(factory=list)
+
+
+def load_config(path_config) -> Config:
+    converter = cattrs.preconf.pyyaml.PyyamlConverter(forbid_extra_keys=True)
+    with open(path_config) as fh:
+        state = yaml.safe_load(fh)
+        return converter.structure(state, Config)
 
 
 @attrs.define
@@ -137,29 +138,31 @@ def make_url_substitutions(hrefs: list[HRef], subs: list[tuple[str, str]]):
         href.translated = url
 
 
-def check_hrefs(hrefs: list[HRef], root: Path, accept: set[str]) -> int:
+def check_hrefs(hrefs: list[HRef], root: Path, accept: set[str]):
     """Check the hyper references."""
     seen = set()
-    result = 0
+    some_failed = False
     for href in hrefs:
         if href.url in seen:
             continue
-        result |= check_href(href, root, accept)
+        some_failed |= check_href(href, root, accept)
         seen.add(href.url)
-    return result
+    if some_failed:
+        raise ValueError("Some hyper references were invalid.")
 
 
-def check_href(href: HRef, root: Path, accept: set[str]) -> int:
+def check_href(href: HRef, root: Path, accept: set[str]) -> bool:
+    """Check a hyper reference and return True if an error was found."""
     if href.url.startswith("mailto:"):
-        return 0
+        return False
     if "://" in href.translated:
         if href.translated in accept:
-            return 0
+            return False
         print(f"FAILED LINK: {href.url}", file=sys.stderr)
-        return 1
+        return True
     path = mynormpath(root / Path(href.translated))
     amend(inp=path)
-    return 0
+    return False
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ from path import Path
 from stepup.core.utils import load_module_file
 
 
-def main(argv: list[str]) -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     if args.mode == "plain":
@@ -52,7 +52,7 @@ def main(argv: list[str]) -> int:
     return 0
 
 
-def parse_args(argv) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(prog="reprep-render", description="Render a file with Jinja2.")
     parser.add_argument("path_in", help="The input file")
@@ -64,7 +64,7 @@ def parse_args(argv) -> argparse.Namespace:
         help="The delimiter style to use",
         default="auto",
     )
-    return parser.parse_args(argv[1:])
+    return parser.parse_args(argv)
 
 
 def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
@@ -156,4 +156,4 @@ def render(
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main(sys.argv[1:])

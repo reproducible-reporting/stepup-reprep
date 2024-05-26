@@ -117,4 +117,4 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

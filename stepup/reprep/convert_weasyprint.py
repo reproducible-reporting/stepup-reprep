@@ -29,22 +29,17 @@ from path import Path
 from stepup.core.api import getenv, step
 
 
-def main() -> int:
+def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if not args.path_pdf.endswith(".pdf"):
-        print(
-            "The output must have a pdf extensions.",
-            file=sys.stderr,
-        )
-        return -1
+        raise ValueError("The output must have a pdf extensions.")
     if args.weasyprint is None:
         args.weasyprint = getenv("REPREP_WEASYPRINT", "weasyprint")
     convert_html_pdf(args.path_html, args.path_pdf, args.weasyprint, args.optional)
-    return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="reprep-convert-weasyprint",
@@ -63,7 +58,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="With this option, the conversion becomes optional.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def convert_html_pdf(path_html: str, path_pdf: str, weasyprint: str, optional: bool):
@@ -117,4 +112,4 @@ def iter_html_hrefs(path_html: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.argv[1:])

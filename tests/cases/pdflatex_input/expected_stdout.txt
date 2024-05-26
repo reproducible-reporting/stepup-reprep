@@ -6,7 +6,7 @@
 RESCHEDULE │ python -m stepup.reprep.latex paper.tex --run-bibtex
 ────────────────────────────────── Step info ───────────────────────────────────
 Command               python -m stepup.reprep.latex paper.tex --run-bibtex
-Return code           0
+Return code           3
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 generated.tex
 ────────────────────────────────────────────────────────────────────────────────

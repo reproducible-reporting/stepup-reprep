@@ -13,7 +13,7 @@ RESCHEDULE │ python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
 ────────────────────────────────── Step info ───────────────────────────────────
 Command               python -m stepup.reprep.latex main.tex --run-bibtex
 Working directory     public/
-Return code           0
+Return code           3
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 public/preamble.inc.tex
 ────────────────────────────────────────────────────────────────────────────────

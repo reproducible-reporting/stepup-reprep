@@ -32,7 +32,7 @@ dependencies = [
     "pymupdf",
     "pyyaml",
     "scipy",
-    "stepup>=1.2.3",
+    "stepup>=1.2.4",
     "weasyprint",
 ]
 dynamic = ["version"]

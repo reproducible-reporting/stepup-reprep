@@ -134,9 +134,6 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     step(command, inp=inp_paths, block=block)
 
 
-pool("markdown_katex", 1)
-
-
 def convert_markdown(
     path_md: str,
     out: str | None = None,
@@ -171,14 +168,15 @@ def convert_markdown(
     path_html = make_path_out(path_md, out, ".html")
     inp = [path_md]
     command = f"python -m stepup.reprep.convert_markdown {path_md} {path_html}"
-    pool = None
+    pool_name = None
     if katex:
         command += " --katex"
-        pool = "markdown_katex"
+        pool_name = "markdown_katex"
+        pool(pool_name, 1)
         if path_macro is not None:
             command += f" --katex-macros={path_macro}"
             inp.append(path_macro)
-    step(command, inp=inp, out=path_html, pool=pool, optional=optional, block=block)
+    step(command, inp=inp, out=path_html, pool=pool_name, optional=optional, block=block)
 
 
 def convert_weasyprint(

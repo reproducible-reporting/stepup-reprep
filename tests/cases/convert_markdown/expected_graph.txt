@@ -26,6 +26,7 @@ step:./plan.py
              workdir = ./
              command = ./plan.py
                state = SUCCEEDED
+        defined pool = markdown_katex=1
           created by   root:
             consumes   file:./
             consumes   file:plan.py

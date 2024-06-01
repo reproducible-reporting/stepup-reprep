@@ -48,9 +48,18 @@ Also, go through a [Git Tutorial](https://www.w3schools.com/git/default.asp?remo
     Replace `'slug'` with the directory created by the cookiecutter.
 
 - Before making a first commit, define the software requirements,
-  e.g., for post-processing and plotting, in `requirements.txt` **AND** `environment.yaml`.
-  If you must use micromamba, because you have non-Python dependencies,
-  then you can remove `requirements.txt`  and `setup-venv-pip.sh`.
+  e.g., for post-processing and plotting, in `requirements.in` and/or `environment.yaml`.
+  Pin versions of your dependencies with `==X.Y.Z` as shown in the example files in the template.
+
+    - If you must use micromamba, because you have non-Python dependencies,
+      you can remove `requirements.in`  and `setup-venv-pip.sh`.
+    - If you prefer to create a *pure Python* project,
+      you can remove `environment.yaml` and `setup-venv-micromamba.sh`.
+
+    Note that the Python environment uses [pip-tools](https://github.com/jazzband/pip-tools)
+    to manage dependencies.
+    This facilitates reproducibility because the results of the package dependency calculation
+    are stored in `requirements.txt` and this file is also committed to the Git repository
 
 - Now you can add all the files, commit them, define a remote URL and push the initial contents online:
 

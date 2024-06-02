@@ -102,7 +102,7 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
                 if ref.size is None:
                     # Symbolic link
                     zipinfo = zipfile.ZipInfo(src[nskip:])
-                    zipinfo.create_system = 3  # 3 = Unix
+                    zipinfo.create_system = 3  # 3 means Unix
                     zipinfo.external_attr |= dst.stat(follow_symlinks=False).st_mode << 16
                     fz.writestr(zipinfo, dst.readlink())
                 else:

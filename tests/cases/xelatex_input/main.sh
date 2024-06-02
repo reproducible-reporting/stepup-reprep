@@ -23,9 +23,13 @@ EOD
 
 # Reproducibility test
 rm paper.aux
+sleep 0.1
 rm paper.log
+sleep 0.1
 rm subdir/generated.tex
+sleep 0.1
 rm subdir/code.txt
+sleep 0.1
 mv paper.pdf paper1.pdf
 python3 - << EOD
 from stepup.core.interact import *

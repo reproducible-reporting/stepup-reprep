@@ -24,11 +24,11 @@ import re
 from path import Path
 
 RE_OPTIONS = re.MULTILINE | re.DOTALL
-RE_INPUT = re.compile(r"\\input\s*\{(.*?)}", RE_OPTIONS)
-RE_VERBATIMINPUT = re.compile(r"\\verbatiminput\s*\{(.*?)}", RE_OPTIONS)
-RE_INCLUDEGRAPHICS = re.compile(r"\\includegraphics(?:\s*\[.*?])?\s*\{(.*?)}", RE_OPTIONS)
-RE_BIBLIOGRAPHY = re.compile(r"\\bibliography\s*\{(.*?)}", RE_OPTIONS)
-RE_IMPORT = re.compile(r"\\import\s*\{(.*?)}\s*\{(.*?)}", RE_OPTIONS)
+RE_INPUT = re.compile(r"\\input\s*\{([^}]*)}", RE_OPTIONS)
+RE_VERBATIMINPUT = re.compile(r"\\verbatiminput\s*\{([^}]*)}", RE_OPTIONS)
+RE_INCLUDEGRAPHICS = re.compile(r"\\includegraphics(?:\s*\[[^]]*])?\s*\{([^}]*)}", RE_OPTIONS)
+RE_BIBLIOGRAPHY = re.compile(r"\\bibliography\s*\{([^}]*)}", RE_OPTIONS)
+RE_IMPORT = re.compile(r"\\import\s*\{([^}]*)}\s*\{([^}]*)}", RE_OPTIONS)
 
 
 def cleanup_path(path, ext=None):
@@ -113,10 +113,10 @@ def scan_latex_deps(path_tex, tex_root=None):
         with open(path_tex) as fh:
             stripped = []
             for line in fh:
-                if "%REPREPBUILD ignore" in line:
+                if "%REPREP ignore" in line:
                     pass
-                elif line.startswith("%REPREPBUILD input "):
-                    implicit.add((tex_root / line[18:].strip()).normpath())
+                elif line.startswith("%REPREP input "):
+                    implicit.add((tex_root / line[13:].strip()).normpath())
                 else:
                     stripped.append(line[: line.find("%")].rstrip())
 

@@ -39,8 +39,8 @@ async def run_example(srcdir, tmpdir, overwrite_expected=False):
     for path_inventory in sorted(workdir.glob("reproducibility_*inventory.txt")):
         records = list(iter_inventory(path_inventory))
         sizes = {record.size for record in records}
-        if not len(sizes) == 1:
+        if len(sizes) != 1:
             raise AssertionError(f"Not all file sizes in {path_inventory} are the same.")
         digests = {record.digest for record in records}
-        if not len(digests) == 1:
+        if len(digests) != 1:
             raise AssertionError(f"Not all file digests in {path_inventory} are the same.")

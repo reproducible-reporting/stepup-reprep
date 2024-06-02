@@ -133,7 +133,7 @@ def get_file_list_workflow(i: int, args: list[str]) -> Collection[str]:
         raise ValueError(f"Error on line {i} of the inventory input: no matching workflow files.")
     paths = set()
     for path_workflow in paths_workflow:
-        if not path_workflow.parent.name == ".stepup":
+        if path_workflow.parent.name != ".stepup":
             raise ValueError("A workflow.mpk.xz file must be in a .stepup directory.")
         root = path_workflow.parent.parent
         workflow = Workflow.from_file(path_workflow)

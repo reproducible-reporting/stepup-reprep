@@ -20,7 +20,6 @@
 """Wrapper for SVG to PDF conversion."""
 
 import argparse
-import re
 import sys
 from collections.abc import Iterator
 from xml.etree import ElementTree
@@ -124,20 +123,6 @@ def iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
                         yield href
                         break
         elem.clear()
-
-
-# TODO: the following can be deleted eventually
-RE_OPTIONS = re.MULTILINE | re.DOTALL
-RE_SVG_HREF = re.compile(rb"<image\s[^<]*?href=\"(?!#)(?!data:)(.*?)\"[^<]*?>", RE_OPTIONS)
-
-
-# TODO: the following can be deleted eventually
-def _iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
-    # It is generally a poor practice to parse XML with a regular expression,
-    # unless performance becomes an issue...
-    with open(path_svg, "rb") as fh:
-        for href in re.findall(RE_SVG_HREF, fh.read()):
-            yield href.decode("utf-8")
 
 
 if __name__ == "__main__":

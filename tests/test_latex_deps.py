@@ -25,7 +25,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
 \input{foo.tex}
 %\includegraphics{not.pdf}
 \includegraphics{figure}
-\includegraphics{\thepage.png} %REPREPBUILD ignore
+\includegraphics{\thepage.png} %REPREP ignore
 \includegraphics
 {plot.pdf}
 \input{
@@ -42,7 +42,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
     works % comment 4
     % comment 5 }
 }
-%REPREPBUILD input implicit.txt
+%REPREP input implicit.txt
 %\input{bar.tex}
 \bibliography {references}
 %\bibliography{old}

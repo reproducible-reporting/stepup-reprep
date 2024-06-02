@@ -5,7 +5,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stepup-reprep)
 ![GPL-3 License](https://img.shields.io/github/license/reproducible-reporting/stepup-reprep)
 [![CodeFactor](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep/badge)](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep)
-
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=reproducible-reporting_stepup-reprep&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=reproducible-reporting_stepup-reprep)
 
 # StepUp RepRep
 

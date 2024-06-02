@@ -22,8 +22,8 @@
 import argparse
 import sys
 from collections.abc import Iterator
-from xml.etree import ElementTree
 
+from defusedxml import ElementTree
 from path import Path
 
 from stepup.core.api import getenv, step

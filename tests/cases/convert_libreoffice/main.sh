@@ -35,8 +35,8 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f slide.odp ]] || exit -1
-[[ -f slide.pdf ]] || exit -1
-[[ -f slide1.pdf ]] || exit -1
-[[ -f reproducibility_inventory_skip.txt ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f slide.odp ]] || exit 1
+[[ -f slide.pdf ]] || exit 1
+[[ -f slide1.pdf ]] || exit 1
+[[ -f reproducibility_inventory_skip.txt ]] || exit 1

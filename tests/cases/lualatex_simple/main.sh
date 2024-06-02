@@ -37,10 +37,10 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f paper.pdf ]] || exit -1
-[[ -f paper.log ]] || exit -1
-[[ -f paper.aux ]] || exit -1
-[[ -f paper1.pdf ]] || exit -1
-[[ -f reproducibility_inventory.txt ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f paper.pdf ]] || exit 1
+[[ -f paper.log ]] || exit 1
+[[ -f paper.aux ]] || exit 1
+[[ -f paper1.pdf ]] || exit 1
+[[ -f reproducibility_inventory.txt ]] || exit 1
 reprep-check-inventory paper-inventory.txt

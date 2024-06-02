@@ -36,19 +36,19 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f triangle.svg ]] || exit -1
-[[ -f square.svg ]] || exit -1
-[[ -f pentagon.svg ]] || exit -1
-[[ -f hexagon.svg ]] || exit -1
-[[ -f vertical.svg ]] || exit -1
-[[ -f horizontal.svg ]] || exit -1
-[[ -f triangle.pdf ]] || exit -1
-[[ -f square.pdf ]] || exit -1
-[[ -f pentagon.pdf ]] || exit -1
-[[ -f hexagon.pdf ]] || exit -1
-[[ -f vertical.pdf ]] || exit -1
-[[ -f horizontal.pdf ]] || exit -1
-[[ -f figure.pdf ]] || exit -1
-[[ -f figure1.pdf ]] || exit -1
-[[ -f reproducibility_inventory.txt ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f triangle.svg ]] || exit 1
+[[ -f square.svg ]] || exit 1
+[[ -f pentagon.svg ]] || exit 1
+[[ -f hexagon.svg ]] || exit 1
+[[ -f vertical.svg ]] || exit 1
+[[ -f horizontal.svg ]] || exit 1
+[[ -f triangle.pdf ]] || exit 1
+[[ -f square.pdf ]] || exit 1
+[[ -f pentagon.pdf ]] || exit 1
+[[ -f hexagon.pdf ]] || exit 1
+[[ -f vertical.pdf ]] || exit 1
+[[ -f horizontal.pdf ]] || exit 1
+[[ -f figure.pdf ]] || exit 1
+[[ -f figure1.pdf ]] || exit 1
+[[ -f reproducibility_inventory.txt ]] || exit 1

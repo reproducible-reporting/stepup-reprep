@@ -21,11 +21,11 @@ join()
 EOD
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f sub/article_structured.tex ]] || exit -1
-[[ -f sub/part1.tex ]] || exit -1
-[[ -f sub/part2.tex ]] || exit -1
-[[ -f sub/article.tex ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f sub/article_structured.tex ]] || exit 1
+[[ -f sub/part1.tex ]] || exit 1
+[[ -f sub/part2.tex ]] || exit 1
+[[ -f sub/article.tex ]] || exit 1
 cp sub/article.tex current_article.tex
 
 # Create an inventory file

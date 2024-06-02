@@ -4,6 +4,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/stepup-reprep)](https://pypi.org/project/stepup-reprep/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stepup-reprep)
 ![GPL-3 License](https://img.shields.io/github/license/reproducible-reporting/stepup-reprep)
+[![CodeFactor](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep/badge)](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep)
 
 
 # StepUp RepRep

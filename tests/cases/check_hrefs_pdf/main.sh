@@ -25,9 +25,9 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f main.pdf ]] || exit -1
-[[ -f main.log ]] || exit -1
-[[ -f main.aux ]] || exit -1
-[[ -f README.md ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f main.pdf ]] || exit 1
+[[ -f main.log ]] || exit 1
+[[ -f main.aux ]] || exit 1
+[[ -f README.md ]] || exit 1
 reprep-check-inventory main-inventory.txt

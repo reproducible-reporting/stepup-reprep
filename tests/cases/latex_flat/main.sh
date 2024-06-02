@@ -23,9 +23,9 @@ join()
 EOD
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f article_structured.tex ]] || exit -1
-[[ ! -f article.tex ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f article_structured.tex ]] || exit 1
+[[ ! -f article.tex ]] || exit 1
 
 # Wait for background processes, if any.
 wait
@@ -48,9 +48,9 @@ join()
 EOD
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f article_structured.tex ]] || exit -1
-[[ -f article.tex ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f article_structured.tex ]] || exit 1
+[[ -f article.tex ]] || exit 1
 
 # Wait for background processes, if any.
 wait

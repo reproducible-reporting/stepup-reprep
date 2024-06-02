@@ -26,13 +26,13 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f variables.py ]] || exit -1
-[[ -f static/main.tex ]] || exit -1
-[[ -f static/plan.py ]] || exit -1
-[[ -f static/preamble.inc.tex ]] || exit -1
-[[ -f static/variables.py ]] || exit -1
-[[ -f public/preamble.inc.tex ]] || exit -1
-[[ -f public/main.pdf ]] || exit -1
-[[ -f public/main.tex ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f variables.py ]] || exit 1
+[[ -f static/main.tex ]] || exit 1
+[[ -f static/plan.py ]] || exit 1
+[[ -f static/preamble.inc.tex ]] || exit 1
+[[ -f static/variables.py ]] || exit 1
+[[ -f public/preamble.inc.tex ]] || exit 1
+[[ -f public/main.pdf ]] || exit 1
+[[ -f public/main.tex ]] || exit 1
 grep Everything public/main.tex

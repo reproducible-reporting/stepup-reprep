@@ -35,9 +35,9 @@ EOD
 wait
 
 # Check files that are expected to be present and/or missing.
-[[ -f plan.py ]] || exit -1
-[[ -f built.txt ]] || exit -1
-[[ -f inventory.txt ]] || exit -1
-[[ -f upload.zip ]] || exit -1
-[[ -f upload1.zip ]] || exit -1
-[[ -f reproducibility_inventory.txt ]] || exit -1
+[[ -f plan.py ]] || exit 1
+[[ -f built.txt ]] || exit 1
+[[ -f inventory.txt ]] || exit 1
+[[ -f upload.zip ]] || exit 1
+[[ -f upload1.zip ]] || exit 1
+[[ -f reproducibility_inventory.txt ]] || exit 1

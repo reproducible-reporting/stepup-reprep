@@ -56,7 +56,7 @@ def cleanup_path(path, ext=None):
 
 
 def iter_latex_references(tex_no_comments):
-    """Loop over file references in a TeX source without comments.
+    r"""Loop over file references in a TeX source without comments.
 
     Parameters
     ----------
@@ -67,7 +67,7 @@ def iter_latex_references(tex_no_comments):
     ------
     relative_path
         The change in current directory implied by a TeX command.
-        (This is only relevant for \\import, no change in directory otherwise.)
+        (This is only relevant for \import, no change in directory otherwise.)
     filename
         The filename of the file included, may include directory.
     ext

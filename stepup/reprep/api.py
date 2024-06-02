@@ -374,7 +374,7 @@ def convert_svg(
         path_out = subs(path_out)
     if not path_svg.endswith(".svg"):
         raise ValueError("The SVG file must have extension .svg")
-    if not (path_out.endswith((".pdf", ".png"))):
+    if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
     command = f"python -m stepup.reprep.convert_inkscape {path_svg} {path_out}"
     if inkscape is not None:
@@ -551,7 +551,7 @@ def latex_diff(
     optional: bool = False,
     block: bool = False,
 ):
-    """Create a step to run latexdiff.
+    r"""Create a step to run latexdiff.
 
     Parameters
     ----------
@@ -570,7 +570,7 @@ def latex_diff(
         If this variable is unset, the following default is used:
 
         ```
-        --append-context2cmd=abstract,supplementary,dataavailability,funding, \\
+        --append-context2cmd=abstract,supplementary,dataavailability,funding, \
                              authorcontributions,conflictsofinterest,abbreviations
         ```
 
@@ -596,7 +596,7 @@ def latex_diff(
 
 
 def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: bool = False):
-    """Flatten structured LaTeX source files (substitute `\\input` and friends by their content).
+    r"""Flatten structured LaTeX source files (substitute `\input` and friends by their content).
 
     Parameters
     ----------

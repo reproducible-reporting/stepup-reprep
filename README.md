@@ -6,6 +6,7 @@
 ![GPL-3 License](https://img.shields.io/github/license/reproducible-reporting/stepup-reprep)
 [![CodeFactor](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep/badge)](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=reproducible-reporting_stepup-reprep&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=reproducible-reporting_stepup-reprep)
+[![DeepSource](https://app.deepsource.com/gh/reproducible-reporting/stepup-reprep.svg/?label=code+coverage&show_trend=true&token=4JwJJ5kVvxh83bIvV7LRbH_y)](https://app.deepsource.com/gh/reproducible-reporting/stepup-reprep/)
 
 # StepUp RepRep
 

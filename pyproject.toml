@@ -35,6 +35,7 @@ dependencies = [
     "bibsane",
     "beautifulsoup4",
     "cattrs",
+    "defusedxml",
     "jinja2",
     "markdown",
     "markdown_katex",

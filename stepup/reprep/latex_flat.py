@@ -177,13 +177,13 @@ RE_REWRITE = re.compile(
 
 
 def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
-    """Rewrite the path in a source line.
+    r"""Rewrite the path in a source line.
 
     Parameters
     ----------
     line
-        A line of LaTeX source code, possibly containing ``\\includegraphics``
-        or ``\\thebibliography`` commands that need fixing.
+        A line of LaTeX source code, possibly containing ``\includegraphics``
+        or ``\thebibliography`` commands that need fixing.
     tex_root
         The directory with respect to which paths in the LaTeX source should
         be interpreted.

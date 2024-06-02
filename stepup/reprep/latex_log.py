@@ -107,7 +107,8 @@ class LatexSourceStack:
                 else:
                     del self.stack[-1]
             else:
-                assert bracket.startswith("(")
+                if not bracket.startswith("("):
+                    raise AssertionError("Inconsistent parenthesis logic in LatexSourceStack")
                 self.stack.append(bracket[1:])
 
 

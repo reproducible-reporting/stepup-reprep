@@ -131,6 +131,7 @@ def render(
         "keep_trailing_newline": True,
         "trim_blocks": True,
         "undefined": jinja2.StrictUndefined,
+        "autoescape": False,
     }
     if latex:
         env_kwargs.update(

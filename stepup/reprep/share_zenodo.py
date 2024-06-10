@@ -26,13 +26,19 @@ import sys
 
 import attrs
 import cattrs
+import markdown
 import requests
+import semver
 import yaml
 from path import Path
 
 
 class RESTError(Exception):
     """Raised when a REST API call is not successful."""
+
+
+class VersionError(ValueError):
+    """Raised when the online version is newer than the local one"""
 
 
 @attrs.define
@@ -88,8 +94,8 @@ class Creator:
 class Metadata:
     """A subset of the Zenodo metadata."""
 
-    title: str = attrs.define()
-    description: str = attrs.define()
+    title: str = attrs.field()
+    description: str = attrs.field()
     creators: list[Creator] = attrs.field()
     version: str = attrs.field()
     license: str = attrs.field()
@@ -126,6 +132,8 @@ class Record:
 
 @attrs.define
 class ZenodoWrapper:
+    """Python interface to a subset of the Zenodo API."""
+
     token: str = attrs.field()
     endpoint: str = attrs.field(default="https://sandbox.zenodo.org/api")
     rest: RESTWrapper = attrs.field(init=False)
@@ -147,19 +155,23 @@ class ZenodoWrapper:
     def upload_file(self, bucket_loc: str, path: str, name: str) -> File:
         with open(path, "rb") as fh:
             res = self.rest.put(f"{bucket_loc}/{name}", data=fh)
-        with open(path, "rb") as fh:
-            if res["checksum"] != f"md5:{hashlib.file_digest(fh, hashlib.md5).hexdigest()}":
-                raise ValueError("MD5 Checksum mismatch")
         # Normalize file info before structuring.
         res["checksum"] = res["checksum"][4:]
         res["name"] = res["key"]
         self._normalize_links(res["links"])
         return cattrs.structure(res, File)
 
+    def delete_file(self, record_id: int, file_id: str):
+        self.rest.delete(f"deposit/depositions/{record_id}/files/{file_id}")
+
+    def create_new_version(self, record_id: int) -> Record:
+        res = self.rest.post(f"deposit/depositions/{record_id}/actions/newversion")
+        return cattrs.structure(res, Record)
+
     def _normalize_record(self, record: dict):
         """Normalize the returned record received from Zenodo.
 
-        The file records id is their version_id. (?)
+        The file id is the version_id. (?)
         """
         for file_dict in record.get("files", []):
             file_dict["version_id"] = file_dict["id"]
@@ -179,9 +191,10 @@ class ZenodoWrapper:
 class Config:
     record_id: int | None = attrs.field()
     endpoint: str = attrs.field()
-    token_path: str = attrs.field()
+    path_token: str = attrs.field()
     metadata: Metadata = attrs.field()
-    paths: list[str] = attrs.field()
+    path_readme: str | None = attrs.field(default=None)
+    paths: list[str] = attrs.field(factory=list)
 
 
 def main(argv: list[str] | None = None):
@@ -195,37 +208,106 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-share-zenodo", description="Share data on Zenodo."
+        prog="reprep-share-zenodo", description="Sync a draft dataset on Zenodo."
     )
     parser.add_argument("config", help="Configuration YAML file.")
+    return parser.parse_args(argv)
 
 
 def update_online(config: Config):
     """Make the online data set up to date with the local information."""
-    # TODO: If token missing, stop early, no error.
-    #       This is useful for checking the metadata.
-    # TODO: Load description from markdown and convert to HTML
-    with open(Path(config.token_path).expand()) as fh:
+    # If present, convert README Markdown file to HTML
+    if config.path_readme is not None:
+        if not config.path_readme.endswith(".md"):
+            raise ValueError("The README Markdown file must end with the .md extension.")
+        md_ctx = markdown.Markdown(extensions=["fenced_code"])
+        with open(config.path_readme) as fh:
+            config.metadata.description = md_ctx.convert(fh.read())
+
+    # Run sanity check on paths: duplicate filenames not allowed.
+    paths = {}
+    for path in config.paths:
+        path = Path(path)
+        paths[path.name] = path
+    if len(paths) != len(config.paths):
+        raise OSError(
+            "Zenodo does not support directory layouts. Files must have a different names."
+        )
+
+    # (Try to) get the token.
+    path_token = Path(config.path_token).expand()
+    if not path_token.is_file():
+        return
+    with open(path_token) as fh:
         zenodo = ZenodoWrapper(fh.read().strip(), config.endpoint)
+
+    # Interact with Zenodo.
     if config.record_id is None:
-        # Create a new one and print id on screen.
-        record = zenodo.create_new_record(config.metadata)
-        for path in config.paths:
-            path = Path(path)
-            zenodo.upload_file(record.links["bucket"], path, path.name)
-        print(record.id)
+        record = _create_new(zenodo, config.metadata, paths)
+        print(f"Record ID to include in the config file: {record.id}")
     else:
         record = zenodo.update_record(config.record_id, config.metadata)
-        # TODO: implement the following logic
-        # if published:
-        #   if version the same as latest
-        #     - check MD5 hashes
-        #   elif version below latest
-        #     - raise error
-        #   else
-        #     - create new version, check, add, update, remove files.
-        # else:
-        #   - check, add, update, remove files.
+        if record.submitted:
+            cmpver = semver.compare(config.metadata.version, record.metadata.version)
+            if cmpver == 0:
+                _check_record_md5(record, paths)
+            elif cmpver > 0:
+                record = _create_new_version(zenodo, config.record_id, config.metadata)
+                _refresh_files(zenodo, record, paths)
+            else:
+                raise VersionError("The online dataset has a newer version than the local one.")
+        else:
+            _refresh_files(zenodo, record, paths)
+
+
+def _create_new(zenodo: ZenodoWrapper, metadata: Metadata, paths: dict[str, Path]) -> Record:
+    """Create a new record on Zenodo."""
+    record = zenodo.create_new_record(metadata)
+    for name, path in paths.items():
+        file = zenodo.upload_file(record.links["bucket"], path, name)
+        if not _match_md5(path, file.checksum):
+            raise ValueError(f"MD5 Checksum mismatch for {path}")
+    return record
+
+
+def _match_md5(path: str, checksum: str) -> bool:
+    with open(path, "rb") as fh:
+        return checksum == hashlib.file_digest(fh, hashlib.md5).hexdigest()
+
+
+def _check_record_md5(record: Record, paths: dict[str, Path]):
+    """Sanity check of MD5 hashes received from Zenodo"""
+    for file in record.files:
+        if file.name not in paths:
+            raise OSError(f"File {file.name} exists online but not locally.")
+        path = paths[file.name]
+        if not _match_md5(path, file.checksum):
+            raise ValueError(f"MD5 Checksum mismatch for {path}")
+    online_names = {file.name for file in record.files}
+    for name in paths:
+        if name not in online_names:
+            raise OSError(f"File {name} exists locally but not online.")
+
+
+def _create_new_version(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata) -> Record:
+    """Create a new version of the dataset and refresh the metadata."""
+    zenodo.create_new_version(record_id)
+    return zenodo.update_record(record_id, metadata)
+
+
+def _refresh_files(zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path]):
+    """Update the online files, only uploading files that do not exit yet online or have changed."""
+    for file in record.files:
+        if file.name not in paths:
+            zenodo.delete_file(record.record_id, file.version_id)
+        path = paths[file.name]
+        if not _match_md5(path, file.checksum):
+            zenodo.delete_file(record.record_id, file.version_id)
+            zenodo.upload_file(record.links["bucket"], path, file.name)
+    online_names = {file.name for file in record.files}
+    for name, path in paths.items():
+        if name not in online_names:
+            zenodo.upload_file(record.links["bucket"], path, name)
 
 
 if __name__ == "__main__":

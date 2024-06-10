@@ -45,6 +45,7 @@ dependencies = [
     "pyyaml",
     "requests",
     "scipy",
+    "semver",
     "stepup>=1.2.4",
     "weasyprint",
 ]

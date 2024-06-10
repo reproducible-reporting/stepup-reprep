@@ -1,4 +1,4 @@
-record_id: null
+path_versions: .zenodo-versions.json
 endpoint: https://sandbox.zenodo.org/api
 path_token: ~/.config/sandbox-zenodo-org-token.txt
 metadata:

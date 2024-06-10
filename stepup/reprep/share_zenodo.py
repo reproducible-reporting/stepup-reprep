@@ -56,11 +56,11 @@ class RESTWrapper:
         raise NotImplementedError
 
     def request(self, method, loc, **kwargs):
-        url = f"{self.end_point}/{loc}"
+        url = f"{self.endpoint}/{loc}"
         if self.verbose:
             print(f"{method} {url}")
         res = requests.request(method, url, params=self.params, **kwargs)
-        data = res.json()
+        data = None if len(res.text) == 0 else res.json()
         if not res.ok:
             raise RESTError(
                 f"Failed {method} {url}: {res.status_code}\n" + json.dumps(data, indent=2)
@@ -86,10 +86,10 @@ class RESTWrapper:
 class Creator:
     """A Zenodo creator"""
 
-    name: str = attrs.field()
+    name: str = attrs.field(converter=str.strip)
     """Formatted as `last, first`."""
 
-    affiliation: str = attrs.field()
+    affiliation: str = attrs.field(converter=str.strip)
 
 
 @attrs.define
@@ -98,8 +98,8 @@ class Metadata:
 
     title: str = attrs.field(validator=attrs.validators.min_len(1))
     # TODO: do not interpret float when loading yaml.
-    version: str = attrs.field(converter=semver.Version.parse)
-    license: str = attrs.field()
+    version: str = attrs.field(converter=str.strip)
+    license: str = attrs.field(converter=lambda s: s.strip().lower())
     upload_type: str = attrs.field(
         validator=attrs.validators.in_(
             [
@@ -140,7 +140,6 @@ class Record:
     """
 
     record_id: int | None = attrs.field()
-    doi_url: str = attrs.field()
     metadata: Metadata = attrs.field()
     links: dict[str, str] = attrs.field()
     files: list[File] = attrs.field()
@@ -154,25 +153,39 @@ class ZenodoWrapper:
 
     token: str = attrs.field()
     endpoint: str = attrs.field(default="https://sandbox.zenodo.org/api")
+    verbose: bool = attrs.field(default=False)
     rest: RESTWrapper = attrs.field(init=False)
 
     @rest.default
     def _default_resp(self):
-        return RESTWrapper(self.endpoint, {"access_token": self.token})
+        return RESTWrapper(self.endpoint, {"access_token": self.token}, verbose=self.verbose)
 
     def create_new_record(self, metadata: Metadata) -> Record:
         data = {"metadata": self._unstructure_metadata(metadata)}
         res = self.rest.post("deposit/depositions", json=data)
+        self._normalize_record(res)
+        return cattrs.structure(res, Record)
+
+    def get_record(self, record_id: int) -> Record:
+        res = self.rest.get(f"records/{record_id}")
+        self._normalize_record(res)
         return cattrs.structure(res, Record)
 
     def update_record(self, record_id: int, metadata: Metadata) -> Record:
         data = {"metadata": self._unstructure_metadata(metadata)}
         res = self.rest.put(f"deposit/depositions/{record_id}", json=data)
+        self._normalize_record(res)
         return cattrs.structure(res, Record)
 
-    def upload_file(self, bucket_loc: str, path: str, name: str) -> File:
+    def edit_record(self, record_id: int):
+        self.rest.post(f"deposit/depositions/{record_id}/actions/edit")
+
+    def publish_record(self, record_id: int):
+        self.rest.post(f"deposit/depositions/{record_id}/actions/publish")
+
+    def upload_file(self, bucket: str, path: str, name: str) -> File:
         with open(path, "rb") as fh:
-            res = self.rest.put(f"{bucket_loc}/{name}", data=fh)
+            res = self.rest.put(f"{bucket}/{name}", data=fh)
         # Normalize file info before structuring.
         res["checksum"] = res["checksum"][4:]
         res["name"] = res["key"]
@@ -184,6 +197,7 @@ class ZenodoWrapper:
 
     def create_new_version(self, record_id: int) -> Record:
         res = self.rest.post(f"deposit/depositions/{record_id}/actions/newversion")
+        self._normalize_record(res)
         return cattrs.structure(res, Record)
 
     @staticmethod
@@ -193,16 +207,30 @@ class ZenodoWrapper:
             del result["description"]
         return result
 
-    def _normalize_record(self, record: dict):
+    def _normalize_record(self, record: dict[str]):
         """Normalize the returned record received from Zenodo.
 
         The file id is the version_id. (?)
         """
-        for file_dict in record.get("files", []):
-            file_dict["version_id"] = file_dict["id"]
-            file_dict["size"] = file_dict["filesize"]
-            file_dict["name"] = file_dict["filename"]
-            self._normalize_links(file_dict["links"])
+        if "id" in record and "record_id" not in record:
+            record["record_id"] = record["id"]
+        self._normalize_links(record.get("links"))
+        self._normalize_metadata(record.get("metadata"))
+        for file in record.get("files", []):
+            self._normalize_file(file)
+
+    def _normalize_file(self, file: dict[str]):
+        file["version_id"] = file["id"]
+        if "checksum" in file and file["checksum"].startswith("md5:"):
+            file["checksum"] = file["checksum"][4:]
+        if "size" not in file and "filesize" in file:
+            file["size"] = file["filesize"]
+        if "name" not in file:
+            if "filename" in file:
+                file["name"] = file["filename"]
+            elif "key" in file:
+                file["name"] = file["key"]
+        self._normalize_links(file["links"])
 
     def _normalize_links(self, links: dict[str, str]):
         """Normalize the links: remove non-API urls and remove endpoint."""
@@ -212,10 +240,16 @@ class ZenodoWrapper:
             else:
                 links[key] = url[len(self.endpoint) + 1 :]
 
+    def _normalize_metadata(self, metadata: dict[str]):
+        if "upload_type" not in metadata and "resource_type" in metadata:
+            metadata["upload_type"] = metadata["resource_type"]["type"]
+        if isinstance(metadata["license"], dict) and "id" in metadata["license"]:
+            metadata["license"] = metadata["license"]["id"]
+
 
 @attrs.define
 class Config:
-    record_id: int | None = attrs.field()
+    path_versions: str = attrs.field()
     endpoint: str = attrs.field()
     path_token: str = attrs.field()
     metadata: Metadata = attrs.field()
@@ -228,7 +262,8 @@ def main(argv: list[str] | None = None):
     args = parse_args(argv)
     with open(args.config) as fh:
         config = cattrs.structure(yaml.safe_load(fh), Config)
-    update_online(config)
+    record_id, submitted = load_version(config.path_versions, config.version)
+    update_online(config, record_id, submitted, args.verbose)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -237,10 +272,43 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         prog="reprep-share-zenodo", description="Sync a draft dataset on Zenodo."
     )
     parser.add_argument("config", help="Configuration YAML file.")
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        default=False,
+        action="store_true",
+        help="Show details of communication with Zenodo endpoint.",
+    )
     return parser.parse_args(argv)
 
 
-def update_online(config: Config):
+def load_version(path_versions: str, version: str) -> tuple[int | None, bool]:
+    path_versions = Path(path_versions)
+    if not path_versions.is_file():
+        return None, False
+    with open(path_versions) as fh:
+        versions = json.load(fh)
+    if len(versions) == 0:
+        return None, False
+    row = versions.get(version)
+    if row is not None:
+        return row
+    return max(versions.values())
+
+
+def dump_version(path_versions: str, version: str, record_id: int, submitted: bool):
+    path_versions = Path(path_versions)
+    if not path_versions.is_file():
+        versions = {}
+    else:
+        with open(path_versions) as fh:
+            versions = json.load(fh)
+    versions[version] = [record_id, submitted]
+    with open(path_versions, "w") as fh:
+        json.dump(versions, fh)
+
+
+def update_online(config: Config, record_id: int, submitted: bool, verbose: bool):
     """Make the online data set up to date with the local information."""
     paths_inp = list(config.paths)
     if config.path_readme is not None:
@@ -271,24 +339,30 @@ def update_online(config: Config):
     if not path_token.is_file():
         return
     with open(path_token) as fh:
-        zenodo = ZenodoWrapper(fh.read().strip(), config.endpoint)
+        zenodo = ZenodoWrapper(fh.read().strip(), config.endpoint, verbose=verbose)
 
     # Interact with Zenodo.
     if config.record_id is None:
+        # New record, when getting started with a dataset.
         record = _create_new(zenodo, config.metadata, paths)
-        print(f"Record ID to include in the config file: {record.id}")
+        print(f"Record ID to include in the config file: {record.record_id}")
     else:
-        record = zenodo.update_record(config.record_id, config.metadata)
+        # When a dataset exists, the actions depend on the current status of the record.
+        record = zenodo.get_record(config.record_id)
         if record.submitted:
             cmpver = semver.compare(config.metadata.version, record.metadata.version)
             if cmpver == 0:
                 _check_record_md5(record, paths)
+                if record.metadata != config.metadata:
+                    _republish_metadata(config.record_id, config.metadata)
             elif cmpver > 0:
                 record = _create_new_version(zenodo, config.record_id, config.metadata)
                 _refresh_files(zenodo, record, paths)
             else:
                 raise VersionError("The online dataset has a newer version than the local one.")
         else:
+            if record.metadata != config.metadata:
+                _update_metadata(zenodo, config.record_id, config.metadata)
             _refresh_files(zenodo, record, paths)
 
 
@@ -296,6 +370,7 @@ def _create_new(zenodo: ZenodoWrapper, metadata: Metadata, paths: dict[str, Path
     """Create a new record on Zenodo."""
     record = zenodo.create_new_record(metadata)
     for name, path in paths.items():
+        print(f"Uploading {path}")
         file = zenodo.upload_file(record.links["bucket"], path, name)
         if not _match_md5(path, file.checksum):
             raise ValueError(f"MD5 Checksum mismatch for {path}")
@@ -321,24 +396,41 @@ def _check_record_md5(record: Record, paths: dict[str, Path]):
             raise OSError(f"File {name} exists locally but not online.")
 
 
+def _republish_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
+    print(f"Editing metadata and publishing same version ({metadata.version}) again.")
+    zenodo.edit_record(record_id)
+    zenodo.update_record(record_id, metadata)
+    zenodo.publish_record(record_id)
+
+
 def _create_new_version(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata) -> Record:
     """Create a new version of the dataset and refresh the metadata."""
+    print(f"Creating a new version ({metadata.version})")
     zenodo.create_new_version(record_id)
     return zenodo.update_record(record_id, metadata)
+
+
+def _update_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
+    print("Updating draft metadata")
+    zenodo.update_record(record_id, metadata)
 
 
 def _refresh_files(zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path]):
     """Update the online files, only uploading files that do not exit yet online or have changed."""
     for file in record.files:
         if file.name not in paths:
+            print(f"Deleting {file.name}")
             zenodo.delete_file(record.record_id, file.version_id)
-        path = paths[file.name]
-        if not _match_md5(path, file.checksum):
-            zenodo.delete_file(record.record_id, file.version_id)
-            zenodo.upload_file(record.links["bucket"], path, file.name)
+        else:
+            path = paths[file.name]
+            if not _match_md5(path, file.checksum):
+                print(f"Replacing {path}")
+                zenodo.delete_file(record.record_id, file.version_id)
+                zenodo.upload_file(record.links["bucket"], path, file.name)
     online_names = {file.name for file in record.files}
     for name, path in paths.items():
         if name not in online_names:
+            print(f"Uploading {path}")
             zenodo.upload_file(record.links["bucket"], path, name)
 
 

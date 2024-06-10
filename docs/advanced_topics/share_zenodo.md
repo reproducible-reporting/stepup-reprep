@@ -1,6 +1,6 @@
 # Share results using Zenodo
 
-!!! note
+!!! note "Version history"
 
     This feature was added to StepUp RepRep 1.3.
 
@@ -22,11 +22,14 @@ To prepare a dataset, you need to create a `zenodo.yaml` file
 by filling in the following template:
 
 ```yaml
-# Leave initially null and replace with the numeric ID after the first upload.
-record_id: null
+# A JSON file containing all versions of the dataset in chronological order
+# and their corresponding record IDs, and whether they were committed.
+# This file is updated by the `reprep-share-zenodo` script.
+# It is recommended to commit it to the Git history.
+path_versions: .zenodo-versions.json
 
-# If you just want to test the upload without using the production Zenodo platform,
-# you can use the sandbox instead. Remove the sandbox prefix for production uploads.
+# If you want to test the upload without using the production Zenodo platform,
+# use the sandbox instead. Remove the sandbox prefix for production uploads.
 endpoint: https://sandbox.zenodo.org/api
 
 # You (or one of your collaborators) will need to create a personal token
@@ -116,3 +119,12 @@ from stepup.reprep.api import share_zenodo
 static("zenodo.yaml", "zenodo.md", "file1", "sub/", "sub/file2")
 share_zenodo("zenodo.yaml")
 ```
+
+
+## Try the Following
+
+When creating a publication starting from the RepRep [Template Tutorial](../from_template/introduction.md),
+one can use the [`share_zenodo()`][stepup.reprep.api.share_zenodo] function to
+continuously share the latest version of a publication with co-authors.
+Drafts of datasets can be shared with co-authors,
+in this case to give them access to the most recent build of the publication PDFs.

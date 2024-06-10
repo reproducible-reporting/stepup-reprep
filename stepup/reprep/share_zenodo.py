@@ -32,6 +32,8 @@ import semver
 import yaml
 from path import Path
 
+from stepup.core.api import amend
+
 
 class RESTError(Exception):
     """Raised when a REST API call is not successful."""
@@ -94,12 +96,28 @@ class Creator:
 class Metadata:
     """A subset of the Zenodo metadata."""
 
-    title: str = attrs.field()
-    description: str = attrs.field()
-    creators: list[Creator] = attrs.field()
-    version: str = attrs.field()
+    title: str = attrs.field(validator=attrs.validators.min_len(1))
+    # TODO: do not interpret float when loading yaml.
+    version: str = attrs.field(converter=semver.Version.parse)
     license: str = attrs.field()
-    upload_type: str = attrs.field()
+    upload_type: str = attrs.field(
+        validator=attrs.validators.in_(
+            [
+                "publication",
+                "poster",
+                "presentation",
+                "dataset",
+                "image",
+                "video",
+                "software",
+                "lesson",
+                "physicalobject",
+                "other",
+            ]
+        )
+    )
+    creators: list[Creator] = attrs.field()
+    description: str | None = attrs.field(default=None)
 
 
 @attrs.define
@@ -121,7 +139,7 @@ class Record:
     https://github.com/zenodo/zenodo/tree/master/zenodo/modules/deposit/jsonschemas/deposits/records
     """
 
-    record_id: int = attrs.field()
+    record_id: int | None = attrs.field()
     doi_url: str = attrs.field()
     metadata: Metadata = attrs.field()
     links: dict[str, str] = attrs.field()
@@ -143,12 +161,12 @@ class ZenodoWrapper:
         return RESTWrapper(self.endpoint, {"access_token": self.token})
 
     def create_new_record(self, metadata: Metadata) -> Record:
-        data = {"metadata": cattrs.unstructure(metadata)}
+        data = {"metadata": self._unstructure_metadata(metadata)}
         res = self.rest.post("deposit/depositions", json=data)
         return cattrs.structure(res, Record)
 
     def update_record(self, record_id: int, metadata: Metadata) -> Record:
-        data = {"metadata": cattrs.unstructure(metadata)}
+        data = {"metadata": self._unstructure_metadata(metadata)}
         res = self.rest.put(f"deposit/depositions/{record_id}", json=data)
         return cattrs.structure(res, Record)
 
@@ -167,6 +185,13 @@ class ZenodoWrapper:
     def create_new_version(self, record_id: int) -> Record:
         res = self.rest.post(f"deposit/depositions/{record_id}/actions/newversion")
         return cattrs.structure(res, Record)
+
+    @staticmethod
+    def _unstructure_metadata(metadata: Metadata) -> dict[str]:
+        result = cattrs.unstructure(metadata)
+        if result["description"] is None:
+            del result["description"]
+        return result
 
     def _normalize_record(self, record: dict):
         """Normalize the returned record received from Zenodo.
@@ -188,6 +213,7 @@ class ZenodoWrapper:
                 links[key] = url[len(self.endpoint) + 1 :]
 
 
+@attrs.define
 class Config:
     record_id: int | None = attrs.field()
     endpoint: str = attrs.field()
@@ -201,7 +227,7 @@ def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     with open(args.config) as fh:
-        config = cattrs.unstructure(yaml.safe_load(fh), Config)
+        config = cattrs.structure(yaml.safe_load(fh), Config)
     update_online(config)
 
 
@@ -216,6 +242,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def update_online(config: Config):
     """Make the online data set up to date with the local information."""
+    paths_inp = list(config.paths)
+    if config.path_readme is not None:
+        paths_inp.append(config.path_readme)
+    if not amend(inp=paths_inp):
+        return
+
     # If present, convert README Markdown file to HTML
     if config.path_readme is not None:
         if not config.path_readme.endswith(".md"):
@@ -312,116 +344,3 @@ def _refresh_files(zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path]
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-"""Examples of return data
-
-Zenodo record:
-
-{
-  "created": "2024-06-10T04:21:11.624064+00:00",
-  "modified": "2024-06-10T04:21:11.723770+00:00",
-  "id": 68998,
-  "conceptrecid": "68997",
-  "doi": "10.5072/zenodo.68998",
-  "conceptdoi": "10.5072/zenodo.68997",
-  "doi_url": "https://doi.org/10.5072/zenodo.68998",
-  "metadata": {
-    "title": "Random files for testing",
-    "doi": "10.5072/zenodo.68998",
-    "publication_date": "2024-06-09",
-    "description": "Added later",
-    "access_right": "open",
-    "creators": [
-      {
-        "name": "Verstraelen, Toon",
-        "affiliation": "Ghent University"
-      }
-    ],
-    "version": "1.0.0",
-    "license": "cc-zero",
-    "imprint_publisher": "Zenodo",
-    "upload_type": "dataset",
-    "prereserve_doi": {
-      "doi": "10.5281/zenodo.68998",
-      "recid": 68998
-    }
-  },
-  "title": "Random files for testing",
-  "links": {
-    "self": "https://sandbox.zenodo.org/api/deposit/depositions/68998",
-    "html": "https://sandbox.zenodo.org/deposit/68998",
-    "doi": "https://doi.org/10.5072/zenodo.68998",
-    "badge": "https://sandbox.zenodo.org/badge/doi/10.5072%2Fzenodo.68998.svg",
-    "files": "https://sandbox.zenodo.org/api/deposit/depositions/68998/files",
-    "bucket": "https://sandbox.zenodo.org/api/files/d181918c-87c4-407b-9511-fe79b91c7e35",
-    "latest_draft": "https://sandbox.zenodo.org/api/deposit/depositions/68998",
-    "latest_draft_html": "https://sandbox.zenodo.org/deposit/68998",
-    "publish": "https://sandbox.zenodo.org/api/deposit/depositions/68998/actions/publish",
-    "edit": "https://sandbox.zenodo.org/api/deposit/depositions/68998/actions/edit",
-    "discard": "https://sandbox.zenodo.org/api/deposit/depositions/68998/actions/discard",
-    "newversion": "https://sandbox.zenodo.org/api/deposit/depositions/68998/actions/newversion",
-    "registerconceptdoi": "https://sandbox.zenodo.org/api/deposit/depositions/68998/actions/registerconceptdoi",
-    "record": "https://sandbox.zenodo.org/api/records/68998",
-    "record_html": "https://sandbox.zenodo.org/record/68998",
-    "latest": "https://sandbox.zenodo.org/api/records/68998/versions/latest",
-    "latest_html": "https://sandbox.zenodo.org/record/68998/versions/latest"
-  },
-  "record_id": 68998,
-  "owner": 12150,
-  "files": [
-    {
-      "id": "2f4030c1-2cfa-459b-bdb0-e3653c49f9ce",
-      "filename": "random1.txt",
-      "filesize": 3080,
-      "checksum": "16a96e337044dd7eace6cde813d61698",
-      "links": {
-        "self": "https://sandbox.zenodo.org/api/deposit/depositions/68998/files/2f4030c1-2cfa-459b-bdb0-e3653c49f9ce",
-        "download": "https://sandbox.zenodo.org/api/records/68998/draft/files/random1.txt/content"
-      }
-    },
-    {
-      "id": "e8a42ac3-aaba-4e51-baa7-f4dc0f9eca7b",
-      "filename": "random3.txt",
-      "filesize": 3080,
-      "checksum": "63533d0616e4b50af558d43a65c392e1",
-      "links": {
-        "self": "https://sandbox.zenodo.org/api/deposit/depositions/68998/files/e8a42ac3-aaba-4e51-baa7-f4dc0f9eca7b",
-        "download": "https://sandbox.zenodo.org/api/records/68998/draft/files/random3.txt/content"
-      }
-    },
-    {
-      "id": "f18b2ceb-5bf8-4881-b20c-ccc0bcee598b",
-      "filename": "random2.txt",
-      "filesize": 3080,
-      "checksum": "037cf16537eb29058763abcd92d5eb0c",
-      "links": {
-        "self": "https://sandbox.zenodo.org/api/deposit/depositions/68998/files/f18b2ceb-5bf8-4881-b20c-ccc0bcee598b",
-        "download": "https://sandbox.zenodo.org/api/records/68998/draft/files/random2.txt/content"
-      }
-    }
-  ],
-  "state": "inprogress",
-  "submitted": true
-}
-
-File upload:
-
-{
-  "created": "2024-06-10T04:22:14.470342+00:00",
-  "updated": "2024-06-10T04:22:14.764589+00:00",
-  "version_id": "dae40715-69d5-4537-b2fb-dbdbbbf7a1e9",
-  "key": "random3.txt",
-  "size": 3080,
-  "mimetype": "text/plain",
-  "checksum": "md5:63533d0616e4b50af558d43a65c392e1",
-  "is_head": true,
-  "delete_marker": false,
-  "links": {
-    "self": "https://sandbox.zenodo.org/api/files/1e7a283b-8bd0-48ff-b269-ba944d2bb5e2/random3.txt",
-    "version": "https://sandbox.zenodo.org/api/files/1e7a283b-8bd0-48ff-b269-ba944d2bb5e2/random3.txt?versionId=dae40715-69d5-4537-b2fb-dbdbbbf7a1e9",
-    "uploads": "https://sandbox.zenodo.org/api/files/1e7a283b-8bd0-48ff-b269-ba944d2bb5e2/random3.txt?uploads"
-  }
-}
-
-"""

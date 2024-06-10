@@ -17,7 +17,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-r"""RepRep Wrapper for LaTeX."""
+"""RepRep Wrapper for LaTeX."""
 
 import argparse
 import subprocess

@@ -43,6 +43,7 @@ dependencies = [
     "path",
     "pymupdf",
     "pyyaml",
+    "requests",
     "scipy",
     "stepup>=1.2.4",
     "weasyprint",
@@ -69,6 +70,7 @@ Changelog = "https://reproducible-reporting.github.io/stepup-reprep/changelog/"
 [project.scripts]
 reprep-check-inventory = "stepup.reprep.check_inventory:main"
 reprep-make-inventory = "stepup.reprep.make_inventory:main"
+reprep-share-zenodo = "stepup.reprep.share_zenodo:main"
 reprep-zip-inventory = "stepup.reprep.zip_inventory:main"
 
 [tool.pytest.ini_options]

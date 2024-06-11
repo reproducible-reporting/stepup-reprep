@@ -17,7 +17,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""Online sharing and archiving on Zenodo.
+"""Synchronization of local datasets with drafst on Zenodo.
 
 This script synchronizes your local version of a dataset
 with the (draft of) this dataset on Zenodo.
@@ -43,6 +43,7 @@ import hashlib
 import json
 import sys
 from datetime import date
+from typing import Any
 
 import attrs
 import cattrs
@@ -71,7 +72,7 @@ class RESTWrapper:
     params: dict[str, str] = attrs.field()
     verbose: bool = attrs.field(default=False)
 
-    def request(self, method, loc, **kwargs):
+    def request(self, method: str, loc: str, **kwargs) -> Any:
         """Send a HTTP request and deserialize the response as JSON.
 
         Parameters
@@ -101,19 +102,19 @@ class RESTWrapper:
             print(json.dumps(data, indent=2))
         return data
 
-    def get(self, loc, **kwargs):
+    def get(self, loc: str, **kwargs):
         """Create a GET HTTP requests. See `request` method for details."""
         return self.request("GET", loc, **kwargs)
 
-    def post(self, loc, **kwargs):
+    def post(self, loc: str, **kwargs):
         """Create a POST HTTP requests. See `request` method for details."""
         return self.request("POST", loc, **kwargs)
 
-    def put(self, loc, **kwargs):
+    def put(self, loc: str, **kwargs):
         """Create a PUT HTTP requests. See `request` method for details."""
         return self.request("PUT", loc, **kwargs)
 
-    def delete(self, loc, **kwargs):
+    def delete(self, loc: str, **kwargs):
         """Create a DELETE HTTP requests. See `request` method for details."""
         return self.request("DELETE", loc, **kwargs)
 
@@ -295,7 +296,8 @@ class ZenodoWrapper:
             else:
                 links[key] = url[len(self.endpoint) + 1 :]
 
-    def _normalize_metadata(self, metadata: dict[str]):
+    @staticmethod
+    def _normalize_metadata(metadata: dict[str]):
         """Normalize metadata receivd from Zenodo or taken from the YAML config."""
         if metadata["description"] is None:
             del metadata["description"]

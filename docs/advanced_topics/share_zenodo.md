@@ -4,7 +4,8 @@
 
     This feature was added to StepUp RepRep 1.3.
 
-StepUp RepRep can create a draft dataset in Zenodo on your behalf, and automatically update it when the local versions of your files have changed.
+StepUp RepRep can create a draft dataset in Zenodo on your behalf,
+and automatically update it when the local versions of your files have changed.
 You can also provide metadata within your StepUp project,
 which minimizes the amount of GUI interaction required in the Zenodo web interface.
 This approach also makes it easier for all your collaborators
@@ -16,15 +17,17 @@ you must increment the version numbers
 using the [semantic version numbering](https://semver.org/) format.
 
 
-## Configuring a Zenodo dataset.
+## Configure a Zenodo dataset.
 
 To prepare a dataset, you need to create a `zenodo.yaml` file
 by filling in the following template:
 
 ```yaml
-# A JSON file containing all versions of the dataset in chronological order
-# and their corresponding record IDs, and whether they were committed.
+# A JSON file containing all versions of the dataset in chronological order and
+# their corresponding record IDs.
 # This file is updated by the `reprep-share-zenodo` script.
+# You should not need to modify it unless you created or discarded new records
+# manually through the Zenodo web interface.
 # It is recommended to commit it to the Git history.
 path_versions: .zenodo-versions.json
 
@@ -39,8 +42,7 @@ path_token: ~/.config/sandbox-zenodo-org-token.txt
 # the plan.py below will validate this file without uploading.
 
 # Provide metadata for your Zenodo record.
-# This is a subset of all possible metadata.
-# We may add support for additional fields in the future.
+# (This is a subset of all supported metadata on Zenodo.)
 metadata:
   title: 'A title'
   # Put the version number in quotes to prevent it from being
@@ -54,7 +56,7 @@ metadata:
   upload_type: dataset
   creators:
     - name: 'Last name 1, First name 1'
-      affiliation: |
+      affiliation: >-
         Research group,
         University,
         Street and number,
@@ -62,7 +64,7 @@ metadata:
         City,
         Country
     - name: 'Last name 2, First name 2'
-      affiliation: |
+      affiliation: >-
         Research group,
         University,
         Street and number,
@@ -128,3 +130,15 @@ one can use the [`share_zenodo()`][stepup.reprep.api.share_zenodo] function to
 continuously share the latest version of a publication with co-authors.
 Drafts of datasets can be shared with co-authors,
 in this case to give them access to the most recent build of the publication PDFs.
+
+
+## Known limitations
+
+- Funding information cannot be included in the YAML config file yet.
+  The Zenodo API documentation still needs to be written to support this feature.
+  See [zenodo/zenodo#950](https://github.com/zenodo/zenodo/issues/950).
+  Also, adding funding details manually does not seem to work yet,
+  because not all funding organizations are included.
+  For now, just add funding details to the dataset description.
+- Not all Zenodo metadata fields are supported.
+  We may add more in future versions of StepUp RepRep.

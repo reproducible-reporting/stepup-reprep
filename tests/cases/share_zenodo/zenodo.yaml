@@ -9,7 +9,7 @@ metadata:
   upload_type: dataset
   creators:
     - name: 'Verstraelen, Toon'
-      affiliation: |
+      affiliation: >-
         Center for Molecular Modeling (CMM),
         Ghent University,
         Technologiepark-Zwijnaarde 46,

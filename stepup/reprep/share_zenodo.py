@@ -17,12 +17,32 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""Online sharing and archiving on Zenodo."""
+"""Online sharing and archiving on Zenodo.
+
+This script synchronizes your local version of a dataset
+with the (draft of) this dataset on Zenodo.
+This simplifies your interaction with Zenodo to the following steps:
+
+1. Prepare a personal token
+2. Write metadata in a configuration YAML file.
+3. Include this script in your workflow to automatically sync data.
+4. Publish the dataset through the Zenodo web interface.
+
+After publication, only metadata can be updated, not the actual files.
+If you need to upload different files, increment the version number.
+This will result in a new draft that you can publish when it is final.
+
+This script offers a simplified interface to Zenodo.
+It does not try to mirror all of Zenodo's REST API features.
+Zenodo has subtle differences in APIs for drafts and submitted records,
+which are normalized in the `ZenodoWrapper` class to become identical.
+"""
 
 import argparse
 import hashlib
 import json
 import sys
+from datetime import date
 
 import attrs
 import cattrs
@@ -39,8 +59,8 @@ class RESTError(Exception):
     """Raised when a REST API call is not successful."""
 
 
-class VersionError(ValueError):
-    """Raised when the online version is newer than the local one"""
+class ZenodoError(Exception):
+    """Raised in case of an error in the logic of the main script."""
 
 
 @attrs.define
@@ -51,11 +71,23 @@ class RESTWrapper:
     params: dict[str, str] = attrs.field()
     verbose: bool = attrs.field(default=False)
 
-    @property
-    def params(self) -> dict[str, str]:
-        raise NotImplementedError
-
     def request(self, method, loc, **kwargs):
+        """Send a HTTP request and deserialize the response as JSON.
+
+        Parameters
+        ----------
+        method
+            The HTTP method: GET, POST, PUT or DELETE.
+        loc
+            The address to be appended after the endpoint.
+        kwargs
+            Keyword arguments to pass on to the `requests.request` function.
+
+        Returns
+        -------
+        response_data
+            Deserialized JSON response data.
+        """
         url = f"{self.endpoint}/{loc}"
         if self.verbose:
             print(f"{method} {url}")
@@ -70,15 +102,19 @@ class RESTWrapper:
         return data
 
     def get(self, loc, **kwargs):
+        """Create a GET HTTP requests. See `request` method for details."""
         return self.request("GET", loc, **kwargs)
 
     def post(self, loc, **kwargs):
+        """Create a POST HTTP requests. See `request` method for details."""
         return self.request("POST", loc, **kwargs)
 
     def put(self, loc, **kwargs):
+        """Create a PUT HTTP requests. See `request` method for details."""
         return self.request("PUT", loc, **kwargs)
 
     def delete(self, loc, **kwargs):
+        """Create a DELETE HTTP requests. See `request` method for details."""
         return self.request("DELETE", loc, **kwargs)
 
 
@@ -167,12 +203,18 @@ class ZenodoWrapper:
         return cattrs.structure(res, Record)
 
     def get_record(self, record_id: int) -> Record:
-        res = self.rest.get(f"records/{record_id}")
+        try:
+            # If the dataset is in draft
+            res = self.rest.get(f"deposit/depositions/{record_id}")
+        except RESTError:
+            # If the dataset is published
+            res = self.rest.get(f"records/{record_id}")
         self._normalize_record(res)
         return cattrs.structure(res, Record)
 
     def update_record(self, record_id: int, metadata: Metadata) -> Record:
         data = {"metadata": self._unstructure_metadata(metadata)}
+        data["metadata"]["publication_date"] = date.today().isoformat()
         res = self.rest.put(f"deposit/depositions/{record_id}", json=data)
         self._normalize_record(res)
         return cattrs.structure(res, Record)
@@ -245,6 +287,8 @@ class ZenodoWrapper:
             metadata["upload_type"] = metadata["resource_type"]["type"]
         if isinstance(metadata["license"], dict) and "id" in metadata["license"]:
             metadata["license"] = metadata["license"]["id"]
+        if "version" not in metadata:
+            metadata["version"] = "TODO"
 
 
 @attrs.define
@@ -262,8 +306,7 @@ def main(argv: list[str] | None = None):
     args = parse_args(argv)
     with open(args.config) as fh:
         config = cattrs.structure(yaml.safe_load(fh), Config)
-    record_id, submitted = load_version(config.path_versions, config.version)
-    update_online(config, record_id, submitted, args.verbose)
+    update_online(config, args.verbose)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -282,33 +325,37 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def load_version(path_versions: str, version: str) -> tuple[int | None, bool]:
+def load_version(path_versions: str, version: str) -> int:
     path_versions = Path(path_versions)
     if not path_versions.is_file():
-        return None, False
+        return None
     with open(path_versions) as fh:
         versions = json.load(fh)
     if len(versions) == 0:
-        return None, False
-    row = versions.get(version)
-    if row is not None:
-        return row
+        return None
+    record_id = versions.get(version)
+    if record_id is not None:
+        return record_id
     return max(versions.values())
 
 
-def dump_version(path_versions: str, version: str, record_id: int, submitted: bool):
+def dump_version(path_versions: str, version: str, record_id: int):
     path_versions = Path(path_versions)
     if not path_versions.is_file():
         versions = {}
     else:
         with open(path_versions) as fh:
             versions = json.load(fh)
-    versions[version] = [record_id, submitted]
+    versions[version] = record_id
+    # Serialize before opening file,
+    # so no information is lost when JSON fails.
+    serialized = json.dumps(versions, indent=2)
     with open(path_versions, "w") as fh:
-        json.dump(versions, fh)
+        fh.write(serialized)
+        fh.write("\n")
 
 
-def update_online(config: Config, record_id: int, submitted: bool, verbose: bool):
+def update_online(config: Config, verbose: bool):
     """Make the online data set up to date with the local information."""
     paths_inp = list(config.paths)
     if config.path_readme is not None:
@@ -330,7 +377,7 @@ def update_online(config: Config, record_id: int, submitted: bool, verbose: bool
         path = Path(path)
         paths[path.name] = path
     if len(paths) != len(config.paths):
-        raise OSError(
+        raise ZenodoError(
             "Zenodo does not support directory layouts. Files must have a different names."
         )
 
@@ -342,38 +389,45 @@ def update_online(config: Config, record_id: int, submitted: bool, verbose: bool
         zenodo = ZenodoWrapper(fh.read().strip(), config.endpoint, verbose=verbose)
 
     # Interact with Zenodo.
-    if config.record_id is None:
+    record_id = load_version(config.path_versions, config.metadata.version)
+    if record_id is None:
         # New record, when getting started with a dataset.
-        record = _create_new(zenodo, config.metadata, paths)
-        print(f"Record ID to include in the config file: {record.record_id}")
+        record = _create_new(zenodo, config.metadata, paths, config.metadata.version)
+        dump_version(config.path_versions, config.metadata.version, record.record_id)
     else:
         # When a dataset exists, the actions depend on the current status of the record.
-        record = zenodo.get_record(config.record_id)
+        record = zenodo.get_record(record_id)
         if record.submitted:
             cmpver = semver.compare(config.metadata.version, record.metadata.version)
             if cmpver == 0:
-                _check_record_md5(record, paths)
+                _check_record_md5(record, paths, config.metadata.version)
                 if record.metadata != config.metadata:
-                    _republish_metadata(config.record_id, config.metadata)
+                    _republish_metadata(zenodo, record_id, config.metadata)
             elif cmpver > 0:
-                record = _create_new_version(zenodo, config.record_id, config.metadata)
-                _refresh_files(zenodo, record, paths)
+                record = _create_new_version(zenodo, record_id, config.metadata)
+                dump_version(config.path_versions, config.metadata.version, record.record_id)
+                _refresh_files(zenodo, record, paths, config.metadata.version)
             else:
-                raise VersionError("The online dataset has a newer version than the local one.")
+                raise ZenodoError(
+                    f"The online version ({record.metadata.version}) is newer "
+                    f"than the local one ({config.metadata.version})."
+                )
         else:
-            if record.metadata != config.metadata:
-                _update_metadata(zenodo, config.record_id, config.metadata)
-            _refresh_files(zenodo, record, paths)
+            changed = _refresh_files(zenodo, record, paths, config.metadata.version)
+            if changed or record.metadata != config.metadata:
+                _update_metadata(zenodo, record_id, config.metadata)
 
 
-def _create_new(zenodo: ZenodoWrapper, metadata: Metadata, paths: dict[str, Path]) -> Record:
+def _create_new(
+    zenodo: ZenodoWrapper, metadata: Metadata, paths: dict[str, Path], version: str
+) -> Record:
     """Create a new record on Zenodo."""
     record = zenodo.create_new_record(metadata)
     for name, path in paths.items():
         print(f"Uploading {path}")
         file = zenodo.upload_file(record.links["bucket"], path, name)
         if not _match_md5(path, file.checksum):
-            raise ValueError(f"MD5 Checksum mismatch for {path}")
+            raise ZenodoError(f"MD5 Checksum mismatch for {path} ({version}, new)")
     return record
 
 
@@ -382,18 +436,20 @@ def _match_md5(path: str, checksum: str) -> bool:
         return checksum == hashlib.file_digest(fh, hashlib.md5).hexdigest()
 
 
-def _check_record_md5(record: Record, paths: dict[str, Path]):
+def _check_record_md5(record: Record, paths: dict[str, Path], version: str):
     """Sanity check of MD5 hashes received from Zenodo"""
     for file in record.files:
         if file.name not in paths:
-            raise OSError(f"File {file.name} exists online but not locally.")
+            raise ZenodoError(
+                f"File {file.name} exists online but not locally ({version}, published)"
+            )
         path = paths[file.name]
         if not _match_md5(path, file.checksum):
-            raise ValueError(f"MD5 Checksum mismatch for {path}")
+            raise ValueError(f"MD5 Checksum mismatch for {path} ({version}, published)")
     online_names = {file.name for file in record.files}
     for name in paths:
         if name not in online_names:
-            raise OSError(f"File {name} exists locally but not online.")
+            raise OSError(f"File {name} exists locally but not online ({version}, published)")
 
 
 def _republish_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
@@ -406,8 +462,8 @@ def _republish_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadat
 def _create_new_version(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata) -> Record:
     """Create a new version of the dataset and refresh the metadata."""
     print(f"Creating a new version ({metadata.version})")
-    zenodo.create_new_version(record_id)
-    return zenodo.update_record(record_id, metadata)
+    record = zenodo.create_new_version(record_id)
+    return zenodo.update_record(record.record_id, metadata)
 
 
 def _update_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
@@ -415,23 +471,34 @@ def _update_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
     zenodo.update_record(record_id, metadata)
 
 
-def _refresh_files(zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path]):
+def _refresh_files(
+    zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path], version: str
+) -> bool:
     """Update the online files, only uploading files that do not exit yet online or have changed."""
+    changed = False
     for file in record.files:
         if file.name not in paths:
-            print(f"Deleting {file.name}")
+            print(f"Deleting {file.name} ({version}, draft)")
             zenodo.delete_file(record.record_id, file.version_id)
+            changed = True
         else:
             path = paths[file.name]
             if not _match_md5(path, file.checksum):
-                print(f"Replacing {path}")
+                print(f"Replacing {path} ({version}, draft)")
                 zenodo.delete_file(record.record_id, file.version_id)
-                zenodo.upload_file(record.links["bucket"], path, file.name)
+                file = zenodo.upload_file(record.links["bucket"], path, file.name)
+                if not _match_md5(path, file.checksum):
+                    raise ZenodoError(f"MD5 Checksum mismatch for {path} ({version}, draft)")
+                changed = True
     online_names = {file.name for file in record.files}
     for name, path in paths.items():
         if name not in online_names:
-            print(f"Uploading {path}")
-            zenodo.upload_file(record.links["bucket"], path, name)
+            print(f"Uploading {path} ({version}, draft)")
+            file = zenodo.upload_file(record.links["bucket"], path, name)
+            if not _match_md5(path, file.checksum):
+                raise ZenodoError(f"MD5 Checksum mismatch for {path} ({version}, draft)")
+            changed = True
+    return changed
 
 
 if __name__ == "__main__":

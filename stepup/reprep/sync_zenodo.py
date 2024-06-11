@@ -133,7 +133,6 @@ class Metadata:
     """A subset of the Zenodo metadata."""
 
     title: str = attrs.field(validator=attrs.validators.min_len(1))
-    # TODO: do not interpret float when loading yaml.
     version: str = attrs.field(converter=str.strip)
     license: str = attrs.field(converter=lambda s: s.strip().lower())
     upload_type: str = attrs.field(
@@ -193,16 +192,24 @@ class ZenodoWrapper:
     rest: RESTWrapper = attrs.field(init=False)
 
     @rest.default
-    def _default_resp(self):
+    def _default_rest(self):
+        """Set the default RESP Wrapper."""
         return RESTWrapper(self.endpoint, {"access_token": self.token}, verbose=self.verbose)
 
     def create_new_record(self, metadata: Metadata) -> Record:
+        """Create a new record on Zenodo, which remains in draft until it is published manually."""
         data = {"metadata": self._unstructure_metadata(metadata)}
         res = self.rest.post("deposit/depositions", json=data)
         self._normalize_record(res)
         return cattrs.structure(res, Record)
 
     def get_record(self, record_id: int) -> Record:
+        """Get an (un)published record with given id.
+
+        Note that Zenodo has different APIs for submitted and draft records.
+        This method tries both and normalizes the record so that the caller
+        does not have to deal with those differences.
+        """
         try:
             # If the dataset is in draft
             res = self.rest.get(f"deposit/depositions/{record_id}")
@@ -213,6 +220,10 @@ class ZenodoWrapper:
         return cattrs.structure(res, Record)
 
     def update_record(self, record_id: int, metadata: Metadata) -> Record:
+        """Update the metadata of a record.
+
+        This is applicable draft records and published records in edit mode.
+        """
         data = {"metadata": self._unstructure_metadata(metadata)}
         data["metadata"]["publication_date"] = date.today().isoformat()
         res = self.rest.put(f"deposit/depositions/{record_id}", json=data)
@@ -220,12 +231,15 @@ class ZenodoWrapper:
         return cattrs.structure(res, Record)
 
     def edit_record(self, record_id: int):
+        """Put a published record into edit mode."""
         self.rest.post(f"deposit/depositions/{record_id}/actions/edit")
 
     def publish_record(self, record_id: int):
+        """Publish are draft record or a record in edit mode."""
         self.rest.post(f"deposit/depositions/{record_id}/actions/publish")
 
     def upload_file(self, bucket: str, path: str, name: str) -> File:
+        """Upload a file. The buckect must belong to a record in draft mode."""
         with open(path, "rb") as fh:
             res = self.rest.put(f"{bucket}/{name}", data=fh)
         # Normalize file info before structuring.
@@ -235,25 +249,23 @@ class ZenodoWrapper:
         return cattrs.structure(res, File)
 
     def delete_file(self, record_id: int, file_id: str):
+        """Delete a file. The file must belong to a record in draft mode."""
         self.rest.delete(f"deposit/depositions/{record_id}/files/{file_id}")
 
     def create_new_version(self, record_id: int) -> Record:
+        """Create a new version of a published record. The result is a draft record."""
         res = self.rest.post(f"deposit/depositions/{record_id}/actions/newversion")
         self._normalize_record(res)
         return cattrs.structure(res, Record)
 
-    @staticmethod
-    def _unstructure_metadata(metadata: Metadata) -> dict[str]:
+    def _unstructure_metadata(self, metadata: Metadata) -> dict[str]:
+        """Turn a Metadata instance into a JSON-able dictionary."""
         result = cattrs.unstructure(metadata)
-        if result["description"] is None:
-            del result["description"]
+        self._normalize_metadata(result)
         return result
 
     def _normalize_record(self, record: dict[str]):
-        """Normalize the returned record received from Zenodo.
-
-        The file id is the version_id. (?)
-        """
+        """Normalize a record received from Zenodo."""
         if "id" in record and "record_id" not in record:
             record["record_id"] = record["id"]
         self._normalize_links(record.get("links"))
@@ -262,6 +274,7 @@ class ZenodoWrapper:
             self._normalize_file(file)
 
     def _normalize_file(self, file: dict[str]):
+        """Normalize a file received from Zenodo."""
         file["version_id"] = file["id"]
         if "checksum" in file and file["checksum"].startswith("md5:"):
             file["checksum"] = file["checksum"][4:]
@@ -275,7 +288,7 @@ class ZenodoWrapper:
         self._normalize_links(file["links"])
 
     def _normalize_links(self, links: dict[str, str]):
-        """Normalize the links: remove non-API urls and remove endpoint."""
+        """Normalize the links received from Zenodo: remove non-API urls and remove endpoint."""
         for key, url in list(links.items()):
             if not url.startswith(self.endpoint):
                 del links[key]
@@ -283,6 +296,9 @@ class ZenodoWrapper:
                 links[key] = url[len(self.endpoint) + 1 :]
 
     def _normalize_metadata(self, metadata: dict[str]):
+        """Normalize metadata receivd from Zenodo or taken from the YAML config."""
+        if metadata["description"] is None:
+            del metadata["description"]
         if "upload_type" not in metadata and "resource_type" in metadata:
             metadata["upload_type"] = metadata["resource_type"]["type"]
         if isinstance(metadata["license"], dict) and "id" in metadata["license"]:
@@ -293,6 +309,12 @@ class ZenodoWrapper:
 
 @attrs.define
 class Config:
+    """Configuration datastructure.
+
+    An object of this class is created from data loaded from a local YAML config file.
+    It provides a more convenient way to access the configuration data.
+    """
+
     path_versions: str = attrs.field()
     endpoint: str = attrs.field()
     path_token: str = attrs.field()
@@ -305,14 +327,20 @@ def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     with open(args.config) as fh:
-        config = cattrs.structure(yaml.safe_load(fh), Config)
+        data = yaml.safe_load(fh)
+        if not isinstance(data.get("metadata").get("version"), str):
+            raise TypeError(
+                "The version in the YAML config file is missing or is not a string. "
+                "Enclose the versionin quotes to make it a string."
+            )
+        config = cattrs.structure(data, Config)
     update_online(config, args.verbose)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-share-zenodo", description="Sync a draft dataset on Zenodo."
+        prog="reprep-sync-zenodo", description="Sync a draft dataset on Zenodo."
     )
     parser.add_argument("config", help="Configuration YAML file.")
     parser.add_argument(
@@ -326,6 +354,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def load_version(path_versions: str, version: str) -> int:
+    """Load the record_id for a given version from a versions.json file."""
     path_versions = Path(path_versions)
     if not path_versions.is_file():
         return None
@@ -340,6 +369,7 @@ def load_version(path_versions: str, version: str) -> int:
 
 
 def dump_version(path_versions: str, version: str, record_id: int):
+    """Dump the record_id for a given version into a versions.json file."""
     path_versions = Path(path_versions)
     if not path_versions.is_file():
         versions = {}
@@ -357,10 +387,12 @@ def dump_version(path_versions: str, version: str, record_id: int):
 
 def update_online(config: Config, verbose: bool):
     """Make the online data set up to date with the local information."""
+    # Amend inputs when this script is called in a StepUp workflow.
     paths_inp = list(config.paths)
     if config.path_readme is not None:
         paths_inp.append(config.path_readme)
     if not amend(inp=paths_inp):
+        print("No amend")
         return
 
     # If present, convert README Markdown file to HTML
@@ -415,7 +447,7 @@ def update_online(config: Config, verbose: bool):
         else:
             changed = _refresh_files(zenodo, record, paths, config.metadata.version)
             if changed or record.metadata != config.metadata:
-                _update_metadata(zenodo, record_id, config.metadata)
+                zenodo.update_record(record_id, config.metadata)
 
 
 def _create_new(
@@ -432,6 +464,7 @@ def _create_new(
 
 
 def _match_md5(path: str, checksum: str) -> bool:
+    """Compute the MD5 sum of a file and compare to the given checksum."""
     with open(path, "rb") as fh:
         return checksum == hashlib.file_digest(fh, hashlib.md5).hexdigest()
 
@@ -453,6 +486,7 @@ def _check_record_md5(record: Record, paths: dict[str, Path], version: str):
 
 
 def _republish_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
+    """Put a record in edit mode, update the metadata and publish again."""
     print(f"Editing metadata and publishing same version ({metadata.version}) again.")
     zenodo.edit_record(record_id)
     zenodo.update_record(record_id, metadata)
@@ -466,15 +500,14 @@ def _create_new_version(zenodo: ZenodoWrapper, record_id: int, metadata: Metadat
     return zenodo.update_record(record.record_id, metadata)
 
 
-def _update_metadata(zenodo: ZenodoWrapper, record_id: int, metadata: Metadata):
-    print("Updating draft metadata")
-    zenodo.update_record(record_id, metadata)
-
-
 def _refresh_files(
     zenodo: ZenodoWrapper, record: Record, paths: dict[str, Path], version: str
 ) -> bool:
-    """Update the online files, only uploading files that do not exit yet online or have changed."""
+    """Refresh the online files.
+
+    This function only uploads files that do not exit yet online or have changed locally.
+    Files removed from the local YAML config will also be removed online.
+    """
     changed = False
     for file in record.files:
         if file.name not in paths:

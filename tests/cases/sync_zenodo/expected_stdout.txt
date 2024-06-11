@@ -2,8 +2,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.share_zenodo zenodo.yaml
-   SUCCESS │ python -m stepup.reprep.share_zenodo zenodo.yaml
+     START │ python -m stepup.reprep.sync_zenodo zenodo.yaml
+   SUCCESS │ python -m stepup.reprep.sync_zenodo zenodo.yaml
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
      PHASE │ watch
   DIRECTOR │ Stopping workers.

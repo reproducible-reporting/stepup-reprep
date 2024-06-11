@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The script `reprep-share-zenodo` and corresponding StepUp API function `share_zenodo()`
-  sync your local data with a draft dataset on Zenodo.
+- The script `reprep-sync-zenodo` and corresponding StepUp API function `sync_zenodo()`
+  synchronize your local data with a draft dataset on Zenodo.
 
 
 ## [1.2.1] - 2024-05-27

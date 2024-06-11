@@ -17,9 +17,9 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""Unit tests for stepup.reprep.share_zenodo."""
+"""Unit tests for stepup.reprep.sync_zenodo."""
 
-from stepup.reprep.share_zenodo import ZenodoWrapper
+from stepup.reprep.sync_zenodo import ZenodoWrapper
 
 
 def test_links():

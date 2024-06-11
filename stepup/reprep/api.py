@@ -44,7 +44,7 @@ __all__ = (
     "nup_pdf",
     "raster_pdf",
     "render",
-    "share_zenodo",
+    "sync_zenodo",
     "zip_inventory",
 )
 
@@ -776,8 +776,8 @@ def render(
     )
 
 
-def share_zenodo(path_config: str, *, block: bool = False):
-    """Share data online on Zenodo
+def sync_zenodo(path_config: str, *, block: bool = False):
+    """Synchronize data with an draft dataset on Zenodo.
 
     Parameters
     ----------
@@ -786,7 +786,7 @@ def share_zenodo(path_config: str, *, block: bool = False):
     block
         When `True`, the step will always remain pending.
     """
-    step("python -m stepup.reprep.share_zenodo ${inp}", inp=path_config, block=block)
+    step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
 
 
 def zip_inventory(

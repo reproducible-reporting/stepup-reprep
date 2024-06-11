@@ -1,6 +1,6 @@
 path_versions: .zenodo-versions.json
 endpoint: https://sandbox.zenodo.org/api
-path_token: ~/.config/sandbox-zenodo-org-token.txt
+path_token: does-not-exist.txt
 metadata:
   title: 'Drink a coffee and try to think of a better title'
   version: '1.0.0'

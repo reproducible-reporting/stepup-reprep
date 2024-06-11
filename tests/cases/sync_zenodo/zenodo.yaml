@@ -1,0 +1,20 @@
+path_versions: .zenodo-versions.json
+endpoint: https://sandbox.zenodo.org/api
+path_token: does-not-exist.txt
+metadata:
+  title: 'Drink a coffee and try to think of a better title'
+  version: '1.0.0'
+  # See identifies on https://spdx.org/licenses/ (make lowercase)
+  license: cc-by-nc-4.0
+  upload_type: dataset
+  creators:
+    - name: 'Verstraelen, Toon'
+      affiliation: >-
+        Center for Molecular Modeling (CMM),
+        Ghent University,
+        Technologiepark-Zwijnaarde 46,
+        B-9052,
+        Zwijnaarde, Belgium
+path_readme: zenodo.md
+paths:
+  - README.md

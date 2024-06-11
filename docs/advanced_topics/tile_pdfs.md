@@ -6,7 +6,7 @@ The tiling code is based on the *script protocol* in StepUp Core,
 which is explained in the [StepUp Core "Getting Started" tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/).
 
 This tutorial provides a simple example that you can use as a starting point.
-For a more advanced example, see the [`tild_pdf` test case](https://github.com/reproducible-reporting/stepup-reprep/tree/main/tests/cases/tile_pdf) in the StepUp RepRep unit test suite.
+For a more advanced example, see the [`tile_pdf` test case](https://github.com/reproducible-reporting/stepup-reprep/tree/main/tests/cases/tile_pdf) in the StepUp RepRep unit test suite.
 
 
 ## Example

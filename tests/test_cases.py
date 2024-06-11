@@ -46,6 +46,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "nup_pdf",
         "raster_pdf",
         "render_basic",
+        "sync_zenodo",
         "zip_inventory",
     ],
 )

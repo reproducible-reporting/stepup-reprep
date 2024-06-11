@@ -44,6 +44,7 @@ __all__ = (
     "nup_pdf",
     "raster_pdf",
     "render",
+    "sync_zenodo",
     "zip_inventory",
 )
 
@@ -773,6 +774,19 @@ def render(
         optional=optional,
         block=block,
     )
+
+
+def sync_zenodo(path_config: str, *, block: bool = False):
+    """Synchronize data with an draft dataset on Zenodo.
+
+    Parameters
+    ----------
+    path_config
+        The YAML configuration file for the Zenodo upload.
+    block
+        When `True`, the step will always remain pending.
+    """
+    step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
 
 
 def zip_inventory(

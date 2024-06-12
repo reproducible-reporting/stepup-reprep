@@ -1,21 +1,22 @@
 # Good Practices
 
-This tutorial lists some recommendations that facilitate data accuracy, reuse and reproducibility
+This tutorial lists some recommendations to facilitate data accuracy, reuse and reproducibility
 when working on a StepUp RepRep project.
 
-The [first section](#summaries) offers a compact summary of recommendations,
-which refer to parts of the [second section](#motivations) for more background
-and motivations behind the recommendations.
+The [first section](#summaries) contains a compact summary of the recommendations,
+and refer to parts of the [second section](#details) for more background
+and motivation behind the recommendations.
 
 ## Summaries
 
-The summaries below are grouped into categories and within each categeory several classes of recommendations exist:
+The summaries below are grouped into categories, and within each category,
+there are two classes of recommendations:
 
 - *"Must"* recommendations are highly encouraged.
-  Even when you have started of neglecting some of these recommendations,
-  you would benefit from converting your repository to adhere to these points.
-- *"Should"* recommendation are also encouraged but are considered less pressing.
-  There can be external factors (e.g. publisher) that force you to digress.
+  Even if you initially neglect some of these recommendations,
+  you would benefit from converting your repository to comply with them.
+- *"Should"* recommendations are also encouraged but are considered less urgent.
+  There may be external factors, such as a publisher, that force you to deviate.
 
 
 ### Filename Conventions
@@ -23,9 +24,9 @@ The summaries below are grouped into categories and within each categeory severa
 #### Must
 
 - Use semantic file and directory names to organize your data.
-- When directory or file names contain numbers, zero-pad them
-  so all relevant information is nicely aligned and filenames are correctly
-  sorted.
+- If directory or file names contain numbers,
+  zero-pad them so that all relevant information is nicely aligned
+  and file names are sorted correctly.
 
     Good example:
     ```
@@ -43,15 +44,15 @@ The summaries below are grouped into categories and within each categeory severa
     pressure-1.0MPa.txt
     ```
 
-- Similarly, keywords can be padded with dashes or underscores, for example:
+- Similarly, keywords can be padded with dashes or underscores, for instance:
 
     ```
     opt__low
     opt_high
     ```
 
-- When using a similar structure inside multiple directories, use
-  exactly the same filenames within the directories.
+- If you use a similar structure within multiple directories,
+  use exactly the same file names within the directories.
   This facilitates automation.
 
     Good example:
@@ -78,21 +79,22 @@ The summaries below are grouped into categories and within each categeory severa
 #### Must
 
 - All documents are written in LaTeX.
-- Every unused LaTeX package is a good package.
+- Any unused LaTeX package is a good package.
 - Each sentence starts on a new line in the LaTeX source.
-- To facilitate reviewing the PDF, use single-column and double-line spacing.
-- Use [BibSane](https://github.com/reproducible-reporting/bibsane) to keep your BibTeX files sane.
+- Use single-column and double-line spacing to make the PDF easier to review.
+- Use [BibSane](https://github.com/reproducible-reporting/bibsane) to clean up your BibTeX files.
   Hint: [Quick DOI to BIB conversion](https://www.doi2bib.org)
-- Avoid `\subfigure`. Merge panels into one PDF instead. (See [Tile PDFs](tile_pdfs.md).)
+- Avoid `\subfigure`. Instead, merge panels into one PDF. (See [Tile PDFs](tile_pdfs.md).)
 
 
 #### Should
 
-- Some packages, like `todo`, are convenient while writing.
-  Clearly separate these from other `\usepackage` lines, so they can be easily deleted
-  when finalizing the manuscript.
-- Define as few commands as possible.
-- Avoid low-quality publisher article classes. (ACS has a decent one.)
+- Some packages, such as `todo`, are useful while drafting a manuscript.
+  Separate these clearly from other `\usepackage` lines,
+  so that they can be easily deleted when the manuscript is finished.
+- Define as few custom commands as possible.
+- Avoid using low quality publisher article classes.
+  (ACS has a decent one.)
 
 
 ### Figures
@@ -106,99 +108,102 @@ The summaries below are grouped into categories and within each categeory severa
     - Data files (e.g., CSV) containing plot data, including generated data.
       This allows for verification of reproducibility.
 
-    - Scripts generating data, if applicable.
+    - Scripts that generate the data, if applicable.
 
-    - Scripts generating plots using the above data as input.
+    - Scripts that generate the plots using the above data as input.
       Use matplotlib unless otherwise justified.
 
-    - A `README.md` or docstrings summarizing scripts and data.
+    - A `README.md` or docstrings summarizing the scripts and data.
 
-- When creating drawings, use Inkscape (>= 1.2) and commit SVG source files.
+- Use Inkscape (>= 1.2) to create drawings and commit SVG source files.
 
 - Use bitmap formats only as an intermediate format
-  when vector graphics PDFs show performance issues.
-  This typically happens with plots containing many thousands of data points:
+  when vector graphics PDFs show performance problems.
+  This is typically the case for plots with many thousands of data points:
   Use high-resolution PNG files (not GIF, JPEG or other formats).
 
-- [Avoid Jupyter notebooks](#jupyter-notebooks) as a tool to make figures with Python scripts.
+- [Avoid using Jupyter Notebooks](#jupyter-notebooks) as a tool for creating plots.
 
 
 ### Tables
 
 #### Must
 
-Commit the following:
+Commit the following to the Git history:
 
-- Machine-readable files (e.g., CSV) containing table data.
-- Scripts generating LaTeX source for tables.
-- A `README.md` or docstrings summarizing scripts and data.
-- [Avoid Jupyter notebooks](#jupyter-notebooks) as a tool to make tables with Python scripts.
+- Machine-readable files, such as CSV, containing table data.
+- Scripts that generate LaTeX source for the tables.
+- A `README.md` or docstrings summarizing the scripts and data.
+- [Avoid using Jupyter Notebooks](#jupyter-notebooks) as a tool for creating tables.
 
 
 ### Data Sets
 
 #### Must
 
-- Use `dataset-{name}` directories for data that cannot be (easily) generated from scratch.
-  For example.
+- Use `dataset-{name}` directories for data that cannot (easily) be generated from scratch.
+  For example:
 
-    - External data sets.
-    - Expensive calculations done previously.
+    - External datasets.
+    - Expensive calculations.
     - (Large amounts of) experimental measurements.
     - Data generated with closed-source software.
       (Avoid closed-source software when you have the choice.)
-    - Data created with specialized hardware not generally available.
+    - Data created with specialized hardware that is not generally available.
     - Manually curated data.
 
 - Add scripts and implementations to regenerate the data,
   integrating them as much as possible with StepUp RepRep.
 
-- Add a `README.md` file explaining:
+- Add a `README.md` file that explains:
 
-    - How the data were generated.
-    - Software that was used.
+    - How the data was generated.
+    - The software that was used.
     - Directory and file organization.
     - File content details.
 
-- Data sets will be Zipped in the end, so store uncompressed data in the repository.
+- Datasets are Zipped in the end, so store uncompressed data in the repository.
 
-- [Avoid Jupyter notebooks](#jupyter-notebooks) as a tool to work on datasets.
+- [Avoid using Jupyter Notebooks](#jupyter-notebooks) as a tool for working with datasets.
 
 - Do not invent your own file formats.
 
 - Do not use tar files, especially compressed ones, due to data loss concerns.
-  Ordinary ZIP is more robust, because every file is compressed individually.
+  ZIP is more robust, because each file is compressed individually.
 
-- [Do not use HDF5 files](#hdf5) due to their data integrity issues.
+- [Do not use HDF5 files](#hdf5) because of data integrity issues.
 
 - Do not use Python pickle files,
-  as these can only be loaded when the corresponding Python packages are around.
-  This is too limiting for long-term data preservation.
+  as they can only be loaded when the corresponding Python packages are available.
+  This is too restrictive for long-term data preservation.
 
-- Do not use file formats that can only be used with closed-source software.
+- Do not use file formats that can only be used with closed source software.
 
 
 #### Should
 
-- When data sets exceed 500 kB, use [Git LFS](https://git-lfs.com/).
+- For files larger than exceed 500 kB, use [Git LFS](https://git-lfs.com/),
+  instead of committing them directly into the Git repository.
   The threshold can be increased for convenience,
-  but consider remote Git repository storage quota.
-  For GitHub, the maximum seems to be 5 GB at the moment (for the entire history).
+  but be aware of the storage quota of the remote Git repository.
+  For GitHub, the maximum currently appears to be 5 GB (for the entire history).
 
-- When data sets become large for Git LFS (more than 50 MB), use University-provided storage.
-  Check your Git LFS quota to define a sensible threshold.
+- When datasets become large for Git LFS,
+  collect the data on a remote server that all co-authors can access.
+  Check your Git LFS quota to determine a reasonable threshold.
   At the time of writing, this is 2 GB (all files combined) for GitHub.
-  When offloading data outside the Git repository,
-  document clearly where the data is stored, how to access and who has access permissions.
+  If you store data outside of the Git repository,
+  clearly document where the data is stored,
+  how it can be accessed and who has access permissions.
 
 - For some files, such as zipped collections of data files,
-  there are no concerns that the zipping itself is difficult to reproduce,
-  so you can decide not to store the zip file separately and add it to `.gitignore` instead.
+  there is no concern that the zipping itself will be difficult to reproduce,
+  so you can add such files to `.gitignore`.
 
-- Do not store compressed files inside compressed files.
-  This is usually inefficient and increase the risk of large data losses due to bitrot.
+- Do not put compressed files inside compressed files.
+  This is usually inefficient and increases the risk of large data losses due to bitrot.
 
-- Avoid binary files in general, are harder to reuse in the longer term.
+- Avoid binary files in general, as they are harder to reuse in the longer term.
 
 
 ### Software
@@ -206,24 +211,29 @@ Commit the following:
 #### Must
 
 - List software dependencies in `requirements.txt` or `environment.yaml`,
-  specifying versions where relevant,
-  to enable installation with `pip` or `conda` by all co-authors.
+  and pin the version of the requirements to a specific version.
+  This allows co-authors to install the same software using `pip` or `conda`.
 
-- Use only open-source software to (re)build the publication.
+- If you are using `pip`, prepare a `requirements.in` file
+  and convert it using `pip-compile` to a `requirements.txt` file.
+  See [pip-tools](https://pypi.org/project/pip-tools/) for more details.
 
-- When possible, avoid using closed-source entirely.
+- Use only open source software to (re)build the publication.
 
-- If you generate some data with closed-source software, store it in a `dataset-<name>`
-  directory and document in the `README.md` how you exactly generated the data
-  and which versions of the software were used.
+- If possible, avoid using closed source software altogether.
+
+- If you do generate some data with closed-source software,
+  put it in a `dataset-<name>` directory
+  and document in the `README.md` how exactly you generated the data
+  and what versions of the software were used.
 
 - If you write your own Python package and use it in a publication,
-  make open-source releases of all versions used in the paper.
+  make open source releases of all versions used in the paper.
   In addition to `requirements.txt` or `environment.yaml`,
   refer to the source repository and the version of your package in the `README.md`
   of the corresponding `results-<name>` or `dataset-<name>` directories.
 
-    If your Python package is experimental and not ready for release yet,
+    If your Python package is experimental and not yet ready for release,
     include it in the publication project repository under `latest-draft/pkgs/your_package`.
     Add a line `-e latest-draft/pkgs/your_package`
     to the `requirements.txt` and `environment.yaml` files as follows:
@@ -242,30 +252,31 @@ Commit the following:
 
 ## Details
 
-This section contains some more background on the recommendations given above.
-Keep in mind that this section is work in progress.
+This section provides additional background information on the recommendations listed above.
+Note that this section is still a work in progress.
+
 
 ### Jupyter Notebooks
 
 Jupyter Notebooks are very popular for interactive Python programming because
-you can combine documentation, code and visualization in one document.
-However, Jupyter notebooks have also been
-[criticized for encouraging poor practices](https://doi.org/10.1007/s10664-021-09961-9).
+you can combine documentation, code, and visualization in one document.
+However, Jupyter Notebooks have also been
+[criticized for encouraging bad practices](https://doi.org/10.1007/s10664-021-09961-9).
 In short, notebooks have inherent limitations that are not easy to overcome:
 
-- Changes to Jupyter notebooks are not easily visualized with textual diffs.
+- Changes to Jupyter Notebooks are not easily visualized with textual diffs.
 - Related to the previous point:
-  Collaborating on Jupyter notebooks via version control is problematic.
+  Collaborating on Jupyter Notebooks via version control is problematic.
   Merging different contributions to notebooks easily leads to invalid PYNB files.
 - You can execute code cells in notebooks in any order, which can lead to incorrect results.
-- You cannot easily import Jupyter notebooks into other notebooks,
+- You cannot easily import Jupyter Notebooks into other notebooks,
   making them non-modular and monolithic.
   The only way to reuse code from one notebook in another is to copy and paste fragments.
 
 For these reasons, we recommend avoiding them and instead working with reproducible workflows that
 combine scripts and analysis tools implemented in Python modules (or packages) and Markdown files.
 
-StepUp addresses the above points as follows:
+StepUp addresses the above issues as follows:
 
 - Python source code is implemented in simple Python files,
   so the output `git diff` is readable and merging is relatively easy.
@@ -275,9 +286,10 @@ StepUp addresses the above points as follows:
 - If you change one or more scripts, StepUp will determine which scripts need to be re-executed,
   as opposed to manually re-executing cells in notebooks (which is error-prone).
 - If you want to create simple reports that integrate your comments, results and figures,
-  you can write MarkDown files with figures and convert them to PDF using
+  you can write Markdown files with figures and convert them to PDF using
   [`convert_markdown()`][stepup.reprep.api.convert_markdown]
   and [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint].
+
 
 ### HDF5
 
@@ -286,9 +298,10 @@ there is a tiny chance that the entire file will become unreadable,
 not just the part that was being written.
 Such an abrupt process termination can never be ruled out (e.g., power failure).
 We are not aware of any recent fixes for this, e.g.,
-some form of journaling may make the format resilient to interrupted writes.
+some form of [journaling](https://en.wikipedia.org/wiki/Journaling_file_system)
+may make the format resilient to interrupted writes.
 This happens so rarely that the issue is often dismissed as irrelevant,
-see https://news.ycombinator.com/item?id=10860496
+see [https://news.ycombinator.com/item?id=10860496](https://news.ycombinator.com/item?id=10860496)
 
 [Zarr](https://zarr.readthedocs.io/en/stable/) is an alternative to HDF5
 that has comparable features but does not have the catastrophic data loss issue
@@ -300,11 +313,11 @@ just to say that nothing is perfect.
 Still, reliability beats performance, because losing data is a waste of time.
 
 For less demanding applications,
-[Numpy's](https://numpy.org/doc/stable/reference/generated/numpy.savez.html) NPY and NPZ
+[NumPy's](https://numpy.org/doc/stable/reference/generated/numpy.savez.html) NPY and NPZ
 may be a good fit.
 Their main advantage is the simplicity and availability within NumPy.
 
-Some online discussions on the topic:
+Some online discussions on the subject:
 
 - [https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087](https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087) (2018)
 - [https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658](https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658) (2022)

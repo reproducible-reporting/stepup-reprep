@@ -46,7 +46,7 @@ dependencies = [
     "requests",
     "scipy",
     "semver",
-    "stepup>=1.2.4",
+    "stepup>=1.2.5",
     "weasyprint",
 ]
 dynamic = ["version"]

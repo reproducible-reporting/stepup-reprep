@@ -95,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Initial release
 
 
+[Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
 [1.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.1
 [1.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.0
 [1.1.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.1.2

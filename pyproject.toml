@@ -31,20 +31,24 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: Markdown",
 ]
 dependencies = [
-    "attrs",
-    "bibsane",
+    # Version must pass our unit tests and be
+    # newer than those with known vulnerabilities
+    # https://www.cve.org/
+    # https://cve.mitre.org/cve/search_cve_list.html
+    "attrs>=22.1.0",
+    "bibsane>=0.1.3",
     "beautifulsoup4",
     "cattrs",
     "defusedxml",
     "jinja2",
     "markdown",
     "markdown_katex",
-    "numpy",
-    "path",
+    "numpy>=1.22",
+    "path>=16.14.0",
     "pymupdf",
     "pyyaml",
     "requests",
-    "scipy",
+    "scipy>=1.11",
     "semver",
     "stepup>=1.2.5",
     "weasyprint",

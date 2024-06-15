@@ -78,25 +78,6 @@ file:public/
             supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
             supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
-step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
-             workdir = ./
-             command = cp -aT static/preamble.inc.tex public/preamble.inc.tex
-               state = SUCCEEDED
-           mandatory = IMPLIED
-          created by   step:./plan.py
-            consumes   file:./
-            consumes   file:public/
-            consumes   file:static/preamble.inc.tex
-             creates   file:public/preamble.inc.tex
-            supplies   file:public/preamble.inc.tex
-
-file:static/preamble.inc.tex
-                path = static/preamble.inc.tex
-               state = STATIC
-          created by   dg:'static/**'
-            consumes   file:static/
-            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
-
 file:static/
                 path = static/
                state = STATIC
@@ -109,6 +90,25 @@ file:static/
             supplies   step:./plan.py  # wd=static/
             supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
+file:static/preamble.inc.tex
+                path = static/preamble.inc.tex
+               state = STATIC
+          created by   dg:'static/**'
+            consumes   file:static/
+            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+
+step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+             workdir = ./
+             command = cp -aT static/preamble.inc.tex public/preamble.inc.tex
+               state = SUCCEEDED
+           mandatory = IMPLIED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:public/
+            consumes   file:static/preamble.inc.tex
+             creates   file:public/preamble.inc.tex
+            supplies   file:public/preamble.inc.tex
+
 file:public/preamble.inc.tex
                 path = public/preamble.inc.tex
                state = BUILT
@@ -116,6 +116,13 @@ file:public/preamble.inc.tex
             consumes   file:public/
             consumes   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+
+file:static/plan.py
+                path = static/plan.py
+               state = STATIC
+          created by   dg:'static/**'
+            consumes   file:static/
+            supplies   step:./plan.py  # wd=static/
 
 step:./plan.py  # wd=static/
              workdir = static/
@@ -129,12 +136,19 @@ step:./plan.py  # wd=static/
              creates   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
              creates   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
-file:static/plan.py
-                path = static/plan.py
+file:static/main.tex
+                path = static/main.tex
                state = STATIC
           created by   dg:'static/**'
             consumes   file:static/
-            supplies   step:./plan.py  # wd=static/
+            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/variables.py
+                path = static/variables.py
+               state = STATIC
+          created by   dg:'static/**'
+            consumes   file:static/
+            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
              workdir = static/
@@ -150,20 +164,6 @@ step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../pub
             consumes   file:variables.py
              creates   file:public/main.tex
             supplies   file:public/main.tex
-
-file:static/main.tex
-                path = static/main.tex
-               state = STATIC
-          created by   dg:'static/**'
-            consumes   file:static/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
-
-file:static/variables.py
-                path = static/variables.py
-               state = STATIC
-          created by   dg:'static/**'
-            consumes   file:static/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:public/main.tex
                 path = public/main.tex

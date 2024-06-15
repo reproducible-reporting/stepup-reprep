@@ -95,24 +95,23 @@ defined in the previous section **1a** or **1b**.)
 
 - Install the software environment, using **ONE of the following** commands (**NOT more than one**):
 
-    ```bash
-    # Fedora
-    ./setup-venv-pip.sh
-    ```
+    - Fedora or Ubuntu 24:
 
-    or
+        ```bash
+        ./setup-venv-pip.sh
+        ```
 
-    ```bash
-    # Ubuntu 22
-    PYTHON3=/usr/bin/python3.11 ./setup-venv-pip.sh
-    ```
+    - Ubuntu 22
 
-    or
+        ```
+        PYTHON3=python3.11 ./setup-venv-pip.sh
+        ```
 
-    ```bash
-    # Any
-    ./setup-venv-micromamba.sh
-    ```
+    - Any OS but requires more resources
+
+        ```bash
+        ./setup-venv-micromamba.sh
+        ```
 
 - Activate your software environment:
 

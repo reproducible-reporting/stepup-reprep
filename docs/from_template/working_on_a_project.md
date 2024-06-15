@@ -50,3 +50,39 @@ Ensure you have installed `pre-commit` and activated it on your clone of the rep
 To remove all stale files (defined in `.gitignore`), run `git clean -dfX`.
 However, do not use this command until you have committed all important files,
 as it may inadvertently remove work in progress.
+
+
+### Managing software
+
+It is recommended to *pin* the versions of software dependencies,
+so everyone is working with a consistent software environment.
+
+This can be done by specifying versions in the `requirements.in` or `environment.yaml` files, e.g.
+
+```
+scipy==1.13.1
+```
+
+instead of just
+
+```
+scipy
+```
+
+For pip-based installations, the template uses
+[pip-tools](https://github.com/jazzband/pip-tools)
+to derive a `requirements.txt` from `requirements.in`.
+This will pin not only the versions of your direct dependencies,
+but also dependencies of dependencies, etc.
+
+If one or more dependencies need to be updated,
+change their versions in `requirements.txt` and execute:
+
+```bash
+pip-compile --generate-hashes requirements.in
+pip-sync
+```
+
+If someone else has changed the `requirements.in`
+and updated the `requirements.txt` with `pip-compile`,
+you only need to run `pip-sync` to update your local environment.

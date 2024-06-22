@@ -15,4 +15,4 @@ For more information, consult the [documentation](http://reproducible-reporting.
 
 A screen recording for a quick visual impression of StepUp RepRep in action:
 
-[![asciicast](https://asciinema.org/a/656515.svg)](https://asciinema.org/a/656515)
+[![asciicast](https://asciinema.org/a/665096.svg)](https://asciinema.org/a/665096)

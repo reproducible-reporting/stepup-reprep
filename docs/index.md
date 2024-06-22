@@ -13,7 +13,19 @@ If you want to gain a more in-depth understanding of how StepUp works, the [Step
 
 The following screen cast shows StepUp RepRep in action:
 
-[![asciicast](https://asciinema.org/a/656515.svg)](https://asciinema.org/a/656515)
+- First, StepUp is started with 9 workers
+  to complete the steps in the RepRep publication template from scratch.
+- After the build has completed,
+  the file `generate.py` is modified,
+  whose output is used in a matplotlib plot created by `plot.py`,
+  whose output is included in a LaTeX document, etc.
+- Stepup sees the changes.
+  As soon as the user presses `r`,
+  StepUp executes the necessary steps to rebuild all artifacts
+  that are (indirectly) affected by the change in `generate.py`.
+- Finally, the user presses `q` to exit StepUp.
+
+<script src="https://asciinema.org/a/665096.js" id="asciicast-665096" async="true"></script>
 
 ## Why Was StepUp RepRep Created?
 

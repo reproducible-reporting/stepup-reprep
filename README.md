@@ -4,8 +4,9 @@
 [![PyPI Version](https://img.shields.io/pypi/v/stepup-reprep)](https://pypi.org/project/stepup-reprep/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stepup-reprep)
 ![GPL-3 License](https://img.shields.io/github/license/reproducible-reporting/stepup-reprep)
-[![CodeFactor](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep/badge)](https://www.codefactor.io/repository/github/tovrstra/stepup-reprep)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=reproducible-reporting_stepup-reprep&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=reproducible-reporting_stepup-reprep)
+[![CodeFactor](https://www.codefactor.io/repository/github/reproducible-reporting/stepup-reprep/badge)](https://www.codefactor.io/repository/github/reproducible-reporting/stepup-reprep)
+[![DeepSource](https://app.deepsource.com/gh/reproducible-reporting/stepup-reprep.svg/?label=active+issues&show_trend=true&token=4JwJJ5kVvxh83bIvV7LRbH_y)](https://app.deepsource.com/gh/reproducible-reporting/stepup-reprep/)
+
 
 # StepUp RepRep
 

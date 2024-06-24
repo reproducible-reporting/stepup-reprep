@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import random
+import sys
 
 TEXT_SNIPPETS = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -15,7 +16,9 @@ x y \sin(\theta) \hat{H} \vec{B} \int_0^\infty f(x)\,dx
 
 
 def main():
+    """Write a randomized markdown file."""
     parts = []
+    random.seed(int(sys.argv[1]))
     for _ in range(100):
         parts.append(random.choice(TEXT_SNIPPETS))
         parts.append(f"$`{random.choice(EQ_SNIPPETS)}`$")

@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Upgraded dependency markdown-katex to version 202406.1035,
+- Upgraded dependency markdown-katex to version 202406.1035
   and enabled concurrency for markdown conversion with equations.
 
 

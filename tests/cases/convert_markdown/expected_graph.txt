@@ -26,7 +26,6 @@ step:./plan.py
              workdir = ./
              command = ./plan.py
                state = SUCCEEDED
-        defined pool = markdown_katex=1
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -52,7 +51,6 @@ step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-
              workdir = ./
              command = python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
-                pool = markdown_katex
           created by   step:./plan.py
             consumes   file:./
             consumes   file:demo.md

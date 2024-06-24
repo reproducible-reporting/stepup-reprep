@@ -32,7 +32,7 @@ async def run_example(srcdir, tmpdir, overwrite_expected=False):
 
     See stepup.core.pytest.run_example for details.
     """
-    await run_example_core(srcdir, tmpdir, overwrite_expected)
+    await run_example_core(srcdir, tmpdir, overwrite_expected=overwrite_expected)
 
     # Reproducibility check
     workdir = Path(tmpdir) / "example"

@@ -23,7 +23,7 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import getenv, pool, step, subs_env_vars
+from stepup.core.api import getenv, step, subs_env_vars
 from stepup.core.utils import make_path_out
 
 __all__ = (
@@ -169,15 +169,12 @@ def convert_markdown(
     path_html = make_path_out(path_md, out, ".html")
     inp = [path_md]
     command = f"python -m stepup.reprep.convert_markdown {path_md} {path_html}"
-    pool_name = None
     if katex:
         command += " --katex"
-        pool_name = "markdown_katex"
-        pool(pool_name, 1)
         if path_macro is not None:
             command += f" --katex-macros={path_macro}"
             inp.append(path_macro)
-    step(command, inp=inp, out=path_html, pool=pool_name, optional=optional, block=block)
+    step(command, inp=inp, out=path_html, optional=optional, block=block)
 
 
 def convert_weasyprint(

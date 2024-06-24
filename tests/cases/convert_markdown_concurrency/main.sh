@@ -6,7 +6,7 @@ xargs rm -rvf < .gitignore
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
-stepup -w 4 plan.py & # > current_stdout.txt &
+stepup -w 8 plan.py & # > current_stdout.txt &
 
 # Wait for the director and get its socket.
 export STEPUP_DIRECTOR_SOCKET=$(

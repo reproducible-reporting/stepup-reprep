@@ -76,7 +76,9 @@ reprep-sync-zenodo = "stepup.reprep.sync_zenodo:main"
 reprep-zip-inventory = "stepup.reprep.zip_inventory:main"
 
 [tool.pytest.ini_options]
-addopts = "-n auto -W error"
+addopts = "-n auto -W error --strict-markers"
+markers = ["heavy: requires CPU or memory resources not available in GitHub Actions"]
+
 
 [tool.ruff]
 line-length = 100

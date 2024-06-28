@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgraded dependency markdown-katex to version 202406.1035
   and enabled concurrency for markdown conversion with equations.
+- Scrub PDF files after opening them with `fitz`.
+  See https://github.com/pymupdf/PyMuPDF/issues/3635
 
 
 ## [1.2.1] - 2024-05-27 {: #v1.2.1 }

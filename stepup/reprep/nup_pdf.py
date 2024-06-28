@@ -111,6 +111,8 @@ def nup_pdf(
                 f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr
             )
     src = fitz.open(path_src)
+    # See https://github.com/pymupdf/PyMuPDF/issues/3635
+    src.scrub()
     dst = fitz.open()
 
     nup = nrow * ncol

@@ -115,6 +115,8 @@ class Figure:
 def _load_pdfs(panels: Collection[Panel]):
     for panel in panels:
         panel.pdf = fitz.open(panel.path_in)
+        # See https://github.com/pymupdf/PyMuPDF/issues/3635
+        panel.pdf.scrub()
         if panel.pdf.page_count != 1:
             raise ValueError(
                 "Panel PDF files should have just one page. "

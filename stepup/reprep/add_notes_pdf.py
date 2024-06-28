@@ -51,6 +51,8 @@ def add_notes_pdf(path_src: str, path_notes: str, path_dst: str):
         if not path_pdf.endswith(".pdf"):
             raise ValueError(f"All arguments must have a `.pdf` extension, got: {path_pdf}")
     src = fitz.open(path_src)
+    # See https://github.com/pymupdf/PyMuPDF/issues/3635
+    src.scrub()
     notes = fitz.open(path_notes)
 
     # Create the combined PDF

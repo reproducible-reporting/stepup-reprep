@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2024-06-28 {: #v1.3.0 }
+
 ### Added
 
 - The script `reprep-sync-zenodo` and corresponding StepUp API function `sync_zenodo()`
@@ -104,6 +106,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[1.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.3.0
 [1.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.1
 [1.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.0
 [1.1.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.1.2

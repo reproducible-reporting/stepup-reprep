@@ -444,10 +444,10 @@ def convert_svg_png(
 
 def latex(
     path_tex: str,
+    *,
     run_bibtex=True,
     maxrep: int = 5,
     workdir: str = "./",
-    *,
     latex: str | None = None,
     bibtex: str | None = None,
     bibsane: str | None = None,

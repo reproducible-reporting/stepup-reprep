@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move `load_module_file` from StepUp Core to `stepup.reprep.render`
+  and improve it to facilitate local imports.
+
+
 ## [1.3.0] - 2024-06-28 {: #v1.3.0 }
 
 ### Added
@@ -14,11 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The script `reprep-sync-zenodo` and corresponding StepUp API function `sync_zenodo()`
   synchronize your local data with a draft dataset on Zenodo.
 - Small documentation updates
-
-### Changed
-
-- Move `load_module_file` from StepUp Core to `stepup.reprep.render`
-  and improve it to facilitate local imports.
 
 ### Fixed
 

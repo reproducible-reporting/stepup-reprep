@@ -27,7 +27,7 @@ The documentation is created with [MkDocs](https://www.mkdocs.org/).
 Edit the documentation markdown files with a live preview by running:
 
 ```bash
-mkdocs serve --watch stepup/reprep/
+mkdocs serve
 ```
 
 (Keep this running.)

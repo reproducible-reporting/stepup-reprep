@@ -25,12 +25,12 @@ from which all variables that are strings, integers or floats are imported.
 
 import argparse
 import contextlib
+import importlib.util
 import sys
+from types import ModuleType
 
 import jinja2
 from path import Path
-
-from stepup.core.utils import load_module_file
 
 
 def main(argv: list[str] | None = None):
@@ -98,6 +98,19 @@ def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
                     value = value.relpath(dir_out)
                 variables[name] = value
     return variables
+
+
+def load_module_file(path_py: str, name: str = "pythonscript") -> ModuleType:
+    """Load a Python module from a given path."""
+    parent = Path(path_py).parent
+    sys.path.append(parent)
+    try:
+        spec = importlib.util.spec_from_file_location(f"<{name}>", str(path_py))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(parent)
+    return module
 
 
 def render(

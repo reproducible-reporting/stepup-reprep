@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   synchronize your local data with a draft dataset on Zenodo.
 - Small documentation updates
 
+### Changed
+
+- Move `load_module_file` from StepUp Core to `stepup.reprep.render`
+  and improve it to facilitate local imports.
+
 ### Fixed
 
 - Upgraded dependency markdown-katex to version 202406.1035

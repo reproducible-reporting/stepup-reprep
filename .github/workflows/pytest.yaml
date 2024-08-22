@@ -25,7 +25,9 @@ jobs:
       - name: Install oldest versions of supported dependencies
         if: ${{ matrix.python-version == '3.11'}}
         run: pip install -r .github/requirements-old.txt
-      - name: Install development version
+      - name: Install development version of StepUp-Core
+        run: pip install pip install git+https://github.com/reproducible-reporting/stepup-core.git
+      - name: Install development version of StepUp-RepRep
         run: pip install -e .[dev]
       - name: Run pytest
         run: pytest -vv -m "not heavy"

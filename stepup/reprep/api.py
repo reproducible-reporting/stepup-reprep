@@ -23,7 +23,7 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import getenv, step, subs_env_vars
+from stepup.core.api import StepInfo, getenv, step, subs_env_vars
 from stepup.core.utils import make_path_out
 
 __all__ = (
@@ -51,7 +51,7 @@ __all__ = (
 
 def add_notes_pdf(
     path_src: str, path_notes: str, path_dst: str, optional: bool = False, block: bool = False
-):
+) -> StepInfo:
     """Add a notes page at every even page of a PDF file.
 
     Parameters
@@ -66,8 +66,13 @@ def add_notes_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
-    step(
+    return step(
         "python -m stepup.reprep.add_notes_pdf ${inp} ${out}",
         inp=[path_src, path_notes],
         out=path_dst,
@@ -83,7 +88,7 @@ def cat_pdf(
     mutool: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Concatenate the pages of multiple PDFs into one document
 
     Parameters
@@ -99,10 +104,15 @@ def cat_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
-    step(
+    return step(
         mutool + " merge -o ${out} ${inp}",
         inp=paths_inp,
         out=path_out,
@@ -111,7 +121,7 @@ def cat_pdf(
     )
 
 
-def check_hrefs(path_src: str, path_config: str | None = None, block: bool = False):
+def check_hrefs(path_src: str, path_config: str | None = None, block: bool = False) -> StepInfo:
     """Check hyper references in a Markdown, HTML or PDF file.
 
     Parameters
@@ -123,6 +133,11 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
         Defaults to `${REPREP_CHECK_HREFS_CONFIG}` variable or `check_hrefs.yaml` if it is not set.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
         path_src = subs(path_src)
@@ -132,7 +147,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     if path_config is not None:
         inp_paths.append(path_config)
         command += f" -c {path_config}"
-    step(command, inp=inp_paths, block=block)
+    return step(command, inp=inp_paths, block=block)
 
 
 def convert_markdown(
@@ -143,7 +158,7 @@ def convert_markdown(
     path_macro: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Convert a markdown to HTML.
 
     Parameters
@@ -160,6 +175,11 @@ def convert_markdown(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
         path_md = subs(path_md)
@@ -174,7 +194,7 @@ def convert_markdown(
         if path_macro is not None:
             command += f" --katex-macros={path_macro}"
             inp.append(path_macro)
-    step(command, inp=inp, out=path_html, optional=optional, block=block)
+    return step(command, inp=inp, out=path_html, optional=optional, block=block)
 
 
 def convert_weasyprint(
@@ -184,7 +204,7 @@ def convert_weasyprint(
     weasyprint: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Convert a HTML document to PDF.
 
     Parameters
@@ -200,6 +220,11 @@ def convert_weasyprint(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
         path_html = subs(path_html)
@@ -212,7 +237,7 @@ def convert_weasyprint(
         command += f" --weasyprint={weasyprint}"
     if optional:
         command += " --optional"
-    step(command, inp=path_html, block=block)
+    return step(command, inp=path_html, block=block)
 
 
 def convert_odf_pdf(
@@ -222,7 +247,7 @@ def convert_odf_pdf(
     libreoffice: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Convert a file in OpenDocument format to PDF.
 
     Parameters
@@ -238,6 +263,11 @@ def convert_odf_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
 
     Notes
     -----
@@ -263,7 +293,7 @@ def convert_odf_pdf(
         "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
     path_pdf = make_path_out(path_odf, out, ".pdf")
-    step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
+    return step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
 
 
 def convert_pdf(
@@ -274,7 +304,7 @@ def convert_pdf(
     mutool: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Convert a PDF to a bitmap with mutool (from MuPDF).
 
     Parameters
@@ -292,12 +322,17 @@ def convert_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     if resolution is None:
         resolution = int(getenv("REPREP_CONVERT_PDF_RESOLUTION", "100"))
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
-    step(
+    return step(
         f"{mutool} draw -q -o ${{out}} -r {resolution} ${{inp}}",
         inp=path_pdf,
         out=path_out,
@@ -314,7 +349,7 @@ def convert_pdf_png(
     mutool: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Shorthand for `convert_pdf` with the output file derived from the PDF file.
 
     The `out` argument can be `None`, a directory or a file. See `make_path_out`.
@@ -325,7 +360,7 @@ def convert_pdf_png(
     if not path_pdf.endswith(".pdf"):
         raise ValueError("The PDF file must have extension .pdf")
     path_png = make_path_out(path_pdf, out, ".png")
-    convert_pdf(
+    return convert_pdf(
         path_pdf, path_png, resolution=resolution, mutool=mutool, optional=optional, block=block
     )
 
@@ -338,7 +373,7 @@ def convert_svg(
     inkscape_args: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Convert an SVG figure to a PDF file, detecting dependencies of the SVG on other files.
 
     Parameters
@@ -360,12 +395,15 @@ def convert_svg(
     block
         When `True`, the step will always remain pending.
 
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+
     Notes
     -----
     A wrapper around inkscape is used to carry out the conversion: `stepup.reprep.convert_svg_pdf`.
     The wrapper scans the SVG for dependencies, which may be a bit slow in case of large files.
-    Inkscape is executed in a separate step inside a single-core pool to work around
-    the following bug: https://gitlab.com/inkscape/inkscape/-/issues/4716
     """
     with subs_env_vars() as subs:
         path_svg = subs(path_svg)
@@ -381,7 +419,7 @@ def convert_svg(
         command += f" -- {inkscape_args}"
     if optional:
         command += " --optional"
-    step(command, inp=path_svg, block=block)
+    return step(command, inp=path_svg, block=block)
 
 
 def convert_svg_pdf(
@@ -392,7 +430,7 @@ def convert_svg_pdf(
     inkscape_args: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Shorthand for `convert_svg` with the output file derived from the SVG file.
 
     The `out` argument can be `None`, a directory or a file.
@@ -403,7 +441,7 @@ def convert_svg_pdf(
     if not path_svg.endswith(".svg"):
         raise ValueError("The SVG file must have extension .svg")
     path_pdf = make_path_out(path_svg, out, ".pdf")
-    convert_svg(
+    return convert_svg(
         path_svg,
         path_pdf,
         inkscape=inkscape,
@@ -421,7 +459,7 @@ def convert_svg_png(
     inkscape_args: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Shorthand for `convert_svg` with the output file derived from the SVG file.
 
     The `out` argument can be `None`, a directory or a file. See `make_path_out`.
@@ -432,7 +470,7 @@ def convert_svg_png(
     if not path_svg.endswith(".svg"):
         raise ValueError("The SVG file must have extension .svg")
     path_png = make_path_out(path_svg, out, ".png")
-    convert_svg(
+    return convert_svg(
         path_svg,
         path_png,
         inkscape=inkscape,
@@ -454,7 +492,7 @@ def latex(
     bibsane_config: str | None = None,
     optional: bool = False,
     block: bool = False,
-) -> str:
+) -> StepInfo:
     """Create a step for the compilation of a LaTeX source.
 
     Parameters
@@ -495,8 +533,8 @@ def latex(
 
     Returns
     -------
-    path_pdf
-        The PDF file being created, relative to the working directory.
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
         path_tex = subs(path_tex)
@@ -522,7 +560,7 @@ def latex(
         if bibsane_config is not None:
             command += f" --bibsane-config={bibsane_config}"
             inp_paths.append(workdir / bibsane_config)
-    step(
+    return step(
         command,
         inp=inp_paths,
         out=[workdir / path_pdf, workdir / f"{prefix}.aux", workdir / f"{prefix}-inventory.txt"],
@@ -548,7 +586,7 @@ def latex_diff(
     latexdiff_args: str | None = DEFAULT_LATEXDIFF_ARGS,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     r"""Create a step to run latexdiff.
 
     Parameters
@@ -577,6 +615,11 @@ def latex_diff(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     if latexdiff is None:
         latexdiff = getenv("REPREP_LATEXDIFF", "latexdiff")
@@ -584,7 +627,7 @@ def latex_diff(
     if latexdiff_args is None:
         latexdiff_args = getenv("REPREP_LATEXDIFF_ARGS", "")
 
-    step(
+    return step(
         f"{latexdiff} {latexdiff_args} ${{inp}} --no-label > ${{out}}",
         inp=[path_old, path_new],
         out=path_diff,
@@ -606,8 +649,13 @@ def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: 
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
-    step(
+    return step(
         "python -m stepup.reprep.latex_flat ${inp} ${out}",
         inp=path_tex,
         out=path_flat,
@@ -618,7 +666,7 @@ def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: 
 
 def make_inventory(
     paths: Collection[str], path_inventory: str, *, optional: bool = False, block: bool = False
-):
+) -> StepInfo:
     """Create an `inventory.txt` file.
 
     Parameters
@@ -631,8 +679,13 @@ def make_inventory(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
-    step(
+    return step(
         "reprep-make-inventory ${inp} -o ${out}",
         inp=paths,
         out=[path_inventory],
@@ -651,7 +704,7 @@ def nup_pdf(
     page_format: str | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Put multiple pages per sheet using a fixed layout.
 
     Parameters
@@ -676,6 +729,11 @@ def nup_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     command = "python -m stepup.reprep.nup_pdf ${inp} ${out}"
     if nrow is not None:
@@ -686,7 +744,7 @@ def nup_pdf(
         command += f" -m {margin}"
     if page_format is not None:
         command += f" -p {page_format}"
-    step(command, inp=path_src, out=path_dst, optional=optional, block=block)
+    return step(command, inp=path_src, out=path_dst, optional=optional, block=block)
 
 
 def raster_pdf(
@@ -697,7 +755,7 @@ def raster_pdf(
     quality: int | None = None,
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Turn each page of a PDF into a rendered JPEG bitmap contained in a new PDF.
 
     Parameters
@@ -717,6 +775,11 @@ def raster_pdf(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     command = "python -m stepup.reprep.raster_pdf ${inp} ${out}"
     if resolution is not None:
@@ -724,7 +787,7 @@ def raster_pdf(
     if quality is not None:
         command += f" -q {quality}"
     path_out = make_path_out(path_inp, out, ".pdf")
-    step(command, inp=path_inp, out=path_out, optional=optional, block=block)
+    return step(command, inp=path_inp, out=path_out, optional=optional, block=block)
 
 
 def render(
@@ -735,7 +798,7 @@ def render(
     mode: str = "auto",
     optional: bool = False,
     block: bool = False,
-):
+) -> StepInfo:
     """Render the template with Jinja2.
 
     Parameters
@@ -755,6 +818,11 @@ def render(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
     if mode not in ["auto", "plain", "latex"]:
         raise ValueError(f"Unsupported mode {mode!r}. Must be one of 'auto', 'plain', 'latex'")
@@ -764,7 +832,7 @@ def render(
     command = "python -m stepup.reprep.render ${inp} ${out}"
     if mode != "auto":
         command += f" --mode {mode}"
-    step(
+    return step(
         command,
         inp=[path_template, *paths_variables],
         out=path_out,
@@ -773,7 +841,7 @@ def render(
     )
 
 
-def sync_zenodo(path_config: str, *, block: bool = False):
+def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
     """Synchronize data with an draft dataset on Zenodo.
 
     Parameters
@@ -782,13 +850,18 @@ def sync_zenodo(path_config: str, *, block: bool = False):
         The YAML configuration file for the Zenodo upload.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
-    step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
+    return step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
 
 
 def zip_inventory(
     path_inventory: str, path_zip: str, *, optional: bool = False, block: bool = False
-):
+) -> StepInfo:
     """Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.
 
     Parameters
@@ -802,8 +875,13 @@ def zip_inventory(
         When `True`, the step is only executed when needed by other steps.
     block
         When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
     """
-    step(
+    return step(
         "python -m stepup.reprep.zip_inventory ${inp} ${out}",
         inp=path_inventory,
         out=path_zip,

@@ -21,8 +21,6 @@
 
 from collections.abc import Collection
 
-from path import Path
-
 from stepup.core.api import StepInfo, getenv, step, subs_env_vars
 from stepup.core.utils import make_path_out
 
@@ -544,9 +542,8 @@ def latex(
     prefix = path_tex[:-4]
     path_pdf = f"{prefix}.pdf"
 
-    workdir = Path(workdir)
     command = f"python -m stepup.reprep.latex {path_tex}"
-    inp_paths = [workdir / path_tex]
+    inp_paths = [path_tex]
     if maxrep != 5:
         command += f" --maxrep={maxrep}"
     if latex is not None:
@@ -559,16 +556,15 @@ def latex(
             command += f" --bibsane={bibsane}"
         if bibsane_config is not None:
             command += f" --bibsane-config={bibsane_config}"
-            inp_paths.append(workdir / bibsane_config)
+            inp_paths.append(bibsane_config)
     return step(
         command,
         inp=inp_paths,
-        out=[workdir / path_pdf, workdir / f"{prefix}.aux", workdir / f"{prefix}-inventory.txt"],
+        out=[path_pdf, f"{prefix}.aux", f"{prefix}-inventory.txt"],
         workdir=workdir,
         optional=optional,
         block=block,
     )
-    return workdir / path_pdf
 
 
 DEFAULT_LATEXDIFF_ARGS = (

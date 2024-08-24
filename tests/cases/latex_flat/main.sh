@@ -33,7 +33,7 @@ wait
 # Add the missing file and run again
 cp plan_02.py plan.py
 cp sub/original.tex sub/other.tex
-rm -r .stepup/logs
+rm .stepup/*.log
 stepup -w 1 plan.py & # > current_stdout_02.txt &
 
 # Wait for the director and get its socket.

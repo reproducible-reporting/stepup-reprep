@@ -55,7 +55,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 dev = [
     "pytest",
-    "pytest-asyncio",
+    "pytest-asyncio>=0.24",
     "pytest-xdist",
     "mkdocs",
     "mkdocstrings[python]",
@@ -78,7 +78,7 @@ reprep-zip-inventory = "stepup.reprep.zip_inventory:main"
 [tool.pytest.ini_options]
 addopts = "-n auto -W error --strict-markers"
 markers = ["heavy: requires CPU or memory resources not available in GitHub Actions"]
-
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 100

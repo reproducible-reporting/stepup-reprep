@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The unplot script, a sanitized version of [Depix](https://github.com/tovrstra/depix).
+  It converts paths from SVG files back into data,
+  which can be used to reverse-engineer data sets from plots.
+
+
 ### Changed
 
 - Move `load_module_file` from StepUp Core to `stepup.reprep.render`

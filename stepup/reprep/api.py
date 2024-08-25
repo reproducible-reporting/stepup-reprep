@@ -43,6 +43,7 @@ __all__ = (
     "raster_pdf",
     "render",
     "sync_zenodo",
+    "unplot",
     "zip_inventory",
 )
 
@@ -853,6 +854,33 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
+
+
+def unplot(
+    path_svg: str, out: str | None = None, *, optional: bool = False, block: bool = False
+) -> StepInfo:
+    """Convert a plot back to data.
+
+    Parameters
+    ----------
+    path_svg
+        The SVG file with paths to be converted back.
+    out
+        An output directory or file.
+
+    optional
+        When `True`, the step is only executed when needed by other steps.
+    block
+        When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    path_out = make_path_out(path_svg, out, ".json")
+    command = "python -m stepup.reprep.unplot ${inp} ${out}"
+    return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
 
 
 def zip_inventory(

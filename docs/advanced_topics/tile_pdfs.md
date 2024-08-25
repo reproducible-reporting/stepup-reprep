@@ -11,7 +11,7 @@ For a more advanced example, see the [`tile_pdf` test case](https://github.com/r
 
 ## Example
 
-Example source files: [tutorials/tile_pdfs/](https://github.com/reproducible-reporting/stepup-reprep/tree/main/docs/advanced_topics/tile_pdfs)
+Example source files: [advanced_topics/tile_pdfs/](https://github.com/reproducible-reporting/stepup-reprep/tree/main/docs/advanced_topics/tile_pdfs)
 
 Create a `tile.py` script with the following code:
 

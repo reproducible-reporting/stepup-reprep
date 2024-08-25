@@ -1,0 +1,56 @@
+root:
+             version = v1
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+                path = plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+                path = ./
+               state = STATIC
+          created by   root:
+            supplies   file:current_plot.json
+            supplies   file:plan.py
+            supplies   file:plot.svg
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+
+step:./plan.py
+             workdir = ./
+             command = ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:plot.svg
+             creates   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+
+file:plot.svg
+                path = plot.svg
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+
+step:python -m stepup.reprep.unplot plot.svg current_plot.json
+             workdir = ./
+             command = python -m stepup.reprep.unplot plot.svg current_plot.json
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:plot.svg
+             creates   file:current_plot.json
+            supplies   file:current_plot.json
+
+file:current_plot.json
+                path = current_plot.json
+               state = BUILT
+          created by   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.unplot plot.svg current_plot.json

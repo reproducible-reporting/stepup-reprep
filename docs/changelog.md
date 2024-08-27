@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+(no changes yet)
+
+## [1.4.0] - 2024-08-27 {: #v1.4.0 }
+
 ### Added
 
 - The unplot script, a sanitized version of [Depix](https://github.com/tovrstra/depix).
@@ -119,6 +123,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[1.4.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.0
 [1.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.3.0
 [1.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.1
 [1.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.0

@@ -11,15 +11,15 @@ Unplot converts plots back into data points.
 ## How to prepare an input SVG file.
 
 1. If the plot is embedded in a PDF, use `pdfimages`
-   to extract the figures from the PDF as `.pbm` files.
+   to extract the figures from the PDF as PBM files.
    Most PDF viewers can easily extract bitmaps from a PDF:
    right-click on the image and select "Save Image As ...".
 
 2. Open the image containing the plot in Gimp,
-   crop it if necessary, and save it as a `.png` or `.jpg` file.
+   crop it if necessary, and save it as a PNG or JPEG file.
 
-3. Open the `.png` or `.jpg` file in Inkscape.
-   Use the "link" option to avoid large `.svg` files in one of the following steps.
+3. Open the PNG or JPG file in Inkscape.
+   Use the "link" option to avoid large SVG files in one of the following steps.
 
 4. Draw the x-axis and y-axis as two separate straight line segments,
    i.e., lines with only one start node and one end node.
@@ -40,19 +40,19 @@ Unplot converts plots back into data points.
    Zooming in on the data points also helps to optimize their position.
 
 6. Open the XML Editor in Inkscape. (Press `Ctrl-Shift-X`.)
-   Select the x-axis in the figure
-   and change the `id` of the path in the XML Editor to `xaxis:x0:x1:kind`,
-   where `x0` and `x1` are replaced with the numerical x-values of
-   the start and end points of the line segment for the x-axis.
-   The last part, `kind`, must be replaced with `lin` or `log`
-   for linear or logarithmic scales, respectively.
-   Do the same for the y-axis using the id `yaxis:y0:y1:kind`,
-   following the same conventions.
-   The paths over the curves should be given the id `data:label`,
-   where you replace `label` with an appropriate label.
-   This label will be used to identify the data in the output.
+   Add attributes to the new paths you've drawn needed to interpret them correctly:
 
-7. Use the "File" -> "Save as" menu item to save the file in `.svg` format.
+    - Select the x-axis in the figure and add the following attributes:
+        - `axis`: your name of the axis
+        - `low`: numerical value corresponding to the start the path
+        - `high`: numerical value corresponding to the end the path
+        - `scal`: `linear` or `log`
+        - `unit`: the unit of the axis
+    - Select the y-axis in the figure and add the same attributes for the second axis.
+    - The paths over the curves should be given a `data` attribute whose value is
+      is a label to identify the data series in the output.
+
+7. In the menu, select "File" ➔ "Save As..." to save the file in SVG format.
 
 
 ## Example
@@ -62,9 +62,38 @@ Example source files: [advanced_topics/unplot/](https://github.com/reproducible-
 The following plot has been [taken from Wikipedia](https://en.m.wikipedia.org/wiki/File:Measured_Bearing_Speed_Effect_data_and_curve.jpg)
 and the necessary paths have been drawn over it as input for Unplot.
 Open this file in Inkscape to inspect the paths in the XML Editor.
-The start and intermediate nodes are marked with circles.
+You will find the following (among other attributes):
+
+```xml
+<path
+    d="M 51.564216,441.96145 51.70753,13.139368"
+    id="path2"
+    low="0"
+    unit="micron"
+    high="450"
+    scale="linear"
+    axis="screw movement" />
+<path
+    d="m 51.564216,441.96145 415.207694,0.0146"
+    id="path3"
+    axis="mill speed"
+    unit="mpm"
+    low="0"
+    high="1400"
+    scale="linear" />
+<path
+    d="m 110.57991,284.1976 29.46788,-46.38471 30.43143,-32.0766 29.46052,-24.88177 29.73658,-20.27491 29.64224,-18.83789 29.69832,-17.71775 29.42497,-18.3225 29.57262,-14.312601 29.64572,-13.618158"
+    id="path8"
+    data="measured" />
+```
+
+The `d` attribute encode the node positions of the paths and should not be changed in the XML editor.
+All other attributes were added manually in the XML editor by following the instructions above.
+
+As shown in the figure below,
+the start and intermediate nodes are marked with circles.
 The end node is a diamond.
-Hollow node markers are easy to align with data points in the original image.
+Hollow node markers can be easily aligned with data points in the original image.
 
 ![plot](unplot/plot.svg)
 
@@ -95,14 +124,24 @@ The output is a JSON file containing the extracted data points:
 Each curve is an item in the dictionary
 and the corresponding value is a list with two lists (x- and y-coordinates).
 
-## Troubleshooting
+## Tips and tricks
 
 **Q.**
 The data points are flipped horizontally or vertically. How can I fix this?
 
-**A.**
-You need to make sure that the order of the two points in the line segments for the x
-(or y) axes is compatible with the order of `x0` and `x1` in the path id
-`xaxis:x0:x1:kind`.
-Add a special end marker in Inkscape to identify the end point of the line segment.
-The menu item "Path" -> "Reverse path" allows you to swap start and end.
+> **A.**
+> You need to make sure that the order of the two points in the line segments for the x
+> (or y) axes is compatible with the `low` and `high` attributes.
+> Add a special end marker in Inkscape to identify the end point of the line segment.
+> The menu item "Path" ➔ "Reverse" allows you to swap start and end.
+
+**Q.**
+How can I extract error bars from plots?
+
+> **A.**
+> Draw two polylines, one for each end of the error bar,
+> and ensure they have the same number of nodes in the same order.
+> When loading the JSON file created by unplot,
+> you need to post-process the two paths.
+> For example, for vertical error bars,
+> average their x-coordinates and compute the difference of their y-coordinates.

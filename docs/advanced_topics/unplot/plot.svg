@@ -23,14 +23,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.435866"
-     inkscape:cx="114.21679"
-     inkscape:cy="176.54851"
+     inkscape:zoom="1.5339052"
+     inkscape:cx="246.10386"
+     inkscape:cy="244.8"
      inkscape:window-width="1920"
-     inkscape:window-height="995"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-height="1043"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
      inkscape:current-layer="g1" />
   <defs
      id="defs1">
@@ -91,7 +91,7 @@
          style="fill:context-fill;fill-rule:evenodd;stroke:context-stroke;stroke-width:2"
          d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
          sodipodi:nodetypes="sssss"
-         id="path3" />
+         id="path6" />
     </marker>
     <marker
        style="overflow:visible"
@@ -110,7 +110,7 @@
          transform="scale(0.45)"
          style="fill:context-fill;fill-rule:evenodd;stroke:context-stroke;stroke-width:2"
          d="M 0,-7.0710768 -7.0710894,0 0,7.0710589 7.0710462,0 Z"
-         id="path2" />
+         id="path7" />
     </marker>
     <marker
        style="overflow:visible"
@@ -185,17 +185,28 @@
     <path
        style="fill:none;fill-rule:evenodd;stroke:#d62728;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#marker5);marker-end:url(#marker4);stroke-opacity:0.5;stroke-dasharray:none"
        d="M 51.564216,441.96145 51.70753,13.139368"
-       id="yaxis:0:450:lin"
-       sodipodi:nodetypes="cc" />
+       id="path2"
+       sodipodi:nodetypes="cc"
+       low="0"
+       units="micron"
+       high="450"
+       scale="linear"
+       axis="screw movement" />
     <path
        style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#d62728;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.5;marker-start:url(#marker3);marker-end:url(#marker2);stop-color:#000000;stop-opacity:1"
        d="m 51.564216,441.96145 415.207694,0.0146"
-       id="xaxis:0:1400:lin"
-       sodipodi:nodetypes="cc" />
+       id="path3"
+       sodipodi:nodetypes="cc"
+       axis="mill speed"
+       units="mpm"
+       low="0"
+       high="1400"
+       scale="linear" />
     <path
        style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#004000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.5;marker-start:url(#marker1);marker-mid:url(#ColoredDot);marker-end:url(#ColoredDiamond)"
        d="m 110.57991,284.1976 29.46788,-46.38471 30.43143,-32.0766 29.46052,-24.88177 29.73658,-20.27491 29.64224,-18.83789 29.69832,-17.71775 29.42497,-18.3225 29.57262,-14.312601 29.64572,-13.618158"
-       id="data:measured"
-       sodipodi:nodetypes="cccccccccc" />
+       id="path8"
+       sodipodi:nodetypes="cccccccccc"
+       data="measured" />
   </g>
 </svg>

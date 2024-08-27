@@ -2,5 +2,6 @@
 from stepup.core.api import static
 from stepup.reprep.api import unplot
 
-static("plot.svg")
-unplot("plot.svg", "current_plot.json")
+static("plot1.svg", "plot2.svg")
+unplot("plot1.svg", "current_plot1.json")
+unplot("plot2.svg", "current_plot2.json")

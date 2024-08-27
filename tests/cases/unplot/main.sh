@@ -25,4 +25,5 @@ wait
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
-[[ -f current_plot.json ]] || exit 1
+[[ -f current_plot1.json ]] || exit 1
+[[ -f current_plot2.json ]] || exit 1

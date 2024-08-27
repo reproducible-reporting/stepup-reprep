@@ -15,11 +15,14 @@ file:./
                 path = ./
                state = STATIC
           created by   root:
-            supplies   file:current_plot.json
+            supplies   file:current_plot1.json
+            supplies   file:current_plot2.json
             supplies   file:plan.py
-            supplies   file:plot.svg
+            supplies   file:plot1.svg
+            supplies   file:plot2.svg
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+            supplies   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+            supplies   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
 
 step:./plan.py
              workdir = ./
@@ -28,29 +31,55 @@ step:./plan.py
           created by   root:
             consumes   file:./
             consumes   file:plan.py
-             creates   file:plot.svg
-             creates   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+             creates   file:plot1.svg
+             creates   file:plot2.svg
+             creates   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+             creates   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
 
-file:plot.svg
-                path = plot.svg
+file:plot1.svg
+                path = plot1.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+            supplies   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
 
-step:python -m stepup.reprep.unplot plot.svg current_plot.json
+file:plot2.svg
+                path = plot2.svg
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+
+step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
              workdir = ./
-             command = python -m stepup.reprep.unplot plot.svg current_plot.json
+             command = python -m stepup.reprep.unplot plot1.svg current_plot1.json
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:plot.svg
-             creates   file:current_plot.json
-            supplies   file:current_plot.json
+            consumes   file:plot1.svg
+             creates   file:current_plot1.json
+            supplies   file:current_plot1.json
 
-file:current_plot.json
-                path = current_plot.json
+file:current_plot1.json
+                path = current_plot1.json
                state = BUILT
-          created by   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+          created by   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
             consumes   file:./
-            consumes   step:python -m stepup.reprep.unplot plot.svg current_plot.json
+            consumes   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+
+step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+             workdir = ./
+             command = python -m stepup.reprep.unplot plot2.svg current_plot2.json
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:plot2.svg
+             creates   file:current_plot2.json
+            supplies   file:current_plot2.json
+
+file:current_plot2.json
+                path = current_plot2.json
+               state = BUILT
+          created by   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json

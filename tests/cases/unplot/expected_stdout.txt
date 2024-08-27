@@ -1,0 +1,12 @@
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.unplot plot1.svg current_plot1.json
+   SUCCESS │ python -m stepup.reprep.unplot plot1.svg current_plot1.json
+     START │ python -m stepup.reprep.unplot plot2.svg current_plot2.json
+   SUCCESS │ python -m stepup.reprep.unplot plot2.svg current_plot2.json
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

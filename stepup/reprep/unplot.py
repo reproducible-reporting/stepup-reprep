@@ -21,10 +21,11 @@
 
 import argparse
 import json
-from xml.dom.minidom import Element, parse
+from xml.etree.ElementTree import Element
 
 import attrs
 import numpy as np
+from defusedxml.ElementTree import iterparse
 from numpy.typing import NDArray
 from path import Path
 from svg.path import parse_path
@@ -33,13 +34,15 @@ from svg.path import parse_path
 def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
-    x_axis, y_axis, px_curves = load_pixel_data_svg(args.inp)
-    curves = {
-        label: transform_pixel_data(x_axis, y_axis, px_curve).tolist()
-        for label, px_curve in px_curves.items()
+    axes, px_curves = load_pixel_data_svg(args.inp)
+    data = {
+        "units": {axis.label: axis.units for axis in axes},
+        "curves": {
+            label: transform_pixel_data(axes, px_curve) for label, px_curve in px_curves.items()
+        },
     }
     with open(args.out, "w") as fh:
-        json.dump(curves, fh, indent=2)
+        json.dump(data, fh, indent=2)
         fh.write("\n")
 
 
@@ -59,12 +62,14 @@ class Axis:
 
     start: NDArray = attrs.field()
     end: NDArray = attrs.field()
+    label: str = attrs.field()
     low: float = attrs.field(converter=float)
     high: float = attrs.field(converter=float)
-    kind: str = attrs.field(validator=attrs.validators.in_(["lin", "log"]))
+    scale: str = attrs.field(validator=attrs.validators.in_(["linear", "log"]))
+    units: str = attrs.field()
 
 
-def load_pixel_data_svg(filename: str) -> tuple[Axis, Axis, dict[str, NDArray]]:
+def load_pixel_data_svg(filename: str) -> tuple[list[Axis], dict[str, NDArray]]:
     """Load elements from an SVG file, keeping all data in the units of the SVG drawing.
 
     Parameters
@@ -74,54 +79,54 @@ def load_pixel_data_svg(filename: str) -> tuple[Axis, Axis, dict[str, NDArray]]:
 
     Returns
     -------
-    x_axis
-        The x-axis in the drawing.
-    y_axis
-        The y-axis in the drawing.
+    axes
+        The two axes of the plot.
     pixel_curves
         A dictionary with curve data loaded from the plot.
         The keys are labels extracted from the path id.
         The values are NumPy arrays of which the rows are (x, y) data points.
     """
-    x_axis = None
-    y_axis = None
     px_curves = {}
-    dom = parse(filename)
-    paths = dom.getElementsByTagName("path")
-    for path in paths:
-        name = path.getAttribute("id")
-        if name.startswith("xaxis"):
-            if x_axis is not None:
-                raise ValueError("X-axis defined twice.")
-            x_axis = parse_axis(name, path)
-        elif name.startswith("yaxis"):
-            if y_axis is not None:
-                raise ValueError("X-axis defined twice.")
-            y_axis = parse_axis(name, path)
-        elif name.startswith("data:"):
-            px_curves[name[5:]] = parse_curve(path)
+    axes = []
+    parser = iterparse(filename, events=("start",))
+    for event, elem in parser:
+        if event == "start":
+            tag = elem.tag.rpartition("}")[2]
+            if tag == "path":
+                if "axis" in elem.attrib:
+                    axes.append(parse_axis(elem))
+                elif "data" in elem.attrib:
+                    label = elem.attrib["data"]
+                    px_curve = parse_curve(elem)
+                    px_curves[label] = px_curve
+        elem.clear()
 
-    if x_axis is None:
-        raise ValueError("No x-axis found.")
-    if y_axis is None:
-        raise ValueError("No y-axis found.")
+    if len(axes) != 2:
+        raise ValueError(f"Expecting two axes, got {len(axes)}")
     if len(px_curves) == 0:
         raise ValueError("No curve with data points found.")
-    return x_axis, y_axis, px_curves
+    return axes, px_curves
 
 
-def parse_axis(name: str, path: Element) -> Axis:
+def parse_axis(path: Element) -> Axis:
     """Convert an SVG Path to an x- or y-axis."""
-    result = extract_svg_path(path.getAttribute("d"))
-    if len(result) != 2:
-        raise ValueError(f"Expected two points, got {len(result)} ({name})")
-    words = name.split(":")
-    return Axis(result[0], result[1], words[1], words[2], words[3])
+    id_ = path.attrib["id"]
+    nodes = extract_svg_path(path.attrib["d"])
+    if len(nodes) != 2:
+        raise ValueError(f"Expected two nodes, got {len(nodes)} ({id_})")
+    label = path.attrib.get("axis")
+    if label is None:
+        raise ValueError(f"An axis has no required axis attribute ({id_})")
+    low = path.attrib["low"]
+    high = path.attrib["high"]
+    scale = path.attrib["scale"]
+    units = path.attrib["units"]
+    return Axis(nodes[0], nodes[1], label, low, high, scale, units)
 
 
 def parse_curve(path: Element) -> NDArray:
     """Convert an SVG Path to an array of data points."""
-    return extract_svg_path(path.getAttribute("d"))
+    return extract_svg_path(path.attrib["d"])
 
 
 def extract_svg_path(d: str) -> NDArray:
@@ -135,32 +140,39 @@ def extract_svg_path(d: str) -> NDArray:
     return np.array([[point.real, point.imag] for point in result])
 
 
-def transform_pixel_data(x_axis: Axis, y_axis: Axis, px_curve: NDArray) -> NDArray:
+def transform_pixel_data(axes: list[Axis], px_curve: NDArray) -> NDArray:
     """Convert data in drawing coordinates to axes coordinates."""
-    # construct x- and y-unit vectors in pixel coordinates
+    if len(axes) != 2:
+        raise ValueError(f"Expecting two axes, got {len(axes)}")
+    # The labels x and y are a bit arbitrary,
+    # because any affine transformation of the axes is supported.
+    x_axis, y_axis = axes
+
+    # Construct x- and y-unit vectors in pixel coordinates.
     px_xunit = x_axis.end - x_axis.start
     px_yunit = y_axis.end - y_axis.start
 
-    # the affine transformation to pixel coordinates
+    # The affine transformation to pixel coordinates.
     mat_to_pix = np.array([px_xunit, px_yunit]).T
 
-    # the inverse affine transformation
+    # The inverse affine transformation.
     mat_from_pix = np.linalg.inv(mat_to_pix)
 
-    # reference point for the x and y values
+    # Reference point for the x and y values.
     x_low = np.dot(mat_from_pix, x_axis.start)
     y_low = np.dot(mat_from_pix, y_axis.start)
 
-    # transform the datapoints to data coordinates
+    # Transform the datapoints to data coordinates.
     data = np.dot(mat_from_pix, px_curve.T)
     data[0] -= x_low[0]
     data[1] -= y_low[1]
 
-    # convert to plot units
+    # Convert to plot units.
     convert_unit(data[0], x_axis)
     convert_unit(data[1], y_axis)
 
-    return data
+    # Associate the data with the axis labels, instead of x and y.
+    return {x_axis.label: data[0].tolist(), y_axis.label: data[1].tolist()}
 
 
 def convert_unit(values: NDArray, axis: Axis):
@@ -168,14 +180,14 @@ def convert_unit(values: NDArray, axis: Axis):
 
     The values are assumed to be transformed to dimensionless coordintes first.
     """
-    if axis.kind == "lin":
+    if axis.scale == "linear":
         values[:] = values * (axis.high - axis.low) + axis.low
-    elif axis.kind == "log":
+    elif axis.scale == "log":
         llow = np.log(axis.low)
         lhigh = np.log(axis.high)
         values[:] = np.exp(values * (lhigh - llow) + llow)
     else:
-        raise ValueError(f"Unsupported axis kind: {axis.kind}")
+        raise ValueError(f"Unsupported axis scale: {axis.scale}")
 
 
 if __name__ == "__main__":

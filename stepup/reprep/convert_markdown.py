@@ -73,7 +73,6 @@ HTML_TEMPLATE = """\
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>{{ title }}</title>
   {{ css | indent(width=2) }}
-  {{ extra_header | indent(width=2) }}
 </head>
 <body>
   {{ body | indent(width=2) }}
@@ -154,14 +153,9 @@ def convert_markdown(
         for path_css in paths_css
     ]
 
-    # When using katex, split of the header-related tags,
-    # so they can be included in the header instead of the body.
-    extra_header, body = isolate_header(body)
-
     # Use Jinja to finalize the HTML page.
     variables = {
         "body": body,
-        "extra_header": extra_header,
         "title": md_ctx.Meta.get("title", ["Untitled"])[0],
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }

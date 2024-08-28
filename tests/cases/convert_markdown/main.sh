@@ -21,14 +21,14 @@ graph("current_graph")
 EOD
 
 # Reproducibility test
-mv demo.html demo1.html
+mv sub/demo.html sub/demo1.html
 python3 - << EOD
 from stepup.core.interact import *
 from stepup.reprep.make_inventory import write_inventory
-watch_delete("demo.html")
+watch_delete("sub/demo.html")
 run()
 join()
-write_inventory("reproducibility_inventory.txt", ["demo.html", "demo1.html"])
+write_inventory("reproducibility_inventory.txt", ["sub/demo.html", "sub/demo1.html"])
 EOD
 
 # Wait for background processes, if any.
@@ -36,7 +36,7 @@ wait
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
-[[ -f demo.md ]] || exit 1
-[[ -f demo.html ]] || exit 1
-[[ -f demo1.html ]] || exit 1
+[[ -f sub/demo.md ]] || exit 1
+[[ -f sub/demo.html ]] || exit 1
+[[ -f sub/demo1.html ]] || exit 1
 [[ -f reproducibility_inventory.txt ]] || exit 1

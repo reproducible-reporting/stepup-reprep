@@ -24,6 +24,7 @@ import re
 import sys
 
 import markdown
+from path import Path
 
 from stepup.core.api import amend
 
@@ -38,7 +39,9 @@ def main(argv: list[str] | None = None):
     if not args.markdown.endswith(".md"):
         raise ValueError("The markdown file must end with the .md extension.")
     with open(args.markdown) as fm, open(args.html, "w") as fh:
-        fh.write(convert_markdown(fm.read(), args.katex, args.katex_macros, args.css))
+        fh.write(
+            convert_markdown(fm.read(), args.katex, args.katex_macros, args.css, args.html.parent)
+        )
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -46,12 +49,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="reprep-convert-markdown", description="Convert Markdown to HTML"
     )
-    parser.add_argument("markdown", help="A Markdown file with extension `.md`")
-    parser.add_argument("html", help="A HTML output filename")
+    parser.add_argument("markdown", type=Path, help="A Markdown file with extension `.md`")
+    parser.add_argument("html", type=Path, help="A HTML output filename")
     parser.add_argument("--katex", default=False, action="store_true", help="Enable KaTeX")
-    parser.add_argument("--katex-macros", default=None, help="KaTeX macro file")
+    parser.add_argument("--katex-macros", type=Path, default=None, help="KaTeX macro file")
     parser.add_argument(
-        "--css", nargs="+", default=[], help="Local CSS files to link to in the HTML header"
+        "--css",
+        type=Path,
+        nargs="+",
+        default=[],
+        help="Local CSS files to link to in the HTML header",
     )
     return parser.parse_args(argv)
 
@@ -78,6 +85,7 @@ def convert_markdown(
     katex: bool = False,
     path_macro: str | None = None,
     paths_css: str | list[str] | None = None,
+    parent_html: str = "./",
 ) -> str:
     """Convert Markdown to HTML with KaTeX support.
 
@@ -93,6 +101,9 @@ def convert_markdown(
         Path of a local CSS file, or a list of multiple such paths,
         to be included in the HTML header.
         Note that one may also specify CSS file in the markdown header.
+    parent_html
+        The parent path of the HTML file.
+        The CSS paths are rewritten to become relative to this parent path.
 
     Returns
     -------
@@ -130,6 +141,12 @@ def convert_markdown(
         paths_css = [paths_css]
     paths_css.extend(md_ctx.Meta.get("css", []))
     amend(inp=[path_css for path_css in md_ctx.Meta.get("css", []) if "://" not in path_css])
+
+    # Rewrite CSS paths is paths relative to the parent of the HTML output.
+    # parent_html = Path(parent_html)
+    for i, path_css in enumerate(paths_css):
+        if "://" not in path_css:
+            paths_css[i] = Path(path_css).relpath(parent_html)
 
     # When using katex, split of the header-related tags,
     # so they can be included in the header instead of the body.

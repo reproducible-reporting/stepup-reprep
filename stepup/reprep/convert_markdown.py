@@ -25,6 +25,8 @@ import sys
 
 import markdown
 
+from stepup.core.api import amend
+
 from .render import render
 
 __all__ = ("convert_markdown",)
@@ -36,7 +38,7 @@ def main(argv: list[str] | None = None):
     if not args.markdown.endswith(".md"):
         raise ValueError("The markdown file must end with the .md extension.")
     with open(args.markdown) as fm, open(args.html, "w") as fh:
-        fh.write(convert_markdown(fm.read(), args.katex, args.katex_macros))
+        fh.write(convert_markdown(fm.read(), args.katex, args.katex_macros, args.css))
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -48,6 +50,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("html", help="A HTML output filename")
     parser.add_argument("--katex", default=False, action="store_true", help="Enable KaTeX")
     parser.add_argument("--katex-macros", default=None, help="KaTeX macro file")
+    parser.add_argument(
+        "--css", nargs="+", default=[], help="Local CSS files to link to in the HTML header"
+    )
     return parser.parse_args(argv)
 
 
@@ -59,6 +64,7 @@ HTML_TEMPLATE = """\
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>{{ title }}</title>
   {{ css | indent(width=2) }}
+  {{ extra_header | indent(width=2) }}
 </head>
 <body>
   {{ body | indent(width=2) }}
@@ -67,7 +73,12 @@ HTML_TEMPLATE = """\
 """
 
 
-def convert_markdown(text_md: str, katex: bool = False, path_macro: str | None = None) -> str:
+def convert_markdown(
+    text_md: str,
+    katex: bool = False,
+    path_macro: str | None = None,
+    paths_css: str | list[str] | None = None,
+) -> str:
     """Convert Markdown to HTML with KaTeX support.
 
     Parameters
@@ -78,6 +89,10 @@ def convert_markdown(text_md: str, katex: bool = False, path_macro: str | None =
         Set to `True` to enable KaTeX support.
     path_macro
         A file with KaTeX macro definitions.
+    paths_css
+        Path of a local CSS file, or a list of multiple such paths,
+        to be included in the HTML header.
+        Note that one may also specify CSS file in the markdown header.
 
     Returns
     -------
@@ -107,13 +122,33 @@ def convert_markdown(text_md: str, katex: bool = False, path_macro: str | None =
 
     # Convert to HTML
     body = md_ctx.convert(text_md)
+
+    # Collect all CSS paths
+    if paths_css is None:
+        paths_css = []
+    elif isinstance(paths_css, str):
+        paths_css = [paths_css]
+    paths_css.extend(md_ctx.Meta.get("css", []))
+    amend(inp=[path_css for path_css in md_ctx.Meta.get("css", []) if "://" not in path_css])
+
+    # When using katex, split of the header-related tags,
+    # so they can be included in the header instead of the body.
+    if katex:
+        lines = body.splitlines()
+        icut = lines.index("</style>")
+        header_lines = lines[: icut + 1]
+        body_lines = lines[icut + 1 :]
+        body = "\n".join(body_lines)
+        extra_header = "\n".join(header_lines)
+    else:
+        extra_header = ""
+
+    # Use Jinja to finalize the HTML page.
     variables = {
         "body": body,
+        "extra_header": extra_header,
         "title": md_ctx.Meta.get("title", ["Untitled"])[0],
-        "css": "\n".join(
-            f'<link rel="stylesheet" href="{path_css}" />'
-            for path_css in md_ctx.Meta.get("css", [])
-        ),
+        "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }
     return render("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
 

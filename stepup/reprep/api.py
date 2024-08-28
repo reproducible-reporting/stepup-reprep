@@ -155,6 +155,7 @@ def convert_markdown(
     *,
     katex: bool = False,
     path_macro: str | None = None,
+    paths_css: str | list[str] | None = None,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -170,6 +171,10 @@ def convert_markdown(
         Set to `True` to enable KaTeX support.
     path_macro
         A file with macro definitions for KaTeX.
+    paths_css
+        Path of a local CSS file, or a list of multiple such paths,
+        to be included in the HTML header.
+        Note that one may also specify CSS file in the markdown header.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
@@ -193,6 +198,11 @@ def convert_markdown(
         if path_macro is not None:
             command += f" --katex-macros={path_macro}"
             inp.append(path_macro)
+    if paths_css is not None:
+        if isinstance(paths_css, str):
+            paths_css = [paths_css]
+        inp.extend(paths_css)
+        command += " --css " + " ".join(paths_css)
     return step(command, inp=inp, out=path_html, optional=optional, block=block)
 
 

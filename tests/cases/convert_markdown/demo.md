@@ -1,6 +1,6 @@
 ---
 title: This is the HTML title
-css: demo.css
+css:   demo.css
 ---
 
 # Title

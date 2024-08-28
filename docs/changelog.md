@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-(no changes yet)
+### Fixed
+
+- Fix bug: CSS files in `convert_markdown` where not amended as inputs.
+  Related to this, an extra argument was added to specify CSS files in a `plan.py`.
+- Fix bug: put header output of `markdown_katex` plugin in the HTML header.
+
 
 ## [1.4.0] - 2024-08-27 {: #v1.4.0 }
 
@@ -16,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The unplot script, a sanitized version of [Depix](https://github.com/tovrstra/depix).
   It converts paths from SVG files back into data,
   which can be used to reverse-engineer data sets from plots.
-
 
 ### Changed
 

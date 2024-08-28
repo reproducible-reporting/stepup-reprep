@@ -23,6 +23,35 @@ import pytest
 
 from stepup.reprep.convert_markdown import isolate_header
 
+KATEX_INPUT = r"""
+<ul>
+<li>
+[1/1]
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow><mi>x</mi><mo>=</mo><mfrac>
+<mrow><mi>a</mi><msup><mi>t</mi><mn>2</mn></msup></mrow>
+<mn>2</mn></mfrac></mrow>
+<annotation encoding="application/x-tex">x=\frac{at^2}{2}</annotation>
+</semantics>
+</math>
+</li>
+</ul>
+""".replace("\n", "")
+
+KATEX_OUTPUT = r"""
+<ul xmlns:ns0="http://www.w3.org/1998/Math/MathML">
+<li>[1/1]
+<ns0:math><ns0:semantics><ns0:mrow><ns0:mi>x</ns0:mi><ns0:mo>=</ns0:mo>
+<ns0:mfrac><ns0:mrow><ns0:mi>a</ns0:mi><ns0:msup><ns0:mi>t</ns0:mi><ns0:mn>2
+</ns0:mn></ns0:msup></ns0:mrow><ns0:mn>2</ns0:mn></ns0:mfrac></ns0:mrow>
+<ns0:annotation encoding="application/x-tex">x=\frac{at^2}{2}</ns0:annotation>
+</ns0:semantics></ns0:math></li></ul>
+""".replace("\n", "")
+
+
+SPAN_EXAMPLE = '<span style="height:2.476em;vertical-align:-0.9119em;"></span>'
+
 
 @pytest.mark.parametrize(
     ("orig_body", "header", "body"),
@@ -31,9 +60,11 @@ from stepup.reprep.convert_markdown import isolate_header
         ("<p>first</p><p>second</p>", "", "<p>first</p>\n<p>second</p>"),
         (
             '<title>foo</title><link rel="stylesheet" href="foo.css" />',
-            '<title>foo</title>\n<link rel="stylesheet" href="foo.css" />',
+            '<title>foo</title>\n<link rel="stylesheet" href="foo.css">',
             "",
         ),
+        (KATEX_INPUT, "", KATEX_OUTPUT),
+        (SPAN_EXAMPLE, "", SPAN_EXAMPLE),
     ],
 )
 def test_isolate_header(orig_body, header, body):

@@ -124,7 +124,10 @@ def convert_markdown(
 
     if katex:
         extensions.append("markdown_katex")
-        configs["markdown_katex"] = {"insert_fonts_css": True}
+        configs["markdown_katex"] = {
+            "insert_fonts_css": True,
+            "no_inline_svg": True,
+        }
         if path_macro is not None:
             configs["markdown_katex"]["macro-file"] = path_macro
 
@@ -146,9 +149,10 @@ def convert_markdown(
 
     # Rewrite CSS paths is paths relative to the parent of the HTML output.
     # parent_html = Path(parent_html)
-    for i, path_css in enumerate(paths_css):
-        if "://" not in path_css:
-            paths_css[i] = Path(path_css).relpath(parent_html)
+    paths_css = [
+        path_css if "://" in path_css else Path(path_css).relpath(parent_html)
+        for path_css in paths_css
+    ]
 
     # When using katex, split of the header-related tags,
     # so they can be included in the header instead of the body.
@@ -189,7 +193,9 @@ def isolate_header(body: str) -> tuple[str, str]:
     header_lines = []
     body_lines = []
     for child in root:
-        line = dumps_xml(child).decode("utf-8").strip()
+        line = dumps_xml(
+            child, encoding="unicode", method="html", short_empty_elements=False
+        ).strip()
         if len(line) > 0:
             if child.tag in ["link", "style", "meta", "title"]:
                 header_lines.append(line)

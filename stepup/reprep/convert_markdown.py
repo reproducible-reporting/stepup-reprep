@@ -22,15 +22,17 @@
 import argparse
 import re
 import sys
+from xml.etree.ElementTree import tostring as dumps_xml
 
 import markdown
+from defusedxml.ElementTree import fromstring as loads_xml
 from path import Path
 
 from stepup.core.api import amend
 
 from .render import render
 
-__all__ = ("convert_markdown",)
+__all__ = ("convert_markdown", "isolate_header")
 
 
 def main(argv: list[str] | None = None):
@@ -150,15 +152,7 @@ def convert_markdown(
 
     # When using katex, split of the header-related tags,
     # so they can be included in the header instead of the body.
-    if katex:
-        lines = body.splitlines()
-        icut = lines.index("</style>")
-        header_lines = lines[: icut + 1]
-        body_lines = lines[icut + 1 :]
-        body = "\n".join(body_lines)
-        extra_header = "\n".join(header_lines)
-    else:
-        extra_header = ""
+    extra_header, body = isolate_header(body)
 
     # Use Jinja to finalize the HTML page.
     variables = {
@@ -168,6 +162,40 @@ def convert_markdown(
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }
     return render("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
+
+
+def isolate_header(body: str) -> tuple[str, str]:
+    """Isolate HTML elements that should be put in the HTML header.
+
+    Normally, the markdown library only produces a HTML body,
+    but the markdown_katex plugin needs to insert header elements
+    to format the equations correctly.
+    This function isolates such header elements,
+    so they can be inserted in the right part of the HTML file.
+
+    Parameters
+    ----------
+    body
+        A HTML body with a few header elements.
+
+    Returns
+    -------
+    header
+        A string with HTML header elements.
+    body
+        The given body without the header elements.
+    """
+    root = loads_xml(f'<?xml version="1.0"?><body>{body}</body>')
+    header_lines = []
+    body_lines = []
+    for child in root:
+        line = dumps_xml(child).decode("utf-8").strip()
+        if len(line) > 0:
+            if child.tag in ["link", "style", "meta", "title"]:
+                header_lines.append(line)
+            else:
+                body_lines.append(line)
+    return "\n".join(header_lines), "\n".join(body_lines)
 
 
 if __name__ == "__main__":

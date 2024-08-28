@@ -16,13 +16,12 @@ file:./
                state = STATIC
           created by   root:
             supplies   file:demo.css
-            supplies   file:demo.html
-            supplies   file:demo.md
             supplies   file:macros.tex
             supplies   file:page.css
             supplies   file:plan.py
+            supplies   file:sub/
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 step:./plan.py
              workdir = ./
@@ -32,56 +31,67 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:demo.css
-             creates   file:demo.md
              creates   file:macros.tex
              creates   file:page.css
-             creates   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+             creates   file:sub/
+             creates   file:sub/demo.md
+             creates   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 file:demo.css
                 path = demo.css
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
-
-file:demo.md
-                path = demo.md
-               state = STATIC
-          created by   step:./plan.py
-            consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 file:macros.tex
                 path = macros.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 file:page.css
                 path = page.css
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
-step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+file:sub/
+                path = sub/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   file:sub/demo.html
+            supplies   file:sub/demo.md
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
+
+file:sub/demo.md
+                path = sub/demo.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+            supplies   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
+
+step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
              workdir = ./
-             command = python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+             command = python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
                state = SUCCEEDED
   consumes (amended) = file:demo.css
           created by   step:./plan.py
             consumes   file:./
             consumes   file:demo.css
-            consumes   file:demo.md
             consumes   file:macros.tex
             consumes   file:page.css
-             creates   file:demo.html
-            supplies   file:demo.html
+            consumes   file:sub/
+            consumes   file:sub/demo.md
+             creates   file:sub/demo.html
+            supplies   file:sub/demo.html
 
-file:demo.html
-                path = demo.html
+file:sub/demo.html
+                path = sub/demo.html
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
-            consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_markdown demo.md demo.html --katex --katex-macros=macros.tex --css page.css
+          created by   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
+            consumes   file:sub/
+            consumes   step:python -m stepup.reprep.convert_markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css

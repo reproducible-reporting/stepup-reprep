@@ -40,6 +40,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "check_hrefs_md",
         "convert_markdown",
         pytest.param("convert_markdown_concurrency", marks=pytest.mark.heavy),
+        "convert_markdown_env",
         "convert_weasyprint",
         "latex_flat",
         "latex_flat_subdir",

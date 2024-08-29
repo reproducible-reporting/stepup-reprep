@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support default arguments for convert_markdown defined as environment variables:
+  `${REPREP_KATEX_MACROS}` and `${REPREP_MARKDOWN_CSS}`.
+
 ### Fixed
 
 - Fix bug: CSS files in `convert_markdown` where not amended as inputs.

@@ -171,10 +171,13 @@ def convert_markdown(
         Set to `True` to enable KaTeX support.
     path_macro
         A file with macro definitions for KaTeX.
+        Defaults to `${REPREP_KATEX_MACROS}` if the variable is set.
     paths_css
         Path of a local CSS file, or a list of multiple such paths,
         to be included in the HTML header.
         Note that one may also specify CSS file in the markdown header.
+        Defaults to `${REPREP_MARKDOWN_CSS}` if the variable is set,
+        which is interpreted as a colon-separated list of files.
     optional
         When `True`, the step is only executed when needed by other steps.
     block

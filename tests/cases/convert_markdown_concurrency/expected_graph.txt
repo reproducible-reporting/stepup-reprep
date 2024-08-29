@@ -195,6 +195,7 @@ step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -230,6 +231,7 @@ step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -265,6 +267,7 @@ step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -300,6 +303,7 @@ step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -335,6 +339,7 @@ step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -370,6 +375,7 @@ step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -405,6 +411,7 @@ step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -440,6 +447,7 @@ step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -475,6 +483,7 @@ step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -510,6 +519,7 @@ step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -545,6 +555,7 @@ step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -580,6 +591,7 @@ step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -615,6 +627,7 @@ step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -650,6 +663,7 @@ step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -685,6 +699,7 @@ step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -720,6 +735,7 @@ step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -755,6 +771,7 @@ step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -790,6 +807,7 @@ step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -825,6 +843,7 @@ step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
@@ -860,6 +879,7 @@ step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --kate
              workdir = ./
              command = python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
                state = SUCCEEDED
+   env_var (amended) = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex

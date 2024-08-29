@@ -28,7 +28,7 @@ import markdown
 from defusedxml.ElementTree import fromstring as loads_xml
 from path import Path
 
-from stepup.core.api import amend
+from stepup.core.api import amend, getenv, translate_back
 
 from .render import render
 
@@ -40,6 +40,16 @@ def main(argv: list[str] | None = None):
     args = parse_args(argv)
     if not args.markdown.endswith(".md"):
         raise ValueError("The markdown file must end with the .md extension.")
+    if args.katex_macros is None and args.katex:
+        args.katex_macros = getenv("REPREP_KATEX_MACROS", None)
+        if args.katex_macros is not None:
+            args.katex_macros = translate_back(args.katex_macros)
+            amend(inp=args.katex_macros)
+    if args.css is None:
+        env_css = getenv("REPREP_MARKDOWN_CSS", "")
+        if env_css != "":
+            args.css = [translate_back(path_css) for path_css in env_css.split(":")]
+            amend(inp=args.css)
     with open(args.markdown) as fm, open(args.html, "w") as fh:
         fh.write(
             convert_markdown(fm.read(), args.katex, args.katex_macros, args.css, args.html.parent)
@@ -54,13 +64,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("markdown", type=Path, help="A Markdown file with extension `.md`")
     parser.add_argument("html", type=Path, help="A HTML output filename")
     parser.add_argument("--katex", default=False, action="store_true", help="Enable KaTeX")
-    parser.add_argument("--katex-macros", type=Path, default=None, help="KaTeX macro file")
+    parser.add_argument(
+        "--katex-macros",
+        type=Path,
+        default=None,
+        help="KaTeX macros file. The defualt value if ${REPREP_KATEX_MACROS} (if defined).",
+    )
     parser.add_argument(
         "--css",
         type=Path,
         nargs="+",
-        default=[],
-        help="Local CSS files to link to in the HTML header",
+        default=None,
+        help="Local CSS files to link to in the HTML header. "
+        "The default value is ${REPREP_MARKDOWN_CSS} (if defined) "
+        "and it is interpreted as a colon-separated list",
     )
     return parser.parse_args(argv)
 

@@ -140,10 +140,7 @@ def convert_markdown(
 
     if katex:
         extensions.append("markdown_katex")
-        configs["markdown_katex"] = {
-            "insert_fonts_css": True,
-            "no_inline_svg": True,
-        }
+        configs["markdown_katex"] = {"insert_fonts_css": True}
         if path_macro is not None:
             configs["markdown_katex"]["macro-file"] = path_macro
 

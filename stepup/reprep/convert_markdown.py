@@ -49,7 +49,6 @@ def main(argv: list[str] | None = None):
         env_css = getenv("REPREP_MARKDOWN_CSS", "")
         if env_css != "":
             args.css = [translate_back(path_css) for path_css in env_css.split(":")]
-            amend(inp=args.css)
     with open(args.markdown) as fm, open(args.html, "w") as fh:
         fh.write(
             convert_markdown(fm.read(), args.katex, args.katex_macros, args.css, args.html.parent)
@@ -158,9 +157,8 @@ def convert_markdown(
     elif isinstance(paths_css, str):
         paths_css = [paths_css]
     paths_css.extend(md_ctx.Meta.get("css", []))
-    amend(inp=[path_css for path_css in md_ctx.Meta.get("css", []) if "://" not in path_css])
 
-    # Rewrite CSS paths is paths relative to the parent of the HTML output.
+    # Rewrite CSS paths as paths relative to the parent of the HTML output.
     # parent_html = Path(parent_html)
     paths_css = [
         path_css if "://" in path_css else Path(path_css).relpath(parent_html)

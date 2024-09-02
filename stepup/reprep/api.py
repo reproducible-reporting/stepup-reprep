@@ -204,7 +204,6 @@ def convert_markdown(
     if paths_css is not None:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
-        inp.extend(paths_css)
         command += " --css " + " ".join(paths_css)
     return step(command, inp=inp, out=path_html, optional=optional, block=block)
 

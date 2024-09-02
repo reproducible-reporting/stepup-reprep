@@ -52,24 +52,18 @@ file:source/demo.md
 dg:'common/**'
           created by   step:./plan.py
              creates   file:common/
-             creates   file:common/demo.css
              creates   file:common/macros.tex
-             creates   file:common/page.css
 
 step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
              workdir = ./
              command = python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
                state = SUCCEEDED
-  consumes (amended) = file:common/demo.css
-                     = file:common/macros.tex
-                     = file:common/page.css
+  consumes (amended) = file:common/macros.tex
    env_var (amended) = REPREP_KATEX_MACROS
                      = REPREP_MARKDOWN_CSS
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:common/demo.css
             consumes   file:common/macros.tex
-            consumes   file:common/page.css
             consumes   file:source/
             consumes   file:source/demo.md
              creates   file:source/demo.html
@@ -87,26 +81,10 @@ file:common/
                state = STATIC
           created by   dg:'common/**'
             consumes   file:./
-            supplies   file:common/demo.css
             supplies   file:common/macros.tex
-            supplies   file:common/page.css
 
 file:common/macros.tex
                 path = common/macros.tex
-               state = STATIC
-          created by   dg:'common/**'
-            consumes   file:common/
-            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
-
-file:common/demo.css
-                path = common/demo.css
-               state = STATIC
-          created by   dg:'common/**'
-            consumes   file:common/
-            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
-
-file:common/page.css
-                path = common/page.css
                state = STATIC
           created by   dg:'common/**'
             consumes   file:common/

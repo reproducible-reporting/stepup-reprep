@@ -9,16 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support default arguments for convert_markdown defined as environment variables:
+- An extra argument was added to `convert_markdown` to specify CSS files.
+- Support default arguments for `convert_markdown` defined as environment variables:
   `${REPREP_KATEX_MACROS}` and `${REPREP_MARKDOWN_CSS}`.
 
 ### Fixed
 
-- Fix bug: CSS files in `convert_markdown` where not amended as inputs.
-  Related to this, an extra argument was added to specify CSS files in a `plan.py`.
 - Fix bug: put header output of `markdown_katex` plugin in the HTML header.
 - Fix bug: rewrite paths to CSS files in `convert_markdown`
   to be relative to the parent of the output HTML file.
+
 
 ## [1.4.0] - 2024-08-27 {: #v1.4.0 }
 

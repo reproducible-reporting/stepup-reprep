@@ -22,10 +22,9 @@
 import argparse
 import re
 import sys
-from xml.etree.ElementTree import tostring as dumps_xml
 
 import markdown
-from defusedxml.ElementTree import fromstring as loads_xml
+from bs4 import BeautifulSoup
 from path import Path
 
 from stepup.core.api import amend, getenv, translate_back
@@ -88,6 +87,7 @@ HTML_TEMPLATE = """\
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>{{ title }}</title>
+  {{ extra_head | indent(width=2) }}
   {{ css | indent(width=2) }}
 </head>
 <body>
@@ -148,8 +148,9 @@ def convert_markdown(
         extension_configs=configs,
     )
 
-    # Convert to HTML
+    # Convert to HTML and split into HEAD and BODY parts
     body = md_ctx.convert(text_md)
+    extra_head, body = isolate_header(body)
 
     # Collect all CSS paths
     if paths_css is None:
@@ -167,6 +168,7 @@ def convert_markdown(
 
     # Use Jinja to finalize the HTML page.
     variables = {
+        "extra_head": extra_head,
         "body": body,
         "title": md_ctx.Meta.get("title", ["Untitled"])[0],
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
@@ -195,19 +197,17 @@ def isolate_header(body: str) -> tuple[str, str]:
     body
         The given body without the header elements.
     """
-    root = loads_xml(f'<?xml version="1.0"?><body>{body}</body>')
-    header_lines = []
+    soup = BeautifulSoup(body, features="html.parser")
+    head_lines = []
     body_lines = []
-    for child in root:
-        line = dumps_xml(
-            child, encoding="unicode", method="html", short_empty_elements=False
-        ).strip()
+    for child in soup.contents:
+        line = str(child).strip()
         if len(line) > 0:
-            if child.tag in ["link", "style", "meta", "title"]:
-                header_lines.append(line)
+            if child.name in ["link", "style", "meta", "title"]:
+                head_lines.append(line)
             else:
                 body_lines.append(line)
-    return "\n".join(header_lines), "\n".join(body_lines)
+    return "".join(head_lines), "".join(body_lines)
 
 
 if __name__ == "__main__":

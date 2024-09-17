@@ -7,12 +7,25 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 First, create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
 The following commands assume you create `stepup-core` and `step-reprep` source trees as subdirectories of the same parent.
 
+Clone the StepUp RepRep repository and create a virtual environment using the following commands
+
 ```bash
 git clone git@github.com:reproducible-reporting/stepup-reprep.git
 cd stepup-reprep
 pre-commit install
 python -m venv venv
-echo 'source venv/bin/activate' > .envrc
+```
+
+Put the following two lines in `.envrc`:
+
+```bash
+source venv/bin/activate
+export XDG_CACHE_HOME="${VIRTUAL_ENV}/cache"
+```
+
+Finally, run the following commands:
+
+```bash
 direnv allow
 pip install -U pip
 pip install -e .[dev]

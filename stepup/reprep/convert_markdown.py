@@ -134,6 +134,7 @@ def convert_markdown(
         "fenced_code",
         "tables",
         "meta",
+        "smarty",
     ]
     configs = {}
 

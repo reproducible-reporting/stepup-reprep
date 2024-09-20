@@ -25,6 +25,6 @@ from path import Path
 pytest.register_assert_rewrite("stepup.core.pytest", "stepup.reprep.pytest")
 
 
-@pytest.fixture()
+@pytest.fixture
 def path_tmp(tmpdir: str) -> Path:
     return Path(tmpdir)

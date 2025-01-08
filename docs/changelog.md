@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Added
 
 - Add `smarty` extension to markdown conversion.
+- Add option to insert blank page after odd-paged PDF when concatenating PDFs.
+
 
 ## [1.4.1] - 2024-09-02 {: #v1.4.1 }
 

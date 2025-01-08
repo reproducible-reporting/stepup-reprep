@@ -28,13 +28,13 @@ __all__ = (
     "cat_pdf",
     "check_hrefs",
     "convert_markdown",
-    "convert_weasyprint",
     "convert_odf_pdf",
     "convert_pdf",
     "convert_pdf_png",
     "convert_svg",
     "convert_svg_pdf",
     "convert_svg_png",
+    "convert_weasyprint",
     "latex",
     "latex_diff",
     "latex_flat",
@@ -84,7 +84,7 @@ def cat_pdf(
     paths_inp: Collection[str],
     path_out: str,
     *,
-    mutool: str | None = None,
+    insert_blank: bool = False,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -96,9 +96,9 @@ def cat_pdf(
         The input PDF files.
     path_out
         The concatenated PDF.
-    mutool
-        The path to the mutool executable.
-        Defaults to `${REPREP_MUTOOL}` variable or `mutool` if the variable is unset.
+    insert_blank
+        Insert a blank page after a PDF with an odd number of pages.
+        The last page of each PDF is used to determine the size of the added blank page.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
@@ -109,10 +109,12 @@ def cat_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    if mutool is None:
-        mutool = getenv("REPREP_MUTOOL", "mutool")
+    command = "python -m stepup.reprep.cat_pdf"
+    if insert_blank:
+        command += " --insert-blank"
+    command += " ${inp} ${out}"
     return step(
-        mutool + " merge -o ${out} ${inp}",
+        command,
         inp=paths_inp,
         out=path_out,
         optional=optional,

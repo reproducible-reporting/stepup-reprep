@@ -3,6 +3,7 @@
 .idea
 tmp
 venv/
+site/
 .ruff_cache
 .pytest_cache
 

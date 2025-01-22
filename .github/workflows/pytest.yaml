@@ -28,4 +28,4 @@ jobs:
       - name: Install development version of StepUp-RepRep
         run: pip install -e .[dev]
       - name: Run pytest
-        run: pytest -vv -m "not heavy"
+        run: pytest -vv

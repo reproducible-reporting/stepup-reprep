@@ -1,0 +1,65 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   (file:BROKEN.md)
+            supplies   file:README.md
+            supplies   file:check_hrefs.yaml
+            supplies   file:plan.py
+            supplies   file:test.html
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.check_hrefs test.html
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:README.md
+             creates   file:check_hrefs.yaml
+             creates   file:test.html
+             creates   step:python -m stepup.reprep.check_hrefs test.html
+
+file:README.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.html
+
+file:check_hrefs.yaml
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.html
+
+file:test.html
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.html
+
+step:python -m stepup.reprep.check_hrefs test.html
+               state = PENDING
+             env_var = REPREP_CHECK_HREFS_CONFIG [amended]
+          created by   step:./plan.py
+            consumes   (file:BROKEN.md) [amended]
+            consumes   file:./
+            consumes   file:README.md [amended]
+            consumes   file:check_hrefs.yaml [amended]
+            consumes   file:test.html
+
+(file:BROKEN.md)
+               state = AWAITED
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.check_hrefs test.html

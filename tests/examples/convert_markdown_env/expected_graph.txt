@@ -1,0 +1,79 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:common/
+            supplies   file:plan.py
+            supplies   file:source/
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   dg:common/**
+             creates   file:source/
+             creates   file:source/demo.md
+             creates   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+
+file:source/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   file:source/demo.html
+            supplies   file:source/demo.md
+            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+
+file:source/demo.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:source/
+            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+
+dg:common/**
+          created by   step:./plan.py
+             creates   file:common/
+             creates   file:common/macros.tex
+
+step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+               state = SUCCEEDED
+             env_var = REPREP_KATEX_MACROS [amended]
+                     = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:common/macros.tex [amended]
+            consumes   file:source/
+            consumes   file:source/demo.md
+             creates   file:source/demo.html
+            supplies   file:source/demo.html
+
+file:source/demo.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+            consumes   file:source/
+            consumes   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex
+
+file:common/
+               state = STATIC
+          created by   dg:common/**
+            consumes   file:./
+            supplies   file:common/macros.tex
+
+file:common/macros.tex
+               state = STATIC
+          created by   dg:common/**
+            consumes   file:common/
+            supplies   step:python -m stepup.reprep.convert_markdown source/demo.md source/demo.html --katex

@@ -1,0 +1,770 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:macros.tex
+            supplies   file:plan.py
+            supplies   file:random_00.html
+            supplies   file:random_00.md
+            supplies   file:random_01.html
+            supplies   file:random_01.md
+            supplies   file:random_02.html
+            supplies   file:random_02.md
+            supplies   file:random_03.html
+            supplies   file:random_03.md
+            supplies   file:random_04.html
+            supplies   file:random_04.md
+            supplies   file:random_05.html
+            supplies   file:random_05.md
+            supplies   file:random_06.html
+            supplies   file:random_06.md
+            supplies   file:random_07.html
+            supplies   file:random_07.md
+            supplies   file:random_08.html
+            supplies   file:random_08.md
+            supplies   file:random_09.html
+            supplies   file:random_09.md
+            supplies   file:random_10.html
+            supplies   file:random_10.md
+            supplies   file:random_11.html
+            supplies   file:random_11.md
+            supplies   file:random_12.html
+            supplies   file:random_12.md
+            supplies   file:random_13.html
+            supplies   file:random_13.md
+            supplies   file:random_14.html
+            supplies   file:random_14.md
+            supplies   file:random_15.html
+            supplies   file:random_15.md
+            supplies   file:random_16.html
+            supplies   file:random_16.md
+            supplies   file:random_17.html
+            supplies   file:random_17.md
+            supplies   file:random_18.html
+            supplies   file:random_18.md
+            supplies   file:random_19.html
+            supplies   file:random_19.md
+            supplies   step:./plan.py
+            supplies   step:./write.py 0 > random_00.md
+            supplies   step:./write.py 1 > random_01.md
+            supplies   step:./write.py 10 > random_10.md
+            supplies   step:./write.py 11 > random_11.md
+            supplies   step:./write.py 12 > random_12.md
+            supplies   step:./write.py 13 > random_13.md
+            supplies   step:./write.py 14 > random_14.md
+            supplies   step:./write.py 15 > random_15.md
+            supplies   step:./write.py 16 > random_16.md
+            supplies   step:./write.py 17 > random_17.md
+            supplies   step:./write.py 18 > random_18.md
+            supplies   step:./write.py 19 > random_19.md
+            supplies   step:./write.py 2 > random_02.md
+            supplies   step:./write.py 3 > random_03.md
+            supplies   step:./write.py 4 > random_04.md
+            supplies   step:./write.py 5 > random_05.md
+            supplies   step:./write.py 6 > random_06.md
+            supplies   step:./write.py 7 > random_07.md
+            supplies   step:./write.py 8 > random_08.md
+            supplies   step:./write.py 9 > random_09.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:macros.tex
+             creates   step:./write.py 0 > random_00.md
+             creates   step:./write.py 1 > random_01.md
+             creates   step:./write.py 10 > random_10.md
+             creates   step:./write.py 11 > random_11.md
+             creates   step:./write.py 12 > random_12.md
+             creates   step:./write.py 13 > random_13.md
+             creates   step:./write.py 14 > random_14.md
+             creates   step:./write.py 15 > random_15.md
+             creates   step:./write.py 16 > random_16.md
+             creates   step:./write.py 17 > random_17.md
+             creates   step:./write.py 18 > random_18.md
+             creates   step:./write.py 19 > random_19.md
+             creates   step:./write.py 2 > random_02.md
+             creates   step:./write.py 3 > random_03.md
+             creates   step:./write.py 4 > random_04.md
+             creates   step:./write.py 5 > random_05.md
+             creates   step:./write.py 6 > random_06.md
+             creates   step:./write.py 7 > random_07.md
+             creates   step:./write.py 8 > random_08.md
+             creates   step:./write.py 9 > random_09.md
+             creates   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+             creates   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+
+file:macros.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+            supplies   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+
+step:./write.py 0 > random_00.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_00.md
+            supplies   file:random_00.md
+
+file:random_00.md
+               state = BUILT
+          created by   step:./write.py 0 > random_00.md
+            consumes   file:./
+            consumes   step:./write.py 0 > random_00.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_00.md
+             creates   file:random_00.html
+            supplies   file:random_00.html
+
+file:random_00.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_00.md random_00.html --katex --katex-macros=macros.tex
+
+step:./write.py 1 > random_01.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_01.md
+            supplies   file:random_01.md
+
+file:random_01.md
+               state = BUILT
+          created by   step:./write.py 1 > random_01.md
+            consumes   file:./
+            consumes   step:./write.py 1 > random_01.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_01.md
+             creates   file:random_01.html
+            supplies   file:random_01.html
+
+file:random_01.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_01.md random_01.html --katex --katex-macros=macros.tex
+
+step:./write.py 2 > random_02.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_02.md
+            supplies   file:random_02.md
+
+file:random_02.md
+               state = BUILT
+          created by   step:./write.py 2 > random_02.md
+            consumes   file:./
+            consumes   step:./write.py 2 > random_02.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_02.md
+             creates   file:random_02.html
+            supplies   file:random_02.html
+
+file:random_02.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_02.md random_02.html --katex --katex-macros=macros.tex
+
+step:./write.py 3 > random_03.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_03.md
+            supplies   file:random_03.md
+
+file:random_03.md
+               state = BUILT
+          created by   step:./write.py 3 > random_03.md
+            consumes   file:./
+            consumes   step:./write.py 3 > random_03.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_03.md
+             creates   file:random_03.html
+            supplies   file:random_03.html
+
+file:random_03.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_03.md random_03.html --katex --katex-macros=macros.tex
+
+step:./write.py 4 > random_04.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_04.md
+            supplies   file:random_04.md
+
+file:random_04.md
+               state = BUILT
+          created by   step:./write.py 4 > random_04.md
+            consumes   file:./
+            consumes   step:./write.py 4 > random_04.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_04.md
+             creates   file:random_04.html
+            supplies   file:random_04.html
+
+file:random_04.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_04.md random_04.html --katex --katex-macros=macros.tex
+
+step:./write.py 5 > random_05.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_05.md
+            supplies   file:random_05.md
+
+file:random_05.md
+               state = BUILT
+          created by   step:./write.py 5 > random_05.md
+            consumes   file:./
+            consumes   step:./write.py 5 > random_05.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_05.md
+             creates   file:random_05.html
+            supplies   file:random_05.html
+
+file:random_05.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_05.md random_05.html --katex --katex-macros=macros.tex
+
+step:./write.py 6 > random_06.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_06.md
+            supplies   file:random_06.md
+
+file:random_06.md
+               state = BUILT
+          created by   step:./write.py 6 > random_06.md
+            consumes   file:./
+            consumes   step:./write.py 6 > random_06.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_06.md
+             creates   file:random_06.html
+            supplies   file:random_06.html
+
+file:random_06.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_06.md random_06.html --katex --katex-macros=macros.tex
+
+step:./write.py 7 > random_07.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_07.md
+            supplies   file:random_07.md
+
+file:random_07.md
+               state = BUILT
+          created by   step:./write.py 7 > random_07.md
+            consumes   file:./
+            consumes   step:./write.py 7 > random_07.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_07.md
+             creates   file:random_07.html
+            supplies   file:random_07.html
+
+file:random_07.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_07.md random_07.html --katex --katex-macros=macros.tex
+
+step:./write.py 8 > random_08.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_08.md
+            supplies   file:random_08.md
+
+file:random_08.md
+               state = BUILT
+          created by   step:./write.py 8 > random_08.md
+            consumes   file:./
+            consumes   step:./write.py 8 > random_08.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_08.md
+             creates   file:random_08.html
+            supplies   file:random_08.html
+
+file:random_08.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_08.md random_08.html --katex --katex-macros=macros.tex
+
+step:./write.py 9 > random_09.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_09.md
+            supplies   file:random_09.md
+
+file:random_09.md
+               state = BUILT
+          created by   step:./write.py 9 > random_09.md
+            consumes   file:./
+            consumes   step:./write.py 9 > random_09.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_09.md
+             creates   file:random_09.html
+            supplies   file:random_09.html
+
+file:random_09.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_09.md random_09.html --katex --katex-macros=macros.tex
+
+step:./write.py 10 > random_10.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_10.md
+            supplies   file:random_10.md
+
+file:random_10.md
+               state = BUILT
+          created by   step:./write.py 10 > random_10.md
+            consumes   file:./
+            consumes   step:./write.py 10 > random_10.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_10.md
+             creates   file:random_10.html
+            supplies   file:random_10.html
+
+file:random_10.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_10.md random_10.html --katex --katex-macros=macros.tex
+
+step:./write.py 11 > random_11.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_11.md
+            supplies   file:random_11.md
+
+file:random_11.md
+               state = BUILT
+          created by   step:./write.py 11 > random_11.md
+            consumes   file:./
+            consumes   step:./write.py 11 > random_11.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_11.md
+             creates   file:random_11.html
+            supplies   file:random_11.html
+
+file:random_11.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_11.md random_11.html --katex --katex-macros=macros.tex
+
+step:./write.py 12 > random_12.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_12.md
+            supplies   file:random_12.md
+
+file:random_12.md
+               state = BUILT
+          created by   step:./write.py 12 > random_12.md
+            consumes   file:./
+            consumes   step:./write.py 12 > random_12.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_12.md
+             creates   file:random_12.html
+            supplies   file:random_12.html
+
+file:random_12.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_12.md random_12.html --katex --katex-macros=macros.tex
+
+step:./write.py 13 > random_13.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_13.md
+            supplies   file:random_13.md
+
+file:random_13.md
+               state = BUILT
+          created by   step:./write.py 13 > random_13.md
+            consumes   file:./
+            consumes   step:./write.py 13 > random_13.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_13.md
+             creates   file:random_13.html
+            supplies   file:random_13.html
+
+file:random_13.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_13.md random_13.html --katex --katex-macros=macros.tex
+
+step:./write.py 14 > random_14.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_14.md
+            supplies   file:random_14.md
+
+file:random_14.md
+               state = BUILT
+          created by   step:./write.py 14 > random_14.md
+            consumes   file:./
+            consumes   step:./write.py 14 > random_14.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_14.md
+             creates   file:random_14.html
+            supplies   file:random_14.html
+
+file:random_14.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_14.md random_14.html --katex --katex-macros=macros.tex
+
+step:./write.py 15 > random_15.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_15.md
+            supplies   file:random_15.md
+
+file:random_15.md
+               state = BUILT
+          created by   step:./write.py 15 > random_15.md
+            consumes   file:./
+            consumes   step:./write.py 15 > random_15.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_15.md
+             creates   file:random_15.html
+            supplies   file:random_15.html
+
+file:random_15.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_15.md random_15.html --katex --katex-macros=macros.tex
+
+step:./write.py 16 > random_16.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_16.md
+            supplies   file:random_16.md
+
+file:random_16.md
+               state = BUILT
+          created by   step:./write.py 16 > random_16.md
+            consumes   file:./
+            consumes   step:./write.py 16 > random_16.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_16.md
+             creates   file:random_16.html
+            supplies   file:random_16.html
+
+file:random_16.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_16.md random_16.html --katex --katex-macros=macros.tex
+
+step:./write.py 17 > random_17.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_17.md
+            supplies   file:random_17.md
+
+file:random_17.md
+               state = BUILT
+          created by   step:./write.py 17 > random_17.md
+            consumes   file:./
+            consumes   step:./write.py 17 > random_17.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_17.md
+             creates   file:random_17.html
+            supplies   file:random_17.html
+
+file:random_17.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_17.md random_17.html --katex --katex-macros=macros.tex
+
+step:./write.py 18 > random_18.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_18.md
+            supplies   file:random_18.md
+
+file:random_18.md
+               state = BUILT
+          created by   step:./write.py 18 > random_18.md
+            consumes   file:./
+            consumes   step:./write.py 18 > random_18.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_18.md
+             creates   file:random_18.html
+            supplies   file:random_18.html
+
+file:random_18.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_18.md random_18.html --katex --katex-macros=macros.tex
+
+step:./write.py 19 > random_19.md
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:random_19.md
+            supplies   file:random_19.md
+
+file:random_19.md
+               state = BUILT
+          created by   step:./write.py 19 > random_19.md
+            consumes   file:./
+            consumes   step:./write.py 19 > random_19.md
+            supplies   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+
+step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+               state = SUCCEEDED
+             env_var = REPREP_MARKDOWN_CSS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:macros.tex
+            consumes   file:random_19.md
+             creates   file:random_19.html
+            supplies   file:random_19.html
+
+file:random_19.html
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_markdown random_19.md random_19.html --katex --katex-macros=macros.tex

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from stepup.core.api import glob, script, static
 from stepup.reprep.api import convert_pdf_png, convert_svg_pdf
 

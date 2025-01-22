@@ -393,9 +393,7 @@ def update_online(config: Config, verbose: bool):
     paths_inp = list(config.paths)
     if config.path_readme is not None:
         paths_inp.append(config.path_readme)
-    if not amend(inp=paths_inp):
-        print("No amend")
-        return
+    amend(inp=paths_inp)
 
     # If present, convert README Markdown file to HTML
     if config.path_readme is not None:

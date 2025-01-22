@@ -23,12 +23,11 @@ This is mainly intended to impede (the quality of) unauthorized copies.
 """
 
 import argparse
-import os
 import sys
 
 import fitz
 
-from stepup.core.api import amend
+from stepup.core.api import getenv
 
 __all__ = ("raster_pdf",)
 
@@ -37,11 +36,9 @@ def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     if args.resolution is None:
-        amend(env=["REPREP_RASTER_RESOLUTION"])
-        args.resolution = int(os.environ.get("REPREP_RASTER_RESOLUTION", "100"))
+        args.resolution = int(getenv("REPREP_RASTER_RESOLUTION", "100"))
     if args.quality is None:
-        amend(env=["REPREP_RASTER_QUALITY"])
-        args.quality = int(os.environ.get("REPREP_RASTER_QUALITY", "50"))
+        args.quality = int(getenv("REPREP_RASTER_QUALITY", "50"))
 
     raster_pdf(args.path_inp, args.path_out, args.resolution, args.quality)
     return 0

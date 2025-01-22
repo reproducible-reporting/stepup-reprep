@@ -29,6 +29,7 @@ There are two kinds of inventory files:
 import argparse
 import contextlib
 import shlex
+import sqlite3
 import subprocess
 import sys
 from collections.abc import Collection
@@ -37,7 +38,6 @@ from path import Path
 
 from stepup.core.file import FileState
 from stepup.core.nglob import NGlobMulti
-from stepup.core.workflow import Workflow
 
 from .inventory import format_summary, get_summary
 
@@ -121,6 +121,10 @@ def get_file_list_git(i: int, args: list[str]) -> Collection[str]:
 
 
 def get_file_list_workflow(i: int, args: list[str]) -> Collection[str]:
+    """Get a list of files from a StepUp graph.db workflow file.
+
+    There must be at least two arguments: the state and one or more patterns of graph.db files.
+    """
     if len(args) < 2:
         raise ValueError(
             f"Error on line {i} of the inventory input: Expecting at least two arguments."
@@ -128,18 +132,21 @@ def get_file_list_workflow(i: int, args: list[str]) -> Collection[str]:
     state = FileState[args[0]]
     ngm = NGlobMulti.from_patterns(args[1:])
     ngm.glob()
-    paths_workflow = ngm.files()
-    if len(paths_workflow) == 0:
-        raise ValueError(f"Error on line {i} of the inventory input: no matching workflow files.")
+    paths_graph_db = ngm.files()
+    if len(paths_graph_db) == 0:
+        raise ValueError(
+            f"Error on line {i} of the inventory input: no matching graph.db workflow files."
+        )
     paths = set()
-    for path_workflow in paths_workflow:
-        if path_workflow.parent.name != ".stepup":
-            raise ValueError("A workflow.mpk.xz file must be in a .stepup directory.")
-        root = path_workflow.parent.parent
-        workflow = Workflow.from_file(path_workflow)
-        for file_key in workflow.file_states.inverse.get(state):
-            if not file_key.endswith("/"):
-                paths.add(root / file_key[5:])
+    for path_graph_db in paths_graph_db:
+        if path_graph_db.parent.name != ".stepup":
+            raise ValueError("A graph.db file must be in a .stepup directory.")
+        root = path_graph_db.parent.parent
+        con = sqlite3.connect(f"file:{path_graph_db}?mode=ro", uri=True)
+        sql = "SELECT label FROM node JOIN file ON node.i = file.node WHERE state = ?"
+        for (path,) in con.execute(sql, (state.value,)):
+            if not path.endswith("/"):
+                paths.add(root / path)
     return paths
 
 

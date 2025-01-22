@@ -1,0 +1,2 @@
+include-workflow STATIC .stepup/graph.db
+include-workflow BUILT .stepup/graph.db

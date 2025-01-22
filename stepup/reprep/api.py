@@ -19,6 +19,7 @@
 # --
 """Application programming interface for StepUp RepRep."""
 
+import shlex
 from collections.abc import Collection
 
 from stepup.core.api import StepInfo, getenv, step, subs_env_vars
@@ -143,7 +144,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     with subs_env_vars() as subs:
         path_src = subs(path_src)
         path_config = subs(path_config)
-    command = f"python -m stepup.reprep.check_hrefs {path_src}"
+    command = f"python -m stepup.reprep.check_hrefs {shlex.quote(path_src)}"
     inp_paths = [path_src]
     if path_config is not None:
         inp_paths.append(path_config)
@@ -197,16 +198,17 @@ def convert_markdown(
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, out, ".html")
     inp = [path_md]
-    command = f"python -m stepup.reprep.convert_markdown {path_md} {path_html}"
+    command = "python -m stepup.reprep.convert_markdown "
+    command += shlex.join([path_md, path_html])
     if katex:
         command += " --katex"
         if path_macro is not None:
-            command += f" --katex-macros={path_macro}"
+            command += " --katex-macros=" + shlex.quote(path_macro)
             inp.append(path_macro)
     if paths_css is not None:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
-        command += " --css " + " ".join(paths_css)
+        command += " --css " + shlex.join(paths_css)
     return step(command, inp=inp, out=path_html, optional=optional, block=block)
 
 
@@ -245,9 +247,10 @@ def convert_weasyprint(
     if not path_html.endswith(".html"):
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, out, ".pdf")
-    command = f"python -m stepup.reprep.convert_weasyprint {path_html} {path_pdf}"
+    command = "python -m stepup.reprep.convert_weasyprint "
+    command += shlex.join([path_html, path_pdf])
     if weasyprint is not None:
-        command += f" --weasyprint={weasyprint}"
+        command += " --weasyprint=" + shlex.quote(weasyprint)
     if optional:
         command += " --optional"
     return step(command, inp=path_html, block=block)
@@ -301,8 +304,9 @@ def convert_odf_pdf(
         # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
         # Not solved yet:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
-        f"WORK=`mktemp -d --suffix=reprep` && {libreoffice} "
-        "-env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
+        "WORK=`mktemp -d --suffix=reprep` && "
+        + shlex.quote(libreoffice)
+        + " -env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
         "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
     path_pdf = make_path_out(path_odf, out, ".pdf")
@@ -345,8 +349,10 @@ def convert_pdf(
         resolution = int(getenv("REPREP_CONVERT_PDF_RESOLUTION", "100"))
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
+    args = [shlex.quote(mutool), "draw -q -o ${out} -r", shlex.quote(str(resolution)), "${inp}"]
+    command = " ".join(args)
     return step(
-        f"{mutool} draw -q -o ${{out}} -r {resolution} ${{inp}}",
+        command,
         inp=path_pdf,
         out=path_out,
         optional=optional,
@@ -425,9 +431,10 @@ def convert_svg(
         raise ValueError("The SVG file must have extension .svg")
     if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
-    command = f"python -m stepup.reprep.convert_inkscape {path_svg} {path_out}"
+    command = "python -m stepup.reprep.convert_inkscape "
+    command += shlex.join([path_svg, path_out])
     if inkscape is not None:
-        command += f" --inkscape={inkscape}"
+        command += " --inkscape=" + shlex.quote(inkscape)
     if inkscape_args is not None:
         command += f" -- {inkscape_args}"
     if optional:
@@ -557,20 +564,20 @@ def latex(
     prefix = path_tex[:-4]
     path_pdf = f"{prefix}.pdf"
 
-    command = f"python -m stepup.reprep.latex {path_tex}"
+    command = "python -m stepup.reprep.latex " + shlex.quote(path_tex)
     inp_paths = [path_tex]
     if maxrep != 5:
-        command += f" --maxrep={maxrep}"
+        command += " --maxrep=" + shlex.quote(str(maxrep))
     if latex is not None:
-        command += f" --latex={latex}"
+        command += " --latex=" + shlex.quote(latex)
     if run_bibtex:
         command += " --run-bibtex"
         if bibtex is not None:
-            command += f" --bibtex={bibtex}"
+            command += " --bibtex=" + shlex.quote(bibtex)
         if bibsane is not None:
-            command += f" --bibsane={bibsane}"
+            command += " --bibsane=" + shlex.quote(bibsane)
         if bibsane_config is not None:
-            command += f" --bibsane-config={bibsane_config}"
+            command += " --bibsane-config=" + shlex.quote(bibsane_config)
             inp_paths.append(bibsane_config)
     return step(
         command,
@@ -638,8 +645,10 @@ def latex_diff(
     if latexdiff_args is None:
         latexdiff_args = getenv("REPREP_LATEXDIFF_ARGS", "")
 
+    args = [shlex.quote(latexdiff), latexdiff_args, "${inp}", "--no-label", ">", "${out}"]
+    command = " ".join(args)
     return step(
-        f"{latexdiff} {latexdiff_args} ${{inp}} --no-label > ${{out}}",
+        command,
         inp=[path_old, path_new],
         out=path_diff,
         optional=optional,
@@ -748,13 +757,13 @@ def nup_pdf(
     """
     command = "python -m stepup.reprep.nup_pdf ${inp} ${out}"
     if nrow is not None:
-        command += f" -r {nrow}"
+        command += " -r " + shlex.quote(str(nrow))
     if ncol is not None:
-        command += f" -c {ncol}"
+        command += " -c " + shlex.quote(str(ncol))
     if margin is not None:
-        command += f" -m {margin}"
+        command += " -m " + shlex.quote(str(margin))
     if page_format is not None:
-        command += f" -p {page_format}"
+        command += " -p " + shlex.quote(page_format)
     return step(command, inp=path_src, out=path_dst, optional=optional, block=block)
 
 
@@ -794,9 +803,9 @@ def raster_pdf(
     """
     command = "python -m stepup.reprep.raster_pdf ${inp} ${out}"
     if resolution is not None:
-        command += f" -r {resolution}"
+        command += " -r " + shlex.quote(str(resolution))
     if quality is not None:
-        command += f" -q {quality}"
+        command += " -q " + shlex.quote(str(quality))
     path_out = make_path_out(path_inp, out, ".pdf")
     return step(command, inp=path_inp, out=path_out, optional=optional, block=block)
 

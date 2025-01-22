@@ -1,0 +1,48 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:README.md
+            supplies   file:inventory.txt
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:reprep-make-inventory README.md -o inventory.txt
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:README.md
+             creates   step:reprep-make-inventory README.md -o inventory.txt
+
+file:README.md
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:reprep-make-inventory README.md -o inventory.txt
+
+step:reprep-make-inventory README.md -o inventory.txt
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:README.md
+             creates   file:inventory.txt
+            supplies   file:inventory.txt
+
+file:inventory.txt
+               state = BUILT
+          created by   step:reprep-make-inventory README.md -o inventory.txt
+            consumes   file:./
+            consumes   step:reprep-make-inventory README.md -o inventory.txt

@@ -25,7 +25,6 @@ Instead, StepUp RepRep offers tools to make such files.
 ### Inventory Definitions (`inventory.def`)
 
 The `inventory.def` format is inspired by the `MANIFEST.in` format from the [setuptools](https://setuptools.pypa.io/) project.
-See [`MANIFEST.in` format documentation](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html#using-manifest-in) for details.
 As of version 1.2.0, StepUp RepRep no longer relies on setuptools and has its own implementation to process inventory definitions.
 
 Inventory definition files are processed one line at a time.
@@ -46,10 +45,10 @@ The following rules are supported:
 - The `include-git` and `exclude-git` use `git ls-files` to generate a list of files.
   This command takes no arguments.
 - The `include-workflow` and `exclude-workflow` extract a file list
-  from one or more StepUp `workflow.mpl.xz` files.
+  from one or more StepUp `graph.db` files.
   The first argument is the state of the files to be selected.
   (`STATIC`, `BUILT` or `VOLATILE` are common. Other states exist but make less sense.)
-  All subsequent arguments are (named glob patterns matching) StepUp workflow files.
+  All subsequent arguments are (named glob patterns matching) StepUp `graph.db` files.
 
 
 ## Creating `inventory.txt` Files.

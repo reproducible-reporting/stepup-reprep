@@ -26,7 +26,7 @@ import fitz
 import numpy as np
 from scipy import optimize
 
-__all__ = ("Panel", "Figure")
+__all__ = ("Figure", "Panel")
 
 
 @attrs.define

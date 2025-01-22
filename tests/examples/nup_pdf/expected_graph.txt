@@ -1,0 +1,51 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:dst.pdf
+            supplies   file:plan.py
+            supplies   file:src.pdf
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:src.pdf
+             creates   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+
+file:src.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+
+step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+               state = SUCCEEDED
+             env_var = REPREP_NUP_MARGIN [amended]
+                     = REPREP_NUP_NCOL [amended]
+                     = REPREP_NUP_NROW [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:src.pdf
+             creates   file:dst.pdf
+            supplies   file:dst.pdf
+
+file:dst.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4

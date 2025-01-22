@@ -1,0 +1,57 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:cat.pdf
+            supplies   file:doc1.pdf
+            supplies   file:doc2.pdf
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:doc1.pdf
+             creates   file:doc2.pdf
+             creates   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+
+file:doc1.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+
+file:doc2.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+
+step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:doc1.pdf
+            consumes   file:doc2.pdf
+             creates   file:cat.pdf
+            supplies   file:cat.pdf
+
+file:cat.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf

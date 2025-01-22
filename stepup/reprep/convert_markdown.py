@@ -27,7 +27,8 @@ import markdown
 from bs4 import BeautifulSoup
 from path import Path
 
-from stepup.core.api import amend, getenv, translate_back
+from stepup.core.api import amend, getenv
+from stepup.core.utils import translate
 
 from .render import render
 
@@ -42,12 +43,12 @@ def main(argv: list[str] | None = None):
     if args.katex_macros is None and args.katex:
         args.katex_macros = getenv("REPREP_KATEX_MACROS", None)
         if args.katex_macros is not None:
-            args.katex_macros = translate_back(args.katex_macros)
+            args.katex_macros = translate.back(args.katex_macros)
             amend(inp=args.katex_macros)
     if args.css is None:
         env_css = getenv("REPREP_MARKDOWN_CSS", "")
         if env_css != "":
-            args.css = [translate_back(path_css) for path_css in env_css.split(":")]
+            args.css = [translate.back(path_css) for path_css in env_css.split(":")]
     with open(args.markdown) as fm, open(args.html, "w") as fh:
         fh.write(
             convert_markdown(fm.read(), args.katex, args.katex_macros, args.css, args.html.parent)

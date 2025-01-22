@@ -27,7 +27,7 @@ from path import Path
 
 from .inventory import FileSummary, check_summary, get_summary, parse_summary
 
-__all__ = ("main", "iter_inventory", "check_inventory")
+__all__ = ("check_inventory", "iter_inventory", "main")
 
 
 def main(argv: list[str] | None = None):

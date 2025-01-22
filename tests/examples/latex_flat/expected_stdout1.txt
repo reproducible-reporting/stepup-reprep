@@ -1,0 +1,29 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
+RESCHEDULE │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+sub/other.tex
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ 1 step(s) remained pending due to incomplete requirements
+─────────────────────────────── Orphaned inputs ────────────────────────────────
+             AWAITED  sub/other.tex
+             AWAITED  sub/
+───────────────────────────────── PENDING Step ─────────────────────────────────
+Command               python -m stepup.reprep.latex_flat article_structured.tex article.tex
+Working directory     ./
+Inputs        STATIC  ./
+              STATIC  article_structured.tex
+              STATIC  part1.tex [amended]
+              STATIC  part2.tex [amended]
+             AWAITED  (sub/other.tex) [amended]
+Outputs      AWAITED  article.tex
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ Skipping cleanup due to incomplete build.
+   WARNING │ Check logs: .stepup/warning.log
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

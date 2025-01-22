@@ -97,7 +97,7 @@ def test_symbolic_link_directory(path_tmp):
 
 
 def test_git():
-    with contextlib.chdir("tests/cases/check_hrefs_md"):
+    with contextlib.chdir("tests/examples/check_hrefs_md"):
         paths = parse_inventory_def(["include-git\n"])
     assert paths == {
         "main.sh",

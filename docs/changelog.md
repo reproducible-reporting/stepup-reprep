@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `smarty` extension to markdown conversion.
 - Add option to insert blank page after odd-paged PDF when concatenating PDFs.
 
+### Changed
+
+- Compatibility with StepUp Core 2.0.0, which breaks compatibility with older StepUp Core versions.
+
+### Fixed
+
+- Use `shlex` for building shell commands in `stepup.reprep.api` to avoid shell injection.
+
 
 ## [1.4.1] - 2024-09-02 {: #v1.4.1 }
 

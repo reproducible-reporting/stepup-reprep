@@ -58,8 +58,7 @@ def main(argv: list[str] | None = None):
         with open(path_flat_tmp, "w") as fh_out:
             out_root = Path(args.path_flat).parent
             status, inp_paths = flatten_latex(args.path_tex, fh_out, out_root)
-        if not amend(inp=inp_paths):
-            sys.exit(3)
+        amend(inp=inp_paths)
         if status == FlattenStatus.SUCCESS:
             path_flat_tmp.copy(args.path_flat)
         else:

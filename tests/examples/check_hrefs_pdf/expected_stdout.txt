@@ -1,0 +1,29 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.latex main.tex --run-bibtex
+   SUCCESS │ python -m stepup.reprep.latex main.tex --run-bibtex
+     START │ python -m stepup.reprep.check_hrefs main.pdf
+RESCHEDULE │ python -m stepup.reprep.check_hrefs main.pdf
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+BROKEN.md
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ 1 step(s) remained pending due to incomplete requirements
+─────────────────────────────── Orphaned inputs ────────────────────────────────
+             AWAITED  BROKEN.md
+───────────────────────────────── PENDING Step ─────────────────────────────────
+Command               python -m stepup.reprep.check_hrefs main.pdf
+Working directory     ./
+Inputs        STATIC  ./
+              STATIC  README.md [amended]
+              STATIC  check_hrefs.yaml [amended]
+               BUILT  main.pdf
+             AWAITED  (BROKEN.md) [amended]
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ Skipping cleanup due to incomplete build.
+   WARNING │ Check logs: .stepup/warning.log
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

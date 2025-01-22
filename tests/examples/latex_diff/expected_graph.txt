@@ -1,0 +1,58 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:diff.tex
+            supplies   file:new.tex
+            supplies   file:old.tex
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_LATEXDIFF [amended]
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:new.tex
+             creates   file:old.tex
+             creates   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+
+file:new.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+
+file:old.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+
+step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:new.tex
+            consumes   file:old.tex
+             creates   file:diff.tex
+            supplies   file:diff.tex
+
+file:diff.tex
+               state = BUILT
+          created by   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+            consumes   file:./
+            consumes   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex

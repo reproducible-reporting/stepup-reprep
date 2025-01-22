@@ -50,7 +50,7 @@ def test_allosteric_modulator(path_tmp):
     # Plot taken from:
     # https://en.m.wikipedia.org/wiki/File:Negative_allosteric_modulator_plot.svg
     path_out = path_tmp / "out.json"
-    main(["tests/cases/unplot/plot1.svg", path_out])
+    main(["tests/examples/unplot/plot1.svg", path_out])
     with open(path_out) as fh:
         data = json.load(fh)
     xl = "agonist concentration"
@@ -88,7 +88,7 @@ def test_allosteric_modulator(path_tmp):
 
 def test_simple(path_tmp):
     path_out = path_tmp / "out.json"
-    main(["tests/cases/unplot/plot2.svg", path_out])
+    main(["tests/examples/unplot/plot2.svg", path_out])
     with open(path_out) as fh:
         data = json.load(fh)
     assert data["units"]["h"] == "1"

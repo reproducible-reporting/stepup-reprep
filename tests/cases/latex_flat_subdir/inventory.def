@@ -1,2 +1,0 @@
-include-workflow STATIC .stepup/workflow.mpk.xz
-include-workflow BUILT .stepup/workflow.mpk.xz

@@ -63,8 +63,7 @@ def main(argv: list[str] | None = None):
 
     aux_digest_hist = []
     if len(bib) == 0:
-        if not amend(inp=implicit):
-            sys.exit(3)
+        amend(inp=implicit)
         inventory_files = list(implicit)
     elif args.run_bibtex:
         # Get other executables and files
@@ -74,14 +73,10 @@ def main(argv: list[str] | None = None):
             args.bibsane = getenv("REPREP_BIBSANE", "bibsane")
         paths_config = []
         if args.bibsane_config is None:
-            args.bibsane_config = getenv("REPREP_BIBSANE_CONFIG", "bibsane.yaml", is_path=True)
+            args.bibsane_config = getenv("REPREP_BIBSANE_CONFIG", "bibsane.yaml", back=True)
             paths_config.append(args.bibsane_config)
 
-        if not amend(
-            inp=implicit + bib + paths_config,
-            out=[f"{stem}.bbl"],
-        ):
-            sys.exit(3)
+        amend(inp=implicit + bib + paths_config, out=[f"{stem}.bbl"])
         inventory_files = [*implicit, *bib, f"{stem}.bbl"]
 
         # LaTeX
@@ -137,8 +132,7 @@ def main(argv: list[str] | None = None):
             sys.stdout.write(cp.stdout)
             sys.exit(1)
     else:
-        if not amend(inp=[*implicit, f"{stem}.bbl"]):
-            sys.exit(3)
+        amend(inp=[*implicit, f"{stem}.bbl"])
         inventory_files = [*implicit, f"{stem}.bbl"]
 
     for _ in range(args.maxrep):

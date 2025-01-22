@@ -39,9 +39,8 @@ def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     if args.path_config is None:
-        args.path_config = getenv("REPREP_CHECK_HREFS_CONFIG", "check_hrefs.yaml", is_path=True)
-        if not amend(inp=args.path_config):
-            sys.exit(3)
+        args.path_config = getenv("REPREP_CHECK_HREFS_CONFIG", "check_hrefs.yaml", back=True)
+        amend(inp=args.path_config)
     config = load_config(args.path_config)
     hrefs = collect_hrefs(args.path_src)
     make_url_substitutions(hrefs, config.subs)

@@ -1,0 +1,17 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+   SUCCESS │ latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+   DELETED │ diff.tex
+     PHASE │ run
+     START │ latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+   SUCCESS │ latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

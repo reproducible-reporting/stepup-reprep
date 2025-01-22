@@ -1,0 +1,17 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+   DELETED │ slide.pdf
+     PHASE │ run
+     START │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+   SUCCESS │ WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

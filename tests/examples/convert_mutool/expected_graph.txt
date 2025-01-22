@@ -1,0 +1,49 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:example.pdf
+            supplies   file:example.png
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:mutool draw -q -o example.png -r 100 example.pdf
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_MUTOOL [amended]
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:example.pdf
+             creates   step:mutool draw -q -o example.png -r 100 example.pdf
+
+file:example.pdf
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:mutool draw -q -o example.png -r 100 example.pdf
+
+step:mutool draw -q -o example.png -r 100 example.pdf
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:example.pdf
+             creates   file:example.png
+            supplies   file:example.png
+
+file:example.png
+               state = BUILT
+          created by   step:mutool draw -q -o example.png -r 100 example.pdf
+            consumes   file:./
+            consumes   step:mutool draw -q -o example.png -r 100 example.pdf

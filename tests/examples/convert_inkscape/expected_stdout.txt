@@ -1,0 +1,26 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
+   SUCCESS │ python -m stepup.reprep.convert_inkscape glasses.svg glasses.png --optional
+     START │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+   SUCCESS │ python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+     START │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+   DELETED │ final.pdf
+   DELETED │ glasses.png
+     PHASE │ run
+     START │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+   SUCCESS │ SELF_CALL=x inkscape glasses.svg  --export-filename=glasses.png --export-type=png
+     START │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+   SUCCESS │ SELF_CALL=x inkscape smile.svg  --export-filename=final.pdf --export-type=pdf
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

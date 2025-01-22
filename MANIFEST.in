@@ -1,0 +1,3 @@
+include stepup/reprep/_version.py
+exclude .vscode .deepsource.toml .editorconfig .gitignore. pre-commit-config.yaml mkdocs.yaml
+prune .github .vscode docs overrides tests

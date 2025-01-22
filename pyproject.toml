@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=65.0", "setuptools_scm[toml]>=7.1.0"]
+requires = ["setuptools>=65.0", "setuptools_scm[toml]>=8.1.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -110,9 +110,9 @@ ignore = [
 ]
 
 [tool.setuptools]
-packages = ["stepup"]
+packages = ["stepup.reprep"]
 
 [tool.setuptools_scm]
-write_to = "stepup/reprep/_version.py"
+version_file = "stepup/reprep/_version.py"
 version_scheme = "post-release"
 local_scheme = "no-local-version"

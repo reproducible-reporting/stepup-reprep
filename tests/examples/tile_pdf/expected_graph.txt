@@ -31,12 +31,6 @@ file:./
             supplies   step:./plan.py
             supplies   step:./tile.py plan
             supplies   step:./tile.py run
-            supplies   step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-            supplies   step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-            supplies   step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-            supplies   step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-            supplies   step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-            supplies   step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
             supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
@@ -71,103 +65,139 @@ file:hexagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
 
 file:horizontal.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
 
 file:pentagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
 
 file:square.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
 
 file:triangle.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
 
 file:vertical.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
             supplies   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
 
 step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:hexagon.svg
-             creates   step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
+             creates   file:hexagon.pdf
+            supplies   file:hexagon.pdf
+
+file:hexagon.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+            supplies   step:./tile.py run
 
 step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:horizontal.svg
-             creates   step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
+             creates   file:horizontal.pdf
+            supplies   file:horizontal.pdf
+
+file:horizontal.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+            supplies   step:./tile.py run
 
 step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:pentagon.svg
-             creates   step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
+             creates   file:pentagon.pdf
+            supplies   file:pentagon.pdf
+
+file:pentagon.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+            supplies   step:./tile.py run
 
 step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:square.svg
-             creates   step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
+             creates   file:square.pdf
+            supplies   file:square.pdf
+
+file:square.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+            supplies   step:./tile.py run
 
 step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:triangle.svg
-             creates   step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
+             creates   file:triangle.pdf
+            supplies   file:triangle.pdf
+
+file:triangle.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+            supplies   step:./tile.py run
 
 step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:vertical.svg
-             creates   step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
+             creates   file:vertical.pdf
+            supplies   file:vertical.pdf
+
+file:vertical.pdf
+               state = BUILT
+          created by   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            consumes   file:./
+            consumes   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            supplies   step:./tile.py run
 
 file:tile.py
                state = STATIC
@@ -189,96 +219,6 @@ step:./tile.py plan
             consumes   file:./
             consumes   file:tile.py
              creates   step:./tile.py run
-
-step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-            consumes   file:./
-            consumes   file:hexagon.svg
-             creates   file:hexagon.pdf
-            supplies   file:hexagon.pdf
-
-file:hexagon.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape hexagon.svg  --export-filename=hexagon.pdf --export-type=pdf
-            supplies   step:./tile.py run
-
-step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-            consumes   file:./
-            consumes   file:horizontal.svg
-             creates   file:horizontal.pdf
-            supplies   file:horizontal.pdf
-
-file:horizontal.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape horizontal.svg  --export-filename=horizontal.pdf --export-type=pdf
-            supplies   step:./tile.py run
-
-step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-            consumes   file:./
-            consumes   file:pentagon.svg
-             creates   file:pentagon.pdf
-            supplies   file:pentagon.pdf
-
-file:pentagon.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape pentagon.svg  --export-filename=pentagon.pdf --export-type=pdf
-            supplies   step:./tile.py run
-
-step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
-            consumes   file:./
-            consumes   file:square.svg
-             creates   file:square.pdf
-            supplies   file:square.pdf
-
-file:square.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape square.svg  --export-filename=square.pdf --export-type=pdf
-            supplies   step:./tile.py run
-
-step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-            consumes   file:./
-            consumes   file:triangle.svg
-             creates   file:triangle.pdf
-            supplies   file:triangle.pdf
-
-file:triangle.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape triangle.svg  --export-filename=triangle.pdf --export-type=pdf
-            supplies   step:./tile.py run
-
-step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
-               state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
-            consumes   file:./
-            consumes   file:vertical.svg
-             creates   file:vertical.pdf
-            supplies   file:vertical.pdf
-
-file:vertical.pdf
-               state = BUILT
-          created by   step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
-            consumes   file:./
-            consumes   step:SELF_CALL=x inkscape vertical.svg  --export-filename=vertical.pdf --export-type=pdf
-            supplies   step:./tile.py run
 
 step:./tile.py run
                state = SUCCEEDED

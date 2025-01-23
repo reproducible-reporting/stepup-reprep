@@ -398,8 +398,8 @@ def convert_svg(
     Parameters
     ----------
     path_svg
-        The input SVG figure. It may contain <img> tags referring to other files included in
-        the figure.
+        The input SVG figure.
+        It may contain <img> tags referring to other files included in the figure.
     path_out
         The output PDF or PNG file. Other formats are not supported.
     inkscape
@@ -410,9 +410,9 @@ def convert_svg(
         Depending on the extension of the output, the default is `${REPREP_INKSCAPE_PDF_ARGS}` or
         `${REPREP_INKSCAPE_PNG_ARGS}`, if the environment variable is defined.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -437,9 +437,7 @@ def convert_svg(
         command += " --inkscape=" + shlex.quote(inkscape)
     if inkscape_args is not None:
         command += f" -- {inkscape_args}"
-    if optional:
-        command += " --optional"
-    return step(command, inp=path_svg, block=block)
+    return step(command, inp=path_svg, out=path_out, block=block, optional=optional)
 
 
 def convert_svg_pdf(

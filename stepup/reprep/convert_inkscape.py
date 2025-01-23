@@ -20,13 +20,16 @@
 """Wrapper for SVG to PDF conversion."""
 
 import argparse
+import os
+import shlex
+import subprocess
 import sys
 from collections.abc import Iterator
 
 from defusedxml import ElementTree
 from path import Path
 
-from stepup.core.api import getenv, step
+from stepup.core.api import amend, getenv
 
 
 def main(argv: list[str] | None = None):
@@ -41,10 +44,10 @@ def main(argv: list[str] | None = None):
     if args.inkscape is None:
         args.inkscape = getenv("REPREP_INKSCAPE", "inkscape")
     if len(args.inkscape_args) == 0:
-        inkscape_args = getenv(f"REPREP_INKSCAPE_{path_out.suffix[1:].upper()}_ARGS", "")
-    else:
-        inkscape_args = " ".join(args.inkscape_args)
-    convert_svg_pdf(args.path_svg, path_out, args.inkscape, inkscape_args, args.optional)
+        args.inkscape_args = shlex.split(
+            getenv(f"REPREP_INKSCAPE_{path_out.suffix[1:].upper()}_ARGS", "")
+        )
+    convert_svg_pdf(args.path_svg, path_out, args.inkscape, args.inkscape_args)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -68,26 +71,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="The inkscape executable to use. "
         "Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.",
     )
-    parser.add_argument(
-        "--optional",
-        default=False,
-        action="store_true",
-        help="With this option, the conversion becomes optional.",
-    )
     return parser.parse_args(argv)
 
 
-def convert_svg_pdf(
-    path_svg: str, path_out: Path, inkscape: str, inkscape_args: str, optional: bool
-):
+def convert_svg_pdf(path_svg: str, path_out: Path, inkscape: str, inkscape_args: list[str]):
     inp_paths = search_svg_deps(path_svg)
-    fmt = path_out.suffix[1:]
-    step(
-        f"SELF_CALL=x {inkscape} {path_svg} {inkscape_args} "
-        f"--export-filename={path_out} --export-type={fmt}",
-        inp=[path_svg, *inp_paths],
-        out=path_out,
-        optional=optional,
+    amend(inp=inp_paths)
+    subprocess.run(
+        [
+            inkscape,
+            path_svg,
+            *inkscape_args,
+            f"--export-filename={path_out}",
+            f"--export-type={path_out.suffix[1:]}",
+        ],
+        check=True,
+        env=os.environ | {"SELF_CALL": "x"},
     )
 
 

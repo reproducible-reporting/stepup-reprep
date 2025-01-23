@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-(No changes yet)
+### Changed
+
+- The conversion with Inkscape has become a single step.
+  (It was first split up in a step scanning for dependencies followed by the actual conversion.)
 
 
 ## [2.0.2] - 2025-01-22 {: #v2.0.2 }
 
+This is the first release of StepUp RepRep that is compatible with StepUp Core 2.0.0.
 (Earlier 2.0 releases were yanked due to packaging issues.)
 
 ### Added

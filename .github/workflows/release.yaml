@@ -77,18 +77,20 @@ jobs:
         inputs: >-
           ./dist/*.tar.gz
           ./dist/*.whl
-    - name: Get version from tag
+    - name: Prepare release notes
       run: |
         TAG=${{ github.event.release.tag_name }}
         echo "TAG=${TAG}" >> $GITHUB_ENV
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+        .github/scripts/extract-notes.sh ${VERSION}
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: >-
         gh release create "${TAG}"
         --repo '${{ github.repository }}'
-        --notes "See [docs/changelog/#${TAG}](https://reproducible-reporting.github.io/stepup-reprep/${VERSION}/changelog/#${TAG})"
+        --title "Release ${VERSION}"
+        --notes-file notes.md
     - name: Upload artifact signatures to GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}

@@ -1,6 +1,13 @@
-name: release
+# This workflow is adapted from:
+# https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 
-on: push
+name: release
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
 
 env:
   # This is not critical
@@ -77,18 +84,29 @@ jobs:
         inputs: >-
           ./dist/*.tar.gz
           ./dist/*.whl
+    - name: Extract the version from the tag
+      run: |
+        TAG="${{ github.ref }}"
+        TAG="${TAG#refs/tags/}"
+        echo "TAG=${TAG}" >> $GITHUB_ENV
+        VERSION="${TAG#v}"
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "MAJMIN=${VERSION%.*}" >> $GITHUB_ENV
     - name: Prepare release notes
       run: |
-        TAG=${{ github.event.release.tag_name }}
-        echo "TAG=${TAG}" >> $GITHUB_ENV
-        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
-        .github/scripts/extract-notes.sh ${VERSION}
+        # Extract the release notes from the changelog
+        sed -n "/## \[${VERSION}\] -/, /## /{ /##/!p }" docs/changelog.md > notes.md
+        # Add a link to the release notes
+        URL="https://reproducible-reporting.github.io/${{ github.event.repository.name }}/${MAJMIN}/changelog/#${TAG}"
+        echo "See [docs/changelog/#${TAG}](${URL}) for more details." >> notes.md
+        # Remove leading and trailing empty lines
+        sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba' -i notes.md
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: >-
         gh release create "${TAG}"
-        --repo '${{ github.repository }}'
+        --repo "${{ github.repository }}"
         --title "Release ${VERSION}"
         --notes-file notes.md
     - name: Upload artifact signatures to GitHub Release
@@ -99,7 +117,8 @@ jobs:
       # sigstore-produced signatures and certificates.
       run: >-
         gh release upload
-        '${{ github.ref_name }}' dist/**
+        "${{ github.ref_name }}"
+        dist/**
         --repo '${{ github.repository }}'
 
   publish-to-testpypi:

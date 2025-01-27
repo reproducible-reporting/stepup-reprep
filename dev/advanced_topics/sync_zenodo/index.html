@@ -1042,7 +1042,7 @@ by filling in the following template:</p>
 <p><code>path_versions</code>:
   A JSON file containing all versions of the dataset in chronological order
   and their corresponding record IDs.
-  This file is updated by the <code>reprep-sync-zenodo</code> script.
+  This file is updated by the <code>rr-sync-zenodo</code> script.
   You should not need to modify it unless you created or discarded new records
   manually through the Zenodo web interface.
   It is recommended to commit this file to the Git history.</p>
@@ -1079,7 +1079,7 @@ Use <a href="https://semver.org/">semantic version numbers</a>.</p>
 <p>If you have published the dataset, only metadata of the published versions
 can be updated, but not the files.
 If you want to upload newer files, you can increment this version number.
-The <code>reprep-sync-zenodo</code> script will create a new version for you on Zenodo,
+The <code>rr-sync-zenodo</code> script will create a new version for you on Zenodo,
 which stays in draft mode until you manually publish it through the Zenodo web interface.</p>
 </li>
 <li>
@@ -1124,10 +1124,10 @@ If you have such files or if you have a large number of files, consider uploadin
 </li>
 </ul>
 <h2 id="synchronize-your-dataset">Synchronize your dataset<a class="headerlink" href="#synchronize-your-dataset" title="Permanent link">&para;</a></h2>
-<p>The command <code>reprep-sync-zenodo</code> will create or synchronize the online dataset and store the <code>record_id</code> in the versions JSON file.
+<p>The command <code>rr-sync-zenodo</code> will create or synchronize the online dataset and store the <code>record_id</code> in the versions JSON file.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.</p>
 <p>Once you have all the files you need, execute the script:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>reprep-sync-zenodo<span class="w"> </span>zenodo.yaml
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>rr-sync-zenodo<span class="w"> </span>zenodo.yaml
 </span></code></pre></div>
 <p>You can also include this command as a step in your <code>plan.py</code> file:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">stepup.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">static</span>

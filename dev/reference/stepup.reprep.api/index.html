@@ -932,9 +932,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stepup.reprep.api.render" class="md-nav__link">
+  <a href="#stepup.reprep.api.render_jinja" class="md-nav__link">
     <span class="md-ellipsis">
-      render
+      render_jinja
     </span>
   </a>
   
@@ -1253,9 +1253,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stepup.reprep.api.render" class="md-nav__link">
+  <a href="#stepup.reprep.api.render_jinja" class="md-nav__link">
     <span class="md-ellipsis">
-      render
+      render_jinja
     </span>
   </a>
   
@@ -1469,7 +1469,7 @@
 </span><span id="__span-0-73"><a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-75"><a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="s2">&quot;python -m stepup.reprep.add_notes_pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="s2">&quot;rr-add-notes-pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="__span-0-77"><a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="n">inp</span><span class="o">=</span><span class="p">[</span><span class="n">path_src</span><span class="p">,</span> <span class="n">path_notes</span><span class="p">],</span>
 </span><span id="__span-0-78"><a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_dst</span><span class="p">,</span>
 </span><span id="__span-0-79"><a id="__codelineno-0-79" name="__codelineno-0-79"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
@@ -1628,7 +1628,7 @@ The last page of each PDF is used to determine the size of the added blank page.
 </span><span id="__span-0-110"><a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="sd">    step_info</span>
 </span><span id="__span-0-111"><a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-112"><a id="__codelineno-0-112" name="__codelineno-0-112"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-113"><a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.cat_pdf&quot;</span>
+</span><span id="__span-0-113"><a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-cat-pdf&quot;</span>
 </span><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">if</span> <span class="n">insert_blank</span><span class="p">:</span>
 </span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --insert-blank&quot;</span>
 </span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a>    <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
@@ -1753,7 +1753,7 @@ Defaults to <code>${REPREP_CHECK_HREFS_CONFIG}</code> variable or <code>check_hr
 </span><span id="__span-0-144"><a id="__codelineno-0-144" name="__codelineno-0-144"></a>    <span class="k">with</span> <span class="n">subs_env_vars</span><span class="p">()</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
 </span><span id="__span-0-145"><a id="__codelineno-0-145" name="__codelineno-0-145"></a>        <span class="n">path_src</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_src</span><span class="p">)</span>
 </span><span id="__span-0-146"><a id="__codelineno-0-146" name="__codelineno-0-146"></a>        <span class="n">path_config</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_config</span><span class="p">)</span>
-</span><span id="__span-0-147"><a id="__codelineno-0-147" name="__codelineno-0-147"></a>    <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;python -m stepup.reprep.check_hrefs </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-147"><a id="__codelineno-0-147" name="__codelineno-0-147"></a>    <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rr-check-hrefs </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-148"><a id="__codelineno-0-148" name="__codelineno-0-148"></a>    <span class="n">inp_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_src</span><span class="p">]</span>
 </span><span id="__span-0-149"><a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="k">if</span> <span class="n">path_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-0-150"><a id="__codelineno-0-150" name="__codelineno-0-150"></a>        <span class="n">inp_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_config</span><span class="p">)</span>
@@ -1973,7 +1973,7 @@ which is interpreted as a colon-separated list of files.</p>
 </span><span id="__span-0-198"><a id="__codelineno-0-198" name="__codelineno-0-198"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The Markdown file must have extension .md&quot;</span><span class="p">)</span>
 </span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>    <span class="n">path_html</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_md</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="s2">&quot;.html&quot;</span><span class="p">)</span>
 </span><span id="__span-0-200"><a id="__codelineno-0-200" name="__codelineno-0-200"></a>    <span class="n">inp</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_md</span><span class="p">]</span>
-</span><span id="__span-0-201"><a id="__codelineno-0-201" name="__codelineno-0-201"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.convert_markdown &quot;</span>
+</span><span id="__span-0-201"><a id="__codelineno-0-201" name="__codelineno-0-201"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-convert-markdown &quot;</span>
 </span><span id="__span-0-202"><a id="__codelineno-0-202" name="__codelineno-0-202"></a>    <span class="n">command</span> <span class="o">+=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">path_md</span><span class="p">,</span> <span class="n">path_html</span><span class="p">])</span>
 </span><span id="__span-0-203"><a id="__codelineno-0-203" name="__codelineno-0-203"></a>    <span class="k">if</span> <span class="n">katex</span><span class="p">:</span>
 </span><span id="__span-0-204"><a id="__codelineno-0-204" name="__codelineno-0-204"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --katex&quot;</span>
@@ -2642,7 +2642,7 @@ The wrapper scans the SVG for dependencies, which may be a bit slow in case of l
 </span><span id="__span-0-431"><a id="__codelineno-0-431" name="__codelineno-0-431"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The SVG file must have extension .svg&quot;</span><span class="p">)</span>
 </span><span id="__span-0-432"><a id="__codelineno-0-432" name="__codelineno-0-432"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_out</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)):</span>
 </span><span id="__span-0-433"><a id="__codelineno-0-433" name="__codelineno-0-433"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The output file must have extension .pdf or .png&quot;</span><span class="p">)</span>
-</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.convert_inkscape &quot;</span>
+</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-convert-inkscape &quot;</span>
 </span><span id="__span-0-435"><a id="__codelineno-0-435" name="__codelineno-0-435"></a>    <span class="n">command</span> <span class="o">+=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">path_out</span><span class="p">])</span>
 </span><span id="__span-0-436"><a id="__codelineno-0-436" name="__codelineno-0-436"></a>    <span class="k">if</span> <span class="n">inkscape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-0-437"><a id="__codelineno-0-437" name="__codelineno-0-437"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --inkscape=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">inkscape</span><span class="p">)</span>
@@ -2962,7 +2962,7 @@ Defaults to <code>${REPREP_WEASYPRINT}</code> variable or <code>weasyprint</code
 </span><span id="__span-0-247"><a id="__codelineno-0-247" name="__codelineno-0-247"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_html</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.html&quot;</span><span class="p">):</span>
 </span><span id="__span-0-248"><a id="__codelineno-0-248" name="__codelineno-0-248"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The HTML file must have extension .html&quot;</span><span class="p">)</span>
 </span><span id="__span-0-249"><a id="__codelineno-0-249" name="__codelineno-0-249"></a>    <span class="n">path_pdf</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_html</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
-</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.convert_weasyprint &quot;</span>
+</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-convert-weasyprint &quot;</span>
 </span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251"></a>    <span class="n">command</span> <span class="o">+=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">path_html</span><span class="p">,</span> <span class="n">path_pdf</span><span class="p">])</span>
 </span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252"></a>    <span class="k">if</span> <span class="n">weasyprint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --weasyprint=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">weasyprint</span><span class="p">)</span>
@@ -3265,7 +3265,7 @@ to refer to a local version of the file. (Mind the single quotes.)</p>
 </span><span id="__span-0-562"><a id="__codelineno-0-562" name="__codelineno-0-562"></a>    <span class="n">prefix</span> <span class="o">=</span> <span class="n">path_tex</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
 </span><span id="__span-0-563"><a id="__codelineno-0-563" name="__codelineno-0-563"></a>    <span class="n">path_pdf</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.pdf&quot;</span>
 </span><span id="__span-0-564"><a id="__codelineno-0-564" name="__codelineno-0-564"></a>
-</span><span id="__span-0-565"><a id="__codelineno-0-565" name="__codelineno-0-565"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.latex &quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_tex</span><span class="p">)</span>
+</span><span id="__span-0-565"><a id="__codelineno-0-565" name="__codelineno-0-565"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-latex &quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_tex</span><span class="p">)</span>
 </span><span id="__span-0-566"><a id="__codelineno-0-566" name="__codelineno-0-566"></a>    <span class="n">inp_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_tex</span><span class="p">]</span>
 </span><span id="__span-0-567"><a id="__codelineno-0-567" name="__codelineno-0-567"></a>    <span class="k">if</span> <span class="n">maxrep</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
 </span><span id="__span-0-568"><a id="__codelineno-0-568" name="__codelineno-0-568"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --maxrep=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">maxrep</span><span class="p">))</span>
@@ -3633,7 +3633,7 @@ If this variable is unset, the following default is used:</p>
 </span><span id="__span-0-674"><a id="__codelineno-0-674" name="__codelineno-0-674"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-675"><a id="__codelineno-0-675" name="__codelineno-0-675"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-676"><a id="__codelineno-0-676" name="__codelineno-0-676"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-677"><a id="__codelineno-0-677" name="__codelineno-0-677"></a>        <span class="s2">&quot;python -m stepup.reprep.latex_flat $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-677"><a id="__codelineno-0-677" name="__codelineno-0-677"></a>        <span class="s2">&quot;rr-latex-flat $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="__span-0-678"><a id="__codelineno-0-678" name="__codelineno-0-678"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_tex</span><span class="p">,</span>
 </span><span id="__span-0-679"><a id="__codelineno-0-679" name="__codelineno-0-679"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_flat</span><span class="p">,</span>
 </span><span id="__span-0-680"><a id="__codelineno-0-680" name="__codelineno-0-680"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
@@ -3762,7 +3762,7 @@ If this variable is unset, the following default is used:</p>
 </span><span id="__span-0-704"><a id="__codelineno-0-704" name="__codelineno-0-704"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-705"><a id="__codelineno-0-705" name="__codelineno-0-705"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-706"><a id="__codelineno-0-706" name="__codelineno-0-706"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-707"><a id="__codelineno-0-707" name="__codelineno-0-707"></a>        <span class="s2">&quot;reprep-make-inventory $</span><span class="si">{inp}</span><span class="s2"> -o $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-707"><a id="__codelineno-0-707" name="__codelineno-0-707"></a>        <span class="s2">&quot;rr-make-inventory $</span><span class="si">{inp}</span><span class="s2"> -o $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="__span-0-708"><a id="__codelineno-0-708" name="__codelineno-0-708"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">paths</span><span class="p">,</span>
 </span><span id="__span-0-709"><a id="__codelineno-0-709" name="__codelineno-0-709"></a>        <span class="n">out</span><span class="o">=</span><span class="p">[</span><span class="n">path_inventory</span><span class="p">],</span>
 </span><span id="__span-0-710"><a id="__codelineno-0-710" name="__codelineno-0-710"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
@@ -3977,7 +3977,7 @@ The default is <code>${REPREP_NUP_PAGE_FORMAT}</code> or A4-L if the variable is
 </span><span id="__span-0-753"><a id="__codelineno-0-753" name="__codelineno-0-753"></a><span class="sd">    step_info</span>
 </span><span id="__span-0-754"><a id="__codelineno-0-754" name="__codelineno-0-754"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-755"><a id="__codelineno-0-755" name="__codelineno-0-755"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-756"><a id="__codelineno-0-756" name="__codelineno-0-756"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.nup_pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-756"><a id="__codelineno-0-756" name="__codelineno-0-756"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-nup-pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-757"><a id="__codelineno-0-757" name="__codelineno-0-757"></a>    <span class="k">if</span> <span class="n">nrow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-0-758"><a id="__codelineno-0-758" name="__codelineno-0-758"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; -r &quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nrow</span><span class="p">))</span>
 </span><span id="__span-0-759"><a id="__codelineno-0-759" name="__codelineno-0-759"></a>    <span class="k">if</span> <span class="n">ncol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -4158,7 +4158,7 @@ The default value is taken from <code>${REPREP_RASTER_QUALITY}</code> or 50 if t
 </span><span id="__span-0-799"><a id="__codelineno-0-799" name="__codelineno-0-799"></a><span class="sd">    step_info</span>
 </span><span id="__span-0-800"><a id="__codelineno-0-800" name="__codelineno-0-800"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-801"><a id="__codelineno-0-801" name="__codelineno-0-801"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-802"><a id="__codelineno-0-802" name="__codelineno-0-802"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.raster_pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-802"><a id="__codelineno-0-802" name="__codelineno-0-802"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-raster-pdf $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-803"><a id="__codelineno-0-803" name="__codelineno-0-803"></a>    <span class="k">if</span> <span class="n">resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-0-804"><a id="__codelineno-0-804" name="__codelineno-0-804"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; -r &quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">resolution</span><span class="p">))</span>
 </span><span id="__span-0-805"><a id="__codelineno-0-805" name="__codelineno-0-805"></a>    <span class="k">if</span> <span class="n">quality</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -4174,10 +4174,10 @@ The default value is taken from <code>${REPREP_RASTER_QUALITY}</code> or 50 if t
 <div class="doc doc-object doc-function">
 
 
-<h2 id="stepup.reprep.api.render" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="n">path_template</span><span class="p">,</span> <span class="n">paths_variables</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<h2 id="stepup.reprep.api.render_jinja" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_jinja</span><span class="p">(</span><span class="n">path_template</span><span class="p">,</span> <span class="n">paths_variables</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
-<a href="#stepup.reprep.api.render" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#stepup.reprep.api.render_jinja" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
@@ -4308,7 +4308,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 <span class="normal"><a href="#__codelineno-0-856">856</a></span>
 <span class="normal"><a href="#__codelineno-0-857">857</a></span>
 <span class="normal"><a href="#__codelineno-0-858">858</a></span>
-<span class="normal"><a href="#__codelineno-0-859">859</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-811"><a id="__codelineno-0-811" name="__codelineno-0-811"></a><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>
+<span class="normal"><a href="#__codelineno-0-859">859</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-811"><a id="__codelineno-0-811" name="__codelineno-0-811"></a><span class="k">def</span><span class="w"> </span><span class="nf">render_jinja</span><span class="p">(</span>
 </span><span id="__span-0-812"><a id="__codelineno-0-812" name="__codelineno-0-812"></a>    <span class="n">path_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="__span-0-813"><a id="__codelineno-0-813" name="__codelineno-0-813"></a>    <span class="n">paths_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 </span><span id="__span-0-814"><a id="__codelineno-0-814" name="__codelineno-0-814"></a>    <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -4347,7 +4347,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 </span><span id="__span-0-847"><a id="__codelineno-0-847" name="__codelineno-0-847"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths_variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 </span><span id="__span-0-848"><a id="__codelineno-0-848" name="__codelineno-0-848"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one file with variable definitions needed.&quot;</span><span class="p">)</span>
 </span><span id="__span-0-849"><a id="__codelineno-0-849" name="__codelineno-0-849"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_template</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="__span-0-850"><a id="__codelineno-0-850" name="__codelineno-0-850"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.render $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-850"><a id="__codelineno-0-850" name="__codelineno-0-850"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-render-jinja $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-851"><a id="__codelineno-0-851" name="__codelineno-0-851"></a>    <span class="k">if</span> <span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
 </span><span id="__span-0-852"><a id="__codelineno-0-852" name="__codelineno-0-852"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-853"><a id="__codelineno-0-853" name="__codelineno-0-853"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
@@ -4443,7 +4443,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 </span><span id="__span-0-874"><a id="__codelineno-0-874" name="__codelineno-0-874"></a><span class="sd">    step_info</span>
 </span><span id="__span-0-875"><a id="__codelineno-0-875" name="__codelineno-0-875"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-876"><a id="__codelineno-0-876" name="__codelineno-0-876"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-877"><a id="__codelineno-0-877" name="__codelineno-0-877"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot;python -m stepup.reprep.sync_zenodo $</span><span class="si">{inp}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_config</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+</span><span id="__span-0-877"><a id="__codelineno-0-877" name="__codelineno-0-877"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot;rr-sync-zenodo $</span><span class="si">{inp}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_config</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4567,7 +4567,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 </span><span id="__span-0-900"><a id="__codelineno-0-900" name="__codelineno-0-900"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-901"><a id="__codelineno-0-901" name="__codelineno-0-901"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-902"><a id="__codelineno-0-902" name="__codelineno-0-902"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-</span><span id="__span-0-903"><a id="__codelineno-0-903" name="__codelineno-0-903"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python -m stepup.reprep.unplot $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-903"><a id="__codelineno-0-903" name="__codelineno-0-903"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-unplot $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-904"><a id="__codelineno-0-904" name="__codelineno-0-904"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">path_out</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
@@ -4597,7 +4597,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
           –
           <div class="doc-md-description">
             <p>A file created with the <code>make_inventory</code> API or with the command-line script
-<code>reprep-make-inventory</code>.</p>
+<code>rr-make-inventory</code>.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -4681,7 +4681,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 </span><span id="__span-0-913"><a id="__codelineno-0-913" name="__codelineno-0-913"></a><span class="sd">    ----------</span>
 </span><span id="__span-0-914"><a id="__codelineno-0-914" name="__codelineno-0-914"></a><span class="sd">    path_inventory</span>
 </span><span id="__span-0-915"><a id="__codelineno-0-915" name="__codelineno-0-915"></a><span class="sd">        A file created with the `make_inventory` API or with the command-line script</span>
-</span><span id="__span-0-916"><a id="__codelineno-0-916" name="__codelineno-0-916"></a><span class="sd">        `reprep-make-inventory`.</span>
+</span><span id="__span-0-916"><a id="__codelineno-0-916" name="__codelineno-0-916"></a><span class="sd">        `rr-make-inventory`.</span>
 </span><span id="__span-0-917"><a id="__codelineno-0-917" name="__codelineno-0-917"></a><span class="sd">    path_zip</span>
 </span><span id="__span-0-918"><a id="__codelineno-0-918" name="__codelineno-0-918"></a><span class="sd">        The output ZIP file</span>
 </span><span id="__span-0-919"><a id="__codelineno-0-919" name="__codelineno-0-919"></a><span class="sd">    optional</span>
@@ -4695,7 +4695,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 </span><span id="__span-0-927"><a id="__codelineno-0-927" name="__codelineno-0-927"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
 </span><span id="__span-0-928"><a id="__codelineno-0-928" name="__codelineno-0-928"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-929"><a id="__codelineno-0-929" name="__codelineno-0-929"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-930"><a id="__codelineno-0-930" name="__codelineno-0-930"></a>        <span class="s2">&quot;python -m stepup.reprep.zip_inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-930"><a id="__codelineno-0-930" name="__codelineno-0-930"></a>        <span class="s2">&quot;rr-zip-inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
 </span><span id="__span-0-931"><a id="__codelineno-0-931" name="__codelineno-0-931"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_inventory</span><span class="p">,</span>
 </span><span id="__span-0-932"><a id="__codelineno-0-932" name="__codelineno-0-932"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_zip</span><span class="p">,</span>
 </span><span id="__span-0-933"><a id="__codelineno-0-933" name="__codelineno-0-933"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>

@@ -1,0 +1,10 @@
+  DIRECTOR │ Listening on /tmp/stepup-########/director
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ python -m stepup.reprep.unplot plot.svg plot.json
+   SUCCESS │ python -m stepup.reprep.unplot plot.svg plot.json
+  WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

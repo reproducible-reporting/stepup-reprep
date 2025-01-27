@@ -3,14 +3,14 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
-   SUCCESS │ python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+     START │ rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+   SUCCESS │ rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ cat.pdf
      PHASE │ run
-     START │ python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
-   SUCCESS │ python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+     START │ rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+   SUCCESS │ rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
   DIRECTOR │ Stopping workers.

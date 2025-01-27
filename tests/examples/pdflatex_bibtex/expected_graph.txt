@@ -23,7 +23,7 @@ file:./
             supplies   file:plan.py
             supplies   file:references.bib
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 step:./plan.py
                state = SUCCEEDED
@@ -35,27 +35,27 @@ step:./plan.py
              creates   file:bibsane.yaml
              creates   file:paper.tex
              creates   file:references.bib
-             creates   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+             creates   step:rr-latex paper.tex --run-bibtex
 
 file:paper.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 file:bibsane.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 file:references.bib
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
-step:python -m stepup.reprep.latex paper.tex --run-bibtex
+step:rr-latex paper.tex --run-bibtex
                state = SUCCEEDED
              env_var = REPREP_BIBSANE [amended]
                      = REPREP_BIBSANE_CONFIG [amended]
@@ -81,36 +81,36 @@ step:python -m stepup.reprep.latex paper.tex --run-bibtex
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.aux
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.bbl
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.blg
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.log
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex

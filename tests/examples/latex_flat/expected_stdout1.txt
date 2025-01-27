@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
-RESCHEDULE │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
+     START │ rr-latex-flat article_structured.tex article.tex
+RESCHEDULE │ rr-latex-flat article_structured.tex article.tex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 sub/other.tex
 ────────────────────────────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ sub/other.tex
              AWAITED  sub/other.tex
              AWAITED  sub/
 ───────────────────────────────── PENDING Step ─────────────────────────────────
-Command               python -m stepup.reprep.latex_flat article_structured.tex article.tex
+Command               rr-latex-flat article_structured.tex article.tex
 Working directory     ./
 Inputs        STATIC  ./
               STATIC  article_structured.tex

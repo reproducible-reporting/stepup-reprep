@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.check_hrefs test.md
-RESCHEDULE │ python -m stepup.reprep.check_hrefs test.md
+     START │ rr-check-hrefs test.md
+RESCHEDULE │ rr-check-hrefs test.md
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ BROKEN.md
 ─────────────────────────────── Orphaned inputs ────────────────────────────────
              AWAITED  BROKEN.md
 ───────────────────────────────── PENDING Step ─────────────────────────────────
-Command               python -m stepup.reprep.check_hrefs test.md
+Command               rr-check-hrefs test.md
 Working directory     ./
 Inputs        STATIC  ./
               STATIC  README.md [amended]

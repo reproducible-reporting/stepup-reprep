@@ -49,4 +49,4 @@ wait
 [[ -f paper1.bbl ]] || exit 1
 [[ -f reproducibility_pdf_inventory.txt ]] || exit 1
 [[ -f reproducibility_bbl_inventory.txt ]] || exit 1
-reprep-check-inventory paper-inventory.txt
+rr-check-inventory paper-inventory.txt

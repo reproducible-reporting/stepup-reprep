@@ -3,18 +3,18 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-     START │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-     START │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-     START │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape square.svg square.pdf
-     START │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-     START │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
-   SUCCESS │ python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+     START │ rr-convert-inkscape hexagon.svg hexagon.pdf
+   SUCCESS │ rr-convert-inkscape hexagon.svg hexagon.pdf
+     START │ rr-convert-inkscape horizontal.svg horizontal.pdf
+   SUCCESS │ rr-convert-inkscape horizontal.svg horizontal.pdf
+     START │ rr-convert-inkscape pentagon.svg pentagon.pdf
+   SUCCESS │ rr-convert-inkscape pentagon.svg pentagon.pdf
+     START │ rr-convert-inkscape square.svg square.pdf
+   SUCCESS │ rr-convert-inkscape square.svg square.pdf
+     START │ rr-convert-inkscape triangle.svg triangle.pdf
+   SUCCESS │ rr-convert-inkscape triangle.svg triangle.pdf
+     START │ rr-convert-inkscape vertical.svg vertical.pdf
+   SUCCESS │ rr-convert-inkscape vertical.svg vertical.pdf
      START │ ./tile.py plan
    SUCCESS │ ./tile.py plan
      START │ ./tile.py run

@@ -30,7 +30,7 @@ from path import Path
 from stepup.core.api import amend, getenv
 from stepup.core.utils import translate
 
-from .render import render
+from .render_jinja import render
 
 __all__ = ("convert_markdown", "isolate_header")
 

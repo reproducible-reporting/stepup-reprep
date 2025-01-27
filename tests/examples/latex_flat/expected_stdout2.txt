@@ -7,8 +7,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
-   SUCCESS │ python -m stepup.reprep.latex_flat article_structured.tex article.tex
+     START │ rr-latex-flat article_structured.tex article.tex
+   SUCCESS │ rr-latex-flat article_structured.tex article.tex
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
   DIRECTOR │ Stopping workers.

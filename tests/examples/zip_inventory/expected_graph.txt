@@ -19,8 +19,8 @@ file:./
             supplies   file:upload.zip
             supplies   step:./plan.py
             supplies   step:echo hello > built.txt
-            supplies   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
-            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:rr-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:rr-zip-inventory inventory.txt upload.zip
 
 step:./plan.py
                state = SUCCEEDED
@@ -30,14 +30,14 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:static.txt
              creates   step:echo hello > built.txt
-             creates   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
-             creates   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+             creates   step:rr-make-inventory static.txt built.txt -o inventory.txt
+             creates   step:rr-zip-inventory inventory.txt upload.zip
 
 file:static.txt
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:rr-make-inventory static.txt built.txt -o inventory.txt
 
 step:echo hello > built.txt
                state = SUCCEEDED
@@ -51,9 +51,9 @@ file:built.txt
           created by   step:echo hello > built.txt
             consumes   file:./
             consumes   step:echo hello > built.txt
-            supplies   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:rr-make-inventory static.txt built.txt -o inventory.txt
 
-step:reprep-make-inventory static.txt built.txt -o inventory.txt
+step:rr-make-inventory static.txt built.txt -o inventory.txt
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -64,12 +64,12 @@ step:reprep-make-inventory static.txt built.txt -o inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:reprep-make-inventory static.txt built.txt -o inventory.txt
+          created by   step:rr-make-inventory static.txt built.txt -o inventory.txt
             consumes   file:./
-            consumes   step:reprep-make-inventory static.txt built.txt -o inventory.txt
-            supplies   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+            consumes   step:rr-make-inventory static.txt built.txt -o inventory.txt
+            supplies   step:rr-zip-inventory inventory.txt upload.zip
 
-step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+step:rr-zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -79,6 +79,6 @@ step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+          created by   step:rr-zip-inventory inventory.txt upload.zip
             consumes   file:./
-            consumes   step:python -m stepup.reprep.zip_inventory inventory.txt upload.zip
+            consumes   step:rr-zip-inventory inventory.txt upload.zip

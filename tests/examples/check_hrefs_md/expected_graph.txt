@@ -18,7 +18,7 @@ file:./
             supplies   file:plan.py
             supplies   file:test.md
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.check_hrefs test.md
+            supplies   step:rr-check-hrefs test.md
 
 step:./plan.py
                state = SUCCEEDED
@@ -29,27 +29,27 @@ step:./plan.py
              creates   file:README.md
              creates   file:check_hrefs.yaml
              creates   file:test.md
-             creates   step:python -m stepup.reprep.check_hrefs test.md
+             creates   step:rr-check-hrefs test.md
 
 file:README.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs test.md
+            supplies   step:rr-check-hrefs test.md
 
 file:check_hrefs.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs test.md
+            supplies   step:rr-check-hrefs test.md
 
 file:test.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs test.md
+            supplies   step:rr-check-hrefs test.md
 
-step:python -m stepup.reprep.check_hrefs test.md
+step:rr-check-hrefs test.md
                state = PENDING
              env_var = REPREP_CHECK_HREFS_CONFIG [amended]
           created by   step:./plan.py
@@ -62,4 +62,4 @@ step:python -m stepup.reprep.check_hrefs test.md
 (file:BROKEN.md)
                state = AWAITED
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs test.md
+            supplies   step:rr-check-hrefs test.md

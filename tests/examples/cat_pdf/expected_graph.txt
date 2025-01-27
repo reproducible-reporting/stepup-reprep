@@ -17,7 +17,7 @@ file:./
             supplies   file:doc2.pdf
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 step:./plan.py
                state = SUCCEEDED
@@ -27,21 +27,21 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:doc1.pdf
              creates   file:doc2.pdf
-             creates   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+             creates   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc1.pdf
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc2.pdf
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
-step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -52,6 +52,6 @@ step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
 
 file:cat.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+          created by   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.cat_pdf doc1.pdf doc2.pdf cat.pdf
+            consumes   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf

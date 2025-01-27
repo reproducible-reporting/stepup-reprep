@@ -3,14 +3,14 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
-   SUCCESS │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+     START │ rr-nup-pdf src.pdf dst.pdf -p A4
+   SUCCESS │ rr-nup-pdf src.pdf dst.pdf -p A4
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ dst.pdf
      PHASE │ run
-     START │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
-   SUCCESS │ python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+     START │ rr-nup-pdf src.pdf dst.pdf -p A4
+   SUCCESS │ rr-nup-pdf src.pdf dst.pdf -p A4
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
   DIRECTOR │ Stopping workers.

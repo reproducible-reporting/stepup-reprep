@@ -16,7 +16,7 @@ file:./
             supplies   file:inventory.txt
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:reprep-make-inventory README.md -o inventory.txt
+            supplies   step:rr-make-inventory README.md -o inventory.txt
 
 step:./plan.py
                state = SUCCEEDED
@@ -25,15 +25,15 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:README.md
-             creates   step:reprep-make-inventory README.md -o inventory.txt
+             creates   step:rr-make-inventory README.md -o inventory.txt
 
 file:README.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:reprep-make-inventory README.md -o inventory.txt
+            supplies   step:rr-make-inventory README.md -o inventory.txt
 
-step:reprep-make-inventory README.md -o inventory.txt
+step:rr-make-inventory README.md -o inventory.txt
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -43,6 +43,6 @@ step:reprep-make-inventory README.md -o inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:reprep-make-inventory README.md -o inventory.txt
+          created by   step:rr-make-inventory README.md -o inventory.txt
             consumes   file:./
-            consumes   step:reprep-make-inventory README.md -o inventory.txt
+            consumes   step:rr-make-inventory README.md -o inventory.txt

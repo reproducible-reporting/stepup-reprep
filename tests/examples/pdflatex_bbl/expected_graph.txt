@@ -20,7 +20,7 @@ file:./
             supplies   file:paper.tex
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.latex paper.tex
+            supplies   step:rr-latex paper.tex
 
 step:./plan.py
                state = SUCCEEDED
@@ -30,21 +30,21 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:paper.bbl
              creates   file:paper.tex
-             creates   step:python -m stepup.reprep.latex paper.tex
+             creates   step:rr-latex paper.tex
 
 file:paper.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex
+            supplies   step:rr-latex paper.tex
 
 file:paper.bbl
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex
+            supplies   step:rr-latex paper.tex
 
-step:python -m stepup.reprep.latex paper.tex
+step:rr-latex paper.tex
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
           created by   step:./plan.py
@@ -62,24 +62,24 @@ step:python -m stepup.reprep.latex paper.tex
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex
+          created by   step:rr-latex paper.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex
+            consumes   step:rr-latex paper.tex
 
 file:paper.aux
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex
+          created by   step:rr-latex paper.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex
+            consumes   step:rr-latex paper.tex
 
 file:paper.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex
+          created by   step:rr-latex paper.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex
+            consumes   step:rr-latex paper.tex
 
 file:paper.log
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex paper.tex
+          created by   step:rr-latex paper.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex
+            consumes   step:rr-latex paper.tex

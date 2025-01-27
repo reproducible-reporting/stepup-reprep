@@ -19,7 +19,7 @@
 # --
 """Unit tests for stepup.reprep.render."""
 
-from stepup.reprep.render import load_module_file
+from stepup.reprep.render_jinja import load_module_file
 
 
 def test_load_module_file(path_tmp):

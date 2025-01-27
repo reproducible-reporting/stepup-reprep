@@ -52,4 +52,4 @@ wait
 [[ -f paper.aux ]] || exit 1
 [[ -f paper1.pdf ]] || exit 1
 [[ -f reproducibility_inventory.txt ]] || exit 1
-reprep-check-inventory paper-inventory.txt
+rr-check-inventory paper-inventory.txt

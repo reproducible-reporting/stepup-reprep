@@ -19,7 +19,7 @@ file:./
             supplies   file:part2.tex
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            supplies   step:rr-latex-flat article_structured.tex article.tex
 
 step:./plan.py
                state = SUCCEEDED
@@ -30,27 +30,27 @@ step:./plan.py
              creates   file:article_structured.tex
              creates   file:part1.tex
              creates   file:part2.tex
-             creates   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+             creates   step:rr-latex-flat article_structured.tex article.tex
 
 file:article_structured.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            supplies   step:rr-latex-flat article_structured.tex article.tex
 
 file:part1.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            supplies   step:rr-latex-flat article_structured.tex article.tex
 
 file:part2.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            supplies   step:rr-latex-flat article_structured.tex article.tex
 
-step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+step:rr-latex-flat article_structured.tex article.tex
                state = PENDING
           created by   step:./plan.py
             consumes   (file:sub/other.tex) [amended]
@@ -63,14 +63,14 @@ step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
 
 file:article.tex
                state = AWAITED
-          created by   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+          created by   step:rr-latex-flat article_structured.tex article.tex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            consumes   step:rr-latex-flat article_structured.tex article.tex
 
 (file:sub/other.tex)
                state = AWAITED
             consumes   (file:sub/)
-            supplies   step:python -m stepup.reprep.latex_flat article_structured.tex article.tex
+            supplies   step:rr-latex-flat article_structured.tex article.tex
 
 (file:sub/)
                state = AWAITED

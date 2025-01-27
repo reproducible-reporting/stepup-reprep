@@ -31,12 +31,12 @@ file:./
             supplies   step:./plan.py
             supplies   step:./tile.py plan
             supplies   step:./tile.py run
-            supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-            supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-            supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-            supplies   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
-            supplies   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-            supplies   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            supplies   step:rr-convert-inkscape hexagon.svg hexagon.pdf
+            supplies   step:rr-convert-inkscape horizontal.svg horizontal.pdf
+            supplies   step:rr-convert-inkscape pentagon.svg pentagon.pdf
+            supplies   step:rr-convert-inkscape square.svg square.pdf
+            supplies   step:rr-convert-inkscape triangle.svg triangle.pdf
+            supplies   step:rr-convert-inkscape vertical.svg vertical.pdf
 
 step:./plan.py
                state = SUCCEEDED
@@ -54,50 +54,50 @@ step:./plan.py
              creates   file:vera.ttf
              creates   file:vertical.svg
              creates   step:./tile.py plan
-             creates   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
-             creates   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
-             creates   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
-             creates   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
-             creates   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
-             creates   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+             creates   step:rr-convert-inkscape hexagon.svg hexagon.pdf
+             creates   step:rr-convert-inkscape horizontal.svg horizontal.pdf
+             creates   step:rr-convert-inkscape pentagon.svg pentagon.pdf
+             creates   step:rr-convert-inkscape square.svg square.pdf
+             creates   step:rr-convert-inkscape triangle.svg triangle.pdf
+             creates   step:rr-convert-inkscape vertical.svg vertical.pdf
 
 file:hexagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+            supplies   step:rr-convert-inkscape hexagon.svg hexagon.pdf
 
 file:horizontal.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+            supplies   step:rr-convert-inkscape horizontal.svg horizontal.pdf
 
 file:pentagon.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+            supplies   step:rr-convert-inkscape pentagon.svg pentagon.pdf
 
 file:square.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+            supplies   step:rr-convert-inkscape square.svg square.pdf
 
 file:triangle.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+            supplies   step:rr-convert-inkscape triangle.svg triangle.pdf
 
 file:vertical.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            supplies   step:rr-convert-inkscape vertical.svg vertical.pdf
 
-step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+step:rr-convert-inkscape hexagon.svg hexagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -109,12 +109,12 @@ step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
 
 file:hexagon.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+          created by   step:rr-convert-inkscape hexagon.svg hexagon.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape hexagon.svg hexagon.pdf
+            consumes   step:rr-convert-inkscape hexagon.svg hexagon.pdf
             supplies   step:./tile.py run
 
-step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+step:rr-convert-inkscape horizontal.svg horizontal.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -126,12 +126,12 @@ step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
 
 file:horizontal.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+          created by   step:rr-convert-inkscape horizontal.svg horizontal.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape horizontal.svg horizontal.pdf
+            consumes   step:rr-convert-inkscape horizontal.svg horizontal.pdf
             supplies   step:./tile.py run
 
-step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+step:rr-convert-inkscape pentagon.svg pentagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -143,12 +143,12 @@ step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
 
 file:pentagon.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+          created by   step:rr-convert-inkscape pentagon.svg pentagon.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape pentagon.svg pentagon.pdf
+            consumes   step:rr-convert-inkscape pentagon.svg pentagon.pdf
             supplies   step:./tile.py run
 
-step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+step:rr-convert-inkscape square.svg square.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -160,12 +160,12 @@ step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
 
 file:square.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+          created by   step:rr-convert-inkscape square.svg square.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape square.svg square.pdf
+            consumes   step:rr-convert-inkscape square.svg square.pdf
             supplies   step:./tile.py run
 
-step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+step:rr-convert-inkscape triangle.svg triangle.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -177,12 +177,12 @@ step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
 
 file:triangle.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+          created by   step:rr-convert-inkscape triangle.svg triangle.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape triangle.svg triangle.pdf
+            consumes   step:rr-convert-inkscape triangle.svg triangle.pdf
             supplies   step:./tile.py run
 
-step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+step:rr-convert-inkscape vertical.svg vertical.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -194,9 +194,9 @@ step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
 
 file:vertical.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+          created by   step:rr-convert-inkscape vertical.svg vertical.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape vertical.svg vertical.pdf
+            consumes   step:rr-convert-inkscape vertical.svg vertical.pdf
             supplies   step:./tile.py run
 
 file:tile.py

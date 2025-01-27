@@ -42,7 +42,7 @@ __all__ = (
     "make_inventory",
     "nup_pdf",
     "raster_pdf",
-    "render",
+    "render_jinja",
     "sync_zenodo",
     "unplot",
     "zip_inventory",
@@ -73,7 +73,7 @@ def add_notes_pdf(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "python -m stepup.reprep.add_notes_pdf ${inp} ${out}",
+        "rr-add-notes-pdf ${inp} ${out}",
         inp=[path_src, path_notes],
         out=path_dst,
         optional=optional,
@@ -110,7 +110,7 @@ def cat_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "python -m stepup.reprep.cat_pdf"
+    command = "rr-cat-pdf"
     if insert_blank:
         command += " --insert-blank"
     command += " ${inp} ${out}"
@@ -144,7 +144,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     with subs_env_vars() as subs:
         path_src = subs(path_src)
         path_config = subs(path_config)
-    command = f"python -m stepup.reprep.check_hrefs {shlex.quote(path_src)}"
+    command = f"rr-check-hrefs {shlex.quote(path_src)}"
     inp_paths = [path_src]
     if path_config is not None:
         inp_paths.append(path_config)
@@ -198,7 +198,7 @@ def convert_markdown(
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, out, ".html")
     inp = [path_md]
-    command = "python -m stepup.reprep.convert_markdown "
+    command = "rr-convert-markdown "
     command += shlex.join([path_md, path_html])
     if katex:
         command += " --katex"
@@ -247,7 +247,7 @@ def convert_weasyprint(
     if not path_html.endswith(".html"):
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, out, ".pdf")
-    command = "python -m stepup.reprep.convert_weasyprint "
+    command = "rr-convert-weasyprint "
     command += shlex.join([path_html, path_pdf])
     if weasyprint is not None:
         command += " --weasyprint=" + shlex.quote(weasyprint)
@@ -431,7 +431,7 @@ def convert_svg(
         raise ValueError("The SVG file must have extension .svg")
     if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
-    command = "python -m stepup.reprep.convert_inkscape "
+    command = "rr-convert-inkscape "
     command += shlex.join([path_svg, path_out])
     if inkscape is not None:
         command += " --inkscape=" + shlex.quote(inkscape)
@@ -562,7 +562,7 @@ def latex(
     prefix = path_tex[:-4]
     path_pdf = f"{prefix}.pdf"
 
-    command = "python -m stepup.reprep.latex " + shlex.quote(path_tex)
+    command = "rr-latex " + shlex.quote(path_tex)
     inp_paths = [path_tex]
     if maxrep != 5:
         command += " --maxrep=" + shlex.quote(str(maxrep))
@@ -674,7 +674,7 @@ def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: 
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "python -m stepup.reprep.latex_flat ${inp} ${out}",
+        "rr-latex-flat ${inp} ${out}",
         inp=path_tex,
         out=path_flat,
         optional=optional,
@@ -704,7 +704,7 @@ def make_inventory(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "reprep-make-inventory ${inp} -o ${out}",
+        "rr-make-inventory ${inp} -o ${out}",
         inp=paths,
         out=[path_inventory],
         optional=optional,
@@ -753,7 +753,7 @@ def nup_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "python -m stepup.reprep.nup_pdf ${inp} ${out}"
+    command = "rr-nup-pdf ${inp} ${out}"
     if nrow is not None:
         command += " -r " + shlex.quote(str(nrow))
     if ncol is not None:
@@ -799,7 +799,7 @@ def raster_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "python -m stepup.reprep.raster_pdf ${inp} ${out}"
+    command = "rr-raster-pdf ${inp} ${out}"
     if resolution is not None:
         command += " -r " + shlex.quote(str(resolution))
     if quality is not None:
@@ -808,7 +808,7 @@ def raster_pdf(
     return step(command, inp=path_inp, out=path_out, optional=optional, block=block)
 
 
-def render(
+def render_jinja(
     path_template: str,
     paths_variables: list[str],
     out: str,
@@ -847,7 +847,7 @@ def render(
     if len(paths_variables) == 0:
         raise ValueError("At least one file with variable definitions needed.")
     path_out = make_path_out(path_template, out, None)
-    command = "python -m stepup.reprep.render ${inp} ${out}"
+    command = "rr-render-jinja ${inp} ${out}"
     if mode != "auto":
         command += f" --mode {mode}"
     return step(
@@ -874,7 +874,7 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step("python -m stepup.reprep.sync_zenodo ${inp}", inp=path_config, block=block)
+    return step("rr-sync-zenodo ${inp}", inp=path_config, block=block)
 
 
 def unplot(
@@ -900,7 +900,7 @@ def unplot(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     path_out = make_path_out(path_svg, out, ".json")
-    command = "python -m stepup.reprep.unplot ${inp} ${out}"
+    command = "rr-unplot ${inp} ${out}"
     return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
 
 
@@ -913,7 +913,7 @@ def zip_inventory(
     ----------
     path_inventory
         A file created with the `make_inventory` API or with the command-line script
-        `reprep-make-inventory`.
+        `rr-make-inventory`.
     path_zip
         The output ZIP file
     optional
@@ -927,7 +927,7 @@ def zip_inventory(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "python -m stepup.reprep.zip_inventory ${inp} ${out}",
+        "rr-zip-inventory ${inp} ${out}",
         inp=path_inventory,
         out=path_zip,
         optional=optional,

@@ -17,7 +17,7 @@ file:./
             supplies   file:smile.pdf
             supplies   step:./plan.py
             supplies   step:mkdir -p rastered/
-            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
 
 step:./plan.py
                state = SUCCEEDED
@@ -27,13 +27,13 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:smile.pdf
              creates   step:mkdir -p rastered/
-             creates   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+             creates   step:rr-raster-pdf smile.pdf rastered/smile.pdf
 
 file:smile.pdf
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
 
 step:mkdir -p rastered/
                state = SUCCEEDED
@@ -48,9 +48,9 @@ file:rastered/
             consumes   file:./
             consumes   step:mkdir -p rastered/
             supplies   file:rastered/smile.pdf
-            supplies   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
 
-step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+step:rr-raster-pdf smile.pdf rastered/smile.pdf
                state = SUCCEEDED
              env_var = REPREP_RASTER_QUALITY [amended]
                      = REPREP_RASTER_RESOLUTION [amended]
@@ -63,6 +63,6 @@ step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
 
 file:rastered/smile.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+          created by   step:rr-raster-pdf smile.pdf rastered/smile.pdf
             consumes   file:rastered/
-            consumes   step:python -m stepup.reprep.raster_pdf smile.pdf rastered/smile.pdf
+            consumes   step:rr-raster-pdf smile.pdf rastered/smile.pdf

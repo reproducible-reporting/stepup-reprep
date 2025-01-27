@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
-   SUCCESS │ python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+     START │ rr-convert-weasyprint doc.html doc.pdf
+   SUCCESS │ rr-convert-weasyprint doc.html doc.pdf
      START │ weasyprint doc.html doc.pdf
    SUCCESS │ weasyprint doc.html doc.pdf
   DIRECTOR │ Trying to delete 0 outdated output(s).

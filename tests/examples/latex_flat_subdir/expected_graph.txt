@@ -15,7 +15,7 @@ file:./
             supplies   file:plan.py
             supplies   file:sub/
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            supplies   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
 step:./plan.py
                state = SUCCEEDED
@@ -27,7 +27,7 @@ step:./plan.py
              creates   file:sub/article_structured.tex
              creates   file:sub/part1.tex
              creates   file:sub/part2.tex
-             creates   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+             creates   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
 file:sub/
                state = STATIC
@@ -37,27 +37,27 @@ file:sub/
             supplies   file:sub/article_structured.tex
             supplies   file:sub/part1.tex
             supplies   file:sub/part2.tex
-            supplies   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            supplies   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
 file:sub/article_structured.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:sub/
-            supplies   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            supplies   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
 file:sub/part1.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:sub/
-            supplies   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            supplies   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
 file:sub/part2.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:sub/
-            supplies   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            supplies   step:rr-latex-flat sub/article_structured.tex sub/article.tex
 
-step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+step:rr-latex-flat sub/article_structured.tex sub/article.tex
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -70,6 +70,6 @@ step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.t
 
 file:sub/article.tex
                state = BUILT
-          created by   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+          created by   step:rr-latex-flat sub/article_structured.tex sub/article.tex
             consumes   file:sub/
-            consumes   step:python -m stepup.reprep.latex_flat sub/article_structured.tex sub/article.tex
+            consumes   step:rr-latex-flat sub/article_structured.tex sub/article.tex

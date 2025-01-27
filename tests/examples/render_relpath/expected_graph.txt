@@ -45,7 +45,7 @@ file:variables.py
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 step:mkdir -p public/
                state = SUCCEEDED
@@ -66,8 +66,8 @@ file:public/
             supplies   file:public/main.tex
             supplies   file:public/preamble.inc.tex
             supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
-            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-latex main.tex --run-bibtex  # wd=public/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:static/
                state = STATIC
@@ -78,7 +78,7 @@ file:static/
             supplies   file:static/preamble.inc.tex
             supplies   file:static/variables.py
             supplies   step:./plan.py  # wd=static/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:static/preamble.inc.tex
                state = STATIC
@@ -88,7 +88,7 @@ file:static/preamble.inc.tex
 
 step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
                state = SUCCEEDED
-           mandatory = IMPLIED
+           mandatory = REQUIRED
           created by   step:./plan.py
             consumes   file:./
             consumes   file:public/
@@ -101,7 +101,7 @@ file:public/preamble.inc.tex
           created by   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             consumes   file:public/
             consumes   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
-            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            supplies   step:rr-latex main.tex --run-bibtex  # wd=public/
 
 file:static/plan.py
                state = STATIC
@@ -116,22 +116,22 @@ step:./plan.py  # wd=static/
           created by   step:./plan.py
             consumes   file:static/
             consumes   file:static/plan.py
-             creates   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
-             creates   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+             creates   step:rr-latex main.tex --run-bibtex  # wd=public/
+             creates   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:static/main.tex
                state = STATIC
           created by   dg:static/**
             consumes   file:static/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:static/variables.py
                state = STATIC
           created by   dg:static/**
             consumes   file:static/
-            supplies   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
-step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
                state = SUCCEEDED
              env_var = PUBLIC [amended]
                      = ROOT [amended]
@@ -146,12 +146,12 @@ step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../pub
 
 file:public/main.tex
                state = BUILT
-          created by   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+          created by   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
             consumes   file:public/
-            consumes   step:python -m stepup.reprep.render main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
-            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            consumes   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-latex main.tex --run-bibtex  # wd=public/
 
-step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+step:rr-latex main.tex --run-bibtex  # wd=public/
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
           created by   step:./plan.py  # wd=static/
@@ -169,24 +169,24 @@ step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
 
 file:public/main-inventory.txt
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+          created by   step:rr-latex main.tex --run-bibtex  # wd=public/
             consumes   file:public/
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            consumes   step:rr-latex main.tex --run-bibtex  # wd=public/
 
 file:public/main.aux
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+          created by   step:rr-latex main.tex --run-bibtex  # wd=public/
             consumes   file:public/
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            consumes   step:rr-latex main.tex --run-bibtex  # wd=public/
 
 file:public/main.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+          created by   step:rr-latex main.tex --run-bibtex  # wd=public/
             consumes   file:public/
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            consumes   step:rr-latex main.tex --run-bibtex  # wd=public/
 
 file:public/main.log
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+          created by   step:rr-latex main.tex --run-bibtex  # wd=public/
             consumes   file:public/
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex  # wd=public/
+            consumes   step:rr-latex main.tex --run-bibtex  # wd=public/

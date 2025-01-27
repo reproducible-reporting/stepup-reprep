@@ -3,10 +3,10 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.latex main.tex --run-bibtex
-   SUCCESS │ python -m stepup.reprep.latex main.tex --run-bibtex
-     START │ python -m stepup.reprep.check_hrefs main.pdf
-RESCHEDULE │ python -m stepup.reprep.check_hrefs main.pdf
+     START │ rr-latex main.tex --run-bibtex
+   SUCCESS │ rr-latex main.tex --run-bibtex
+     START │ rr-check-hrefs main.pdf
+RESCHEDULE │ rr-check-hrefs main.pdf
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
@@ -14,7 +14,7 @@ BROKEN.md
 ─────────────────────────────── Orphaned inputs ────────────────────────────────
              AWAITED  BROKEN.md
 ───────────────────────────────── PENDING Step ─────────────────────────────────
-Command               python -m stepup.reprep.check_hrefs main.pdf
+Command               rr-check-hrefs main.pdf
 Working directory     ./
 Inputs        STATIC  ./
               STATIC  README.md [amended]

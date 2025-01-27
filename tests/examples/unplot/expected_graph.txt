@@ -18,8 +18,8 @@ file:./
             supplies   file:plot1.svg
             supplies   file:plot2.svg
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
-            supplies   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+            supplies   step:rr-unplot plot1.svg current_plot1.json
+            supplies   step:rr-unplot plot2.svg current_plot2.json
 
 step:./plan.py
                state = SUCCEEDED
@@ -29,22 +29,22 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:plot1.svg
              creates   file:plot2.svg
-             creates   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
-             creates   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+             creates   step:rr-unplot plot1.svg current_plot1.json
+             creates   step:rr-unplot plot2.svg current_plot2.json
 
 file:plot1.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+            supplies   step:rr-unplot plot1.svg current_plot1.json
 
 file:plot2.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+            supplies   step:rr-unplot plot2.svg current_plot2.json
 
-step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+step:rr-unplot plot1.svg current_plot1.json
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -54,11 +54,11 @@ step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
 
 file:current_plot1.json
                state = BUILT
-          created by   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+          created by   step:rr-unplot plot1.svg current_plot1.json
             consumes   file:./
-            consumes   step:python -m stepup.reprep.unplot plot1.svg current_plot1.json
+            consumes   step:rr-unplot plot1.svg current_plot1.json
 
-step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+step:rr-unplot plot2.svg current_plot2.json
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -68,6 +68,6 @@ step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
 
 file:current_plot2.json
                state = BUILT
-          created by   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+          created by   step:rr-unplot plot2.svg current_plot2.json
             consumes   file:./
-            consumes   step:python -m stepup.reprep.unplot plot2.svg current_plot2.json
+            consumes   step:rr-unplot plot2.svg current_plot2.json

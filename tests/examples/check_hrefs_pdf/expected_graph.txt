@@ -24,8 +24,8 @@ file:./
             supplies   file:main.tex
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
-            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            supplies   step:rr-check-hrefs main.pdf
+            supplies   step:rr-latex main.tex --run-bibtex
 
 step:./plan.py
                state = SUCCEEDED
@@ -36,28 +36,28 @@ step:./plan.py
              creates   file:README.md
              creates   file:check_hrefs.yaml
              creates   file:main.tex
-             creates   step:python -m stepup.reprep.check_hrefs main.pdf
-             creates   step:python -m stepup.reprep.latex main.tex --run-bibtex
+             creates   step:rr-check-hrefs main.pdf
+             creates   step:rr-latex main.tex --run-bibtex
 
 file:README.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+            supplies   step:rr-check-hrefs main.pdf
 
 file:check_hrefs.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+            supplies   step:rr-check-hrefs main.pdf
 
 file:main.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            supplies   step:rr-latex main.tex --run-bibtex
 
-step:python -m stepup.reprep.latex main.tex --run-bibtex
+step:rr-latex main.tex --run-bibtex
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
           created by   step:./plan.py
@@ -78,24 +78,24 @@ step:python -m stepup.reprep.latex main.tex --run-bibtex
 
 file:main-inventory.txt
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   step:rr-latex main.tex --run-bibtex
 
 file:main.aux
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   step:rr-latex main.tex --run-bibtex
 
 file:main.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
-            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+            consumes   step:rr-latex main.tex --run-bibtex
+            supplies   step:rr-check-hrefs main.pdf
 
-step:python -m stepup.reprep.check_hrefs main.pdf
+step:rr-check-hrefs main.pdf
                state = PENDING
              env_var = REPREP_CHECK_HREFS_CONFIG [amended]
           created by   step:./plan.py
@@ -107,23 +107,23 @@ step:python -m stepup.reprep.check_hrefs main.pdf
 
 file:main.log
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   step:rr-latex main.tex --run-bibtex
 
 file:main.out
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   step:rr-latex main.tex --run-bibtex
 
 file:main.sh
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex main.tex --run-bibtex
+          created by   step:rr-latex main.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex main.tex --run-bibtex
+            consumes   step:rr-latex main.tex --run-bibtex
 
 (file:BROKEN.md)
                state = AWAITED
             consumes   file:./
-            supplies   step:python -m stepup.reprep.check_hrefs main.pdf
+            supplies   step:rr-check-hrefs main.pdf

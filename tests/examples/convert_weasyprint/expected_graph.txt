@@ -18,7 +18,7 @@ file:./
             supplies   file:plan.py
             supplies   file:style.css
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+            supplies   step:rr-convert-weasyprint doc.html doc.pdf
             supplies   step:weasyprint doc.html doc.pdf
 
 step:./plan.py
@@ -30,7 +30,7 @@ step:./plan.py
              creates   file:block.png
              creates   file:doc.html
              creates   file:style.css
-             creates   step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+             creates   step:rr-convert-weasyprint doc.html doc.pdf
 
 file:block.png
                state = STATIC
@@ -42,7 +42,7 @@ file:doc.html
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+            supplies   step:rr-convert-weasyprint doc.html doc.pdf
             supplies   step:weasyprint doc.html doc.pdf
 
 file:style.css
@@ -51,7 +51,7 @@ file:style.css
             consumes   file:./
             supplies   step:weasyprint doc.html doc.pdf
 
-step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+step:rr-convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
              env_var = REPREP_WEASYPRINT [amended]
           inp_digest = same
@@ -62,7 +62,7 @@ step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
 
 step:weasyprint doc.html doc.pdf
                state = SUCCEEDED
-          created by   step:python -m stepup.reprep.convert_weasyprint doc.html doc.pdf
+          created by   step:rr-convert-weasyprint doc.html doc.pdf
             consumes   file:./
             consumes   file:block.png
             consumes   file:doc.html

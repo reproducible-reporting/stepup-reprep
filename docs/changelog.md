@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2025-01-27 {: #v2.0.2 }
+
+This release contains a few minor breaking changes for the sake of internal consistentcy.
 
 ### Changed
 
 - The conversion with Inkscape has become a single step.
   (It was first split up in a step scanning for dependencies followed by the actual conversion.)
+- Add more entrypoints for command-line utilitities in StepUp RepRep.
+  Existing ones were renamed from `reprep-*` to `rr-*`.
+- Renamed module `stepup.reprep.render` to `stepup.reprep.render_jinja`.
 
 
 ## [2.0.2] - 2025-01-22 {: #v2.0.2 }
@@ -65,7 +70,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 
 ### Added
 
-- The script `reprep-sync-zenodo` and corresponding StepUp API function `sync_zenodo()`
+- The script `rr-sync-zenodo` and corresponding StepUp API function `sync_zenodo()`
   synchronize your local data with a draft dataset on Zenodo.
 - Small documentation updates
 
@@ -97,7 +102,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 
 ### Added
 
-- `reprep-zip-inventory` command to manually create a reproducible ZIP file from an `inventory.txt` file.
+- `rr-zip-inventory` command to manually create a reproducible ZIP file from an `inventory.txt` file.
 - More documentation on how to work with inventory files.
 - Tutorial for archiving StepUp publication Git repositories.
 

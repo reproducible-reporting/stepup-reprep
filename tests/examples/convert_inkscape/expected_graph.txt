@@ -18,8 +18,8 @@ file:./
             supplies   file:plan.py
             supplies   file:smile.svg
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
-            supplies   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+            supplies   step:rr-convert-inkscape glasses.svg glasses.png
+            supplies   step:rr-convert-inkscape smile.svg final.pdf
 
 step:./plan.py
                state = SUCCEEDED
@@ -29,24 +29,24 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:glasses.svg
              creates   file:smile.svg
-             creates   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
-             creates   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+             creates   step:rr-convert-inkscape glasses.svg glasses.png
+             creates   step:rr-convert-inkscape smile.svg final.pdf
 
 file:glasses.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
+            supplies   step:rr-convert-inkscape glasses.svg glasses.png
 
 file:smile.svg
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+            supplies   step:rr-convert-inkscape smile.svg final.pdf
 
-step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
+step:rr-convert-inkscape glasses.svg glasses.png
                state = SUCCEEDED
-           mandatory = IMPLIED
+           mandatory = REQUIRED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PNG_ARGS [amended]
           created by   step:./plan.py
@@ -57,12 +57,12 @@ step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
 
 file:glasses.png
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
+          created by   step:rr-convert-inkscape glasses.svg glasses.png
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape glasses.svg glasses.png
-            supplies   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+            consumes   step:rr-convert-inkscape glasses.svg glasses.png
+            supplies   step:rr-convert-inkscape smile.svg final.pdf
 
-step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+step:rr-convert-inkscape smile.svg final.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
@@ -75,6 +75,6 @@ step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
 
 file:final.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+          created by   step:rr-convert-inkscape smile.svg final.pdf
             consumes   file:./
-            consumes   step:python -m stepup.reprep.convert_inkscape smile.svg final.pdf
+            consumes   step:rr-convert-inkscape smile.svg final.pdf

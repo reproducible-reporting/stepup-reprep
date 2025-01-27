@@ -16,7 +16,7 @@ file:./
             supplies   file:plan.py
             supplies   file:src.pdf
             supplies   step:./plan.py
-            supplies   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+            supplies   step:rr-nup-pdf src.pdf dst.pdf -p A4
 
 step:./plan.py
                state = SUCCEEDED
@@ -25,15 +25,15 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:src.pdf
-             creates   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+             creates   step:rr-nup-pdf src.pdf dst.pdf -p A4
 
 file:src.pdf
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+            supplies   step:rr-nup-pdf src.pdf dst.pdf -p A4
 
-step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+step:rr-nup-pdf src.pdf dst.pdf -p A4
                state = SUCCEEDED
              env_var = REPREP_NUP_MARGIN [amended]
                      = REPREP_NUP_NCOL [amended]
@@ -46,6 +46,6 @@ step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
 
 file:dst.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+          created by   step:rr-nup-pdf src.pdf dst.pdf -p A4
             consumes   file:./
-            consumes   step:python -m stepup.reprep.nup_pdf src.pdf dst.pdf -p A4
+            consumes   step:rr-nup-pdf src.pdf dst.pdf -p A4

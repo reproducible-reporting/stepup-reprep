@@ -24,7 +24,7 @@ file:./
             supplies   step:echo '2 + 2' > subdir/code.txt
             supplies   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
             supplies   step:mkdir -p subdir/
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 step:./plan.py
                state = SUCCEEDED
@@ -36,13 +36,13 @@ step:./plan.py
              creates   step:echo '2 + 2' > subdir/code.txt
              creates   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
              creates   step:mkdir -p subdir/
-             creates   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+             creates   step:rr-latex paper.tex --run-bibtex
 
 file:paper.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 step:mkdir -p subdir/
                state = SUCCEEDED
@@ -61,7 +61,7 @@ file:subdir/
             supplies   step:echo '2 + 2' > subdir/code.txt
             supplies   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
 
-step:python -m stepup.reprep.latex paper.tex --run-bibtex
+step:rr-latex paper.tex --run-bibtex
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
           created by   step:./plan.py
@@ -82,21 +82,21 @@ step:python -m stepup.reprep.latex paper.tex --run-bibtex
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.aux
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.pdf
                state = BUILT
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
                state = SUCCEEDED
@@ -111,7 +111,7 @@ file:subdir/generated.tex
           created by   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
             consumes   file:subdir/
             consumes   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 step:echo '2 + 2' > subdir/code.txt
                state = SUCCEEDED
@@ -126,16 +126,16 @@ file:subdir/code.txt
           created by   step:echo '2 + 2' > subdir/code.txt
             consumes   file:subdir/
             consumes   step:echo '2 + 2' > subdir/code.txt
-            supplies   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            supplies   step:rr-latex paper.tex --run-bibtex
 
 file:paper.log
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex
 
 file:paper.out
                state = VOLATILE
-          created by   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+          created by   step:rr-latex paper.tex --run-bibtex
             consumes   file:./
-            consumes   step:python -m stepup.reprep.latex paper.tex --run-bibtex
+            consumes   step:rr-latex paper.tex --run-bibtex

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.0] - 2025-01-27 {: #v2.0.2 }
 
-This release contains a few minor breaking changes for the sake of internal consistentcy.
+This release contains a few minor breaking changes for the sake of internal consistency.
 
 ### Changed
 
@@ -165,6 +165,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.1.0
 [2.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.0.2
 [1.4.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.1
 [1.4.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.0

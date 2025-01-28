@@ -806,6 +806,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#stepup.reprep.api.compile_typst" class="md-nav__link">
+    <span class="md-ellipsis">
+      compile_typst
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#stepup.reprep.api.convert_markdown" class="md-nav__link">
     <span class="md-ellipsis">
       convert_markdown
@@ -1121,6 +1130,15 @@
   <a href="#stepup.reprep.api.check_hrefs" class="md-nav__link">
     <span class="md-ellipsis">
       check_hrefs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stepup.reprep.api.compile_typst" class="md-nav__link">
+    <span class="md-ellipsis">
+      compile_typst
     </span>
   </a>
   
@@ -1759,6 +1777,213 @@ Defaults to <code>${REPREP_CHECK_HREFS_CONFIG}</code> variable or <code>check_hr
 </span><span id="__span-0-150"><a id="__codelineno-0-150" name="__codelineno-0-150"></a>        <span class="n">inp_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_config</span><span class="p">)</span>
 </span><span id="__span-0-151"><a id="__codelineno-0-151" name="__codelineno-0-151"></a>        <span class="n">command</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -c </span><span class="si">{</span><span class="n">path_config</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-152"><a id="__codelineno-0-152" name="__codelineno-0-152"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">inp_paths</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="stepup.reprep.api.compile_typst" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">compile_typst</span><span class="p">(</span><span class="n">path_typ</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">typst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+<a href="#stepup.reprep.api.compile_typst" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a step for the compilation of a LaTeX source.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>path_typ</code></b>
+              (<code>str</code>)
+          –
+          <div class="doc-md-description">
+            <p>The main typst source file.
+This argument may contain environment variables.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>workdir</code></b>
+              (<code>str</code>, default:
+                  <code>&#39;./&#39;</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The working directory where the LaTeX command must be executed.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>typst</code></b>
+              (<code>str | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Path to the Typst executable.
+Defaults to <code>${REPREP_TYPSY}</code> variable or <code>typst</code> if the variable is unset.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>optional</code></b>
+              (<code>bool</code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>When <code>True</code>, the step is only executed when needed by other steps.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>block</code></b>
+              (<code>bool</code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>When <code>True</code>, the step will always remain pending.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code>step_info</code>
+          –
+          <div class="doc-md-description">
+            <p>Holds relevant information of the step, useful for defining follow-up steps.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="note" open>
+  <summary>Notes</summary>
+  <p>Support for typst in StepUp RepRep is experimental.
+Expect breaking changes in future releases.
+Future extensions could include:
+- Support for inventory files, similar to LaTeX
+- Support for other output formats than PDF
+- Support for passing in other options to the typst compiler</p>
+</details>
+            <details class="quote">
+              <summary>Source code in <code>stepup/reprep/api.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-938">938</a></span>
+<span class="normal"><a href="#__codelineno-0-939">939</a></span>
+<span class="normal"><a href="#__codelineno-0-940">940</a></span>
+<span class="normal"><a href="#__codelineno-0-941">941</a></span>
+<span class="normal"><a href="#__codelineno-0-942">942</a></span>
+<span class="normal"><a href="#__codelineno-0-943">943</a></span>
+<span class="normal"><a href="#__codelineno-0-944">944</a></span>
+<span class="normal"><a href="#__codelineno-0-945">945</a></span>
+<span class="normal"><a href="#__codelineno-0-946">946</a></span>
+<span class="normal"><a href="#__codelineno-0-947">947</a></span>
+<span class="normal"><a href="#__codelineno-0-948">948</a></span>
+<span class="normal"><a href="#__codelineno-0-949">949</a></span>
+<span class="normal"><a href="#__codelineno-0-950">950</a></span>
+<span class="normal"><a href="#__codelineno-0-951">951</a></span>
+<span class="normal"><a href="#__codelineno-0-952">952</a></span>
+<span class="normal"><a href="#__codelineno-0-953">953</a></span>
+<span class="normal"><a href="#__codelineno-0-954">954</a></span>
+<span class="normal"><a href="#__codelineno-0-955">955</a></span>
+<span class="normal"><a href="#__codelineno-0-956">956</a></span>
+<span class="normal"><a href="#__codelineno-0-957">957</a></span>
+<span class="normal"><a href="#__codelineno-0-958">958</a></span>
+<span class="normal"><a href="#__codelineno-0-959">959</a></span>
+<span class="normal"><a href="#__codelineno-0-960">960</a></span>
+<span class="normal"><a href="#__codelineno-0-961">961</a></span>
+<span class="normal"><a href="#__codelineno-0-962">962</a></span>
+<span class="normal"><a href="#__codelineno-0-963">963</a></span>
+<span class="normal"><a href="#__codelineno-0-964">964</a></span>
+<span class="normal"><a href="#__codelineno-0-965">965</a></span>
+<span class="normal"><a href="#__codelineno-0-966">966</a></span>
+<span class="normal"><a href="#__codelineno-0-967">967</a></span>
+<span class="normal"><a href="#__codelineno-0-968">968</a></span>
+<span class="normal"><a href="#__codelineno-0-969">969</a></span>
+<span class="normal"><a href="#__codelineno-0-970">970</a></span>
+<span class="normal"><a href="#__codelineno-0-971">971</a></span>
+<span class="normal"><a href="#__codelineno-0-972">972</a></span>
+<span class="normal"><a href="#__codelineno-0-973">973</a></span>
+<span class="normal"><a href="#__codelineno-0-974">974</a></span>
+<span class="normal"><a href="#__codelineno-0-975">975</a></span>
+<span class="normal"><a href="#__codelineno-0-976">976</a></span>
+<span class="normal"><a href="#__codelineno-0-977">977</a></span>
+<span class="normal"><a href="#__codelineno-0-978">978</a></span>
+<span class="normal"><a href="#__codelineno-0-979">979</a></span>
+<span class="normal"><a href="#__codelineno-0-980">980</a></span>
+<span class="normal"><a href="#__codelineno-0-981">981</a></span>
+<span class="normal"><a href="#__codelineno-0-982">982</a></span>
+<span class="normal"><a href="#__codelineno-0-983">983</a></span>
+<span class="normal"><a href="#__codelineno-0-984">984</a></span>
+<span class="normal"><a href="#__codelineno-0-985">985</a></span>
+<span class="normal"><a href="#__codelineno-0-986">986</a></span>
+<span class="normal"><a href="#__codelineno-0-987">987</a></span>
+<span class="normal"><a href="#__codelineno-0-988">988</a></span>
+<span class="normal"><a href="#__codelineno-0-989">989</a></span>
+<span class="normal"><a href="#__codelineno-0-990">990</a></span>
+<span class="normal"><a href="#__codelineno-0-991">991</a></span>
+<span class="normal"><a href="#__codelineno-0-992">992</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-938"><a id="__codelineno-0-938" name="__codelineno-0-938"></a><span class="k">def</span><span class="w"> </span><span class="nf">compile_typst</span><span class="p">(</span>
+</span><span id="__span-0-939"><a id="__codelineno-0-939" name="__codelineno-0-939"></a>    <span class="n">path_typ</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="__span-0-940"><a id="__codelineno-0-940" name="__codelineno-0-940"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-0-941"><a id="__codelineno-0-941" name="__codelineno-0-941"></a>    <span class="n">workdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+</span><span id="__span-0-942"><a id="__codelineno-0-942" name="__codelineno-0-942"></a>    <span class="n">typst</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-943"><a id="__codelineno-0-943" name="__codelineno-0-943"></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-944"><a id="__codelineno-0-944" name="__codelineno-0-944"></a>    <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-945"><a id="__codelineno-0-945" name="__codelineno-0-945"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-946"><a id="__codelineno-0-946" name="__codelineno-0-946"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a step for the compilation of a LaTeX source.</span>
+</span><span id="__span-0-947"><a id="__codelineno-0-947" name="__codelineno-0-947"></a>
+</span><span id="__span-0-948"><a id="__codelineno-0-948" name="__codelineno-0-948"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-949"><a id="__codelineno-0-949" name="__codelineno-0-949"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-950"><a id="__codelineno-0-950" name="__codelineno-0-950"></a><span class="sd">    path_typ</span>
+</span><span id="__span-0-951"><a id="__codelineno-0-951" name="__codelineno-0-951"></a><span class="sd">        The main typst source file.</span>
+</span><span id="__span-0-952"><a id="__codelineno-0-952" name="__codelineno-0-952"></a><span class="sd">        This argument may contain environment variables.</span>
+</span><span id="__span-0-953"><a id="__codelineno-0-953" name="__codelineno-0-953"></a><span class="sd">    workdir</span>
+</span><span id="__span-0-954"><a id="__codelineno-0-954" name="__codelineno-0-954"></a><span class="sd">        The working directory where the LaTeX command must be executed.</span>
+</span><span id="__span-0-955"><a id="__codelineno-0-955" name="__codelineno-0-955"></a><span class="sd">    typst</span>
+</span><span id="__span-0-956"><a id="__codelineno-0-956" name="__codelineno-0-956"></a><span class="sd">        Path to the Typst executable.</span>
+</span><span id="__span-0-957"><a id="__codelineno-0-957" name="__codelineno-0-957"></a><span class="sd">        Defaults to `${REPREP_TYPSY}` variable or `typst` if the variable is unset.</span>
+</span><span id="__span-0-958"><a id="__codelineno-0-958" name="__codelineno-0-958"></a><span class="sd">    optional</span>
+</span><span id="__span-0-959"><a id="__codelineno-0-959" name="__codelineno-0-959"></a><span class="sd">        When `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-960"><a id="__codelineno-0-960" name="__codelineno-0-960"></a><span class="sd">    block</span>
+</span><span id="__span-0-961"><a id="__codelineno-0-961" name="__codelineno-0-961"></a><span class="sd">        When `True`, the step will always remain pending.</span>
+</span><span id="__span-0-962"><a id="__codelineno-0-962" name="__codelineno-0-962"></a>
+</span><span id="__span-0-963"><a id="__codelineno-0-963" name="__codelineno-0-963"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-964"><a id="__codelineno-0-964" name="__codelineno-0-964"></a><span class="sd">    -------</span>
+</span><span id="__span-0-965"><a id="__codelineno-0-965" name="__codelineno-0-965"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-966"><a id="__codelineno-0-966" name="__codelineno-0-966"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-967"><a id="__codelineno-0-967" name="__codelineno-0-967"></a>
+</span><span id="__span-0-968"><a id="__codelineno-0-968" name="__codelineno-0-968"></a><span class="sd">    Notes</span>
+</span><span id="__span-0-969"><a id="__codelineno-0-969" name="__codelineno-0-969"></a><span class="sd">    -----</span>
+</span><span id="__span-0-970"><a id="__codelineno-0-970" name="__codelineno-0-970"></a><span class="sd">    Support for typst in StepUp RepRep is experimental.</span>
+</span><span id="__span-0-971"><a id="__codelineno-0-971" name="__codelineno-0-971"></a><span class="sd">    Expect breaking changes in future releases.</span>
+</span><span id="__span-0-972"><a id="__codelineno-0-972" name="__codelineno-0-972"></a><span class="sd">    Future extensions could include:</span>
+</span><span id="__span-0-973"><a id="__codelineno-0-973" name="__codelineno-0-973"></a><span class="sd">    - Support for inventory files, similar to LaTeX</span>
+</span><span id="__span-0-974"><a id="__codelineno-0-974" name="__codelineno-0-974"></a><span class="sd">    - Support for other output formats than PDF</span>
+</span><span id="__span-0-975"><a id="__codelineno-0-975" name="__codelineno-0-975"></a><span class="sd">    - Support for passing in other options to the typst compiler</span>
+</span><span id="__span-0-976"><a id="__codelineno-0-976" name="__codelineno-0-976"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-977"><a id="__codelineno-0-977" name="__codelineno-0-977"></a>    <span class="k">with</span> <span class="n">subs_env_vars</span><span class="p">()</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
+</span><span id="__span-0-978"><a id="__codelineno-0-978" name="__codelineno-0-978"></a>        <span class="n">path_tex</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_typ</span><span class="p">)</span>
+</span><span id="__span-0-979"><a id="__codelineno-0-979" name="__codelineno-0-979"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_typ</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.typ&quot;</span><span class="p">):</span>
+</span><span id="__span-0-980"><a id="__codelineno-0-980" name="__codelineno-0-980"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The input of the typst command must end with .typ, got </span><span class="si">{</span><span class="n">path_tex</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span id="__span-0-981"><a id="__codelineno-0-981" name="__codelineno-0-981"></a>
+</span><span id="__span-0-982"><a id="__codelineno-0-982" name="__codelineno-0-982"></a>    <span class="n">stem</span> <span class="o">=</span> <span class="n">path_typ</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+</span><span id="__span-0-983"><a id="__codelineno-0-983" name="__codelineno-0-983"></a>    <span class="n">path_pdf</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s2">.pdf&quot;</span>
+</span><span id="__span-0-984"><a id="__codelineno-0-984" name="__codelineno-0-984"></a>    <span class="n">path_dep</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s2">.dep&quot;</span>
+</span><span id="__span-0-985"><a id="__codelineno-0-985" name="__codelineno-0-985"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
+</span><span id="__span-0-986"><a id="__codelineno-0-986" name="__codelineno-0-986"></a>        <span class="s2">&quot;rr-compile-typst &quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_typ</span><span class="p">),</span>
+</span><span id="__span-0-987"><a id="__codelineno-0-987" name="__codelineno-0-987"></a>        <span class="n">inp</span><span class="o">=</span><span class="p">[</span><span class="n">path_typ</span><span class="p">],</span>
+</span><span id="__span-0-988"><a id="__codelineno-0-988" name="__codelineno-0-988"></a>        <span class="n">out</span><span class="o">=</span><span class="p">[</span><span class="n">path_pdf</span><span class="p">,</span> <span class="n">path_dep</span><span class="p">],</span>
+</span><span id="__span-0-989"><a id="__codelineno-0-989" name="__codelineno-0-989"></a>        <span class="n">workdir</span><span class="o">=</span><span class="n">workdir</span><span class="p">,</span>
+</span><span id="__span-0-990"><a id="__codelineno-0-990" name="__codelineno-0-990"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
+</span><span id="__span-0-991"><a id="__codelineno-0-991" name="__codelineno-0-991"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
+</span><span id="__span-0-992"><a id="__codelineno-0-992" name="__codelineno-0-992"></a>    <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -933,3 +933,60 @@ def zip_inventory(
         optional=optional,
         block=block,
     )
+
+
+def compile_typst(
+    path_typ: str,
+    *,
+    workdir: str = "./",
+    typst: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Create a step for the compilation of a LaTeX source.
+
+    Parameters
+    ----------
+    path_typ
+        The main typst source file.
+        This argument may contain environment variables.
+    workdir
+        The working directory where the LaTeX command must be executed.
+    typst
+        Path to the Typst executable.
+        Defaults to `${REPREP_TYPSY}` variable or `typst` if the variable is unset.
+    optional
+        When `True`, the step is only executed when needed by other steps.
+    block
+        When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+
+    Notes
+    -----
+    Support for typst in StepUp RepRep is experimental.
+    Expect breaking changes in future releases.
+    Future extensions could include:
+    - Support for inventory files, similar to LaTeX
+    - Support for other output formats than PDF
+    - Support for passing in other options to the typst compiler
+    """
+    with subs_env_vars() as subs:
+        path_tex = subs(path_typ)
+    if not path_typ.endswith(".typ"):
+        raise ValueError(f"The input of the typst command must end with .typ, got {path_tex}.")
+
+    stem = path_typ[:-4]
+    path_pdf = f"{stem}.pdf"
+    path_dep = f"{stem}.dep"
+    return step(
+        "rr-compile-typst " + shlex.quote(path_typ),
+        inp=[path_typ],
+        out=[path_pdf, path_dep],
+        workdir=workdir,
+        optional=optional,
+        block=block,
+    )

@@ -36,6 +36,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
     "name",
     [
         "add_notes_pdf",
+        "cat_pdf",
         "check_hrefs_html",
         "check_hrefs_md",
         "convert_markdown",
@@ -105,7 +106,11 @@ async def test_latex_example(path_tmp: Path, name: str):
 @pytest.mark.skipif(not shutil.which("inkscape"), reason="No Inkscape")
 @pytest.mark.parametrize(
     "name",
-    ["convert_inkscape", "convert_inkscape_concurrency", "tile_pdf"],
+    [
+        "convert_inkscape",
+        pytest.param("convert_inkscape_concurrency", marks=pytest.mark.heavy),
+        "tile_pdf",
+    ],
 )
 @pytest.mark.asyncio
 async def test_inkscape_example(path_tmp: Path, name: str):
@@ -115,7 +120,7 @@ async def test_inkscape_example(path_tmp: Path, name: str):
 @pytest.mark.skipif(not shutil.which("mutool"), reason="No Mutool")
 @pytest.mark.parametrize(
     "name",
-    ["convert_mutool", "cat_pdf"],
+    ["convert_mutool"],
 )
 @pytest.mark.asyncio
 async def test_mutool_example(path_tmp: Path, name: str):
@@ -125,8 +130,21 @@ async def test_mutool_example(path_tmp: Path, name: str):
 @pytest.mark.skipif(not shutil.which("libreoffice"), reason="No LibreOffice")
 @pytest.mark.parametrize(
     "name",
-    ["convert_libreoffice", "convert_libreoffice_concurrency"],
+    [
+        "convert_libreoffice",
+        pytest.param("convert_libreoffice_concurrency", marks=pytest.mark.heavy),
+    ],
 )
 @pytest.mark.asyncio
 async def test_libreoffice_example(path_tmp: Path, name: str):
+    await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
+
+
+@pytest.mark.skipif(not shutil.which("typst"), reason="No Typst")
+@pytest.mark.parametrize(
+    "name",
+    ["typst_simple"],
+)
+@pytest.mark.asyncio
+async def test_typst_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)

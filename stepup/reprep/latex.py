@@ -178,8 +178,8 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-latex",
-        description="Compile a LaTeX document and print essence from log file.",
+        prog="rr-latex",
+        description="Compile a LaTeX document and extract input and output info.",
     )
     parser.add_argument("path_tex", help="The main LaTeX source file.")
     parser.add_argument(

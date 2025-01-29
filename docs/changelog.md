@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+(nothing yet)
+
 ## [2.2.0] - 2025-01-29 {: #v2.2.0 }
 
 This release adds experimental support for [typst](https://github.com/typst).
@@ -21,9 +23,9 @@ It also introduces a few breaking API changes for the sake of consistency.
 ### Changed
 
 - Rename API functions:
-    - `latex` -> `compile_latex`
-    - `latex_flat` -> `flatten_latex`
-    - `latex_diff` -> `diff_latex`
+    - `latex()` -> [`compile_latex()`][stepup.reprep.api.compile_latex]
+    - `latex_flat()` -> [`flatten_latex()`][stepup.reprep.api.flatten_latex]
+    - `latex_diff()` -> [`diff_latex()`][stepup.reprep.api.diff_latex]
 
 
 ## [2.1.0] - 2025-01-27 {: #v2.1.0 }
@@ -36,7 +38,8 @@ This release contains a few minor breaking changes for the sake of internal cons
   (It was first split up in a step scanning for dependencies followed by the actual conversion.)
 - Add more entrypoints for command-line utilitities in StepUp RepRep.
   Existing ones were renamed from `reprep-*` to `rr-*`.
-- Renamed module `stepup.reprep.render` to `stepup.reprep.render_jinja`.
+- Rename module `stepup.reprep.render` to `stepup.reprep.render_jinja`.
+- Rename API function: `render()` -> [`render_jinja()`][stepup.reprep.api.render_jinja]
 
 
 ## [2.0.2] - 2025-01-22 {: #v2.0.2 }

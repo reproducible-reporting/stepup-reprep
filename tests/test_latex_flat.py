@@ -19,7 +19,7 @@
 # --
 """Unit tests for stepup.reprep.latex_flat"""
 
-from stepup.reprep.latex_flat import flatten_latex
+from stepup.reprep.flatten_latex import flatten_latex
 
 MAIN_TEX = r"""
 \begin{document}

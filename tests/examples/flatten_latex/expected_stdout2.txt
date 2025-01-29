@@ -1,0 +1,15 @@
+   STARTUP │ Making failed steps pending
+   STARTUP │ Watching 2 director(y|ies) from initial database
+   STARTUP │ Scanning initial database for changed files
+   UPDATED │ plan.py (digest d6b8414a ➜ e7a7a736, size 217 ➜ 256)
+   STARTUP │ Scanning initial database for new nglob matches
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-flatten-latex article_structured.tex article.tex
+   SUCCESS │ rr-flatten-latex article_structured.tex article.tex
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

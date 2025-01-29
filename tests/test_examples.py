@@ -43,12 +43,12 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         pytest.param("convert_markdown_concurrency", marks=pytest.mark.heavy),
         "convert_markdown_env",
         "convert_weasyprint",
-        "latex_flat",
-        "latex_flat_subdir",
+        "flatten_latex",
+        "flatten_latex_subdir",
         "make_inventory_list",
         "nup_pdf",
         "raster_pdf",
-        "render_basic",
+        "render_jinja_basic",
         "sync_zenodo",
         "unplot",
         "zip_inventory",
@@ -89,13 +89,13 @@ def has_texlive_2023():
     "name",
     [
         "check_hrefs_pdf",
-        "latex_diff",
-        "lualatex_simple",
-        "pdflatex_bbl",
-        "pdflatex_bibtex",
-        "pdflatex_input",
-        "render_relpath",
-        "xelatex_input",
+        "diff_latex",
+        "compile_lualatex_simple",
+        "compile_pdflatex_bbl",
+        "compile_pdflatex_bibtex",
+        "compile_pdflatex_input",
+        "compile_xelatex_input",
+        "render_jinja_relpath",
     ],
 )
 @pytest.mark.asyncio
@@ -143,7 +143,7 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
 @pytest.mark.skipif(not shutil.which("typst"), reason="No Typst")
 @pytest.mark.parametrize(
     "name",
-    ["typst_simple"],
+    ["compile_typst_simple"],
 )
 @pytest.mark.asyncio
 async def test_typst_example(path_tmp: Path, name: str):

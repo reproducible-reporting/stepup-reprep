@@ -1,0 +1,192 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:plan.py
+            supplies   file:public/
+            supplies   file:static/
+            supplies   file:variables.py
+            supplies   step:./plan.py
+            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+            supplies   step:mkdir -p public/
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = PUBLIC [amended]
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   dg:static/**
+             creates   file:variables.py
+             creates   step:./plan.py  # wd=static/
+             creates   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+             creates   step:mkdir -p public/
+
+dg:static/**
+          created by   step:./plan.py
+             creates   file:static/
+             creates   file:static/main.tex
+             creates   file:static/plan.py
+             creates   file:static/preamble.inc.tex
+             creates   file:static/variables.py
+
+file:variables.py
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+step:mkdir -p public/
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:public/
+            supplies   file:public/
+
+file:public/
+               state = BUILT
+          created by   step:mkdir -p public/
+            consumes   file:./
+            consumes   step:mkdir -p public/
+            supplies   file:public/main-inventory.txt
+            supplies   file:public/main.aux
+            supplies   file:public/main.log
+            supplies   file:public/main.pdf
+            supplies   file:public/main.tex
+            supplies   file:public/preamble.inc.tex
+            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+            supplies   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:./
+            supplies   file:static/main.tex
+            supplies   file:static/plan.py
+            supplies   file:static/preamble.inc.tex
+            supplies   file:static/variables.py
+            supplies   step:./plan.py  # wd=static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/preamble.inc.tex
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:static/
+            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+
+step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+               state = SUCCEEDED
+           mandatory = REQUIRED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:public/
+            consumes   file:static/preamble.inc.tex
+             creates   file:public/preamble.inc.tex
+            supplies   file:public/preamble.inc.tex
+
+file:public/preamble.inc.tex
+               state = BUILT
+          created by   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+            consumes   file:public/
+            consumes   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+            supplies   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+
+file:static/plan.py
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:static/
+            supplies   step:./plan.py  # wd=static/
+
+step:./plan.py  # wd=static/
+               state = SUCCEEDED
+             env_var = PUBLIC [amended]
+          inp_digest = same
+          created by   step:./plan.py
+            consumes   file:static/
+            consumes   file:static/plan.py
+             creates   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+             creates   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/main.tex
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/variables.py
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:static/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+               state = SUCCEEDED
+             env_var = PUBLIC [amended]
+                     = ROOT [amended]
+          created by   step:./plan.py  # wd=static/
+            consumes   file:public/
+            consumes   file:static/
+            consumes   file:static/main.tex
+            consumes   file:static/variables.py
+            consumes   file:variables.py
+             creates   file:public/main.tex
+            supplies   file:public/main.tex
+
+file:public/main.tex
+               state = BUILT
+          created by   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            consumes   file:public/
+            consumes   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+            supplies   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+
+step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+               state = SUCCEEDED
+             env_var = REPREP_LATEX [amended]
+          created by   step:./plan.py  # wd=static/
+            consumes   file:public/
+            consumes   file:public/main.tex
+            consumes   file:public/preamble.inc.tex [amended]
+             creates   file:public/main-inventory.txt
+             creates   file:public/main.aux
+             creates   file:public/main.log
+             creates   file:public/main.pdf
+            supplies   file:public/main-inventory.txt
+            supplies   file:public/main.aux
+            supplies   file:public/main.log [amended]
+            supplies   file:public/main.pdf
+
+file:public/main-inventory.txt
+               state = BUILT
+          created by   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+            consumes   file:public/
+            consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+
+file:public/main.aux
+               state = BUILT
+          created by   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+            consumes   file:public/
+            consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+
+file:public/main.pdf
+               state = BUILT
+          created by   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+            consumes   file:public/
+            consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+
+file:public/main.log
+               state = VOLATILE
+          created by   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
+            consumes   file:public/
+            consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/

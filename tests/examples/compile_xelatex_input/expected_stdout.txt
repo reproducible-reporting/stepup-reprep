@@ -1,0 +1,35 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ mkdir -p subdir/
+   SUCCESS │ mkdir -p subdir/
+     START │ rr-compile-latex paper.tex --run-bibtex
+RESCHEDULE │ rr-compile-latex paper.tex --run-bibtex
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+subdir/generated.tex
+────────────────────────────────────────────────────────────────────────────────
+     START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+   SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+     START │ echo '2 + 2' > subdir/code.txt
+   SUCCESS │ echo '2 + 2' > subdir/code.txt
+     START │ rr-compile-latex paper.tex --run-bibtex
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+   DELETED │ paper.aux
+   DELETED │ subdir/generated.tex
+   DELETED │ subdir/code.txt
+   DELETED │ paper.pdf
+     PHASE │ run
+     START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+   SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+     START │ echo '2 + 2' > subdir/code.txt
+   SUCCESS │ echo '2 + 2' > subdir/code.txt
+     START │ rr-compile-latex paper.tex --run-bibtex
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

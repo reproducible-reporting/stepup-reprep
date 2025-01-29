@@ -29,6 +29,7 @@ __all__ = (
     "add_notes_pdf",
     "cat_pdf",
     "check_hrefs",
+    "compile_latex",
     "compile_typst",
     "convert_markdown",
     "convert_odf_pdf",
@@ -38,9 +39,8 @@ __all__ = (
     "convert_svg_pdf",
     "convert_svg_png",
     "convert_weasyprint",
-    "latex",
-    "latex_diff",
-    "latex_flat",
+    "diff_latex",
+    "flatten_latex",
     "make_inventory",
     "nup_pdf",
     "raster_pdf",
@@ -152,6 +152,95 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
         inp_paths.append(path_config)
         command += f" -c {path_config}"
     return step(command, inp=inp_paths, block=block)
+
+
+def compile_latex(
+    path_tex: str,
+    *,
+    run_bibtex=True,
+    maxrep: int = 5,
+    workdir: str = "./",
+    latex: str | None = None,
+    bibtex: str | None = None,
+    bibsane: str | None = None,
+    bibsane_config: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Create a step for the compilation of a LaTeX source.
+
+    Parameters
+    ----------
+    path_tex
+        The main tex source file.
+        This argument may contain environment variables.
+    run_bibtex
+        By default, when bib files are used, BibTeX is invoked.
+        This can be overruled by setting this argument to False,
+        which is useful when recompiling sources with fixed bbl files.
+    maxrep
+        The maximum number of repetitions of the LaTeX command
+        in case the aux file keeps changing.
+    workdir
+        The working directory where the LaTeX command must be executed.
+    latex
+        Path to the LaTeX executable. Note that only PDF-producing LaTeX compilers are supported:
+        `pdflatex`, `xelatex` or `lualatex`.
+        Defaults to `${REPREP_LATEX}` variable or `pdflatex` if the variable is unset.
+    bibtex
+        Path to the BibTeX executable.
+        Defaults to `${REPREP_BIBTEX}` variable or `bibtex` if the variable is unset.
+    bibsane
+        Path to the BibSane executable.
+        Defaults to `${REPREP_BIBSANE}` variable or `bibsane` if the variable is unset.
+    bibsane_config
+        Path to the BibSane configuration file.
+        Defaults to `${REPREP_BIBSANE_CONFIG}` variable or `bibsane.yaml` if it is unset.
+        Note that when the config file is read from the environment variable,
+        it is interpreted relative to `${STEPUP_ROOT}`.
+        One may define it globally with `export REPREP_BIBSANE_CONFIG='${HERE}/bibsane.yaml'`
+        to refer to a local version of the file. (Mind the single quotes.)
+    optional
+        When `True`, the step is only executed when needed by other steps.
+    block
+        When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_tex = subs(path_tex)
+    if not path_tex.endswith(".tex"):
+        raise ValueError(f"The input of the latex command must end with .tex, got {path_tex}.")
+
+    prefix = path_tex[:-4]
+    path_pdf = f"{prefix}.pdf"
+
+    command = "rr-compile-latex " + shlex.quote(path_tex)
+    inp_paths = [path_tex]
+    if maxrep != 5:
+        command += " --maxrep=" + shlex.quote(str(maxrep))
+    if latex is not None:
+        command += " --latex=" + shlex.quote(latex)
+    if run_bibtex:
+        command += " --run-bibtex"
+        if bibtex is not None:
+            command += " --bibtex=" + shlex.quote(bibtex)
+        if bibsane is not None:
+            command += " --bibsane=" + shlex.quote(bibsane)
+        if bibsane_config is not None:
+            command += " --bibsane-config=" + shlex.quote(bibsane_config)
+            inp_paths.append(bibsane_config)
+    return step(
+        command,
+        inp=inp_paths,
+        out=[path_pdf, f"{prefix}.aux", f"{prefix}-inventory.txt"],
+        workdir=workdir,
+        optional=optional,
+        block=block,
+    )
 
 
 def compile_typst(
@@ -560,102 +649,13 @@ def convert_weasyprint(
     return step(command, inp=path_html, block=block)
 
 
-def latex(
-    path_tex: str,
-    *,
-    run_bibtex=True,
-    maxrep: int = 5,
-    workdir: str = "./",
-    latex: str | None = None,
-    bibtex: str | None = None,
-    bibsane: str | None = None,
-    bibsane_config: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Create a step for the compilation of a LaTeX source.
-
-    Parameters
-    ----------
-    path_tex
-        The main tex source file.
-        This argument may contain environment variables.
-    run_bibtex
-        By default, when bib files are used, BibTeX is invoked.
-        This can be overruled by setting this argument to False,
-        which is useful when recompiling sources with fixed bbl files.
-    maxrep
-        The maximum number of repetitions of the LaTeX command
-        in case the aux file keeps changing.
-    workdir
-        The working directory where the LaTeX command must be executed.
-    latex
-        Path to the LaTeX executable. Note that only PDF-producing LaTeX compilers are supported:
-        `pdflatex`, `xelatex` or `lualatex`.
-        Defaults to `${REPREP_LATEX}` variable or `pdflatex` if the variable is unset.
-    bibtex
-        Path to the BibTeX executable.
-        Defaults to `${REPREP_BIBTEX}` variable or `bibtex` if the variable is unset.
-    bibsane
-        Path to the BibSane executable.
-        Defaults to `${REPREP_BIBSANE}` variable or `bibsane` if the variable is unset.
-    bibsane_config
-        Path to the BibSane configuration file.
-        Defaults to `${REPREP_BIBSANE_CONFIG}` variable or `bibsane.yaml` if it is unset.
-        Note that when the config file is read from the environment variable,
-        it is interpreted relative to `${STEPUP_ROOT}`.
-        One may define it globally with `export REPREP_BIBSANE_CONFIG='${HERE}/bibsane.yaml'`
-        to refer to a local version of the file. (Mind the single quotes.)
-    optional
-        When `True`, the step is only executed when needed by other steps.
-    block
-        When `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-    """
-    with subs_env_vars() as subs:
-        path_tex = subs(path_tex)
-    if not path_tex.endswith(".tex"):
-        raise ValueError(f"The input of the latex command must end with .tex, got {path_tex}.")
-
-    prefix = path_tex[:-4]
-    path_pdf = f"{prefix}.pdf"
-
-    command = "rr-latex " + shlex.quote(path_tex)
-    inp_paths = [path_tex]
-    if maxrep != 5:
-        command += " --maxrep=" + shlex.quote(str(maxrep))
-    if latex is not None:
-        command += " --latex=" + shlex.quote(latex)
-    if run_bibtex:
-        command += " --run-bibtex"
-        if bibtex is not None:
-            command += " --bibtex=" + shlex.quote(bibtex)
-        if bibsane is not None:
-            command += " --bibsane=" + shlex.quote(bibsane)
-        if bibsane_config is not None:
-            command += " --bibsane-config=" + shlex.quote(bibsane_config)
-            inp_paths.append(bibsane_config)
-    return step(
-        command,
-        inp=inp_paths,
-        out=[path_pdf, f"{prefix}.aux", f"{prefix}-inventory.txt"],
-        workdir=workdir,
-        optional=optional,
-        block=block,
-    )
-
-
 DEFAULT_LATEXDIFF_ARGS = (
     "--append-context2cmd=abstract,supplementary,dataavailability,funding,"
     "authorcontributions,conflictsofinterest,abbreviations"
 )
 
 
-def latex_diff(
+def diff_latex(
     path_old: str,
     path_new: str,
     path_diff: str,
@@ -716,7 +716,7 @@ def latex_diff(
     )
 
 
-def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: bool = False):
+def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, block: bool = False):
     r"""Flatten structured LaTeX source files (substitute `\input` and friends by their content).
 
     Parameters
@@ -736,7 +736,7 @@ def latex_flat(path_tex: str, path_flat: str, *, optional: bool = False, block: 
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "rr-latex-flat ${inp} ${out}",
+        "rr-flatten-latex ${inp} ${out}",
         inp=path_tex,
         out=path_flat,
         optional=optional,

@@ -1,0 +1,75 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:plan.py
+            supplies   file:sub/
+            supplies   step:./plan.py
+            supplies   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:sub/
+             creates   file:sub/article_structured.tex
+             creates   file:sub/part1.tex
+             creates   file:sub/part2.tex
+             creates   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+file:sub/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   file:sub/article.tex
+            supplies   file:sub/article_structured.tex
+            supplies   file:sub/part1.tex
+            supplies   file:sub/part2.tex
+            supplies   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+file:sub/article_structured.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+            supplies   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+file:sub/part1.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+            supplies   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+file:sub/part2.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
+            supplies   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+
+step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:sub/
+            consumes   file:sub/article_structured.tex
+            consumes   file:sub/part1.tex [amended]
+            consumes   file:sub/part2.tex [amended]
+             creates   file:sub/article.tex
+            supplies   file:sub/article.tex
+
+file:sub/article.tex
+               state = BUILT
+          created by   step:rr-flatten-latex sub/article_structured.tex sub/article.tex
+            consumes   file:sub/
+            consumes   step:rr-flatten-latex sub/article_structured.tex sub/article.tex

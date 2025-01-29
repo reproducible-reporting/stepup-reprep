@@ -1,0 +1,85 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.aux
+            supplies   file:paper.bbl
+            supplies   file:paper.log
+            supplies   file:paper.pdf
+            supplies   file:paper.tex
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:rr-compile-latex paper.tex
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:paper.bbl
+             creates   file:paper.tex
+             creates   step:rr-compile-latex paper.tex
+
+file:paper.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-latex paper.tex
+
+file:paper.bbl
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-latex paper.tex
+
+step:rr-compile-latex paper.tex
+               state = SUCCEEDED
+             env_var = REPREP_LATEX [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:paper.bbl [amended]
+            consumes   file:paper.tex
+             creates   file:paper-inventory.txt
+             creates   file:paper.aux
+             creates   file:paper.log
+             creates   file:paper.pdf
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.aux
+            supplies   file:paper.log [amended]
+            supplies   file:paper.pdf
+
+file:paper-inventory.txt
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex
+
+file:paper.aux
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex
+
+file:paper.pdf
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex
+
+file:paper.log
+               state = VOLATILE
+          created by   step:rr-compile-latex paper.tex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex

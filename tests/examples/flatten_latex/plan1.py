@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+from stepup.core.api import static
+from stepup.reprep.api import flatten_latex
+
+static("article_structured.tex", "part1.tex", "part2.tex")
+flatten_latex("article_structured.tex", "article.tex")

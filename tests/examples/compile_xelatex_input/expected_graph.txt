@@ -1,0 +1,141 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.aux
+            supplies   file:paper.log
+            supplies   file:paper.out
+            supplies   file:paper.pdf
+            supplies   file:paper.tex
+            supplies   file:plan.py
+            supplies   file:subdir/
+            supplies   step:./plan.py
+            supplies   step:echo '2 + 2' > subdir/code.txt
+            supplies   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+            supplies   step:mkdir -p subdir/
+            supplies   step:rr-compile-latex paper.tex --run-bibtex
+
+step:./plan.py
+               state = SUCCEEDED
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:paper.tex
+             creates   step:echo '2 + 2' > subdir/code.txt
+             creates   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+             creates   step:mkdir -p subdir/
+             creates   step:rr-compile-latex paper.tex --run-bibtex
+
+file:paper.tex
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-latex paper.tex --run-bibtex
+
+step:mkdir -p subdir/
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:subdir/
+            supplies   file:subdir/
+
+file:subdir/
+               state = BUILT
+          created by   step:mkdir -p subdir/
+            consumes   file:./
+            consumes   step:mkdir -p subdir/
+            supplies   file:subdir/code.txt
+            supplies   file:subdir/generated.tex
+            supplies   step:echo '2 + 2' > subdir/code.txt
+            supplies   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+
+step:rr-compile-latex paper.tex --run-bibtex
+               state = SUCCEEDED
+             env_var = REPREP_LATEX [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:paper.tex
+            consumes   file:subdir/code.txt [amended]
+            consumes   file:subdir/generated.tex [amended]
+             creates   file:paper-inventory.txt
+             creates   file:paper.aux
+             creates   file:paper.log
+             creates   file:paper.out
+             creates   file:paper.pdf
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.aux
+            supplies   file:paper.log [amended]
+            supplies   file:paper.out [amended]
+            supplies   file:paper.pdf
+
+file:paper-inventory.txt
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex
+
+file:paper.aux
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex
+
+file:paper.pdf
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex
+
+step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:subdir/
+             creates   file:subdir/generated.tex
+            supplies   file:subdir/generated.tex
+
+file:subdir/generated.tex
+               state = BUILT
+          created by   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+            consumes   file:subdir/
+            consumes   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+            supplies   step:rr-compile-latex paper.tex --run-bibtex
+
+step:echo '2 + 2' > subdir/code.txt
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:subdir/
+             creates   file:subdir/code.txt
+            supplies   file:subdir/code.txt
+
+file:subdir/code.txt
+               state = BUILT
+          created by   step:echo '2 + 2' > subdir/code.txt
+            consumes   file:subdir/
+            consumes   step:echo '2 + 2' > subdir/code.txt
+            supplies   step:rr-compile-latex paper.tex --run-bibtex
+
+file:paper.log
+               state = VOLATILE
+          created by   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex
+
+file:paper.out
+               state = VOLATILE
+          created by   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex

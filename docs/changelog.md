@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Experimental support for Typst.
 
 
+### Changed
+
+- Rename API functions:
+    - `latex` -> `compile_latex`
+    - `latex_flat` -> `flatten_latex`
+    - `latex_diff` -> `diff_latex`
+
+
 ## [2.1.0] - 2025-01-27 {: #v2.1.0 }
 
 This release contains a few minor breaking changes for the sake of internal consistency.

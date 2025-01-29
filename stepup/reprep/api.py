@@ -253,6 +253,16 @@ def compile_typst(
 ) -> StepInfo:
     """Create a step for the compilation of a LaTeX source.
 
+    !!! warning
+
+        Support for typst in StepUp RepRep is experimental.
+        Expect breaking changes in future releases.
+        Future extensions could include:
+
+        - Support for inventory files, similar to `compile_latex`.
+        - Support for other output formats than PDF.
+        - Support for passing in other options to the typst compiler.
+
     Parameters
     ----------
     path_typ
@@ -272,15 +282,6 @@ def compile_typst(
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
-
-    Notes
-    -----
-    Support for typst in StepUp RepRep is experimental.
-    Expect breaking changes in future releases.
-    Future extensions could include:
-    - Support for inventory files, similar to LaTeX
-    - Support for other output formats than PDF
-    - Support for passing in other options to the typst compiler
     """
     with subs_env_vars() as subs:
         path_tex = subs(path_typ)

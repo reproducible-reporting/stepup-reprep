@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2025-01-29 {: #v2.2.0 }
+
+This release adds experimental support for [typst](https://github.com/typst).
+It also introduces a few breaking API changes for the sake of consistency.
+(More breaking changes should be expected in the near future.)
+
 ### Added
 
 - Experimental support for Typst.
@@ -180,6 +186,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0
 [2.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.1.0
 [2.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.0.2
 [1.4.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.1

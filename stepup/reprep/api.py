@@ -26,8 +26,10 @@ from stepup.core.api import StepInfo, getenv, step, subs_env_vars
 from stepup.core.utils import make_path_out
 
 __all__ = (
+    "add_notes_pdf",
     "cat_pdf",
     "check_hrefs",
+    "compile_typst",
     "convert_markdown",
     "convert_odf_pdf",
     "convert_pdf",
@@ -152,6 +154,63 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     return step(command, inp=inp_paths, block=block)
 
 
+def compile_typst(
+    path_typ: str,
+    *,
+    workdir: str = "./",
+    typst: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Create a step for the compilation of a LaTeX source.
+
+    Parameters
+    ----------
+    path_typ
+        The main typst source file.
+        This argument may contain environment variables.
+    workdir
+        The working directory where the LaTeX command must be executed.
+    typst
+        Path to the Typst executable.
+        Defaults to `${REPREP_TYPSY}` variable or `typst` if the variable is unset.
+    optional
+        When `True`, the step is only executed when needed by other steps.
+    block
+        When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+
+    Notes
+    -----
+    Support for typst in StepUp RepRep is experimental.
+    Expect breaking changes in future releases.
+    Future extensions could include:
+    - Support for inventory files, similar to LaTeX
+    - Support for other output formats than PDF
+    - Support for passing in other options to the typst compiler
+    """
+    with subs_env_vars() as subs:
+        path_tex = subs(path_typ)
+    if not path_typ.endswith(".typ"):
+        raise ValueError(f"The input of the typst command must end with .typ, got {path_tex}.")
+
+    stem = path_typ[:-4]
+    path_pdf = f"{stem}.pdf"
+    path_dep = f"{stem}.dep"
+    return step(
+        "rr-compile-typst " + shlex.quote(path_typ),
+        inp=[path_typ],
+        out=[path_pdf, path_dep],
+        workdir=workdir,
+        optional=optional,
+        block=block,
+    )
+
+
 def convert_markdown(
     path_md: str,
     out: str | None = None,
@@ -210,50 +269,6 @@ def convert_markdown(
             paths_css = [paths_css]
         command += " --css " + shlex.join(paths_css)
     return step(command, inp=inp, out=path_html, optional=optional, block=block)
-
-
-def convert_weasyprint(
-    path_html: str,
-    out: str | None = None,
-    *,
-    weasyprint: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Convert a HTML document to PDF.
-
-    Parameters
-    ----------
-    path_html
-        The HTML input file.
-    out
-        Output destination: `None`, a directory or a file.
-    weasyprint
-        The path to the weasyprint executable.
-        Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
-    optional
-        When `True`, the step is only executed when needed by other steps.
-    block
-        When `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-    """
-    with subs_env_vars() as subs:
-        path_html = subs(path_html)
-        out = subs(out)
-    if not path_html.endswith(".html"):
-        raise ValueError("The HTML file must have extension .html")
-    path_pdf = make_path_out(path_html, out, ".pdf")
-    command = "rr-convert-weasyprint "
-    command += shlex.join([path_html, path_pdf])
-    if weasyprint is not None:
-        command += " --weasyprint=" + shlex.quote(weasyprint)
-    if optional:
-        command += " --optional"
-    return step(command, inp=path_html, block=block)
 
 
 def convert_odf_pdf(
@@ -496,6 +511,50 @@ def convert_svg_png(
         optional=optional,
         block=block,
     )
+
+
+def convert_weasyprint(
+    path_html: str,
+    out: str | None = None,
+    *,
+    weasyprint: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Convert a HTML document to PDF.
+
+    Parameters
+    ----------
+    path_html
+        The HTML input file.
+    out
+        Output destination: `None`, a directory or a file.
+    weasyprint
+        The path to the weasyprint executable.
+        Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
+    optional
+        When `True`, the step is only executed when needed by other steps.
+    block
+        When `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_html = subs(path_html)
+        out = subs(out)
+    if not path_html.endswith(".html"):
+        raise ValueError("The HTML file must have extension .html")
+    path_pdf = make_path_out(path_html, out, ".pdf")
+    command = "rr-convert-weasyprint "
+    command += shlex.join([path_html, path_pdf])
+    if weasyprint is not None:
+        command += " --weasyprint=" + shlex.quote(weasyprint)
+    if optional:
+        command += " --optional"
+    return step(command, inp=path_html, block=block)
 
 
 def latex(
@@ -930,63 +989,6 @@ def zip_inventory(
         "rr-zip-inventory ${inp} ${out}",
         inp=path_inventory,
         out=path_zip,
-        optional=optional,
-        block=block,
-    )
-
-
-def compile_typst(
-    path_typ: str,
-    *,
-    workdir: str = "./",
-    typst: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Create a step for the compilation of a LaTeX source.
-
-    Parameters
-    ----------
-    path_typ
-        The main typst source file.
-        This argument may contain environment variables.
-    workdir
-        The working directory where the LaTeX command must be executed.
-    typst
-        Path to the Typst executable.
-        Defaults to `${REPREP_TYPSY}` variable or `typst` if the variable is unset.
-    optional
-        When `True`, the step is only executed when needed by other steps.
-    block
-        When `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-
-    Notes
-    -----
-    Support for typst in StepUp RepRep is experimental.
-    Expect breaking changes in future releases.
-    Future extensions could include:
-    - Support for inventory files, similar to LaTeX
-    - Support for other output formats than PDF
-    - Support for passing in other options to the typst compiler
-    """
-    with subs_env_vars() as subs:
-        path_tex = subs(path_typ)
-    if not path_typ.endswith(".typ"):
-        raise ValueError(f"The input of the typst command must end with .typ, got {path_tex}.")
-
-    stem = path_typ[:-4]
-    path_pdf = f"{stem}.pdf"
-    path_dep = f"{stem}.dep"
-    return step(
-        "rr-compile-typst " + shlex.quote(path_typ),
-        inp=[path_typ],
-        out=[path_pdf, path_dep],
-        workdir=workdir,
         optional=optional,
         block=block,
     )

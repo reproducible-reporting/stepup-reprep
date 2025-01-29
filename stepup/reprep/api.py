@@ -201,8 +201,11 @@ def compile_typst(
     stem = path_typ[:-4]
     path_pdf = f"{stem}.pdf"
     path_dep = f"{stem}.dep"
+    command = "rr-compile-typst "
+    if typst is not None:
+        command += f" --typst={shlex.quote(typst)} "
     return step(
-        "rr-compile-typst " + shlex.quote(path_typ),
+        command + shlex.quote(path_typ),
         inp=[path_typ],
         out=[path_pdf, path_dep],
         workdir=workdir,

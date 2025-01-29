@@ -1662,6 +1662,7 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<p>(nothing yet)</p>
 <h2 id="v2.2.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0">2.2.0</a> - 2025-01-29<a class="headerlink" href="#v2.2.0" title="Permanent link">&para;</a></h2>
 <p>This release adds experimental support for <a href="https://github.com/typst">typst</a>.
 It also introduces a few breaking API changes for the sake of consistency.
@@ -1673,9 +1674,9 @@ It also introduces a few breaking API changes for the sake of consistency.
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Rename API functions:<ul>
-<li><code>latex</code> -&gt; <code>compile_latex</code></li>
-<li><code>latex_flat</code> -&gt; <code>flatten_latex</code></li>
-<li><code>latex_diff</code> -&gt; <code>diff_latex</code></li>
+<li><code>latex()</code> -&gt; <a class="autorefs autorefs-internal" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a></li>
+<li><code>latex_flat()</code> -&gt; <a class="autorefs autorefs-internal" href="../reference/stepup.reprep.api/#stepup.reprep.api.flatten_latex"><code>flatten_latex()</code></a></li>
+<li><code>latex_diff()</code> -&gt; <a class="autorefs autorefs-internal" href="../reference/stepup.reprep.api/#stepup.reprep.api.diff_latex"><code>diff_latex()</code></a></li>
 </ul>
 </li>
 </ul>
@@ -1687,7 +1688,8 @@ It also introduces a few breaking API changes for the sake of consistency.
   (It was first split up in a step scanning for dependencies followed by the actual conversion.)</li>
 <li>Add more entrypoints for command-line utilitities in StepUp RepRep.
   Existing ones were renamed from <code>reprep-*</code> to <code>rr-*</code>.</li>
-<li>Renamed module <code>stepup.reprep.render</code> to <code>stepup.reprep.render_jinja</code>.</li>
+<li>Rename module <code>stepup.reprep.render</code> to <code>stepup.reprep.render_jinja</code>.</li>
+<li>Rename API function: <code>render()</code> -&gt; <a class="autorefs autorefs-internal" href="../reference/stepup.reprep.api/#stepup.reprep.api.render_jinja"><code>render_jinja()</code></a></li>
 </ul>
 <h2 id="v2.0.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.0.2">2.0.2</a> - 2025-01-22<a class="headerlink" href="#v2.0.2" title="Permanent link">&para;</a></h2>
 <p>This is the first release of StepUp RepRep that is compatible with StepUp Core 2.0.0.

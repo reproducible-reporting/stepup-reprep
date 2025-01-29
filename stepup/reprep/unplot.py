@@ -49,7 +49,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-unplot", description="Extract data points from bitmap plots."
+        prog="rr-unplot", description="Extract data points from bitmap plots."
     )
     parser.add_argument("inp", type=Path, help="SVG file with paths drawn on top of the image")
     parser.add_argument("out", type=Path, help="Output JSON file with extracted data points")

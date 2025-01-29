@@ -52,7 +52,7 @@ from stepup.core.api import amend
 def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
-    with tempfile.TemporaryDirectory("reprep-latex-flat") as tmpdir:
+    with tempfile.TemporaryDirectory("rr-latex-flat") as tmpdir:
         tmpdir = Path(tmpdir)
         path_flat_tmp = tmpdir / "flat.tex"
         with open(path_flat_tmp, "w") as fh_out:
@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-latex-flat",
+        prog="rr-latex-flat",
         description="Flatten input and import commands in a LaTeX file.",
     )
     parser.add_argument("path_tex", help="The top-level tex file.")

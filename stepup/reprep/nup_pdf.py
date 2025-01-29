@@ -46,7 +46,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
+        prog="rr-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
     )
     parser.add_argument("path_src", help="The source pdf to which notes should be added.")
     parser.add_argument("path_dst", help="The output pdf.")

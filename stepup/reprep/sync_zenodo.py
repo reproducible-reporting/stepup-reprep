@@ -342,7 +342,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-sync-zenodo", description="Sync a draft dataset on Zenodo."
+        prog="rr-sync-zenodo", description="Sync a draft dataset on Zenodo."
     )
     parser.add_argument("config", help="Configuration YAML file.")
     parser.add_argument(

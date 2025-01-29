@@ -45,7 +45,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-zip-inventory", description="Create a reproducible ZIP file."
+        prog="rr-zip-inventory", description="Create a reproducible ZIP file."
     )
     parser.add_argument(
         "inventory_txt",
@@ -83,7 +83,7 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
     # Create a new ZIP archive.
     root = path_inventory.parent
     nskip = 0 if root == "" else len(root) + 1
-    with tempfile.TemporaryDirectory("reprep-zip-inventory") as path_tmp:
+    with tempfile.TemporaryDirectory("rr-zip-inventory") as path_tmp:
         path_tmp = Path(path_tmp)
         path_zip_tmp = path_tmp / "out.zip"
         with zipfile.ZipFile(path_zip_tmp, "w") as fz:

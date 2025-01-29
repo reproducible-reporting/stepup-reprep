@@ -42,7 +42,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-convert-weasyprint",
+        prog="rr-convert-weasyprint",
         description="Convert a HTML to PDF, with dependency tracking.",
     )
     parser.add_argument("path_html", help="The input HTML file.")

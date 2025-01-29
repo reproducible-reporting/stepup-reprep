@@ -37,9 +37,7 @@ def main(argv: list[str] | None = None):
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="reprep-normalize-pdf", description="Normalize a PDF file."
-    )
+    parser = argparse.ArgumentParser(prog="rr-normalize-pdf", description="Normalize a PDF file.")
     parser.add_argument("path_pdf", help="The pdf to be normalized (in place).")
     return parser.parse_args(argv)
 
@@ -53,7 +51,7 @@ def pdf_normalize(path_pdf: str):
     pdf.del_xml_metadata()
     pdf.xref_set_key(-1, "ID", "null")
     pdf.scrub()
-    with tempfile.TemporaryDirectory(suffix="reprep-normalize-pdf", prefix="rr") as dn:
+    with tempfile.TemporaryDirectory(suffix="rr-normalize-pdf", prefix="rr") as dn:
         path_out = Path(dn) / "out.pdf"
         pdf.save(path_out, garbage=4, deflate=True, linear=True, no_new_id=True)
         pdf.close()

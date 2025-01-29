@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
+        prog="rr-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
     )
     parser.add_argument(
         "paths_src", help="The source PDFs to which notes should be added.", nargs="+"

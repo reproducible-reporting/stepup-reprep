@@ -46,7 +46,7 @@ def main(argv: list[str] | None = None):
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(prog="reprep-raster-pdf", description="Raster a PDF file.")
+    parser = argparse.ArgumentParser(prog="rr-raster-pdf", description="Raster a PDF file.")
     parser.add_argument("path_inp", help="The input PDF file.")
     parser.add_argument("path_out", help="The output PDF file.")
     parser.add_argument("-r", "--resolution", type=int, help="Bitmap resolution")

@@ -83,7 +83,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-make-inventory", description="Make an inventory.txt file."
+        prog="rr-make-inventory", description="Make an inventory.txt file."
     )
     parser.add_argument(
         "paths",

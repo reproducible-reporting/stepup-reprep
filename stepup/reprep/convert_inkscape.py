@@ -53,7 +53,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-convert-inkscape",
+        prog="rr-convert-inkscape",
         description="Convert an SVG to PDF or PNG, with dependency tracking.",
     )
     parser.add_argument("path_svg", help="The input SVG file.")

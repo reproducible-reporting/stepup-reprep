@@ -50,7 +50,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
+        prog="rr-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
     )
     parser.add_argument("path_src", help="Markdown, HTML or PDF file.")
     parser.add_argument(

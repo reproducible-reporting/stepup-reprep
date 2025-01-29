@@ -54,7 +54,7 @@ def main(argv: list[str] | None = None):
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(prog="reprep-render", description="Render a file with Jinja2.")
+    parser = argparse.ArgumentParser(prog="rr-render", description="Render a file with Jinja2.")
     parser.add_argument("path_in", help="The input file")
     parser.add_argument("paths_variables", nargs="+", help="Python files defining variables")
     parser.add_argument("path_out", help="The output file")

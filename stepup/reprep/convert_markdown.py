@@ -58,7 +58,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-convert-markdown", description="Convert Markdown to HTML"
+        prog="rr-convert-markdown", description="Convert Markdown to HTML"
     )
     parser.add_argument("markdown", type=Path, help="A Markdown file with extension `.md`")
     parser.add_argument("html", type=Path, help="A HTML output filename")

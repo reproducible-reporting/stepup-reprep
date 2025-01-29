@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-add-notes-pdf",
+        prog="rr-add-notes-pdf",
         description="Add a notes page at every even page of a PDF file.",
     )
     parser.add_argument("path_src", help="The source pdf to which notes should be added.")

@@ -41,7 +41,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="reprep-check-inventory", description="Check an inventory.txt."
+        prog="rr-check-inventory", description="Check an inventory.txt."
     )
     parser.add_argument("inventory_txt", help="An inventory.txt file generated with RepRep")
     return parser.parse_args(argv)

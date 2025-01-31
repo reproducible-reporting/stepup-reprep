@@ -204,6 +204,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.1
 [2.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0
 [2.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.1.0
 [2.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.0.2

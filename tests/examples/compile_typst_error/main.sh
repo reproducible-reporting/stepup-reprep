@@ -22,8 +22,9 @@ join()
 EOD
 
 # Wait for background processes, if any.
-wait
+set +e; wait -fn $PID; RETURNCODE=$?; set -e
+[[ "${RETURNCODE}" -eq 2 ]] || exit 1
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
-[[ -f document.pdf ]] || exit 1
+[[ ! -f error.pdf ]] || exit 1

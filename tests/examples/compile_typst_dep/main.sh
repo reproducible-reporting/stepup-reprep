@@ -6,6 +6,7 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
+export REPREP_KEEP_TYPST_DEPS="1"
 stepup -w -n 1 plan.py & # > current_stdout.txt &
 
 # Wait for the director and get its socket.
@@ -18,7 +19,17 @@ python3 - << EOD
 from stepup.core.interact import *
 wait()
 graph("current_graph")
+EOD
+
+# Reproducibility test
+mv document.pdf document1.pdf
+python3 - << EOD
+from stepup.core.interact import *
+from stepup.reprep.make_inventory import write_inventory
+watch_delete("document.pdf")
+run()
 join()
+write_inventory("reproducibility_inventory.txt", ["document.pdf", "document1.pdf"])
 EOD
 
 # Wait for background processes, if any.
@@ -27,3 +38,7 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f document.pdf ]] || exit 1
+[[ -f document.dep ]] || exit 1
+[[ -f image.jpg ]] || exit 1
+[[ -f document1.pdf ]] || exit 1
+[[ -f reproducibility_inventory.txt ]] || exit 1

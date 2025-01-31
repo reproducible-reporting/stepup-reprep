@@ -143,7 +143,11 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
 @pytest.mark.skipif(not shutil.which("typst"), reason="No Typst")
 @pytest.mark.parametrize(
     "name",
-    ["compile_typst_simple"],
+    [
+        "compile_typst_dep",
+        "compile_typst_error",
+        "compile_typst_simple",
+    ],
 )
 @pytest.mark.asyncio
 async def test_typst_example(path_tmp: Path, name: str):

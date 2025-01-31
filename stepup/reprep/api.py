@@ -23,7 +23,7 @@ import shlex
 from collections.abc import Collection
 
 from stepup.core.api import StepInfo, getenv, step, subs_env_vars
-from stepup.core.utils import make_path_out
+from stepup.core.utils import make_path_out, string_to_bool
 
 __all__ = (
     "add_notes_pdf",
@@ -248,6 +248,7 @@ def compile_typst(
     *,
     workdir: str = "./",
     typst: str | None = None,
+    keep_deps: bool = False,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -272,7 +273,11 @@ def compile_typst(
         The working directory where the LaTeX command must be executed.
     typst
         Path to the Typst executable.
-        Defaults to `${REPREP_TYPSY}` variable or `typst` if the variable is unset.
+        Defaults to `${REPREP_TYPST}` variable or `typst` if the variable is unset.
+    keep_deps
+        If `True`, the dependency file is kept after the compilation.
+        The dependency file is also kept if the environment variable
+        `REPREP_KEEP_TYPST_DEPS` is set to `"1"`.
     optional
         When `True`, the step is only executed when needed by other steps.
     block
@@ -290,14 +295,17 @@ def compile_typst(
 
     stem = path_typ[:-4]
     path_pdf = f"{stem}.pdf"
-    path_dep = f"{stem}.dep"
     command = "rr-compile-typst "
     if typst is not None:
-        command += f" --typst={shlex.quote(typst)} "
+        command += f"--typst={shlex.quote(typst)} "
+    out = [path_pdf]
+    if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
+        command += "--keep-deps "
+        out.append(f"{stem}.dep")
     return step(
         command + shlex.quote(path_typ),
         inp=[path_typ],
-        out=[path_pdf, path_dep],
+        out=out,
         workdir=workdir,
         optional=optional,
         block=block,

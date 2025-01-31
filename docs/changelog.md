@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (nothing yet)
 
+
+## [2.2.1] - 2025-01-31 {: #v2.2.1 }
+
+This is a bugfix release addressing minor issues in the Typst support.
+
+### Fixed
+
+- Fix returncode of the `rr-compile-typst` command (now passes through returncode of `typst build`).
+- By default, depfiles created by `typst build` are now stored in a temporary directory,
+  to avoid littering the working directory.
+  You can keep depfiles by setting the environment variable `REPREP_KEEP_TYPST_DEPS="1"`,
+  or with the argument `keep_deps=True` in [`compile_typst()`][stepup.reprep.api.compile_typst].
+  (Either one will .)
+
+
 ## [2.2.0] - 2025-01-29 {: #v2.2.0 }
 
 This release adds experimental support for [typst](https://github.com/typst).

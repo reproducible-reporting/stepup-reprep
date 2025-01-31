@@ -1,0 +1,21 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-compile-typst error.typ
+      FAIL │ rr-compile-typst error.typ
+────────────────────────────────── Step info ───────────────────────────────────
+Command               rr-compile-typst error.typ
+Return code           1
+───────────────────────── Expected outputs not created ─────────────────────────
+error.pdf
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+   WARNING │ 1 step(s) failed.
+   WARNING │ Skipping cleanup due to incomplete build.
+   WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

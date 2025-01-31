@@ -28,11 +28,12 @@ making it inefficient to plan ahead and build all missing required inputs early.
 """
 
 import argparse
+import contextlib
 import shlex
 import subprocess
 import sys
 
-from path import Path
+from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
 from stepup.core.utils import myrelpath
@@ -49,26 +50,32 @@ def main(argv: list[str] | None = None):
     if args.typst is None:
         args.typst = getenv("REPREP_TYPST", "typst")
 
-    # Remove any existing make-deps output from a previous run.
-    # (Typst does not remove it in case of a compilation error.)
-    path_dep = Path(args.path_typ[:-4] + ".dep")
+    with contextlib.ExitStack() as stack:
+        if args.keep_deps:
+            # Remove any existing make-deps output from a previous run.
+            path_dep = Path(args.path_typ[:-4] + ".dep")
+            path_dep.remove_p()
+        else:
+            # Use a temporary file for the make-deps output.
+            path_dep = stack.enter_context(TempDir()) / "typst.dep"
 
-    # Run typst compile
-    cp = subprocess.run(
-        [args.typst, "compile", args.path_typ, "--make-deps", path_dep],
-        stdin=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-    # Get existing input files from the dependency file and amend.
-    # Note that the deps file does not escape colons in paths,
-    # so the code below assumes one never uses colons in paths.
-    inp_paths = []
-    if path_dep.is_file():
-        with open(path_dep) as fh:
-            _, deps = fh.read().split(":", 1)
-            inp_paths.extend(path_dep.parent / p for p in shlex.split(deps))
-    # Look for missing input files and amend them.
+        # Run typst compile
+        cp = subprocess.run(
+            [args.typst, "compile", args.path_typ, "--make-deps", path_dep],
+            stdin=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        # Get existing input files from the dependency file and amend.
+        # Note that the deps file does not escape colons in paths,
+        # so the code below assumes one never uses colons in paths.
+        inp_paths = []
+        if path_dep.is_file():
+            with open(path_dep) as fh:
+                _, deps = fh.read().split(":", 1)
+                inp_paths.extend(args.path_typ.parent / p for p in shlex.split(deps))
+
+    # Look for missing input files in the standard error stream and amend them.
     if cp.returncode != 0:
         lead = "error: file not found (searched at "
         inp_paths.extend(
@@ -78,6 +85,7 @@ def main(argv: list[str] | None = None):
         )
     sys.stderr.write(cp.stderr.decode())
     amend(inp=inp_paths)
+    sys.exit(cp.returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -86,12 +94,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         prog="rr-typst",
         description="Compile a Typst document and extract input and output info.",
     )
+    parser.add_argument("path_typ", type=Path, help="The main typst source file.")
     parser.add_argument(
         "--typst",
         help="The Typst executable. "
-        "The default is ${REPREP_TYPSY} or typst if the variable is not defined.",
+        "The default is ${REPREP_TYPST} or typst if the variable is not defined.",
     )
-    parser.add_argument("path_typ", help="The main typst source file.")
+    parser.add_argument(
+        "--keep-deps",
+        help="Keep the dependency file after the compilation. "
+        "The default is to use a temporary file, which is removed after it is processed.",
+        action="store_true",
+        default=False,
+    )
     return parser.parse_args(argv)
 
 

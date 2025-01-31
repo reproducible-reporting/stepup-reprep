@@ -1,0 +1,86 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:document.dep
+            supplies   file:document.pdf
+            supplies   file:document.typ
+            supplies   file:image.jpg
+            supplies   file:image.py
+            supplies   file:plan.py
+            supplies   step:./image.py
+            supplies   step:./plan.py
+            supplies   step:rr-compile-typst --keep-deps document.typ
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+          inp_digest = same
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:document.typ
+             creates   file:image.py
+             creates   step:./image.py
+             creates   step:rr-compile-typst --keep-deps document.typ
+
+file:document.typ
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst --keep-deps document.typ
+
+file:image.py
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+
+step:rr-compile-typst --keep-deps document.typ
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:document.typ
+            consumes   file:image.jpg [amended]
+             creates   file:document.dep
+             creates   file:document.pdf
+            supplies   file:document.dep
+            supplies   file:document.pdf
+
+file:document.dep
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps document.typ
+            consumes   file:./
+            consumes   step:rr-compile-typst --keep-deps document.typ
+
+file:document.pdf
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps document.typ
+            consumes   file:./
+            consumes   step:rr-compile-typst --keep-deps document.typ
+
+step:./image.py
+               state = SUCCEEDED
+             env_var = BG_COLOR [amended]
+                     = FG_COLOR [amended]
+          created by   step:./plan.py
+            consumes   file:./
+             creates   file:image.jpg
+            supplies   file:image.jpg
+
+file:image.jpg
+               state = BUILT
+          created by   step:./image.py
+            consumes   file:./
+            consumes   step:./image.py
+            supplies   step:rr-compile-typst --keep-deps document.typ

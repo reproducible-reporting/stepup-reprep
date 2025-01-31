@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (nothing yet)
 
 
+## [2.2.2] - 2025-01-31 {: #v2.2.2 }
+
+This is a bugfix release addressing minor issues in the Typst support.
+
+### Fixed
+
+- Only call `sys.exit` in `rr-compile-typst` if the returncode is non-zero.
+  This allows for other scripts to call its main function without exiting
+  in case of a succeeded typst build.
+
+
 ## [2.2.1] - 2025-01-31 {: #v2.2.1 }
 
 This is a bugfix release addressing minor issues in the Typst support.
@@ -204,6 +215,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.2.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.2
 [2.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.1
 [2.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0
 [2.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.1.0

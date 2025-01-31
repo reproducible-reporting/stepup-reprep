@@ -85,7 +85,10 @@ def main(argv: list[str] | None = None):
         )
     sys.stderr.write(cp.stderr.decode())
     amend(inp=inp_paths)
-    sys.exit(cp.returncode)
+    if cp.returncode != 0:
+        # Only use sys.exit in cases of an error,
+        # so other programs may call this function without exiting.
+        sys.exit(cp.returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

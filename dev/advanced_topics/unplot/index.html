@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.2">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.a40c8224.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.d7758b05.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -98,7 +98,7 @@
   </a>
 
             </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
           </aside>
         
       </div>
@@ -614,7 +614,7 @@
         
   
   <span class="md-ellipsis">
-    Good Practices
+    Good practices
     
   </span>
   
@@ -704,7 +704,7 @@
         <li class="md-nav__item">
   <a href="#how-to-prepare-an-input-svg-file" class="md-nav__link">
     <span class="md-ellipsis">
-      How to prepare an input SVG file.
+      How to prepare an input SVG file
     </span>
   </a>
   
@@ -945,7 +945,7 @@
         <li class="md-nav__item">
   <a href="#how-to-prepare-an-input-svg-file" class="md-nav__link">
     <span class="md-ellipsis">
-      How to prepare an input SVG file.
+      How to prepare an input SVG file
     </span>
   </a>
   
@@ -1000,7 +1000,7 @@
 </div>
 <p>Unplot converts plots back into data points.
 (It is a sanitized version of <a href="https://github.com/tovrstra/depix">Depix</a>.)</p>
-<h2 id="how-to-prepare-an-input-svg-file">How to prepare an input SVG file.<a class="headerlink" href="#how-to-prepare-an-input-svg-file" title="Permanent link">&para;</a></h2>
+<h2 id="how-to-prepare-an-input-svg-file">How to prepare an input SVG file<a class="headerlink" href="#how-to-prepare-an-input-svg-file" title="Permanent link">&para;</a></h2>
 <ol>
 <li>
 <p>If the plot is embedded in a PDF, use <code>pdfimages</code>
@@ -1092,14 +1092,14 @@ The end node is a diamond.
 Hollow node markers can be easily aligned with data points in the original image.</p>
 <p><img alt="plot" src="plot.svg" /></p>
 <p>To convert these paths into data, you can use the <code>unplot</code> function of StepUp RepRep as follows:</p>
-<p><div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ch">#!/usr/bin/env python3</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ch">#!/usr/bin/env python3</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">stepup.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">static</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">stepup.reprep.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">unplot</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">static</span><span class="p">(</span><span class="s2">&quot;plot.svg&quot;</span><span class="p">)</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">unplot</span><span class="p">(</span><span class="s2">&quot;plot.svg&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-To run the example, make the scripts executable and run StepUp:</p>
+<p>To run the example, make the scripts executable and run StepUp:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>plan.py<span class="w"> </span>tile.py
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>stepup<span class="w"> </span>-n<span class="w"> </span>-w1
 </span></code></pre></div>
@@ -1227,7 +1227,7 @@ average their x-coordinates and compute the difference of their y-coordinates.</
     <script id="__config" type="application/json">{"base": "../..", "features": ["search.highlight", "search.suggest", "search.share", "navigation.instant", "navigation.instant.prefetch", "content.code.copy", "content.action.edit"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5090c770.min.js"></script>
+      <script src="../../assets/javascripts/bundle.f13b1293.min.js"></script>
       
     
   </body>

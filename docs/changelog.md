@@ -1,16 +1,32 @@
+<!-- markdownlint-disable no-duplicate-heading -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev/effver/).
+(Changes to features documented as "experimental" will not increment macro and meso version numbers.)
 
-## [Unreleased]
+## [Unreleased][]
 
 (nothing yet)
 
+## [2.2.3][] - 2025-02-05 {: #v2.2.3 }
 
-## [2.2.2] - 2025-01-31 {: #v2.2.2 }
+This release uses the new `STEPUP_EXTERNAL_SOURCES` environment variable
+introduced in StepUp Core 2.0.6.
+
+### Changed
+
+- Switch from [SemVer](https://semver.org/spec/v2.0.0.html) to
+  [EffVer](https://jacobtomlinson.dev/effver/).
+- Scripts that automatically detect dependencies
+  (`rr-compile-latex`, `rr-compile-typst` and `rr-convert-inkscape`)
+  now also use the new `STEPUP_EXTERNAL_SOURCES` environment variable
+  introduced in StepUp Core 2.0.6.
+
+## [2.2.2][] - 2025-01-31 {: #v2.2.2 }
 
 This is a bugfix release addressing minor issues in the Typst support.
 
@@ -20,8 +36,7 @@ This is a bugfix release addressing minor issues in the Typst support.
   This allows for other scripts to call its main function without exiting
   in case of a succeeded typst build.
 
-
-## [2.2.1] - 2025-01-31 {: #v2.2.1 }
+## [2.2.1][] - 2025-01-31 {: #v2.2.1 }
 
 This is a bugfix release addressing minor issues in the Typst support.
 
@@ -34,8 +49,7 @@ This is a bugfix release addressing minor issues in the Typst support.
   or with the argument `keep_deps=True` in [`compile_typst()`][stepup.reprep.api.compile_typst].
   (Either one will .)
 
-
-## [2.2.0] - 2025-01-29 {: #v2.2.0 }
+## [2.2.0][] - 2025-01-29 {: #v2.2.0 }
 
 This release adds experimental support for [typst](https://github.com/typst).
 It also introduces a few breaking API changes for the sake of consistency.
@@ -45,7 +59,6 @@ It also introduces a few breaking API changes for the sake of consistency.
 
 - Experimental support for Typst.
 
-
 ### Changed
 
 - Rename API functions:
@@ -53,8 +66,7 @@ It also introduces a few breaking API changes for the sake of consistency.
     - `latex_flat()` -> [`flatten_latex()`][stepup.reprep.api.flatten_latex]
     - `latex_diff()` -> [`diff_latex()`][stepup.reprep.api.diff_latex]
 
-
-## [2.1.0] - 2025-01-27 {: #v2.1.0 }
+## [2.1.0][] - 2025-01-27 {: #v2.1.0 }
 
 This release contains a few minor breaking changes for the sake of internal consistency.
 
@@ -62,13 +74,12 @@ This release contains a few minor breaking changes for the sake of internal cons
 
 - The conversion with Inkscape has become a single step.
   (It was first split up in a step scanning for dependencies followed by the actual conversion.)
-- Add more entrypoints for command-line utilitities in StepUp RepRep.
+- Add more entrypoints for command-line utilities in StepUp RepRep.
   Existing ones were renamed from `reprep-*` to `rr-*`.
 - Rename module `stepup.reprep.render` to `stepup.reprep.render_jinja`.
 - Rename API function: `render()` -> [`render_jinja()`][stepup.reprep.api.render_jinja]
 
-
-## [2.0.2] - 2025-01-22 {: #v2.0.2 }
+## [2.0.2][] - 2025-01-22 {: #v2.0.2 }
 
 This is the first release of StepUp RepRep that is compatible with StepUp Core 2.0.0.
 (Earlier 2.0 releases were yanked due to packaging issues.)
@@ -86,8 +97,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 
 - Use `shlex` for building shell commands in `stepup.reprep.api` to avoid shell injection.
 
-
-## [1.4.1] - 2024-09-02 {: #v1.4.1 }
+## [1.4.1][] - 2024-09-02 {: #v1.4.1 }
 
 ### Added
 
@@ -101,8 +111,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 - Fix bug: rewrite paths to CSS files in `convert_markdown`
   to be relative to the parent of the output HTML file.
 
-
-## [1.4.0] - 2024-08-27 {: #v1.4.0 }
+## [1.4.0][] - 2024-08-27 {: #v1.4.0 }
 
 ### Added
 
@@ -115,8 +124,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 - Move `load_module_file` from StepUp Core to `stepup.reprep.render`
   and improve it to facilitate local imports.
 
-
-## [1.3.0] - 2024-06-28 {: #v1.3.0 }
+## [1.3.0][] - 2024-06-28 {: #v1.3.0 }
 
 ### Added
 
@@ -129,15 +137,14 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 - Upgraded dependency markdown-katex to version 202406.1035
   and enabled concurrency for markdown conversion with equations.
 - Scrub PDF files after opening them with `fitz`.
-  See https://github.com/pymupdf/PyMuPDF/issues/3635
+  See <https://github.com/pymupdf/PyMuPDF/issues/3635>
 
-
-## [1.2.1] - 2024-05-27 {: #v1.2.1 }
+## [1.2.1][] - 2024-05-27 {: #v1.2.1 }
 
 ### Changed
 
 - Conversion from HTML to weasyprint is now a two-step process and includes detection
-  of implicit input files used in the HTML to PDF conversion. (Images and exteral CCS)
+  of implicit input files used in the HTML to PDF conversion. (Images and external CCS)
 - Improved reusability of script modules:
   `add_notes_pdf`, `check_hrefs`, `convert_inkscape`, `convert_markdown`,
   `convert_weasyprint`, `latex`, `latex_flat`, `make_inventory`, `normalized_pdf`,
@@ -147,8 +154,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 
 - Fixed a few errors in the HTML generated by `convert_markdown()`
 
-
-## [1.2.0] - 2024-05-20 {: #v1.2.0 }
+## [1.2.0][] - 2024-05-20 {: #v1.2.0 }
 
 ### Added
 
@@ -172,27 +178,25 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 - Symbolic links are no longer dereferenced when they are listed in an inventory file.
 - Symbolic links are archived in ZIP files without dereferencing.
 
-
-## [1.1.2] - 2024-05-16 {: #v1.1.2 }
+## [1.1.2][] - 2024-05-16 {: #v1.1.2 }
 
 ### Fixed
 
 - Nicer fix for concurrent Inkscape SVG to PDF or PNG conversion
   (with `SELF_CALL=x`).
-  See: https://gitlab.com/inkscape/inkscape/-/issues/4716
+  See: <https://gitlab.com/inkscape/inkscape/-/issues/4716>
 - Make unit tests work with stepup-core 1.2.2.
 
-
-## [1.1.1] - 2024-05-07 {: #v1.1.1 }
+## [1.1.1][] - 2024-05-07 {: #v1.1.1 }
 
 ### Fixed
 
 - Inkscape SVG to PDF or PNG conversion now works also in parallel,
   thanks to the workaround posted here:
-  https://gitlab.com/inkscape/inkscape/-/issues/4716
-- Libroffice PDF conversion now works also in parallel,
+  <https://gitlab.com/inkscape/inkscape/-/issues/4716>
+- LibrOffice PDF conversion now works also in parallel,
   thanks to the workaround posted here:
-  https://bugs.documentfoundation.org/show_bug.cgi?id=106134
+  <https://bugs.documentfoundation.org/show_bug.cgi?id=106134>
 - Inkscape conversion no longer opens files in write mode,
   which triggered the watcher of StepUp Core.
 - Fixed packaging mistake that confused PyCharm and Pytest.
@@ -201,20 +205,19 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 
 - Documentation improvements
 
-
-## [1.1.0] - 2024-05-02 {: #v1.1.0 }
+## [1.1.0][] - 2024-05-02 {: #v1.1.0 }
 
 ### Changed
 
 - Documentation improvements
 - Unit tests are made compatible with StepUp Core 1.2.0.
 
-## [1.0.0] - 2024-04-25 {: #v1.0.0 }
+## [1.0.0][] - 2024-04-25 {: #v1.0.0 }
 
 Initial release
 
-
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.2.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.3
 [2.2.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.2
 [2.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.1
 [2.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0

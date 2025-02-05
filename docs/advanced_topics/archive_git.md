@@ -34,7 +34,6 @@ However, their reliability alone does not make them suitable for long-term archi
     or compatible with your current operating system.
     In such a scenario, it is preferable to also include all output in the archive.
 
-
 ## Preparations When Using Git LFS
 
 Git LFS makes it easier to work with large files,
@@ -43,7 +42,6 @@ LFS improves the efficiency of Git by storing large files externally,
 so that when you clone a Git repository,
 you don't have to download all versions of those large files.
 Instead, LFS will only download the versions of the large files that you are working on.
-
 
 ### Download Large Files from LFS
 
@@ -68,7 +66,6 @@ To replace these pointers with the actual files, run:
 ```bash
 git lfs checkout
 ```
-
 
 ### Migrate from an LFS-enabled Git Repository
 
@@ -95,7 +92,6 @@ The migration can be performed in two steps:
     ```bash
     git lfs migrate export --everything --include="*.*"
     ```
-
 
 ## Archival Recipes
 
@@ -141,7 +137,6 @@ If you want to recreate a Git repository from a bundle, run:
 git clone main.bundle
 ```
 
-
 ### Archive Source Files from the Latest Commit
 
 There are two options, the latter of which is preferable:
@@ -163,7 +158,7 @@ There are two options, the latter of which is preferable:
     - Write an `inventory-main.def` file with the following line,
       to include all files recorded by Git:
 
-        ```
+        ```text
         include-git
         ```
 
@@ -183,21 +178,19 @@ There are two options, the latter of which is preferable:
         rr-zip-inventory inventory-main-latest.txt main-latest.zip
         ```
 
-
 ### Archiving Source and Output Files from the Last Commit
 
 This is similar to the previous section, but now with a larger set of files.
 Create an `inventory-main-latest-with-outputs.def` file
 that will include all files recorded by Git and all outputs of the StepUp workflows:
 
-```
+```text
 include-git
 include-workflow BUILT */.stepup/workflow.mpk.gz
 ```
 
 (It is assumed that all STATIC files are already checked into the Git repository.)
 With this file, just follow the same steps as in option 2 of the previous subsection.
-
 
 ## Create a `README.md` for the Archives
 

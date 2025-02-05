@@ -14,8 +14,8 @@ git config --global user.email "Your.Name@email.com"
 git config --global core.editor nano
 ```
 
-Also, go through a [Git Tutorial](https://www.w3schools.com/git/default.asp?remote=github) to become familiar with the basic concepts.
-
+Also, go through a [Git Tutorial](https://www.w3schools.com/git/default.asp?remote=github)
+to become familiar with the basic concepts.
 
 ## 1a) Start a New Publication
 
@@ -74,7 +74,6 @@ Also, go through a [Git Tutorial](https://www.w3schools.com/git/default.asp?remo
     This depends on which online service is used to share the Git repository with your co-authors.
     If in doubt, create a private repository on GitHub.
 
-
 ## 1b) Clone an Existing Publication
 
 You need a `'remote url'` of an existing publication, which one of your co-authors created.
@@ -86,7 +85,6 @@ cd 'slug'
 ```
 
 Replace `'slug'` with the directory created by `git clone`.
-
 
 ## 2) Set Up the Software Environment
 
@@ -103,7 +101,7 @@ defined in the previous section **1a** or **1b**.)
 
     - Ubuntu 22
 
-        ```
+        ```bash
         PYTHON3=python3.11 ./setup-venv-pip.sh
         ```
 
@@ -127,7 +125,6 @@ defined in the previous section **1a** or **1b**.)
     you only need to allow it once with `direnv allow .`,
     and the `.envrc` script is automatically sourced
     when you change to the directory of the Git repository.
-
 
 - Install `pre-commit` and `git-lfs` into the new repository:
 

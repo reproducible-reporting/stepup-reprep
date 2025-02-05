@@ -55,12 +55,12 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
 """
 
 
-def test_scan_latex_deps(path_tmp):
-    path_main_tex = path_tmp / "main.tex"
-    with open(path_main_tex, "w") as fh:
+def test_scan_latex_deps(monkeypatch, path_tmp):
+    monkeypatch.chdir(path_tmp)
+    with open("main.tex", "w") as fh:
         fh.write(SCAN_LATEX_DEPS_EXAMPLE)
-    implicit, bib = scan_latex_deps(path_main_tex, path_tmp)
-    implicit_ref = [
+    implicit, bib = scan_latex_deps("main.tex", path_tmp)
+    implicit_ref = {
         "foo.tex",
         "results/info.tex",
         "this also works.tex",
@@ -68,9 +68,7 @@ def test_scan_latex_deps(path_tmp):
         "plot.pdf",
         "implicit.txt",
         "sub/inc.tex",
-    ]
-    implicit_ref = {path_tmp / name for name in implicit_ref}
+    }
     assert set(implicit) == implicit_ref
-    bib_ref = ["references.bib", "extra.bib"]
-    bib_ref = {path_tmp / name for name in bib_ref}
+    bib_ref = {"references.bib", "extra.bib"}
     assert set(bib) == bib_ref

@@ -1,8 +1,8 @@
 # Inventory Files
 
 StepUp RepRep uses `inventory.txt` to collect metadata to prepare a ZIP archive.
-Inventory files can either be created manually (for an external dataset) or automatically (for datasets created within a StepUp workflow.)
-
+Inventory files can either be created manually (for an external dataset)
+or automatically (for datasets created within a StepUp workflow.)
 
 ## File Formats
 
@@ -13,7 +13,8 @@ Each line has four fields:
 
 - the file size,
 - the file mode,
-- the [BLAKE2b](https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2) hash of the file contents (regular file) or link destination (symbolic link), and
+- the [BLAKE2b](https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2) hash
+  of the file contents (regular file) or link destination (symbolic link), and
 - the relative path to the file, starting from the parent of the inventory file.
 
 A fixed column width is used.
@@ -21,11 +22,12 @@ You do not create this type of file manually.
 Instead, StepUp RepRep offers tools to make such files.
 (See below.)
 
-
 ### Inventory Definitions (`inventory.def`)
 
-The `inventory.def` format is inspired by the `MANIFEST.in` format from the [setuptools](https://setuptools.pypa.io/) project.
-As of version 1.2.0, StepUp RepRep no longer relies on setuptools and has its own implementation to process inventory definitions.
+The `inventory.def` format is inspired by the `MANIFEST.in` format
+from the [setuptools](https://setuptools.pypa.io/) project.
+As of version 1.2.0, StepUp RepRep no longer relies on setuptools
+and has its own implementation to process inventory definitions.
 
 Inventory definition files are processed one line at a time.
 Comments start with the `#` character, just as in Python source code.
@@ -50,8 +52,7 @@ The following rules are supported:
   (`STATIC`, `BUILT` or `VOLATILE` are common. Other states exist but make less sense.)
   All subsequent arguments are (named glob patterns matching) StepUp `graph.db` files.
 
-
-## Creating `inventory.txt` Files.
+## Creating `inventory.txt` Files
 
 ### Command-line Tool `rr-make-inventory`
 
@@ -91,7 +92,8 @@ This is a command-line wrapper around the `zip_inventory` function discussed bel
 
 ### StepUp RepRep Function `zip_inventory`
 
-The function [`zip_inventory()`][stepup.reprep.api.zip_inventory] takes a `inventory.txt` file as input and creates a ZIP file containing all the files listed in the inventory.
+The function [`zip_inventory()`][stepup.reprep.api.zip_inventory] takes a `inventory.txt` file as input
+and creates a ZIP file containing all the files listed in the inventory.
 It differs from the conventional `zip` program in the following ways:
 
 - File hashes are checked before adding files to the archive,
@@ -99,7 +101,6 @@ It differs from the conventional `zip` program in the following ways:
 - The `inventory.txt` file is included in the resulting ZIP file.
 - The ZIP file is reproducible: all time stamps in the ZIP file are set to January 1st, 1980.
 - By default, symbolic links are added as links, instead of the contents they point to.
-
 
 ### Unpacking the ZIP file
 

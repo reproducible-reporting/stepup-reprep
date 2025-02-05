@@ -11,12 +11,12 @@ Now that you have gained a basic understanding of StepUp Core,
 it will become clear why a `plan.py` file is included in the template.
 The off-the-shelf `plan.py` already covers quite a few use cases,
 but consider it a good starting point for further development.
-In addition to the functions in `stepup.core.api`, StepUp RepRep provides more functionality geared towards scientific publishing.
+In addition to the functions in `stepup.core.api`,
+StepUp RepRep provides more functionality geared towards scientific publishing.
 Reference documentation for these functions can be found here:
 
-- [stepup.reprep.api][]
-- [stepup.reprep.tile_pdf][]
-
+- [`stepup.reprep.api`][]
+- [`stepup.reprep.tile_pdf`][]
 
 ## Git
 
@@ -38,7 +38,6 @@ More recommended visual Git resources include:
 - [5 Git resources for visual learners](https://about.gitlab.com/blog/2022/09/14/git-resources-for-visual-learners/)
 - [Learn Git Branching](https://learngitbranching.js.org/) (an online game to learn Git)
 
-
 ### Keep Clean
 
 It is essential to keep the Git repository organized and understandable by your co-authors.
@@ -51,7 +50,6 @@ To remove all stale files (defined in `.gitignore`), run `git clean -dfX`.
 However, do not use this command until you have committed all important files,
 as it may inadvertently remove work in progress.
 
-
 ### Managing software
 
 It is recommended to *pin* the versions of software dependencies,
@@ -59,13 +57,13 @@ so everyone is working with a consistent software environment.
 
 This can be done by specifying versions in the `requirements.in` or `environment.yaml` files, e.g.
 
-```
+```text
 scipy==1.13.1
 ```
 
 instead of just
 
-```
+```text
 scipy
 ```
 

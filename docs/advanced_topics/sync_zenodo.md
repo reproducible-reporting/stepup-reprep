@@ -16,8 +16,7 @@ If your files change and you want to create a new version,
 you must increment the version numbers
 using the [semantic version numbering](https://semver.org/) format.
 
-
-## Configure a Zenodo dataset.
+## Configure a Zenodo dataset
 
 To prepare a dataset, you need to create a `zenodo.yaml` file
 by filling in the following template:
@@ -130,12 +129,13 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
     so files are uploaded without reference to their parent directory.
     This also means that two files with the same name in different subdirectories
     cannot both be included.
-    If you have such files or if you have a large number of files, consider uploading a ZIP archive instead of separate files.
-
+    If you have such files or if you have a large number of files,
+    consider uploading a ZIP archive instead of separate files.
 
 ## Synchronize your dataset
 
-The command `rr-sync-zenodo` will create or synchronize the online dataset and store the `record_id` in the versions JSON file.
+The command `rr-sync-zenodo` will create or synchronize the online dataset
+and store the `record_id` in the versions JSON file.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.
 
 Once you have all the files you need, execute the script:
@@ -154,7 +154,6 @@ static("zenodo.yaml", "zenodo.md", "file1", "sub/", "sub/file2")
 sync_zenodo("zenodo.yaml")
 ```
 
-
 ## Try the Following
 
 When creating a publication starting from the RepRep [Template Tutorial](../from_template/introduction.md),
@@ -162,7 +161,6 @@ one can use the [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] function to
 continuously synchronize the latest version of a publication with co-authors.
 Drafts of datasets can be shared with co-authors,
 in this case to give them access to the most recent build of the publication PDFs.
-
 
 ## Known limitations
 

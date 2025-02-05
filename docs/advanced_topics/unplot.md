@@ -7,8 +7,7 @@
 Unplot converts plots back into data points.
 (It is a sanitized version of [Depix](https://github.com/tovrstra/depix).)
 
-
-## How to prepare an input SVG file.
+## How to prepare an input SVG file
 
 1. If the plot is embedded in a PDF, use `pdfimages`
    to extract the figures from the PDF as PBM files.
@@ -53,7 +52,6 @@ Unplot converts plots back into data points.
       is a label to identify the data series in the output.
 
 7. In the menu, select "File" ➔ "Save As..." to save the file in SVG format.
-
 
 ## Example
 
@@ -102,6 +100,7 @@ To convert these paths into data, you can use the `unplot` function of StepUp Re
 ```python
 {% include 'advanced_topics/unplot/plan.py' %}
 ```
+
 To run the example, make the scripts executable and run StepUp:
 
 ```bash
@@ -111,7 +110,7 @@ stepup -n -w1
 
 You should see the following terminal output:
 
-```
+```text
 {% include 'advanced_topics/unplot/stdout.txt' %}
 ```
 

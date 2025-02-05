@@ -36,7 +36,7 @@ import sys
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import myrelpath
+from stepup.core.utils import filter_dependencies, myrelpath
 
 
 def main(argv: list[str] | None = None):
@@ -84,7 +84,7 @@ def main(argv: list[str] | None = None):
             if line.startswith(lead)
         )
     sys.stderr.write(cp.stderr.decode())
-    amend(inp=inp_paths)
+    amend(inp=filter_dependencies(inp_paths))
     if cp.returncode != 0:
         # Only use sys.exit in cases of an error,
         # so other programs may call this function without exiting.

@@ -1,3 +1,5 @@
+<!-- markdownlint-disable no-duplicate-heading -->
+
 # Good Practices
 
 This tutorial lists some recommendations to facilitate data accuracy, reuse and reproducibility
@@ -18,7 +20,6 @@ there are two classes of recommendations:
 - *"Should"* recommendations are also encouraged but are considered less urgent.
   There may be external factors, such as a publisher, that force you to deviate.
 
-
 ### Filename Conventions
 
 #### Must
@@ -29,7 +30,8 @@ there are two classes of recommendations:
   and file names are sorted correctly.
 
     Good example:
-    ```
+
+    ```text
     pressure-000.1MPa.txt
     pressure-001.0MPa.txt
     pressure-010.0MPa.txt
@@ -37,7 +39,8 @@ there are two classes of recommendations:
     ```
 
     Bad example:
-    ```
+
+    ```text
     pressure-0.1MPa.txt
     pressure-100.0MPa.txt
     pressure-10.0MPa.txt
@@ -46,7 +49,7 @@ there are two classes of recommendations:
 
 - Similarly, keywords can be padded with dashes or underscores, for instance:
 
-    ```
+    ```text
     opt__low
     opt_high
     ```
@@ -56,23 +59,25 @@ there are two classes of recommendations:
   This facilitates automation.
 
     Good example:
-    ```
+
+    ```text
     opt__low/compute.py
     opt_high/compute.py
     ```
 
     Bad example:
-    ```
+
+    ```text
     opt__low/compute__low.py
     opt_high/compute_high.py
     ```
 
     Terrible example:
-    ```
+
+    ```text
     opt__low/compute.py
     opt_high/calculate.py
     ```
-
 
 ### Tex Sources
 
@@ -86,7 +91,6 @@ there are two classes of recommendations:
   Hint: [Quick DOI to BIB conversion](https://www.doi2bib.org)
 - Avoid `\subfigure`. Instead, merge panels into one PDF. (See [Tile PDFs](tile_pdfs.md).)
 
-
 #### Should
 
 - Some packages, such as `todo`, are useful while drafting a manuscript.
@@ -95,7 +99,6 @@ there are two classes of recommendations:
 - Define as few custom commands as possible.
 - Avoid using low quality publisher article classes.
   (ACS has a decent one.)
-
 
 ### Figures
 
@@ -124,7 +127,6 @@ there are two classes of recommendations:
 
 - [Avoid using Jupyter Notebooks](#jupyter-notebooks) as a tool for creating plots.
 
-
 ### Tables
 
 #### Must
@@ -135,7 +137,6 @@ Commit the following to the Git history:
 - Scripts that generate LaTeX source for the tables.
 - A `README.md` or docstrings summarizing the scripts and data.
 - [Avoid using Jupyter Notebooks](#jupyter-notebooks) as a tool for creating tables.
-
 
 ### Data Sets
 
@@ -179,7 +180,6 @@ Commit the following to the Git history:
 
 - Do not use file formats that can only be used with closed source software.
 
-
 #### Should
 
 - For files larger than exceed 500 kB, use [Git LFS](https://git-lfs.com/),
@@ -204,7 +204,6 @@ Commit the following to the Git history:
   This is usually inefficient and increases the risk of large data losses due to bitrot.
 
 - Avoid binary files in general, as they are harder to reuse in the longer term.
-
 
 ### Software
 
@@ -239,22 +238,22 @@ Commit the following to the Git history:
     to the `requirements.txt` and `environment.yaml` files as follows:
 
     **requirements.txt** (just add a line)
-    ```
+
+    ```text
     -e latest-draft/pkgs/your_package
     ```
 
     **environment.yaml** (add a line under the `pip` item)
-    ```
+
+    ```text
     - pip:
     - '-e latest-draft/pkgs/your_package'
     ```
-
 
 ## Details
 
 This section provides additional background information on the recommendations listed above.
 Note that this section is still a work in progress.
-
 
 ### Jupyter Notebooks
 
@@ -290,7 +289,6 @@ StepUp addresses the above issues as follows:
   [`convert_markdown()`][stepup.reprep.api.convert_markdown]
   and [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint].
 
-
 ### HDF5
 
 If a process is killed while writing to an HDF5 file,
@@ -319,6 +317,6 @@ Their main advantage is the simplicity and availability within NumPy.
 
 Some online discussions on the subject:
 
-- [https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087](https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087) (2018)
-- [https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658](https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658) (2022)
-- [https://janert.me/blog/2022/looking-at-hdf5/](https://janert.me/blog/2022/looking-at-hdf5/) (2022)
+- 2018: [https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087](https://forum.hdfgroup.org/t/avoiding-corruption-of-the-hdf5-file/4087)
+- 2022: [https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658](https://forum.hdfgroup.org/t/corrupted-file-due-to-shutdown/9658)
+- 2022: [https://janert.me/blog/2022/looking-at-hdf5/](https://janert.me/blog/2022/looking-at-hdf5/)

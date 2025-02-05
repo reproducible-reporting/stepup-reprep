@@ -30,6 +30,7 @@ from defusedxml import ElementTree
 from path import Path
 
 from stepup.core.api import amend, getenv
+from stepup.core.utils import filter_dependencies
 
 
 def main(argv: list[str] | None = None):
@@ -75,7 +76,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def convert_svg_pdf(path_svg: str, path_out: Path, inkscape: str, inkscape_args: list[str]):
-    inp_paths = search_svg_deps(path_svg)
+    inp_paths = filter_dependencies(search_svg_deps(path_svg))
     amend(inp=inp_paths)
     subprocess.run(
         [

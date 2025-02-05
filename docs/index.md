@@ -1,13 +1,17 @@
 # Welcome to StepUp RepRep
 
-StepUp RepRep is the publication build tool for [Reproducible Reporting](https://github.com/reproducible-reporting).
-It is a domain-specific extension of a powerful universal build tool called [StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
+StepUp RepRep is the publication build tool for
+[Reproducible Reporting](https://github.com/reproducible-reporting).
+It is a domain-specific extension of a powerful universal build tool called
+[StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
 
-To get started, we recommend to follow the [Template Tutorial](from_template/introduction.md) in this documentation.
+To get started, we recommend to follow the
+[Template Tutorial](from_template/introduction.md) in this documentation.
 StepUp RepRep will be installed in your instance of the template, as part of the setup.
 
-If you want to gain a more in-depth understanding of how StepUp works, the [StepUp Core tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/) will take you through all the basics.
-
+If you want to gain a more in-depth understanding of how StepUp works,
+the [StepUp Core tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/)
+will take you through all the basics.
 
 ## Quick Demo
 
@@ -33,11 +37,15 @@ StepUp RepRep aims to facilitate the reproducibility and data management of scie
 It targets the *last mile* of the publication process:
 The creation of a publication from raw research results.
 
-The making of a scientific publication involves many moving parts, which are not easily connected and shared among co-authors.
+The making of a scientific publication involves many moving parts,
+which are not easily connected and shared among co-authors.
 Raw results need to be analyzed, tabulated, and plotted and presented in a convenient way to the reader.
-Today, such data processing is increasingly done using scripting languages (Python, R, Notebooks, ...) because they allow more advanced analysis than spreadsheets or manual calculations.
-Too often, however, the results of such scripting tools are incorporated into a publication (or subsequent analysis tool) by tedious copy-paste or manual import.
-While each tool can be very advanced, the transfer of information from one step to the next is often not.
+Today, such data processing is increasingly done using scripting languages (Python, R, Notebooks, ...)
+because they allow more advanced analysis than spreadsheets or manual calculations.
+Too often, however, the results of such scripting tools are incorporated
+into a publication (or subsequent analysis tool) by tedious copy-paste or manual import.
+While each tool can be very advanced,
+the transfer of information from one step to the next is often not.
 This becomes problematic in at least the following scenarios:
 
 1. When trying to reproduce the results of a paper, long after it was published,
@@ -58,9 +66,11 @@ This becomes problematic in at least the following scenarios:
    Even if the data and scripts are archived and made available,
    the knowledge of how to reproduce these results is not easily shared.
 
-StepUp RepRep overcomes these difficulties by fully formalizing the interactions between different scripts, analysis tools and authoring software.
-Once configured, the entire process, from raw results and source files all the way to a ZIP file to be uploaded to the publisher, can be reproduced by simply running the `stepup` program once.
-
+StepUp RepRep overcomes these difficulties by fully formalizing
+the interactions between different scripts, analysis tools and authoring software.
+Once configured, the entire process,
+from raw results and source files all the way to a ZIP file to be uploaded to the publisher,
+can be reproduced by simply running the `stepup` program once.
 
 ## Git and Virtual Environments
 

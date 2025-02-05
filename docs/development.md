@@ -5,7 +5,8 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 ## Development Install and Unit Tests
 
 First, create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
-The following commands assume you create `stepup-core` and `step-reprep` source trees as subdirectories of the same parent.
+The following commands assume you create `stepup-core` and `step-reprep` source trees
+as subdirectories of the same parent.
 
 Clone the StepUp RepRep repository and create a virtual environment using the following commands
 
@@ -50,7 +51,6 @@ and edit Markdown files in your IDE.
 
 Please, use [Semantic Line Breaks](https://sembr.org/)
 because it results in cleaner file diffs when editing documentation.
-
 
 ## How to Make a Release
 

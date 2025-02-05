@@ -23,6 +23,8 @@ import re
 
 from path import Path
 
+from stepup.core.utils import filter_dependencies
+
 RE_OPTIONS = re.MULTILINE | re.DOTALL
 RE_INPUT = re.compile(r"\\input\s*\{([^}]*)}", RE_OPTIONS)
 RE_VERBATIMINPUT = re.compile(r"\\verbatiminput\s*\{([^}]*)}", RE_OPTIONS)
@@ -132,4 +134,9 @@ def scan_latex_deps(path_tex, tex_root=None):
                     sub_implicit, sub_bib = scan_latex_deps(path_inc, new_root)
                     implicit.update(sub_implicit)
                     bib.update(sub_bib)
+
+    # Filter dependencies to exclude global files
+    implicit = filter_dependencies(implicit)
+    bib = filter_dependencies(bib)
+
     return sorted(implicit), sorted(bib)

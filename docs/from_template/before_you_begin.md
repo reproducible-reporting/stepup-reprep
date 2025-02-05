@@ -12,7 +12,6 @@ The following competences are required (at a basic level) for this template to b
 Without these competences, it is still possible to contribute to a publication
 created with StepUp RepRep, but it will be difficult to take the lead.
 
-
 ## Required Software and Configuration
 
 It is assumed that you have installed and configured the following software,
@@ -115,7 +114,8 @@ It is up to each co-author to decide which one they prefer:
    is a bit more powerful than pip.
    In principle, you can use it on a system without (a recent version of) Python.
    It can also install non-Python dependencies.
-   The main drawbacks are the time it takes to install, the bandwidth consumed during installation, and the amount of diskspace used.
+   The main drawbacks are the time it takes to install, the bandwidth consumed during installation,
+   and the amount of disk space used.
    Because the cookiecutter requires Python >= 3.7, you already need a working Python version
    before installing micromamba.
 

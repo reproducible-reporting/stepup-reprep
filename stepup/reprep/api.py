@@ -260,9 +260,15 @@ def compile_typst(
         Expect breaking changes in future releases.
         Future extensions could include:
 
+        - Specify output path
         - Support for inventory files, similar to `compile_latex`.
         - Support for other output formats than PDF.
         - Support for passing in other options to the typst compiler.
+        - Support for additional dependencies.
+          For example, files in `--input` option of `typst`.
+          These will most likely be picked by the `--make-deps` option already,
+          but knowing them upfront makes the workflow more efficient.
+        - Support for specifying the output file name.
 
     Parameters
     ----------

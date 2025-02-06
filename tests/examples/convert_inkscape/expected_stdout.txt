@@ -6,6 +6,7 @@
      START │ rr-convert-inkscape smile.svg final.pdf
 RESCHEDULE │ rr-convert-inkscape smile.svg final.pdf
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 glasses.png
 ────────────────────────────────────────────────────────────────────────────────
      START │ rr-convert-inkscape glasses.svg glasses.png

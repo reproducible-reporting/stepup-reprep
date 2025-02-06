@@ -3,12 +3,6 @@ root:
              creates   file:plan.py
              creates   step:./plan.py
 
-file:plan.py
-               state = STATIC
-          created by   root:
-            consumes   file:./
-            supplies   step:./plan.py
-
 file:./
                state = STATIC
           created by   root:
@@ -19,6 +13,13 @@ file:./
             supplies   step:./plan.py
             supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             supplies   step:mkdir -p public/
+            supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
@@ -69,6 +70,17 @@ file:public/
             supplies   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
             supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
+step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
+               state = SUCCEEDED
+           mandatory = REQUIRED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:public/
+            consumes   file:static/
+            consumes   file:static/preamble.inc.tex
+             creates   file:public/preamble.inc.tex
+            supplies   file:public/preamble.inc.tex
+
 file:static/
                state = STATIC
           created by   dg:static/**
@@ -78,6 +90,7 @@ file:static/
             supplies   file:static/preamble.inc.tex
             supplies   file:static/variables.py
             supplies   step:./plan.py  # wd=static/
+            supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
 
 file:static/preamble.inc.tex
@@ -86,28 +99,12 @@ file:static/preamble.inc.tex
             consumes   file:static/
             supplies   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
 
-step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
-               state = SUCCEEDED
-           mandatory = REQUIRED
-          created by   step:./plan.py
-            consumes   file:./
-            consumes   file:public/
-            consumes   file:static/preamble.inc.tex
-             creates   file:public/preamble.inc.tex
-            supplies   file:public/preamble.inc.tex
-
 file:public/preamble.inc.tex
                state = BUILT
           created by   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             consumes   file:public/
             consumes   step:cp -aT static/preamble.inc.tex public/preamble.inc.tex
             supplies   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
-
-file:static/plan.py
-               state = STATIC
-          created by   dg:static/**
-            consumes   file:static/
-            supplies   step:./plan.py  # wd=static/
 
 step:./plan.py  # wd=static/
                state = SUCCEEDED
@@ -118,6 +115,26 @@ step:./plan.py  # wd=static/
             consumes   file:static/plan.py
              creates   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
              creates   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+
+file:static/plan.py
+               state = STATIC
+          created by   dg:static/**
+            consumes   file:static/
+            supplies   step:./plan.py  # wd=static/
+
+step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
+               state = SUCCEEDED
+             env_var = PUBLIC [amended]
+                     = ROOT [amended]
+          created by   step:./plan.py  # wd=static/
+            consumes   file:./
+            consumes   file:public/
+            consumes   file:static/
+            consumes   file:static/main.tex
+            consumes   file:static/variables.py
+            consumes   file:variables.py
+             creates   file:public/main.tex
+            supplies   file:public/main.tex
 
 file:static/main.tex
                state = STATIC
@@ -130,19 +147,6 @@ file:static/variables.py
           created by   dg:static/**
             consumes   file:static/
             supplies   step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
-
-step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
-               state = SUCCEEDED
-             env_var = PUBLIC [amended]
-                     = ROOT [amended]
-          created by   step:./plan.py  # wd=static/
-            consumes   file:public/
-            consumes   file:static/
-            consumes   file:static/main.tex
-            consumes   file:static/variables.py
-            consumes   file:variables.py
-             creates   file:public/main.tex
-            supplies   file:public/main.tex
 
 file:public/main.tex
                state = BUILT

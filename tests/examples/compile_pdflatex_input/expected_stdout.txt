@@ -6,6 +6,7 @@
      START │ rr-compile-latex paper.tex --run-bibtex
 RESCHEDULE │ rr-compile-latex paper.tex --run-bibtex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 generated.tex
 ────────────────────────────────────────────────────────────────────────────────
      START │ echo 'Hi there!' > generated.tex

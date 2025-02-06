@@ -8,6 +8,7 @@
      START │ rr-compile-latex paper.tex --run-bibtex
 RESCHEDULE │ rr-compile-latex paper.tex --run-bibtex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 subdir/generated.tex
 ────────────────────────────────────────────────────────────────────────────────
      START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex

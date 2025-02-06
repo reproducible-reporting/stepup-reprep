@@ -3,12 +3,6 @@ root:
              creates   file:plan.py
              creates   step:./plan.py
 
-file:plan.py
-               state = STATIC
-          created by   root:
-            consumes   file:./
-            supplies   step:./plan.py
-
 file:./
                state = STATIC
           created by   root:
@@ -17,6 +11,12 @@ file:./
             supplies   file:slide.pdf
             supplies   step:./plan.py
             supplies   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED

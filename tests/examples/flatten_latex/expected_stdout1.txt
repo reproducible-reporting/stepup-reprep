@@ -6,6 +6,7 @@
      START │ rr-flatten-latex article_structured.tex article.tex
 RESCHEDULE │ rr-flatten-latex article_structured.tex article.tex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 sub/other.tex
 ────────────────────────────────────────────────────────────────────────────────
    WARNING │ 1 step(s) remained pending due to incomplete requirements

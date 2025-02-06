@@ -8,6 +8,7 @@
      START │ rr-check-hrefs main.pdf
 RESCHEDULE │ rr-check-hrefs main.pdf
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
    WARNING │ 1 step(s) remained pending due to incomplete requirements

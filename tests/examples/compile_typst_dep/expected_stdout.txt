@@ -6,6 +6,7 @@
      START │ rr-compile-typst --keep-deps document.typ
 RESCHEDULE │ rr-compile-typst --keep-deps document.typ
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
 image.jpg
 ────────────────────────────────────────────────────────────────────────────────
      START │ ./image.py

@@ -52,6 +52,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "sync_zenodo",
         "unplot",
         "zip_inventory",
+        "zip_tree",
     ],
 )
 @pytest.mark.asyncio

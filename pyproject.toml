@@ -123,6 +123,7 @@ ignore = [
     "PLW2901",  # https://docs.astral.sh/ruff/rules/redefined-loop-name/
     "PT011",  # https://docs.astral.sh/ruff/rules/pytest-raises-too-broad/
     "RET503",  # https://docs.astral.sh/ruff/rules/implicit-return/
+    "RUF003",  # https://docs.astral.sh/ruff/rules/ambiguous-unicode-character-comment/
     "TRY003",  # https://docs.astral.sh/ruff/rules/raise-vanilla-args/
     "TRY300",  # https://docs.astral.sh/ruff/rules/try-consider-else/
     "TRY301",  # https://docs.astral.sh/ruff/rules/raise-within-try/

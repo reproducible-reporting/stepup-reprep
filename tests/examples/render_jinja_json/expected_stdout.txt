@@ -1,0 +1,13 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-render-jinja template.txt trip1.json rendered-trip1.txt
+   SUCCESS │ rr-render-jinja template.txt trip1.json rendered-trip1.txt
+     START │ rr-render-jinja template.txt trip2.json rendered-trip2.txt
+   SUCCESS │ rr-render-jinja template.txt trip2.json rendered-trip2.txt
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

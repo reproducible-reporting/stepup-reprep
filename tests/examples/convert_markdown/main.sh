@@ -12,6 +12,7 @@ stepup -w -n 1 plan.py & # > current_stdout.txt &
 export STEPUP_DIRECTOR_SOCKET=$(
   python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
 )
+PID=$!
 
 # Get the graph after completion of the pending steps.
 python3 - << EOD
@@ -32,7 +33,8 @@ write_inventory("reproducibility_inventory.txt", ["sub/demo.html", "sub/demo1.ht
 EOD
 
 # Wait for background processes, if any.
-wait
+set +e; wait -fn $PID; RETURNCODE=$?; set -e
+[[ "${RETURNCODE}" -eq 0 ]] || exit 1
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1

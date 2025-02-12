@@ -26,10 +26,12 @@ from which all variables that are strings, integers or floats are imported.
 import argparse
 import contextlib
 import importlib.util
+import json
 import sys
 from types import ModuleType
 
 import jinja2
+import yaml
 from path import Path
 
 
@@ -46,6 +48,8 @@ def main(argv: list[str] | None = None):
         raise ValueError(f"mode not supported: {args.mode}")
     dir_out = Path(args.path_out).parent.absolute()
     variables = load_variables(args.paths_variables, dir_out)
+    if args.json is not None:
+        variables.update(json.loads(args.json))
     result = render(args.path_in, variables, latex)
     with open(args.path_out, "w") as fh:
         fh.write(result)
@@ -56,13 +60,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(prog="rr-render", description="Render a file with Jinja2.")
     parser.add_argument("path_in", help="The input file")
-    parser.add_argument("paths_variables", nargs="+", help="Python files defining variables")
+    parser.add_argument(
+        "paths_variables",
+        nargs="*",
+        type=Path,
+        help="Python, JSON or YAML files defining variables."
+        "They are loaded in the given order, "
+        "so later variable definitions may overrule earlier ones. "
+        "Python files have the advantage of supporting more types and logic. "
+        "path.Path instances are interpreted as relative to parent of the variable file.",
+    )
     parser.add_argument("path_out", help="The output file")
     parser.add_argument(
         "--mode",
         choices=["auto", "plain", "latex"],
         help="The delimiter style to use",
         default="auto",
+    )
+    parser.add_argument(
+        "--json",
+        help="Variables are given as a JSON string (overrules the variables files)",
     )
     return parser.parse_args(argv)
 
@@ -73,7 +90,7 @@ def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
     Parameters
     ----------
     paths_variables
-        paths of Python files containing variable definitions.
+        paths of Python, JSON or YAML files containing variable definitions.
         They are loaded in the given order, so later variable definitions may overrule earlier ones.
     dir_out
         This is used to translate paths defined the variables files to relative paths with respect
@@ -85,18 +102,27 @@ def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
         A dictionary with variables.
     """
     variables = {}
-    for path_py in paths_variables:
-        path_py = Path(path_py)
-        dir_py = path_py.parent.normpath()
-        fn_py = path_py.name
-        with contextlib.chdir(dir_py):
-            module = load_module_file(fn_py, "variables")
-            current = vars(module)
-        for name, value in current.items():
-            if isinstance(value, (str | int | float | None)):
-                if isinstance(value, Path):
-                    value = value.relpath(dir_out)
-                variables[name] = value
+    for path_var in paths_variables:
+        path_var = Path(path_var)
+        if path_var.suffix == ".json":
+            with open(path_var) as fh:
+                variables.update(json.load(fh))
+        elif path_var.suffix in (".yaml", ".yml"):
+            with open(path_var) as fh:
+                variables.update(yaml.safe_load(fh))
+        elif path_var.suffix == ".py":
+            dir_py = path_var.parent.normpath()
+            fn_py = path_var.name
+            with contextlib.chdir(dir_py):
+                module = load_module_file(fn_py, "variables")
+                current = vars(module)
+            for name, value in current.items():
+                if isinstance(value, (str | int | float | None)):
+                    if isinstance(value, Path):
+                        value = value.relpath(dir_out)
+                    variables[name] = value
+        else:
+            raise ValueError(f"unsupported variable file format: {path_var}")
     return variables
 
 

@@ -1,0 +1,92 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:bibsane.yaml
+            supplies   file:cleaned.bib
+            supplies   file:copy.bib
+            supplies   file:journal_abbreviation_cache.json
+            supplies   file:paper.aux
+            supplies   file:plan.py
+            supplies   file:references.bib
+            supplies   step:./plan.py
+            supplies   step:cp -aT cleaned.bib copy.bib
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:bibsane.yaml
+             creates   file:paper.aux
+             creates   file:references.bib
+             creates   step:cp -aT cleaned.bib copy.bib
+             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+
+file:bibsane.yaml
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+
+file:paper.aux
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+
+file:references.bib
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+
+step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:bibsane.yaml
+            consumes   file:paper.aux
+            consumes   file:references.bib [amended]
+             creates   file:cleaned.bib
+             creates   file:journal_abbreviation_cache.json
+            supplies   file:cleaned.bib
+            supplies   file:journal_abbreviation_cache.json [amended]
+
+file:cleaned.bib
+               state = BUILT
+          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            consumes   file:./
+            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            supplies   step:cp -aT cleaned.bib copy.bib
+
+step:cp -aT cleaned.bib copy.bib
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:cleaned.bib
+             creates   file:copy.bib
+            supplies   file:copy.bib
+
+file:copy.bib
+               state = BUILT
+          created by   step:cp -aT cleaned.bib copy.bib
+            consumes   file:./
+            consumes   step:cp -aT cleaned.bib copy.bib
+
+file:journal_abbreviation_cache.json
+               state = VOLATILE
+          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            consumes   file:./
+            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib

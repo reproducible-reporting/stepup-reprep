@@ -1,0 +1,23 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+   SUCCESS │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+   DELETED │ demo.html
+     PHASE │ run
+     START │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+   SUCCESS │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

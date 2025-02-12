@@ -21,7 +21,7 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
-          inp_digest = same
+                     = REPREP_TYPST_INVENTORY [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -37,6 +37,7 @@ file:error.typ
 step:rr-compile-typst error.typ
                state = FAILED
              env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
           created by   step:./plan.py
             consumes   file:./
             consumes   file:error.typ
@@ -44,7 +45,7 @@ step:rr-compile-typst error.typ
             supplies   file:error.pdf
 
 file:error.pdf
-               state = OUTDATED
+               state = AWAITED
           created by   step:rr-compile-typst error.typ
             consumes   file:./
             consumes   step:rr-compile-typst error.typ

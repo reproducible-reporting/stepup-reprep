@@ -20,13 +20,15 @@
 """Wrapper for HTML to PDF conversion."""
 
 import argparse
+import os
+import subprocess
 import sys
 from collections.abc import Iterator
 
 from defusedxml import ElementTree
 from path import Path
 
-from stepup.core.api import getenv, step
+from stepup.core.api import amend, getenv
 
 
 def main(argv: list[str] | None = None):
@@ -36,7 +38,7 @@ def main(argv: list[str] | None = None):
         raise ValueError("The output must have a pdf extensions.")
     if args.weasyprint is None:
         args.weasyprint = getenv("REPREP_WEASYPRINT", "weasyprint")
-    convert_html_pdf(args.path_html, args.path_pdf, args.weasyprint, args.optional)
+    convert_html_pdf(args.path_html, args.path_pdf, args.weasyprint)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -52,23 +54,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="The weasyprint executable to use. "
         "Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.",
     )
-    parser.add_argument(
-        "--optional",
-        default=False,
-        action="store_true",
-        help="With this option, the conversion becomes optional.",
-    )
     return parser.parse_args(argv)
 
 
-def convert_html_pdf(path_html: str, path_pdf: str, weasyprint: str, optional: bool):
+def convert_html_pdf(path_html: str, path_pdf: str, weasyprint: str):
     inp_paths = search_html_deps(path_html)
-    step(
-        f"{weasyprint} {path_html} {path_pdf}",
-        inp=[path_html, *inp_paths],
-        out=path_pdf,
-        optional=optional,
-    )
+    amend(inp=inp_paths)
+    subprocess.run([weasyprint, path_html, path_pdf], check=True, env=os.environ)
 
 
 def search_html_deps(src: str) -> list[str]:

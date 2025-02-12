@@ -36,6 +36,8 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
     "name",
     [
         "add_notes_pdf",
+        "bibsane_same",
+        "bibsane_other",
         "cat_pdf",
         "check_hrefs_html",
         "check_hrefs_md",
@@ -48,7 +50,10 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "make_inventory_list",
         "nup_pdf",
         "raster_pdf",
-        "render_jinja_basic",
+        "render_jinja_dict",
+        "render_jinja_json",
+        "render_jinja_python",
+        "render_jinja_yaml",
         "sync_zenodo",
         "unplot",
         "zip_inventory",
@@ -145,11 +150,33 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
 @pytest.mark.parametrize(
     "name",
     [
+        "compile_typst_args",
         "compile_typst_dep",
         "compile_typst_error",
+        "compile_typst_external",
+        "compile_typst_png",
+        pytest.param("compile_typst_png_multi", marks=pytest.mark.xfail),
+        "compile_typst_relpath",
         "compile_typst_simple",
+        "compile_typst_svg",
+        pytest.param("compile_typst_svg_deps", marks=pytest.mark.xfail),
+        pytest.param("compile_typst_svg_multi", marks=pytest.mark.xfail),
+        "compile_typst_sysinp",
+        "compile_typst_sysinp_json",
     ],
 )
 @pytest.mark.asyncio
 async def test_typst_example(path_tmp: Path, name: str):
+    await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
+
+
+@pytest.mark.skipif(not shutil.which("jupyter"), reason="No Jupyter")
+@pytest.mark.parametrize(
+    "name",
+    [
+        "convert_jupyter",
+    ],
+)
+@pytest.mark.asyncio
+async def test_jupyter_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)

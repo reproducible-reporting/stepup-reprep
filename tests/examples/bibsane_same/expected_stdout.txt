@@ -1,0 +1,38 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+      FAIL │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+────────────────────────────────── Step info ───────────────────────────────────
+Command               rr-bibsane --amend paper.aux --config=bibsane.yaml
+Return code           0
+──────────────────────────────── Invalid inputs ────────────────────────────────
+Input changed unexpectedly: references.bib (digest bfc27a8d ➜ f933ff21, size 1644 ➜ 1585)
+─────────────────────────────── Standard output ────────────────────────────────
+📂 Loading paper.aux
+   Found 1 citations
+   Found 1 unique citations
+📂 Loading references.bib
+   Found 1 BibTeX entries
+🔨 Checking unused and missing citations
+   Found 1 used BibTeX entries
+🔨 Fixing bad practices
+🔨 Checking for potential mistakes in BibTeX keys
+🔨 Normalizing dois
+🔨 Normalizing whitespace
+🔨 Fixing double hyphen in page ranges
+🔨 Abbreviating journal names
+💾 Please check the new or corrected file: references.bib
+────────────────────────────────────────────────────────────────────────────────
+     ERROR │ The scheduler has been drained due to unexpected input changes.
+   WARNING │ 1 step(s) failed.
+   WARNING │ Scheduler is put on hold. Not reporting pending steps.
+   WARNING │ Skipping file cleanup due to incomplete build.
+   WARNING │ Made 1 step(s) in the queue pending again.
+   WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+     PHASE │ watch
+   UPDATED │ references.bib
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

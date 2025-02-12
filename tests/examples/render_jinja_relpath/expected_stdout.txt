@@ -20,6 +20,7 @@ public/preamble.inc.tex
      START │ rr-compile-latex main.tex --run-bibtex  # wd=public/
    SUCCESS │ rr-compile-latex main.tex --run-bibtex  # wd=public/
   DIRECTOR │ Trying to delete 0 outdated output(s).
+   WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
   DIRECTOR │ Stopping workers.
   DIRECTOR │ See you!

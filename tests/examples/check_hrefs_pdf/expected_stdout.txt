@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ rr-compile-latex main.tex --run-bibtex
-   SUCCESS │ rr-compile-latex main.tex --run-bibtex
+     START │ rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+   SUCCESS │ rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
      START │ rr-check-hrefs main.pdf
 RESCHEDULE │ rr-check-hrefs main.pdf
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
@@ -23,7 +23,7 @@ Inputs        STATIC  ./
                BUILT  main.pdf
              AWAITED  (BROKEN.md) [amended]
 ────────────────────────────────────────────────────────────────────────────────
-   WARNING │ Skipping cleanup due to incomplete build.
+   WARNING │ Skipping file cleanup due to incomplete build.
    WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
   DIRECTOR │ Stopping workers.

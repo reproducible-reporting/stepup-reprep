@@ -1,0 +1,83 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:bibsane.yaml
+            supplies   file:copy.bib
+            supplies   file:journal_abbreviation_cache.json
+            supplies   file:paper.aux
+            supplies   file:plan.py
+            supplies   file:references.bib
+            supplies   step:./plan.py
+            supplies   step:cp -aT references.bib copy.bib
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:bibsane.yaml
+             creates   file:paper.aux
+             creates   file:references.bib
+             creates   step:cp -aT references.bib copy.bib
+             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+
+file:bibsane.yaml
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+
+file:paper.aux
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+
+file:references.bib
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:cp -aT references.bib copy.bib
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+
+step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+               state = FAILED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:bibsane.yaml
+            consumes   file:paper.aux
+            consumes   file:references.bib [amended]
+             creates   file:journal_abbreviation_cache.json
+            supplies   file:journal_abbreviation_cache.json [amended]
+
+step:cp -aT references.bib copy.bib
+               state = PENDING
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:references.bib
+             creates   file:copy.bib
+            supplies   file:copy.bib
+
+file:copy.bib
+               state = AWAITED
+          created by   step:cp -aT references.bib copy.bib
+            consumes   file:./
+            consumes   step:cp -aT references.bib copy.bib
+
+file:journal_abbreviation_cache.json
+               state = VOLATILE
+          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            consumes   file:./
+            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml

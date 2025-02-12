@@ -1,0 +1,91 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:alice.pdf
+            supplies   file:bob.pdf
+            supplies   file:charlie.pdf
+            supplies   file:plan.py
+            supplies   file:template.typ
+            supplies   step:./plan.py
+            supplies   step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+            supplies   step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+            supplies   step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                     = REPREP_TYPST_INVENTORY [amended]
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:template.typ
+             creates   step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+             creates   step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+             creates   step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+
+file:template.typ
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+            supplies   step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+            supplies   step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+
+step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:template.typ
+             creates   file:alice.pdf
+            supplies   file:alice.pdf
+
+file:alice.pdf
+               state = BUILT
+          created by   step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+            consumes   file:./
+            consumes   step:rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+
+step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:template.typ
+             creates   file:bob.pdf
+            supplies   file:bob.pdf
+
+file:bob.pdf
+               state = BUILT
+          created by   step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+            consumes   file:./
+            consumes   step:rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+
+step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:template.typ
+             creates   file:charlie.pdf
+            supplies   file:charlie.pdf
+
+file:charlie.pdf
+               state = BUILT
+          created by   step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+            consumes   file:./
+            consumes   step:rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27

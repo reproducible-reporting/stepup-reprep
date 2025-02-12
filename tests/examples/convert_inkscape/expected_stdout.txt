@@ -14,6 +14,7 @@ glasses.png
      START │ rr-convert-inkscape smile.svg final.pdf
    SUCCESS │ rr-convert-inkscape smile.svg final.pdf
   DIRECTOR │ Trying to delete 0 outdated output(s).
+   WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
    DELETED │ final.pdf
    DELETED │ glasses.png

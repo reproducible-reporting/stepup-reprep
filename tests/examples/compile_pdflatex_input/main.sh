@@ -6,6 +6,7 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
+export REPREP_LATEX_INVENTORY="1"
 stepup -w -n 1 plan.py & # > current_stdout.txt &
 
 # Wait for the director and get its socket.

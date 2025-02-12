@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None):
         args.inkscape_args = shlex.split(
             getenv(f"REPREP_INKSCAPE_{path_out.suffix[1:].upper()}_ARGS", "")
         )
-    convert_svg_pdf(args.path_svg, path_out, args.inkscape, args.inkscape_args)
+    convert_inkscape(args.path_svg, path_out, args.inkscape, args.inkscape_args)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -62,7 +62,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "inkscape_args",
         nargs="*",
-        help="Additional arguments to be passed into inkscape. "
+        help="Additional arguments to be passed to inkscape. "
         "E.g. -T (for text to path conversion). "
         "Depending on the output extension, the defaults is `${REPREP_INKSCAPE_PDF_ARGS}` or "
         "`${REPREP_INKSCAPE_PDF_ARGS}`, if the environment variable is defined.",
@@ -75,20 +75,25 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def convert_svg_pdf(path_svg: str, path_out: Path, inkscape: str, inkscape_args: list[str]):
+def convert_inkscape(path_svg: str, path_out: Path, inkscape: str, inkscape_args: list[str]):
     inp_paths = filter_dependencies(search_svg_deps(path_svg))
     amend(inp=inp_paths)
-    subprocess.run(
-        [
-            inkscape,
-            path_svg,
-            *inkscape_args,
-            f"--export-filename={path_out}",
-            f"--export-type={path_out.suffix[1:]}",
-        ],
-        check=True,
-        env=os.environ | {"SELF_CALL": "x"},
-    )
+    args = [
+        inkscape,
+        path_svg,
+        *inkscape_args,
+        f"--export-filename={path_out}",
+        f"--export-type={path_out.suffix[1:]}",
+    ]
+    cp = subprocess.run(args, capture_output=True, env=os.environ | {"SELF_CALL": "x"}, check=False)
+    stdout = cp.stdout.decode()
+    stderr = cp.stderr.decode()
+    if len(stdout) > 0 or len(stderr) > 0:
+        print(f"Command: {' '.join(args)}")
+        sys.stdout.write(stdout)
+        sys.sdterr.write(stderr)
+    if cp.returncode != 0:
+        raise subprocess.CalledProcessError(cp.returncode, args)
 
 
 def search_svg_deps(src: str) -> list[str]:

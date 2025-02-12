@@ -1,0 +1,15 @@
+normalize_doi: true
+preambles_allowed: false
+normalize_whitespace: true
+fix_page_double_hyphen: true
+abbreviate_journal: 'journal_abbreviation_cache.json'
+citation_policies:
+  article:
+    author: must
+    journal: must
+    number: may
+    pages: must
+    title: must
+    volume: must
+    year: must
+    doi: must

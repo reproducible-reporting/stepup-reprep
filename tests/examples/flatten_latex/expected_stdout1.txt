@@ -23,7 +23,7 @@ Inputs        STATIC  ./
              AWAITED  (sub/other.tex) [amended]
 Outputs      AWAITED  article.tex
 ────────────────────────────────────────────────────────────────────────────────
-   WARNING │ Skipping cleanup due to incomplete build.
+   WARNING │ Skipping file cleanup due to incomplete build.
    WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
   DIRECTOR │ Stopping workers.

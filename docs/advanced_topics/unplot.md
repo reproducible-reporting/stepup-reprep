@@ -1,3 +1,9 @@
+<!-- markdownlint-configure-file { "MD013": {
+    "line_length": 100,
+    "heading_line_length": 100,
+    "code_block_line_length": 1000
+} } -->
+
 # Unplot
 
 !!! note "Version history"

@@ -7,6 +7,7 @@ file:./
                state = STATIC
           created by   root:
             supplies   file:bibsane.yaml
+            supplies   file:journal_abbreviation_cache.json
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.bbl
@@ -17,7 +18,8 @@ file:./
             supplies   file:plan.py
             supplies   file:references.bib
             supplies   step:./plan.py
-            supplies   step:rr-compile-latex paper.tex --run-bibtex
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:plan.py
                state = STATIC
@@ -28,42 +30,40 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
              env_var = LATEX_MAIN [amended]
-          inp_digest = same
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:bibsane.yaml
              creates   file:paper.tex
              creates   file:references.bib
-             creates   step:rr-compile-latex paper.tex --run-bibtex
+             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+             creates   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-compile-latex paper.tex --run-bibtex
+            supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:bibsane.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-compile-latex paper.tex --run-bibtex
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
 
 file:references.bib
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-compile-latex paper.tex --run-bibtex
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
-step:rr-compile-latex paper.tex --run-bibtex
+step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
-             env_var = REPREP_BIBSANE [amended]
-                     = REPREP_BIBSANE_CONFIG [amended]
-                     = REPREP_BIBTEX [amended]
+             env_var = REPREP_BIBTEX [amended]
                      = REPREP_LATEX [amended]
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:bibsane.yaml [amended]
             consumes   file:paper.tex
             consumes   file:references.bib [amended]
              creates   file:paper-inventory.txt
@@ -81,36 +81,53 @@ step:rr-compile-latex paper.tex --run-bibtex
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
                state = BUILT
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
 
 file:paper.pdf
                state = BUILT
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+
+step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:bibsane.yaml
+            consumes   file:paper.aux
+            consumes   file:references.bib [amended]
+             creates   file:journal_abbreviation_cache.json
+            supplies   file:journal_abbreviation_cache.json [amended]
 
 file:paper.bbl
                state = BUILT
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.blg
                state = VOLATILE
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
                state = VOLATILE
-          created by   step:rr-compile-latex paper.tex --run-bibtex
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex paper.tex --run-bibtex
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+
+file:journal_abbreviation_cache.json
+               state = VOLATILE
+          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            consumes   file:./
+            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml

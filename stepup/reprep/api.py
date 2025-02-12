@@ -19,8 +19,11 @@
 # --
 """Application programming interface for StepUp RepRep."""
 
+import json
 import shlex
 from collections.abc import Collection
+
+from path import Path
 
 from stepup.core.api import StepInfo, getenv, step, subs_env_vars
 from stepup.core.utils import make_path_out, string_to_bool
@@ -31,13 +34,14 @@ __all__ = (
     "check_hrefs",
     "compile_latex",
     "compile_typst",
+    "convert_inkscape",
+    "convert_inkscape_pdf",
+    "convert_inkscape_png",
+    "convert_jupyter",
     "convert_markdown",
+    "convert_mutool",
+    "convert_mutool_png",
     "convert_odf_pdf",
-    "convert_pdf",
-    "convert_pdf_png",
-    "convert_svg",
-    "convert_svg_pdf",
-    "convert_svg_png",
     "convert_weasyprint",
     "diff_latex",
     "flatten_latex",
@@ -45,6 +49,7 @@ __all__ = (
     "nup_pdf",
     "raster_pdf",
     "render_jinja",
+    "sanitize_bibtex",
     "sync_zenodo",
     "unplot",
     "zip_inventory",
@@ -65,9 +70,9 @@ def add_notes_pdf(
     path_dst
         The output PDF with notes pages inserted.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -103,21 +108,20 @@ def cat_pdf(
         Insert a blank page after a PDF with an odd number of pages.
         The last page of each PDF is used to determine the size of the added blank page.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "rr-cat-pdf"
+    args = ["rr-cat-pdf", "${inp}", "${out}"]
     if insert_blank:
-        command += " --insert-blank"
-    command += " ${inp} ${out}"
+        args.append("--insert-blank")
     return step(
-        command,
+        " ".join(args),
         inp=paths_inp,
         out=path_out,
         optional=optional,
@@ -136,7 +140,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
         The configuration file.
         Defaults to `${REPREP_CHECK_HREFS_CONFIG}` variable or `check_hrefs.yaml` if it is not set.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -146,12 +150,12 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     with subs_env_vars() as subs:
         path_src = subs(path_src)
         path_config = subs(path_config)
-    command = f"rr-check-hrefs {shlex.quote(path_src)}"
+    args = ["rr-check-hrefs", shlex.quote(path_src)]
     inp_paths = [path_src]
     if path_config is not None:
         inp_paths.append(path_config)
-        command += f" -c {path_config}"
-    return step(command, inp=inp_paths, block=block)
+        args.extend(["-c", path_config])
+    return step(" ".join(args), inp=inp_paths, block=block)
 
 
 def compile_latex(
@@ -162,8 +166,7 @@ def compile_latex(
     workdir: str = "./",
     latex: str | None = None,
     bibtex: str | None = None,
-    bibsane: str | None = None,
-    bibsane_config: str | None = None,
+    inventory: str | bool | None = None,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -190,25 +193,32 @@ def compile_latex(
     bibtex
         Path to the BibTeX executable.
         Defaults to `${REPREP_BIBTEX}` variable or `bibtex` if the variable is unset.
-    bibsane
-        Path to the BibSane executable.
-        Defaults to `${REPREP_BIBSANE}` variable or `bibsane` if the variable is unset.
-    bibsane_config
-        Path to the BibSane configuration file.
-        Defaults to `${REPREP_BIBSANE_CONFIG}` variable or `bibsane.yaml` if it is unset.
-        Note that when the config file is read from the environment variable,
-        it is interpreted relative to `${STEPUP_ROOT}`.
-        One may define it globally with `export REPREP_BIBSANE_CONFIG='${HERE}/bibsane.yaml'`
-        to refer to a local version of the file. (Mind the single quotes.)
+    inventory
+        If set to a `str`, it specifies the inventory file to write.
+        If set to  `True`, the inventory file is written to the default location,
+        which is the stem of the source file with `-inventory.txt` appended.
+        When the environment variable `REPREP_LATEX_INVENTORY` is set to `1`,
+        the inventory file is always written, unless this argument is set to `False`.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
+
+    Notes
+    -----
+    The LaTeX source is compiled with the `rr-compile-latex` command,
+    which can detect dependencies on other files by scanning for
+    `\\input`, `\\include`, `\\includegraphics`, etc.
+    Due to the complexity of LaTeX, the dependency scanning is not perfect.
+    You can manually specify dependencies in the LaTeX source with `%REPREP input inp_path`.
+    When `inp_path` is a relative path,
+    it is interpreted in the same way as the LaTeX compiler would resolve it.
+    You can also hide lines from the dependency scanner by adding `%REPREP ignore`.
     """
     with subs_env_vars() as subs:
         path_tex = subs(path_tex)
@@ -218,25 +228,28 @@ def compile_latex(
     prefix = path_tex[:-4]
     path_pdf = f"{prefix}.pdf"
 
-    command = "rr-compile-latex " + shlex.quote(path_tex)
+    args = ["rr-compile-latex", shlex.quote(path_tex)]
     inp_paths = [path_tex]
+    out_paths = [path_pdf, f"{prefix}.aux"]
     if maxrep != 5:
-        command += " --maxrep=" + shlex.quote(str(maxrep))
+        args.append("--maxrep=" + shlex.quote(str(maxrep)))
     if latex is not None:
-        command += " --latex=" + shlex.quote(latex)
+        args.append("--latex=" + shlex.quote(latex))
     if run_bibtex:
-        command += " --run-bibtex"
+        args.append("--run-bibtex")
         if bibtex is not None:
-            command += " --bibtex=" + shlex.quote(bibtex)
-        if bibsane is not None:
-            command += " --bibsane=" + shlex.quote(bibsane)
-        if bibsane_config is not None:
-            command += " --bibsane-config=" + shlex.quote(bibsane_config)
-            inp_paths.append(bibsane_config)
+            args.append("--bibtex=" + shlex.quote(bibtex))
+    if inventory is None:
+        inventory = string_to_bool(getenv("REPREP_LATEX_INVENTORY", "0"))
+    if inventory is True:
+        inventory = f"{prefix}-inventory.txt"
+    if isinstance(inventory, str):
+        args.append("--inventory=" + shlex.quote(inventory))
+        out_paths.append(inventory)
     return step(
-        command,
+        " ".join(args),
         inp=inp_paths,
-        out=[path_pdf, f"{prefix}.aux", f"{prefix}-inventory.txt"],
+        out=out_paths,
         workdir=workdir,
         optional=optional,
         block=block,
@@ -245,36 +258,49 @@ def compile_latex(
 
 def compile_typst(
     path_typ: str,
+    dest: str | None = None,
     *,
+    sysinp: dict[str, str | Path] | None = None,
+    resolution: int | None = None,
     workdir: str = "./",
     typst: str | None = None,
     keep_deps: bool = False,
+    typst_args: Collection[str] = (),
+    inventory: str | bool | None = None,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
-    """Create a step for the compilation of a LaTeX source.
+    """Create a step for the compilation of a Typst source.
 
     !!! warning
 
         Support for typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
-        Future extensions could include:
+        Some limitations include:
 
-        - Specify output path
-        - Support for inventory files, similar to `compile_latex`.
-        - Support for other output formats than PDF.
-        - Support for passing in other options to the typst compiler.
-        - Support for additional dependencies.
-          For example, files in `--input` option of `typst`.
-          These will most likely be picked by the `--make-deps` option already,
-          but knowing them upfront makes the workflow more efficient.
-        - Support for specifying the output file name.
+        - Multi-page SVG and PNG outputs are not yet supported,
+          due to a bug in the depfile created by typst.
+        - SVG figures with references to external bitmaps are not processed correctly.
+          These bitmaps are not rendered, neither are they included in the dep file.
 
     Parameters
     ----------
     path_typ
         The main typst source file.
         This argument may contain environment variables.
+    dest
+        Output destination: `None`, a directory or a file.
+        For SVG and PNG outputs, this argument must be specified with the desired extension.
+        If the output contains any of `{p}`, `{0p}` or `{t}`, the output paths are not
+        known a priori and will be amended.
+    sysinp
+        A dictionary with the input arguments passed to `typst`with `--input key=val`.
+        Keys and values are converted to strings.
+        When values are `Path` instances, they are treated as input dependencies for the step.
+        These parameters are available in the document as `#sys.inputs.key`.
+    resolution
+        The resolution of the bitmap in dots per inch (dpi),
+        only relevant for PNG output.
     workdir
         The working directory where the LaTeX command must be executed.
     typst
@@ -284,10 +310,19 @@ def compile_typst(
         If `True`, the dependency file is kept after the compilation.
         The dependency file is also kept if the environment variable
         `REPREP_KEEP_TYPST_DEPS` is set to `"1"`.
+    typst_args
+        Additional arguments for typst.
+        The defaults is `${REPREP_TYPST_ARGS}`, if the environment variable is defined.
+    inventory
+        If set to a `str`, it specifies the inventory file to write.
+        If set to  `True`, the inventory file is written to the default location,
+        which is the stem of the source file with `-inventory.txt` appended.
+        When the environment variable `REPREP_TYPST_INVENTORY` is set to `1`,
+        the inventory file is always written, unless this argument is set to `False`.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -295,36 +330,268 @@ def compile_typst(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
-        path_tex = subs(path_typ)
+        path_typ = subs(path_typ)
+        dest = subs(dest)
     if not path_typ.endswith(".typ"):
-        raise ValueError(f"The input of the typst command must end with .typ, got {path_tex}.")
+        raise ValueError(f"The input of the typst command must end with .typ, got {path_typ}.")
+    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png"])
 
     stem = path_typ[:-4]
-    path_pdf = f"{stem}.pdf"
-    command = "rr-compile-typst "
+    args = ["rr-compile-typst"]
+    if resolution is not None:
+        args.append(f"--resolution={shlex.quote(str(resolution))}")
     if typst is not None:
-        command += f"--typst={shlex.quote(typst)} "
-    out = [path_pdf]
+        args.append(f"--typst={shlex.quote(typst)}")
+    paths_out = []
+    if not any(x in path_out for x in ("{p}", "{0p}", "{t}")):
+        paths_out.append(path_out)
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
-        command += "--keep-deps "
-        out.append(f"{stem}.dep")
+        args.append("--keep-deps")
+        paths_out.append(f"{stem}.dep")
+    if inventory is None:
+        inventory = string_to_bool(getenv("REPREP_TYPST_INVENTORY", "0"))
+    if inventory is True:
+        inventory = f"{stem}-inventory.txt"
+    if isinstance(inventory, str):
+        args.append(f"--inventory={shlex.quote(inventory)}")
+        paths_out.append(inventory)
+    args.append(shlex.quote(path_typ))
+    if path_typ[:-4] != path_out[:-4]:
+        args.append("--out=" + shlex.quote(path_out))
+    path_inp = [path_typ]
+    if sysinp is not None and len(sysinp) > 0:
+        args.append("--sysinp")
+        for key, val in sysinp.items():
+            args.append(shlex.quote(str(key)) + "=" + shlex.quote(str(val)))
+            if isinstance(val, Path):
+                path_inp.append(val)
+    if len(typst_args) > 0:
+        args.append("--")
+        args.extend(shlex.quote(typst_arg) for typst_arg in typst_args)
+
     return step(
-        command + shlex.quote(path_typ),
-        inp=[path_typ],
-        out=out,
+        " ".join(args),
+        inp=path_inp,
+        out=paths_out,
         workdir=workdir,
         optional=optional,
         block=block,
     )
 
 
+def convert_inkscape(
+    path_svg: str,
+    path_out: str,
+    *,
+    inkscape: str | None = None,
+    inkscape_args: Collection[str] = (),
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Convert an SVG figure to a PDF file, detecting dependencies of the SVG on other files.
+
+    Parameters
+    ----------
+    path_svg
+        The input SVG figure.
+        It may contain <img> tags referring to other files included in the figure.
+    path_out
+        The output PDF or PNG file. Other formats are not supported.
+    inkscape
+        The path to the inkscape executable.
+        Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.
+    inkscape_args
+        Additional arguments to pass to inkscape. E.g. `["-T"]` to convert text to glyphs in PDFs.
+        Depending on the extension of the output, the default is `${REPREP_INKSCAPE_PDF_ARGS}` or
+        `${REPREP_INKSCAPE_PNG_ARGS}`, if the environment variable is defined.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+
+    Notes
+    -----
+    A wrapper around inkscape is used to carry out the conversion: `stepup.reprep.convert_inkscape`.
+    The wrapper scans the SVG for dependencies, which may be a bit slow in case of large files.
+    """
+    with subs_env_vars() as subs:
+        path_svg = subs(path_svg)
+        path_out = subs(path_out)
+    if not path_svg.endswith(".svg"):
+        raise ValueError("The SVG file must have extension .svg")
+    if not path_out.endswith((".pdf", ".png")):
+        raise ValueError("The output file must have extension .pdf or .png")
+    args = ["rr-convert-inkscape", shlex.quote(path_svg), shlex.quote(path_out)]
+    if inkscape is not None:
+        args.append("--inkscape=" + shlex.quote(inkscape))
+    if len(inkscape_args) > 0:
+        args.append("--")
+        args.extend(shlex.quote(inkscape_arg) for inkscape_arg in inkscape_args)
+    return step(" ".join(args), inp=path_svg, out=path_out, block=block, optional=optional)
+
+
+def convert_inkscape_pdf(
+    path_svg: str,
+    dest: str | None = None,
+    *,
+    inkscape: str | None = None,
+    inkscape_args: Collection[str] = (),
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
+
+    The `dest` argument can be `None`, a directory or a file.
+    """
+    with subs_env_vars() as subs:
+        path_svg = subs(path_svg)
+        dest = subs(dest)
+    if not path_svg.endswith(".svg"):
+        raise ValueError("The SVG file must have extension .svg")
+    path_pdf = make_path_out(path_svg, dest, ".pdf")
+    return convert_inkscape(
+        path_svg,
+        path_pdf,
+        inkscape=inkscape,
+        inkscape_args=inkscape_args,
+        optional=optional,
+        block=block,
+    )
+
+
+def convert_inkscape_png(
+    path_svg: str,
+    dest: str | None = None,
+    *,
+    inkscape: str | None = None,
+    inkscape_args: Collection[str] = (),
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
+
+    The `dest` argument can be `None`, a directory or a file. See `make_path_out`.
+    """
+    with subs_env_vars() as subs:
+        path_svg = subs(path_svg)
+        dest = subs(dest)
+    if not path_svg.endswith(".svg"):
+        raise ValueError("The SVG file must have extension .svg")
+    path_png = make_path_out(path_svg, dest, ".png")
+    return convert_inkscape(
+        path_svg,
+        path_png,
+        inkscape=inkscape,
+        inkscape_args=inkscape_args,
+        optional=optional,
+        block=block,
+    )
+
+
+def convert_jupyter(
+    path_nb: str,
+    dest: str | None = None,
+    *,
+    inp: str | Collection[str] = (),
+    out: str | Collection[str] = (),
+    execute: bool = True,
+    to: str | None = None,
+    jupyter: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Convert a Jupyter notebook, by default to HTML with execution of cells.
+
+    !!! warning
+
+        Support for `juptyer nbconvert` in StepUp RepRep is experimental.
+        Expect breaking changes in future releases.
+
+    Parameters
+    ----------
+    path_nb
+        The input Jupyter notebook.
+    dest
+        Output destination: `None`, a directory or a file.
+    inp
+        One or more input files used by the notebook.
+        You can also declare inputs with `amend(inp=...)` in the notebook,
+        but specifying them here will make the scheduling more efficient.
+    out
+        One or more output files produced by the notebook.
+        You can also declare outputs with `amend(out=...)` in the notebook,
+        but you can specify them here if you want to make the notebook execution optional,
+        i.e. dependent on whether the outputs are used in other steps.
+    execute
+        If `True`, the notebook is executed before conversion.
+    to
+        The output format. The default depends on the extension of the output file.
+        if `to` is given and `dest` is `None` or a directory,
+        the `to` argument is used to determine the output file extension.
+    jupyter
+        The path to the jupyter executable.
+        Defaults to `${REPREP_JUPYTER}` variable or `jupyter` if the variable is unset.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_nb = subs(path_nb)
+        dest = subs(dest)
+    if not path_nb.endswith(".ipynb"):
+        raise ValueError("The notebook file must have extension .ipynb")
+    if isinstance(inp, str):
+        inp = [inp]
+    if isinstance(out, str):
+        out = [out]
+    default_exts = {
+        "html": ".html",
+        "pdf": ".pdf",
+        "notebook": ".ipynb",
+        "latex": ".tex",
+        "markdown": ".md",
+        "rst": ".rst",
+        "script": ".py",
+        "asciidoc": ".txt",
+    }
+    if to is not None:
+        default_ext = default_exts.get(to)
+        if default_ext is None:
+            raise ValueError(f"Unsupported output format: {to}")
+    else:
+        default_ext = ".html"
+    other_exts = [".html", ".pdf", ".ipynb", ".tex", ".md", ".rst", ".py", ".txt"]
+    path_out = make_path_out(path_nb, dest, default_ext, other_exts)
+    if to is None:
+        default_formats = {val: key for key, val in default_exts.items()}
+        to = default_formats[path_out.suffix]
+    if jupyter is None:
+        jupyter = getenv("REPREP_JUPYTER", "jupyter")
+    args = [jupyter, "nbconvert", shlex.quote(path_nb), "--stdout", "--to", to]
+    if execute:
+        args.append("--execute")
+    args.extend([">", shlex.quote(path_out)])
+    step(" ".join(args), inp=[path_nb, *inp], out=[path_out, *out], optional=optional, block=block)
+
+
 def convert_markdown(
     path_md: str,
-    out: str | None = None,
+    dest: str | None = None,
     *,
     katex: bool = False,
-    path_macro: str | None = None,
-    paths_css: str | list[str] | None = None,
+    path_macros: str | None = None,
+    paths_css: str | Collection[str] = (),
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -334,23 +601,24 @@ def convert_markdown(
     ----------
     path_md
         The markdown input file.
-    out
+    dest
         Output destination: `None`, a directory or a file.
     katex
         Set to `True` to enable KaTeX support.
-    path_macro
+    path_macros
         A file with macro definitions for KaTeX.
-        Defaults to `${REPREP_KATEX_MACROS}` if the variable is set.
+        Defaults to `${REPREP_KATEX_MACROS}` if the variable is set,
+        which is interpreted as a colon-separated list of files.
     paths_css
-        Path of a local CSS file, or a list of multiple such paths,
+        Path or multiple paths of a local CSS file, or a list of multiple such paths,
         to be included in the HTML header.
         Note that one may also specify CSS file in the markdown header.
         Defaults to `${REPREP_MARKDOWN_CSS}` if the variable is set,
         which is interpreted as a colon-separated list of files.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -359,83 +627,27 @@ def convert_markdown(
     """
     with subs_env_vars() as subs:
         path_md = subs(path_md)
-        out = subs(out)
+        dest = subs(dest)
     if not path_md.endswith(".md"):
         raise ValueError("The Markdown file must have extension .md")
-    path_html = make_path_out(path_md, out, ".html")
+    path_html = make_path_out(path_md, dest, ".html")
     inp = [path_md]
-    command = "rr-convert-markdown "
-    command += shlex.join([path_md, path_html])
+    args = ["rr-convert-markdown", shlex.quote(path_md), shlex.quote(path_html)]
     if katex:
-        command += " --katex"
-        if path_macro is not None:
-            command += " --katex-macros=" + shlex.quote(path_macro)
-            inp.append(path_macro)
-    if paths_css is not None:
+        args.append("--katex")
+        if path_macros is not None:
+            args.append("--katex-macros=" + shlex.quote(path_macros))
+            inp.append(path_macros)
+    if len(paths_css) > 0:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
-        command += " --css " + shlex.join(paths_css)
-    return step(command, inp=inp, out=path_html, optional=optional, block=block)
+        args.append("--css")
+        args.extend(shlex.quote(path_css) for path_css in paths_css)
+        inp.extend(paths_css)
+    return step(" ".join(args), inp=inp, out=path_html, optional=optional, block=block)
 
 
-def convert_odf_pdf(
-    path_odf: str,
-    out: str | None = None,
-    *,
-    libreoffice: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Convert a file in OpenDocument format to PDF.
-
-    Parameters
-    ----------
-    path_odf
-        The input open-document file.
-    out
-        None, output directory or path. See `make_path_out`.
-    libreoffice
-        The libreoffice executable.
-        Defaults to `${REPREP_LIBREOFFICE}` variable or `libreoffice` if the variable is unset.
-    optional
-        When `True`, the step is only executed when needed by other steps.
-    block
-        When `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-
-    Notes
-    -----
-    This function does not yet scan the source document for reference to external files.
-    which should ideally be added as dependencies.
-
-    The conversion is executed in a pool of size 1, due to a bug in libreoffice.
-    It cannot perform multiple PDF conversions in parallel.
-    """
-    with subs_env_vars() as subs:
-        path_odf = subs(path_odf)
-        out = subs(out)
-    if libreoffice is None:
-        libreoffice = getenv("REPREP_LIBREOFFICE", "libreoffice")
-    command = (
-        # Simple things should be simple! ;) See:
-        # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
-        # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
-        # Not solved yet:
-        # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
-        "WORK=`mktemp -d --suffix=reprep` && "
-        + shlex.quote(libreoffice)
-        + " -env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
-        "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
-    )
-    path_pdf = make_path_out(path_odf, out, ".pdf")
-    return step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
-
-
-def convert_pdf(
+def convert_mutool(
     path_pdf: str,
     path_out: str,
     *,
@@ -458,9 +670,9 @@ def convert_pdf(
         The path to the mutool executable.
         Defaults to `${REPREP_MUTOOL}` variable or `mutool` if the variable is unset.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -472,9 +684,8 @@ def convert_pdf(
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
     args = [shlex.quote(mutool), "draw -q -o ${out} -r", shlex.quote(str(resolution)), "${inp}"]
-    command = " ".join(args)
     return step(
-        command,
+        " ".join(args),
         inp=path_pdf,
         out=path_out,
         optional=optional,
@@ -482,55 +693,90 @@ def convert_pdf(
     )
 
 
-def convert_pdf_png(
+def convert_mutool_png(
     path_pdf: str,
-    out: str | None = None,
+    dest: str | None = None,
     *,
     resolution: int | None = None,
     mutool: str | None = None,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
-    """Shorthand for `convert_pdf` with the output file derived from the PDF file.
+    """Shorthand for `convert_mutool` with the output file derived from the PDF file.
 
-    The `out` argument can be `None`, a directory or a file. See `make_path_out`.
+    The `dest` argument can be `None`, a directory or a file. See `make_path_out`.
     """
     with subs_env_vars() as subs:
         path_pdf = subs(path_pdf)
-        out = subs(out)
+        dest = subs(dest)
     if not path_pdf.endswith(".pdf"):
         raise ValueError("The PDF file must have extension .pdf")
-    path_png = make_path_out(path_pdf, out, ".png")
-    return convert_pdf(
+    path_png = make_path_out(path_pdf, dest, ".png")
+    return convert_mutool(
         path_pdf, path_png, resolution=resolution, mutool=mutool, optional=optional, block=block
     )
 
 
-def convert_svg(
-    path_svg: str,
-    path_out: str,
+def convert_weasyprint(
+    path_html: str,
+    dest: str | None = None,
     *,
-    inkscape: str | None = None,
-    inkscape_args: str | None = None,
+    weasyprint: str | None = None,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
-    """Convert an SVG figure to a PDF file, detecting dependencies of the SVG on other files.
+    """Convert a HTML document to PDF.
 
     Parameters
     ----------
-    path_svg
-        The input SVG figure.
-        It may contain <img> tags referring to other files included in the figure.
-    path_out
-        The output PDF or PNG file. Other formats are not supported.
-    inkscape
-        The path to the inkscape executable.
-        Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.
-    inkscape_args
-        Additional arguments to pass to inkscape. E.g. `-T` to convert text to glyphs in PDFs.
-        Depending on the extension of the output, the default is `${REPREP_INKSCAPE_PDF_ARGS}` or
-        `${REPREP_INKSCAPE_PNG_ARGS}`, if the environment variable is defined.
+    path_html
+        The HTML input file.
+    dest
+        Output destination: `None`, a directory or a file.
+    weasyprint
+        The path to the weasyprint executable.
+        Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_html = subs(path_html)
+        dest = subs(dest)
+    if not path_html.endswith(".html"):
+        raise ValueError("The HTML file must have extension .html")
+    path_pdf = make_path_out(path_html, dest, ".pdf")
+    args = ["rr-convert-weasyprint", shlex.quote(path_html), shlex.quote(path_pdf)]
+    if weasyprint is not None:
+        args.append("--weasyprint=" + shlex.quote(weasyprint))
+    return step(" ".join(args), inp=path_html, out=path_pdf, block=block, optional=optional)
+
+
+def convert_odf_pdf(
+    path_odf: str,
+    dest: str | None = None,
+    *,
+    libreoffice: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Convert a file in OpenDocument format to PDF.
+
+    Parameters
+    ----------
+    path_odf
+        The input open-document file.
+    dest
+        None, output directory or path. See `make_path_out`.
+    libreoffice
+        The libreoffice executable.
+        Defaults to `${REPREP_LIBREOFFICE}` variable or `libreoffice` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
     block
@@ -543,130 +789,35 @@ def convert_svg(
 
     Notes
     -----
-    A wrapper around inkscape is used to carry out the conversion: `stepup.reprep.convert_svg_pdf`.
-    The wrapper scans the SVG for dependencies, which may be a bit slow in case of large files.
+    This function does not yet scan the source document for reference to external files.
+    which should ideally be added as dependencies.
+
+    The conversion is executed in a pool of size 1, due to a bug in libreoffice.
+    It cannot perform multiple PDF conversions in parallel.
     """
     with subs_env_vars() as subs:
-        path_svg = subs(path_svg)
-        path_out = subs(path_out)
-    if not path_svg.endswith(".svg"):
-        raise ValueError("The SVG file must have extension .svg")
-    if not path_out.endswith((".pdf", ".png")):
-        raise ValueError("The output file must have extension .pdf or .png")
-    command = "rr-convert-inkscape "
-    command += shlex.join([path_svg, path_out])
-    if inkscape is not None:
-        command += " --inkscape=" + shlex.quote(inkscape)
-    if inkscape_args is not None:
-        command += f" -- {inkscape_args}"
-    return step(command, inp=path_svg, out=path_out, block=block, optional=optional)
-
-
-def convert_svg_pdf(
-    path_svg: str,
-    out: str | None = None,
-    *,
-    inkscape: str | None = None,
-    inkscape_args: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Shorthand for `convert_svg` with the output file derived from the SVG file.
-
-    The `out` argument can be `None`, a directory or a file.
-    """
-    with subs_env_vars() as subs:
-        path_svg = subs(path_svg)
-        out = subs(out)
-    if not path_svg.endswith(".svg"):
-        raise ValueError("The SVG file must have extension .svg")
-    path_pdf = make_path_out(path_svg, out, ".pdf")
-    return convert_svg(
-        path_svg,
-        path_pdf,
-        inkscape=inkscape,
-        inkscape_args=inkscape_args,
-        optional=optional,
-        block=block,
+        path_odf = subs(path_odf)
+        dest = subs(dest)
+    if libreoffice is None:
+        libreoffice = getenv("REPREP_LIBREOFFICE", "libreoffice")
+    command = (
+        # Simple things should be simple! ;) See:
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
+        # Not solved yet:
+        # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
+        "WORK=`mktemp -d --suffix=reprep` && "
+        + shlex.quote(libreoffice)
+        + " -env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
+        "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
-
-
-def convert_svg_png(
-    path_svg: str,
-    out: str | None = None,
-    *,
-    inkscape: str | None = None,
-    inkscape_args: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Shorthand for `convert_svg` with the output file derived from the SVG file.
-
-    The `out` argument can be `None`, a directory or a file. See `make_path_out`.
-    """
-    with subs_env_vars() as subs:
-        path_svg = subs(path_svg)
-        out = subs(out)
-    if not path_svg.endswith(".svg"):
-        raise ValueError("The SVG file must have extension .svg")
-    path_png = make_path_out(path_svg, out, ".png")
-    return convert_svg(
-        path_svg,
-        path_png,
-        inkscape=inkscape,
-        inkscape_args=inkscape_args,
-        optional=optional,
-        block=block,
-    )
-
-
-def convert_weasyprint(
-    path_html: str,
-    out: str | None = None,
-    *,
-    weasyprint: str | None = None,
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Convert a HTML document to PDF.
-
-    Parameters
-    ----------
-    path_html
-        The HTML input file.
-    out
-        Output destination: `None`, a directory or a file.
-    weasyprint
-        The path to the weasyprint executable.
-        Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
-    optional
-        When `True`, the step is only executed when needed by other steps.
-    block
-        When `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-    """
-    with subs_env_vars() as subs:
-        path_html = subs(path_html)
-        out = subs(out)
-    if not path_html.endswith(".html"):
-        raise ValueError("The HTML file must have extension .html")
-    path_pdf = make_path_out(path_html, out, ".pdf")
-    command = "rr-convert-weasyprint "
-    command += shlex.join([path_html, path_pdf])
-    if weasyprint is not None:
-        command += " --weasyprint=" + shlex.quote(weasyprint)
-    if optional:
-        command += " --optional"
-    return step(command, inp=path_html, block=block)
+    path_pdf = make_path_out(path_odf, dest, ".pdf")
+    return step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
 
 
 DEFAULT_LATEXDIFF_ARGS = (
     "--append-context2cmd=abstract,supplementary,dataavailability,funding,"
-    "authorcontributions,conflictsofinterest,abbreviations"
+    "authorcontributions,conflictsofinterest,abbreviations",
 )
 
 
@@ -676,7 +827,7 @@ def diff_latex(
     path_diff: str,
     *,
     latexdiff: str | None = None,
-    latexdiff_args: str | None = DEFAULT_LATEXDIFF_ARGS,
+    latexdiff_args: Collection[str] = DEFAULT_LATEXDIFF_ARGS,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -705,9 +856,9 @@ def diff_latex(
 
         The option `--no-label` is always added because it is needed to make the file reproducible.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -718,12 +869,13 @@ def diff_latex(
         latexdiff = getenv("REPREP_LATEXDIFF", "latexdiff")
 
     if latexdiff_args is None:
-        latexdiff_args = getenv("REPREP_LATEXDIFF_ARGS", "")
+        latexdiff_args = shlex.split(getenv("REPREP_LATEXDIFF_ARGS", ""))
 
-    args = [shlex.quote(latexdiff), latexdiff_args, "${inp}", "--no-label", ">", "${out}"]
-    command = " ".join(args)
+    args = [shlex.quote(latexdiff)]
+    args.extend(shlex.quote(latexdiff_arg) for latexdiff_arg in latexdiff_args)
+    args.extend(["${inp}", "--no-label", ">", "${out}"])
     return step(
-        command,
+        " ".join(args),
         inp=[path_old, path_new],
         out=path_diff,
         optional=optional,
@@ -741,9 +893,9 @@ def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, bloc
     path_flat
         The flattened output file.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -771,9 +923,9 @@ def make_inventory(
     path_inventory
         The inventory file to write.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -821,30 +973,30 @@ def nup_pdf(
         The output page format
         The default is `${REPREP_NUP_PAGE_FORMAT}` or A4-L if the variable is not set.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "rr-nup-pdf ${inp} ${out}"
+    args = ["rr-nup-pdf", "${inp}", "${out}"]
     if nrow is not None:
-        command += " -r " + shlex.quote(str(nrow))
+        args.extend(["-r", str(nrow)])
     if ncol is not None:
-        command += " -c " + shlex.quote(str(ncol))
+        args.extend(["-c", str(ncol)])
     if margin is not None:
-        command += " -m " + shlex.quote(str(margin))
+        args.extend(["-m", str(margin)])
     if page_format is not None:
-        command += " -p " + shlex.quote(page_format)
-    return step(command, inp=path_src, out=path_dst, optional=optional, block=block)
+        args.extend(["-p", shlex.quote(page_format)])
+    return step(" ".join(args), inp=path_src, out=path_dst, optional=optional, block=block)
 
 
 def raster_pdf(
     path_inp: str,
-    out: str,
+    dest: str,
     *,
     resolution: int | None = None,
     quality: int | None = None,
@@ -857,39 +1009,36 @@ def raster_pdf(
     ----------
     path_inp
         The input PDF file.
-    out
+    dest
         None, output directory or path. See `make_path_out`.
     resolution
-        The resolution of the bitmap in dots per inch (pdi).
+        The resolution of the bitmap in dots per inch (dpi).
         The default value is taken from `${REPREP_RASTER_RESOLUTION}` or 100 if the variable is not
         set.
     quality
         The JPEG quality of the bitmap.
         The default value is taken from `${REPREP_RASTER_QUALITY}` or 50 if the variable is not set.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "rr-raster-pdf ${inp} ${out}"
+    args = ["rr-raster-pdf", "${inp}", "${out}"]
     if resolution is not None:
-        command += " -r " + shlex.quote(str(resolution))
+        args.extend(["-r", str(resolution)])
     if quality is not None:
-        command += " -q " + shlex.quote(str(quality))
-    path_out = make_path_out(path_inp, out, ".pdf")
-    return step(command, inp=path_inp, out=path_out, optional=optional, block=block)
+        args.extend(["-q", shlex.quote(str(quality))])
+    path_out = make_path_out(path_inp, dest, ".pdf")
+    return step(" ".join(args), inp=path_inp, out=path_out, optional=optional, block=block)
 
 
 def render_jinja(
-    path_template: str,
-    paths_variables: list[str],
-    out: str,
-    *,
+    *args: str | dict,
     mode: str = "auto",
     optional: bool = False,
     block: bool = False,
@@ -898,42 +1047,127 @@ def render_jinja(
 
     Parameters
     ----------
-    path_template
-        The source file to use as a template.
-    paths_variables
-        A list of Python files with variable definitions, at least one.
-    out
-        An output directory or file.
+    args
+        The first argument is the path to the template file.
+        All the following position arguments can be one of the following two types:
+
+        - Paths to Python, JSON or YAML files with variable definitions.
+          Variables defined in later files take precedence.
+        - A dictionary with additional variables.
+          These will be JSON-serialized and passed on the command-line to the Jinja renderer.
+          Variables in dictionaries take precedence over variables from files.
+          When multiple dictionaries are given, later ones take precedence.
+
+        The very last argument is an output destination (directory or file).
     mode
         The format of the Jinja placeholders.
         The default (auto) selects either plain or latex based on the extension of the template.
         The plain format is the default Jinja style with curly brackets: {{ }} etc.
         The latex style replaces curly brackets by angle brackets: << >> etc.
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+
+    Notes
+    -----
+    At least some variables must be given, either as a file containing variables or as a dictionary.
+    """
+    # Parse the positional arguments
+    if len(args) < 3:
+        raise ValueError(
+            "At least three positional arguments must be given: "
+            "the template, at least one file or dict with variables, and the destination."
+        )
+    path_template = args[0]
+    if not isinstance(path_template, str):
+        raise TypeError("The template argument must be a string.")
+    dest = args[-1]
+    if not isinstance(dest, str):
+        raise TypeError("The destination argument must be a string.")
+    variables = {}
+    paths_variables = []
+    for arg in args[1:-1]:
+        if isinstance(arg, str):
+            paths_variables.append(arg)
+        elif isinstance(arg, dict):
+            variables.update(arg)
+        else:
+            raise TypeError("The variables arguments must be strings (paths) or dictionaries.")
+
+    # Parse other arguments.
+    if mode not in ["auto", "plain", "latex"]:
+        raise ValueError(f"Unsupported mode {mode!r}. Must be one of 'auto', 'plain', 'latex'")
+    if len(paths_variables) == 0 and len(variables) == 0:
+        raise ValueError("At least one file with variable definitions needed.")
+    path_out = make_path_out(path_template, dest, None)
+
+    # Create the command
+    args = ["rr-render-jinja", "${inp}", "${out}"]
+    if mode != "auto":
+        args.append(f"--mode={mode}")
+    if len(variables) > 0:
+        args.append("--json=" + shlex.quote(json.dumps(variables)))
+    return step(
+        " ".join(args),
+        inp=[path_template, *paths_variables],
+        out=path_out,
+        optional=optional,
+        block=block,
+    )
+
+
+def sanitize_bibtex(
+    *paths_aux: str,
+    path_cfg: str | None = None,
+    path_out: str | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Sanitize a BibTeX file.
+
+    Parameters
+    ----------
+    paths_aux
+        Paths to LaTeX aux files.
+    path_cfg
+        The YAML configuration file for the `rr-sanitize-bibtex` script.
+    path_out
+        If given, a single cleaned-up bibtex file is written as output,
+        which you can manually copy back to the original if you approve of the cleanup.
+        If not given, the original bibtex file is overwritten (if there is only one),
+        which will drain the scheduler.
+        You then check if the updated version is correct and rerun the build to approve.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    if mode not in ["auto", "plain", "latex"]:
-        raise ValueError(f"Unsupported mode {mode!r}. Must be one of 'auto', 'plain', 'latex'")
-    if len(paths_variables) == 0:
-        raise ValueError("At least one file with variable definitions needed.")
-    path_out = make_path_out(path_template, out, None)
-    command = "rr-render-jinja ${inp} ${out}"
-    if mode != "auto":
-        command += f" --mode {mode}"
-    return step(
-        command,
-        inp=[path_template, *paths_variables],
-        out=path_out,
-        optional=optional,
-        block=block,
-    )
+    with subs_env_vars() as subs:
+        path_cfg = subs(path_cfg)
+        paths_aux = [subs(path_aux) for path_aux in paths_aux]
+        path_out = subs(path_out)
+
+    args = ["rr-bibsane", "--amend", *(shlex.quote(path_aux) for path_aux in paths_aux)]
+    paths_inp = list(paths_aux)
+    if path_cfg is not None:
+        args.append("--config=" + shlex.quote(path_cfg))
+        paths_inp.append(path_cfg)
+    paths_out = []
+    if path_out is not None:
+        args.append("--out=${out}")
+        paths_out.append(path_out)
+    return step(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, block=block)
 
 
 def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
@@ -944,7 +1178,7 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
     path_config
         The YAML configuration file for the Zenodo upload.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
@@ -955,7 +1189,7 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
 
 
 def unplot(
-    path_svg: str, out: str | None = None, *, optional: bool = False, block: bool = False
+    path_svg: str, dest: str | None = None, *, optional: bool = False, block: bool = False
 ) -> StepInfo:
     """Convert a plot back to data.
 
@@ -963,20 +1197,20 @@ def unplot(
     ----------
     path_svg
         The SVG file with paths to be converted back.
-    out
+    dest
         An output directory or file.
 
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    path_out = make_path_out(path_svg, out, ".json")
+    path_out = make_path_out(path_svg, dest, ".json")
     command = "rr-unplot ${inp} ${out}"
     return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
 
@@ -994,9 +1228,9 @@ def zip_inventory(
     path_zip
         The output ZIP file
     optional
-        When `True`, the step is only executed when needed by other steps.
+        If `True`, the step is only executed when needed by other steps.
     block
-        When `True`, the step will always remain pending.
+        If `True`, the step will always remain pending.
 
     Returns
     -------

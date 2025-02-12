@@ -13,7 +13,6 @@ file:./
             supplies   file:style.css
             supplies   step:./plan.py
             supplies   step:rr-convert-weasyprint doc.html doc.pdf
-            supplies   step:weasyprint doc.html doc.pdf
 
 file:plan.py
                state = STATIC
@@ -23,7 +22,6 @@ file:plan.py
 
 step:./plan.py
                state = SUCCEEDED
-          inp_digest = same
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -36,42 +34,33 @@ file:block.png
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:weasyprint doc.html doc.pdf
+            supplies   step:rr-convert-weasyprint doc.html doc.pdf
 
 file:doc.html
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
             supplies   step:rr-convert-weasyprint doc.html doc.pdf
-            supplies   step:weasyprint doc.html doc.pdf
 
 file:style.css
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:weasyprint doc.html doc.pdf
+            supplies   step:rr-convert-weasyprint doc.html doc.pdf
 
 step:rr-convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
              env_var = REPREP_WEASYPRINT [amended]
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
+            consumes   file:block.png [amended]
             consumes   file:doc.html
-             creates   step:weasyprint doc.html doc.pdf
-
-step:weasyprint doc.html doc.pdf
-               state = SUCCEEDED
-          created by   step:rr-convert-weasyprint doc.html doc.pdf
-            consumes   file:./
-            consumes   file:block.png
-            consumes   file:doc.html
-            consumes   file:style.css
+            consumes   file:style.css [amended]
              creates   file:doc.pdf
             supplies   file:doc.pdf
 
 file:doc.pdf
                state = BUILT
-          created by   step:weasyprint doc.html doc.pdf
+          created by   step:rr-convert-weasyprint doc.html doc.pdf
             consumes   file:./
-            consumes   step:weasyprint doc.html doc.pdf
+            consumes   step:rr-convert-weasyprint doc.html doc.pdf

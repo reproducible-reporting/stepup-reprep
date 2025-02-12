@@ -1,0 +1,11 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+   SUCCESS │ rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

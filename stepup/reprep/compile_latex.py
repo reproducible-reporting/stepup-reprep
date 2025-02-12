@@ -31,14 +31,14 @@ from stepup.reprep.make_inventory import write_inventory
 
 from .bibtex_log import parse_bibtex_log
 from .latex_deps import scan_latex_deps
-from .latex_log import ErrorInfo, parse_latex_log
+from .latex_log import parse_latex_log
 
 
 def main(argv: list[str] | None = None):
     """Main program."""
     args = parse_args(argv)
 
-    workdir, fn_tex = Path(args.path_tex).splitpath()
+    workdir, fn_tex = args.path_tex.splitpath()
     workdir = workdir.normpath()
     if not fn_tex.endswith(".tex"):
         raise ValueError("The LaTeX source must have extension .tex")
@@ -69,14 +69,8 @@ def main(argv: list[str] | None = None):
         # Get other executables and files
         if args.bibtex is None:
             args.bibtex = getenv("REPREP_BIBTEX", "bibtex")
-        if args.bibsane is None:
-            args.bibsane = getenv("REPREP_BIBSANE", "bibsane")
-        paths_config = []
-        if args.bibsane_config is None:
-            args.bibsane_config = getenv("REPREP_BIBSANE_CONFIG", "bibsane.yaml", back=True)
-            paths_config.append(args.bibsane_config)
 
-        amend(inp=implicit + bib + paths_config, out=[f"{stem}.bbl"])
+        amend(inp=implicit + bib, out=[f"{stem}.bbl"])
         inventory_files = [*implicit, *bib, f"{stem}.bbl"]
 
         # LaTeX
@@ -115,22 +109,6 @@ def main(argv: list[str] | None = None):
             error_info = parse_bibtex_log(path_blg)
             error_info.print(path_blg)
             sys.exit(1)
-
-        # BibSane
-        cp = subprocess.run(
-            [args.bibsane, f"{stem}.aux", f"--config={args.bibsane_config}"],
-            cwd=workdir,
-            text=True,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            check=False,
-        )
-        if cp.returncode != 0:
-            error_info = ErrorInfo("BibSane", src=f"{workdir}/{stem}.aux")
-            error_info.print()
-            sys.stdout.write(cp.stdout)
-            sys.exit(1)
     else:
         amend(inp=[*implicit, f"{stem}.bbl"])
         inventory_files = [*implicit, f"{stem}.bbl"]
@@ -163,14 +141,16 @@ def main(argv: list[str] | None = None):
             print(digest.hex(), file=sys.stderr)
         sys.exit(1)
 
+    # Write inventory
     inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
-    path_inventory = f"{stem}-inventory.txt"
-    write_inventory(path_inventory, inventory_files)
+    if args.inventory is not None:
+        write_inventory(args.inventory, inventory_files)
 
+    # Look for additional output files, which are considered to be volatile.
     vol_paths = []
     for path in Path(".").glob(f"{stem}.*"):
         path = path.normpath()
-        if not (path in inventory_files or path == path_inventory):
+        if not (path in inventory_files or path == args.inventory):
             vol_paths.append(path)
     amend(vol=vol_paths)
 
@@ -181,7 +161,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         prog="rr-compile-latex",
         description="Compile a LaTeX document and extract input and output info.",
     )
-    parser.add_argument("path_tex", help="The main LaTeX source file.")
+    parser.add_argument("path_tex", type=Path, help="The main LaTeX source file.")
     parser.add_argument(
         "-m",
         "--maxrep",
@@ -199,7 +179,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         dest="run_bibtex",
         default=False,
         action="store_true",
-        help="Run bibtex and bibsane.",
+        help="Run bibtex.",
     )
     parser.add_argument(
         "--bibtex",
@@ -207,14 +187,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "The default is ${REPREP_BIBTEX} or bibtex if the variable is not defined.",
     )
     parser.add_argument(
-        "--bibsane",
-        help="The BibSane executable. "
-        "The default is ${REPREP_BIBSANE} or bibsane if the variable is not defined.",
-    )
-    parser.add_argument(
-        "--bibsane-config",
-        help="The BibSane configuration file. The default is ${REPREP_BIBSANE_CONFIG} or "
-        "bibsane.yaml if the variables is not defined.",
+        "--inventory",
+        type=Path,
+        help="Write an inventory with all inputs and outputs, useful for archiving.",
     )
     return parser.parse_args(argv)
 

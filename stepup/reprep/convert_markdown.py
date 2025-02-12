@@ -22,13 +22,13 @@
 import argparse
 import re
 import sys
+from collections.abc import Collection
 
 import markdown
 from bs4 import BeautifulSoup
 from path import Path
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import translate
 
 from .render_jinja import render
 
@@ -41,14 +41,11 @@ def main(argv: list[str] | None = None):
     if not args.markdown.endswith(".md"):
         raise ValueError("The markdown file must end with the .md extension.")
     if args.katex_macros is None and args.katex:
-        args.katex_macros = getenv("REPREP_KATEX_MACROS", None)
+        args.katex_macros = getenv("REPREP_KATEX_MACROS", back=True)
         if args.katex_macros is not None:
-            args.katex_macros = translate.back(args.katex_macros)
             amend(inp=args.katex_macros)
-    if args.css is None:
-        env_css = getenv("REPREP_MARKDOWN_CSS", "")
-        if env_css != "":
-            args.css = [translate.back(path_css) for path_css in env_css.split(":")]
+    if len(args.css) == 0:
+        args.css = getenv("REPREP_MARKDOWN_CSS", multi=True, back=True)
     with open(args.markdown) as fm, open(args.html, "w") as fh:
         fh.write(
             convert_markdown(fm.read(), args.katex, args.katex_macros, args.css, args.html.parent)
@@ -66,17 +63,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--katex-macros",
         type=Path,
-        default=None,
         help="KaTeX macros file. The defualt value if ${REPREP_KATEX_MACROS} (if defined).",
     )
     parser.add_argument(
         "--css",
         type=Path,
         nargs="+",
-        default=None,
+        default=(),
         help="Local CSS files to link to in the HTML header. "
         "The default value is ${REPREP_MARKDOWN_CSS} (if defined) "
-        "and it is interpreted as a colon-separated list",
+        "and it is interpreted as a colon-separated list.",
     )
     return parser.parse_args(argv)
 
@@ -101,8 +97,8 @@ HTML_TEMPLATE = """\
 def convert_markdown(
     text_md: str,
     katex: bool = False,
-    path_macro: str | None = None,
-    paths_css: str | list[str] | None = None,
+    path_macros: str | None = None,
+    paths_css: str | Collection[str] = (),
     parent_html: str = "./",
 ) -> str:
     """Convert Markdown to HTML with KaTeX support.
@@ -113,7 +109,7 @@ def convert_markdown(
         The markdown source text.
     katex
         Set to `True` to enable KaTeX support.
-    path_macro
+    path_macros
         A file with KaTeX macro definitions.
     paths_css
         Path of a local CSS file, or a list of multiple such paths,
@@ -142,9 +138,10 @@ def convert_markdown(
     if katex:
         extensions.append("markdown_katex")
         configs["markdown_katex"] = {"insert_fonts_css": True}
-        if path_macro is not None:
-            configs["markdown_katex"]["macro-file"] = path_macro
+        if path_macros is not None:
+            configs["markdown_katex"]["macro-file"] = path_macros
 
+    print(configs)
     md_ctx = markdown.Markdown(
         extensions=extensions,
         extension_configs=configs,
@@ -154,19 +151,18 @@ def convert_markdown(
     body = md_ctx.convert(text_md)
     extra_head, body = isolate_header(body)
 
-    # Collect all CSS paths
-    if paths_css is None:
-        paths_css = []
-    elif isinstance(paths_css, str):
-        paths_css = [paths_css]
-    paths_css.extend(md_ctx.Meta.get("css", []))
+    # Collect CSS paths from the source and amend them
+    parent_html = Path(parent_html)
+    paths_doc_css = md_ctx.Meta.get("css", [])
+    amend(inp=[parent_html / path_css for path_css in paths_doc_css if "://" not in path_css])
 
-    # Rewrite CSS paths as paths relative to the parent of the HTML output.
-    # parent_html = Path(parent_html)
+    # Convert the given CSS files to be relative to the parent of the HTML file.
+    if isinstance(paths_css, str):
+        paths_css = paths_css.split(":")
     paths_css = [
-        path_css if "://" in path_css else Path(path_css).relpath(parent_html)
-        for path_css in paths_css
+        Path(path_css).relpath(parent_html) for path_css in paths_css if "://" not in path_css
     ]
+    paths_css.extend(paths_doc_css)
 
     # Use Jinja to finalize the HTML page.
     variables = {

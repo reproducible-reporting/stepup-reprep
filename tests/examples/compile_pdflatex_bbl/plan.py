@@ -5,4 +5,4 @@ from stepup.reprep.api import compile_latex
 
 static("paper.tex")
 static("paper.bbl")
-compile_latex("paper.tex", run_bibtex=False)
+compile_latex("paper.tex", run_bibtex=False, inventory=True)

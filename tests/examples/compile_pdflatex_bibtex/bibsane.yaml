@@ -1,4 +1,3 @@
-bibtex_out: references.bib
 drop_entry_types: ["control"]
 normalize_doi: true
 duplicate_id: merge

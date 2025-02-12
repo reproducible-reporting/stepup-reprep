@@ -25,7 +25,7 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
-          inp_digest = same
+                     = REPREP_TYPST_INVENTORY [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -48,6 +48,7 @@ file:image.py
 step:rr-compile-typst --keep-deps document.typ
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
           created by   step:./plan.py
             consumes   file:./
             consumes   file:document.typ

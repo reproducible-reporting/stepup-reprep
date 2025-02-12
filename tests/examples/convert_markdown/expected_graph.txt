@@ -6,7 +6,6 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:demo.css
             supplies   file:macros.tex
             supplies   file:page.css
             supplies   file:plan.py
@@ -22,21 +21,15 @@ file:plan.py
 
 step:./plan.py
                state = SUCCEEDED
-          inp_digest = same
           created by   root:
             consumes   file:./
             consumes   file:plan.py
-             creates   file:demo.css
              creates   file:macros.tex
              creates   file:page.css
              creates   file:sub/
+             creates   file:sub/demo.css
              creates   file:sub/demo.md
              creates   step:rr-convert-markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
-
-file:demo.css
-               state = STATIC
-          created by   step:./plan.py
-            consumes   file:./
 
 file:macros.tex
                state = STATIC
@@ -48,13 +41,21 @@ file:page.css
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
+            supplies   step:rr-convert-markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 file:sub/
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
+            supplies   file:sub/demo.css
             supplies   file:sub/demo.html
             supplies   file:sub/demo.md
+            supplies   step:rr-convert-markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
+
+file:sub/demo.css
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:sub/
             supplies   step:rr-convert-markdown sub/demo.md sub/demo.html --katex --katex-macros=macros.tex --css page.css
 
 file:sub/demo.md
@@ -68,7 +69,9 @@ step:rr-convert-markdown sub/demo.md sub/demo.html --katex --katex-macros=macros
           created by   step:./plan.py
             consumes   file:./
             consumes   file:macros.tex
+            consumes   file:page.css
             consumes   file:sub/
+            consumes   file:sub/demo.css [amended]
             consumes   file:sub/demo.md
              creates   file:sub/demo.html
             supplies   file:sub/demo.html

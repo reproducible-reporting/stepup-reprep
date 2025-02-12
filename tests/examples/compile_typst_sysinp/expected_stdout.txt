@@ -1,0 +1,15 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+   SUCCESS │ rr-compile-typst template.typ --out=alice.pdf --sysinp name=Alic age=29
+     START │ rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+   SUCCESS │ rr-compile-typst template.typ --out=bob.pdf --sysinp name=Bob age=31
+     START │ rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+   SUCCESS │ rr-compile-typst template.typ --out=charlie.pdf --sysinp name=Charlie age=27
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

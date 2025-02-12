@@ -3,15 +3,15 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ rr-compile-latex paper.tex --run-bibtex
-   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+     START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ paper.aux
    DELETED │ paper.pdf
      PHASE │ run
-     START │ rr-compile-latex paper.tex --run-bibtex
-   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+     START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
   DIRECTOR │ Stopping workers.

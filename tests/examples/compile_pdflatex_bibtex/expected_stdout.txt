@@ -3,16 +3,41 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ rr-compile-latex paper.tex --run-bibtex
-   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+     START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+     START │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+   SUCCESS │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+─────────────────────────────── Standard output ────────────────────────────────
+📂 Loading paper.aux
+   Found 1 citations
+   Found 1 unique citations
+📂 Loading references.bib
+   Found 1 BibTeX entries
+🔨 Checking unused and missing citations
+   Found 1 used BibTeX entries
+🔨 Validating citation policies
+🔨 Fixing bad practices
+🔨 Checking for potential mistakes in BibTeX keys
+🔨 Normalizing dois
+🔨 Normalizing whitespace
+🔨 Fixing double hyphen in page ranges
+🔨 Abbreviating journal names
+🔨 Merging references by BibTeX ID
+   Reduced to 1 BibTeX entries by merging duplicate BibTeX IDs
+🔨 Merging references by DOI
+   Reduced to 1 BibTeX entries by merging duplicate DOIs
+🔨 Sorting by Year + First author
+😀 No changes to references.bib
+────────────────────────────────────────────────────────────────────────────────
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ paper.aux
    DELETED │ paper.pdf
    DELETED │ paper.bbl
      PHASE │ run
-     START │ rr-compile-latex paper.tex --run-bibtex
-   SUCCESS │ rr-compile-latex paper.tex --run-bibtex
+     START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+      SKIP │ rr-bibsane --amend paper.aux --config=bibsane.yaml
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
   DIRECTOR │ Stopping workers.

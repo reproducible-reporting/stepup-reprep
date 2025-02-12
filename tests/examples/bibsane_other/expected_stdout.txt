@@ -1,0 +1,33 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+   SUCCESS │ rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+─────────────────────────────── Standard output ────────────────────────────────
+📂 Loading paper.aux
+   Found 1 citations
+   Found 1 unique citations
+📂 Loading references.bib
+   Found 1 BibTeX entries
+🔨 Checking unused and missing citations
+   Found 1 used BibTeX entries
+🔨 Validating citation policies
+   💨 skilling2019: @article discarding field abstract
+   💨 skilling2019: @article discarding field issn
+   💨 skilling2019: @article discarding field url
+🔨 Fixing bad practices
+🔨 Checking for potential mistakes in BibTeX keys
+🔨 Normalizing dois
+🔨 Normalizing whitespace
+🔨 Fixing double hyphen in page ranges
+🔨 Abbreviating journal names
+💾 Please check the new or corrected file: cleaned.bib
+────────────────────────────────────────────────────────────────────────────────
+     START │ cp -aT cleaned.bib copy.bib
+   SUCCESS │ cp -aT cleaned.bib copy.bib
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

@@ -54,16 +54,22 @@ def get_summary(path: str, root: str) -> FileSummary:
     Parameters
     ----------
     path
-        The location of the file to be summarized.
+        The location of the file to be summarized,
+        relative to the current working directory.
     root
-        The parent of the inventory file, to construct the relative path.
+        The parent of the inventory file, to construct relative paths.
+
+    Returns
+    -------
+    file_summary
+        Contains the size, mode, digest, and relative path of the file.
     """
     path = Path(path)
     st = path.stat(follow_symlinks=False)
     size = None if stat.S_ISLNK(st.st_mode) else st.st_size
     mode = stat.filemode(st.st_mode)
     digest = compute_file_digest(path, follow_symlinks=False)
-    relpath = path.relpath(root)
+    relpath = path.relpath(root).normpath()
     return FileSummary(size, mode, digest, relpath)
 
 

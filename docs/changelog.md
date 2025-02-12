@@ -10,7 +10,62 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(nothing yet)
+(no changes yet)
+
+## [2.3.0][] - 2025-02-12 {: #v2.3.0 }
+
+This release adds support for Jupyter notebooks with `convert_jupyter()`
+and introduces small breaking changes to the API.
+Other noteworthy changes include new options to the `compile_typst()` function,
+more ways to specify variables in `render_jinja()`.
+
+### Added
+
+- Execute and convert Jupyter notebooks with [`convert_jupyter()`][stepup.reprep.api.convert_jupyter].
+- `rr-bibsane` is now part of StepUp RepRep, instead of using the (retired) `bibsane` package.
+  The main difference, other than the improved integration with StepUp RepRep,
+  is that journal abbreviations are now generated with [pyiso4](https://github.com/pierre-24/pyiso4)
+  instead of the [abrevvIso](https://abbreviso.toolforge.org) Web API.
+  It has a corresponding [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex] function
+  in `stepup.reprep.api`.
+
+### Changed
+
+- Extend [`compile_typst()`][stepup.reprep.api.compile_typst] with additional options:
+    - Specification of the output file.
+    - Key-value pairs for the `--input` argument.
+    - PNG and SVG output formats (multipage is not working yet).
+    - Optional inventory output file.
+    - Pass-through arguments for `typst`
+- Breaking changes to existing API:
+    - `convert_pdf()` and related functions are renamed:
+        - `convert_pdf()` becomes [`convert_mutool()`][stepup.reprep.api.convert_mutool]
+        - `convert_pdf_png()` becomes [`convert_mutool_png()`][stepup.reprep.api.convert_mutool_png]
+    - `convert_svg()` and related functions are renamed:
+        - `convert_svg()` becomes [`convert_inkscape()`][stepup.reprep.api.convert_inkscape]
+        - `convert_svg_pdf()` becomes [`convert_inkscape_pdf()`][stepup.reprep.api.convert_inkscape_pdf]
+        - `convert_svg_png()` becomes [`convert_inkscape_png()`][stepup.reprep.api.convert_inkscape_png]
+    - The `inkscape_args` of [`convert_inkscape()`][stepup.reprep.api.convert_inkscape]
+      must now be a list instead of a string.
+    - [`compile_latex()`][stepup.reprep.api.compile_latex] no longer creates
+      an inventory file by default.
+      To recover the old behavior, add `inventory=True` to the arguments
+      or set the environment variable `REPREP_LATEX_INVENTORY="1"`.
+    - [`compile_latex()`][stepup.reprep.api.compile_latex] no longer calls `bibsane`
+      when the LaTeX source has a BibTeX bibliography.
+      If you want to sanitize the BibTeX file, call [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex]
+      after `compile_latex()`.
+    - The `paths_variables` argument of [`render_jinja()`][stepup.reprep.api.render_jinja]
+      has been replaced by a variadic positional parameter (i.e. `*paths_variables`).
+- Other changes
+    - Change [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint]
+      to perform the conversion in a single step.
+    - Improve handling of arguments and dependencies in
+      [`convert_markdown()`][stepup.reprep.api.convert_markdown]
+    - [`render_jinja()`][stepup.reprep.api.render_jinja] now accepts JSON and YAML files
+      with variables for Jinja2 templates.
+      In addition, one may specify a dictionary with variables directly when calling the function.
+    - Documentation improvements.
 
 ## [2.2.3][] - 2025-02-05 {: #v2.2.3 }
 
@@ -217,6 +272,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.0
 [2.2.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.3
 [2.2.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.2
 [2.2.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.1

@@ -1,0 +1,101 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:out.pdf
+            supplies   file:plan.py
+            supplies   file:source/
+            supplies   step:./plan.py
+            supplies   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:source/
+             creates   file:source/aux/
+             creates   file:source/aux/productivity.csv
+             creates   file:source/document.typ
+             creates   file:source/tada.svg
+             creates   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   file:source/aux/
+            supplies   file:source/document-inventory.txt
+            supplies   file:source/document.dep
+            supplies   file:source/document.typ
+            supplies   file:source/tada.svg
+            supplies   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/aux/
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:source/
+            supplies   file:source/aux/productivity.csv
+
+file:source/aux/productivity.csv
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:source/aux/
+            supplies   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/document.typ
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:source/
+            supplies   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/tada.svg
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:source/
+            supplies   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:source/
+            consumes   file:source/aux/productivity.csv [amended]
+            consumes   file:source/document.typ
+            consumes   file:source/tada.svg [amended]
+             creates   file:out.pdf
+             creates   file:source/document-inventory.txt
+             creates   file:source/document.dep
+            supplies   file:out.pdf
+            supplies   file:source/document-inventory.txt
+            supplies   file:source/document.dep
+
+file:out.pdf
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   file:./
+            consumes   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/document-inventory.txt
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   file:source/
+            consumes   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+
+file:source/document.dep
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   file:source/
+            consumes   step:rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf

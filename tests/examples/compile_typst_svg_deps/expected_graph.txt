@@ -1,0 +1,87 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:demo.dep
+            supplies   file:demo.pdf
+            supplies   file:demo.typ
+            supplies   file:embedded.svg
+            supplies   file:linked.svg
+            supplies   file:plan.py
+            supplies   file:random.png
+            supplies   step:./plan.py
+            supplies   step:rr-compile-typst --keep-deps demo.typ
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_TYPST_INVENTORY [amended]
+                 ngm = ['*.typ'] {}
+                 ngm = ['*.svg'] {}
+                 ngm = ['*.png'] {}
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:demo.typ
+             creates   file:embedded.svg
+             creates   file:linked.svg
+             creates   file:random.png
+             creates   step:rr-compile-typst --keep-deps demo.typ
+
+file:demo.typ
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst --keep-deps demo.typ
+
+file:embedded.svg
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst --keep-deps demo.typ
+
+file:linked.svg
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst --keep-deps demo.typ
+
+file:random.png
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+
+step:rr-compile-typst --keep-deps demo.typ
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:demo.typ
+            consumes   file:embedded.svg [amended]
+            consumes   file:linked.svg [amended]
+             creates   file:demo.dep
+             creates   file:demo.pdf
+            supplies   file:demo.dep
+            supplies   file:demo.pdf
+
+file:demo.dep
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps demo.typ
+            consumes   file:./
+            consumes   step:rr-compile-typst --keep-deps demo.typ
+
+file:demo.pdf
+               state = BUILT
+          created by   step:rr-compile-typst --keep-deps demo.typ
+            consumes   file:./
+            consumes   step:rr-compile-typst --keep-deps demo.typ

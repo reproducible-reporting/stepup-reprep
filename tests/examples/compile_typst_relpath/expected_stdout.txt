@@ -1,0 +1,11 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+   SUCCESS │ rr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+  DIRECTOR │ Trying to delete 0 outdated output(s).
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

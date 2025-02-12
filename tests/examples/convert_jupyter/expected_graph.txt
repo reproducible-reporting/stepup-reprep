@@ -1,0 +1,84 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:data.json
+            supplies   file:demo.html
+            supplies   file:demo.ipynb
+            supplies   file:plan.py
+            supplies   file:plot.png
+            supplies   file:points.txt
+            supplies   file:result.txt
+            supplies   step:./plan.py
+            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_JUPYTER [amended]
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:data.json
+             creates   file:demo.ipynb
+             creates   file:points.txt
+             creates   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:data.json
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:demo.ipynb
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:points.txt
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+               state = SUCCEEDED
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:data.json [amended]
+            consumes   file:demo.ipynb
+            consumes   file:points.txt
+             creates   file:demo.html
+             creates   file:plot.png
+             creates   file:result.txt
+            supplies   file:demo.html
+            supplies   file:plot.png
+            supplies   file:result.txt [amended]
+
+file:demo.html
+               state = BUILT
+          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   file:./
+            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:plot.png
+               state = BUILT
+          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   file:./
+            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+
+file:result.txt
+               state = BUILT
+          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   file:./
+            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html

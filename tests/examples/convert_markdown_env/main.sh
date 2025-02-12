@@ -9,6 +9,7 @@ export SOURCE_DATE_EPOCH="315532800"
 export REPREP_KATEX_MACROS="common/macros.tex"
 export REPREP_MARKDOWN_CSS="common/demo.css:common/page.css"
 stepup -w -n 1 plan.py & # > current_stdout.txt &
+PID=$!
 
 # Wait for the director and get its socket.
 export STEPUP_DIRECTOR_SOCKET=$(
@@ -24,7 +25,8 @@ join()
 EOD
 
 # Wait for background processes, if any.
-wait
+set +e; wait -fn $PID; RETURNCODE=$?; set -e
+[[ "${RETURNCODE}" -eq 0 ]] || exit 1
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1

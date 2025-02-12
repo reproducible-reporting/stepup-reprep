@@ -41,7 +41,6 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
                  ngm = ['*.svg'] {}
-          inp_digest = same
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -214,7 +213,6 @@ file:vera.ttf
 
 step:./tile.py plan
                state = SUCCEEDED
-          inp_digest = same
           created by   step:./plan.py
             consumes   file:./
             consumes   file:tile.py

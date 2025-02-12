@@ -4,5 +4,5 @@ from stepup.core.api import static
 from stepup.reprep.api import check_hrefs, compile_latex
 
 static("README.md", "main.tex", "check_hrefs.yaml")
-compile_latex("main.tex")
+compile_latex("main.tex", inventory=True)
 check_hrefs("main.pdf")

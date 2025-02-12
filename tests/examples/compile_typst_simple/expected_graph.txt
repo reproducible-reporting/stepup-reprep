@@ -6,11 +6,12 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:document.pdf
+            supplies   file:document-inventory.txt
             supplies   file:document.typ
+            supplies   file:out.pdf
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:rr-compile-typst document.typ
+            supplies   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:plan.py
                state = STATIC
@@ -21,30 +22,38 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
-          inp_digest = same
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
-             creates   step:rr-compile-typst document.typ
+             creates   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document.typ
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst document.typ
+            supplies   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
-step:rr-compile-typst document.typ
+step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
           created by   step:./plan.py
             consumes   file:./
             consumes   file:document.typ
-             creates   file:document.pdf
-            supplies   file:document.pdf
+             creates   file:document-inventory.txt
+             creates   file:out.pdf
+            supplies   file:document-inventory.txt
+            supplies   file:out.pdf
 
-file:document.pdf
+file:document-inventory.txt
                state = BUILT
-          created by   step:rr-compile-typst document.typ
+          created by   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
             consumes   file:./
-            consumes   step:rr-compile-typst document.typ
+            consumes   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+
+file:out.pdf
+               state = BUILT
+          created by   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            consumes   file:./
+            consumes   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf

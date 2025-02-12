@@ -26,9 +26,25 @@ import pytest
 from path import Path
 
 from stepup.reprep.check_inventory import main as check_main
+from stepup.reprep.inventory import get_summary
 from stepup.reprep.make_inventory import main as make_main
 from stepup.reprep.make_inventory import parse_inventory_def
 from stepup.reprep.zip_inventory import main as zip_main
+
+
+def test_get_summary(path_tmp):
+    (path_tmp / "sub").mkdir()
+    with open(path_tmp / "sub/a.txt", "w") as fh:
+        print("aaa", file=fh)
+    summary = get_summary(path_tmp / "sub/a.txt", path_tmp / "other")
+    assert summary.size == 4
+    assert summary.mode == "-rw-r--r--"
+    assert summary.digest.hex() == (
+        "b25ac67550816e84f2a5689115534c8b1d72081f14f6bc4395e4af41c1dfa831"
+        "63d5433ae05e4cba54e04364d38f9084ec9c3e41d0fbe45da3b738939b1aec11"
+    )
+    assert summary.path == "../sub/a.txt"
+
 
 BASIC_INVENTORY = """\
               4 -rw-r--r-- b25ac67550816e84f2a5689115534c8b1d72081f14f6bc4395e4af41c1dfa83163d5433a\

@@ -1,0 +1,51 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:belgium.typ
+            supplies   file:flag.png
+            supplies   file:plan.py
+            supplies   step:./plan.py
+            supplies   step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                     = REPREP_TYPST_INVENTORY [amended]
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:belgium.typ
+             creates   step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+
+file:belgium.typ
+               state = STATIC
+          created by   step:./plan.py
+            consumes   file:./
+            supplies   step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+
+step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+          created by   step:./plan.py
+            consumes   file:./
+            consumes   file:belgium.typ
+             creates   file:flag.png
+            supplies   file:flag.png
+
+file:flag.png
+               state = BUILT
+          created by   step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png
+            consumes   file:./
+            consumes   step:rr-compile-typst --resolution=30 belgium.typ --out=flag.png

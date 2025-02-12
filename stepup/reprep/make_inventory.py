@@ -199,6 +199,18 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
 
 
 def write_inventory(path_txt: str, paths: Collection[str]):
+    """Write an inventory file.
+
+    Parameters
+    ----------
+    path_txt
+        The location of the inventory file to be written.
+    paths
+        A collection of paths to be included in the inventory.
+        These must be paths relative to the current working directory.
+        They will be written to the inventory file
+        as paths relative to the parent of the inventory file.
+    """
     path_txt = Path(path_txt)
     root = path_txt.parent.normpath()
     with open(path_txt, "w") as fh:

@@ -33,7 +33,6 @@ classifiers = [
 dependencies = [
     # Ensure changes to these dependencies are reflected in .github/requirements-old.txt
     "attrs>=23.1.0",
-    "cattrs>=23.1.2",
     "bibtexparser>=1.4.3",
     "beautifulsoup4>=4.11.0",
     "cattrs>=23.2.3",

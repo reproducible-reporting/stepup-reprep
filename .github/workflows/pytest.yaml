@@ -38,8 +38,6 @@ jobs:
         uses: typst-community/setup-typst@v4
         with:
           typst-version: 0.12
-      - name: Install mutool and inkscape
-        run: sudo apt-get update && sudo apt-get install -y mupdf-tools inkscape
       - name: Install oldest versions of supported dependencies
         if: ${{ matrix.python-version == '3.11'}}
         run: pip install -r .github/requirements-old.txt

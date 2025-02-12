@@ -12,6 +12,14 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [2.3.1][] - 2025-02-12 {: #v2.3.1 }
+
+This is a minor bugfix release.
+
+### Fixed
+
+- Remove some debug output.
+
 ## [2.3.0][] - 2025-02-12 {: #v2.3.0 }
 
 This release adds support for Jupyter notebooks with `convert_jupyter()`
@@ -272,6 +280,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.1
 [2.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.0
 [2.2.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.3
 [2.2.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.2

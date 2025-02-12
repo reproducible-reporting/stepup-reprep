@@ -141,7 +141,6 @@ def convert_markdown(
         if path_macros is not None:
             configs["markdown_katex"]["macro-file"] = path_macros
 
-    print(configs)
     md_ctx = markdown.Markdown(
         extensions=extensions,
         extension_configs=configs,

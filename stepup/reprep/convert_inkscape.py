@@ -91,7 +91,7 @@ def convert_inkscape(path_svg: str, path_out: Path, inkscape: str, inkscape_args
     if len(stdout) > 0 or len(stderr) > 0:
         print(f"Command: {' '.join(args)}")
         sys.stdout.write(stdout)
-        sys.sdterr.write(stderr)
+        sys.stderr.write(stderr)
     if cp.returncode != 0:
         raise subprocess.CalledProcessError(cp.returncode, args)
 

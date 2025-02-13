@@ -159,7 +159,7 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
         "compile_typst_relpath",
         "compile_typst_simple",
         "compile_typst_svg",
-        pytest.param("compile_typst_svg_deps", marks=pytest.mark.xfail),
+        "compile_typst_svg_deps",
         pytest.param("compile_typst_svg_multi", marks=pytest.mark.xfail),
         "compile_typst_sysinp",
         "compile_typst_sysinp_json",

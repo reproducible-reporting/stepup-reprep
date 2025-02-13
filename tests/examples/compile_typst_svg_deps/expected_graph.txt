@@ -59,6 +59,7 @@ file:random.png
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
+            supplies   step:rr-compile-typst --keep-deps demo.typ
 
 step:rr-compile-typst --keep-deps demo.typ
                state = SUCCEEDED
@@ -69,6 +70,7 @@ step:rr-compile-typst --keep-deps demo.typ
             consumes   file:demo.typ
             consumes   file:embedded.svg [amended]
             consumes   file:linked.svg [amended]
+            consumes   file:random.png [amended]
              creates   file:demo.dep
              creates   file:demo.pdf
             supplies   file:demo.dep

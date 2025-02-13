@@ -28,8 +28,10 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f demo.typ ]] || exit 1
 [[ -f random.png ]] || exit 1
-[[ -f with_bitmap.svg ]] || exit 1
+[[ -f linked.svg ]] || exit 1
+[[ -f embedded.svg ]] || exit 1
 [[ -f demo.pdf ]] || exit 1
 [[ -f demo.dep ]] || exit 1
-grep with_bitmap.svg demo.dep
+grep linked.svg demo.dep
+grep embedded.svg demo.dep
 grep random.png demo.dep

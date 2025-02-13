@@ -104,6 +104,7 @@ def main(argv: list[str] | None = None):
                     for path in (Path(p) for p in shlex.split(dep_inp))
                 ]
         else:
+            print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
             out_paths = [args.path_out]
 
     # Look for missing input files in the standard error stream and amend them.

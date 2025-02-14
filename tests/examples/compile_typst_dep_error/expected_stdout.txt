@@ -1,0 +1,24 @@
+   STARTUP │ (Re)initialized boot script
+  DIRECTOR │ Launched worker 0
+     PHASE │ run
+     START │ ./plan.py
+   SUCCESS │ ./plan.py
+     START │ rr-compile-typst --keep-deps document.typ
+      FAIL │ rr-compile-typst --keep-deps document.typ
+────────────────────────────────── Step info ───────────────────────────────────
+Command               rr-compile-typst --keep-deps document.typ
+Return code           1
+───────────────────────── Expected outputs not created ─────────────────────────
+document.dep
+document.pdf
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+     START │ echo 'fixed: new' > data.yaml
+   SUCCESS │ echo 'fixed: new' > data.yaml
+   WARNING │ 1 step(s) failed.
+   WARNING │ Skipping file cleanup due to incomplete build.
+   WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+     PHASE │ watch
+  DIRECTOR │ Stopping workers.
+  DIRECTOR │ See you!

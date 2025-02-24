@@ -37,7 +37,7 @@ jobs:
       - name: Install typst
         uses: typst-community/setup-typst@v4
         with:
-          typst-version: 0.12
+          typst-version: 0.13
       - name: Install oldest versions of supported dependencies
         if: ${{ matrix.python-version == '3.11'}}
         run: pip install -r .github/requirements-old.txt

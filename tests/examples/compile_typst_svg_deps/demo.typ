@@ -34,7 +34,7 @@
     }
   }
 
-  image.decode(output, ..args)
+  image(bytes(output), ..args)
 }
 
 #grid(

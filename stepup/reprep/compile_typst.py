@@ -98,11 +98,8 @@ def main(argv: list[str] | None = None):
             out_paths = []
             with open(path_dep) as fh:
                 dep_out, dep_inp = fh.read().split(":", 1)
-                out_paths.extend(p for p in shlex.split(dep_out))
-                inp_paths = [
-                    path if path.isabs() else typst_root / path
-                    for path in (Path(p) for p in shlex.split(dep_inp))
-                ]
+                out_paths.extend(shlex.split(dep_out))
+                inp_paths.extend(shlex.split(dep_inp))
         else:
             print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
             out_paths = [args.path_out]

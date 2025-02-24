@@ -6,11 +6,10 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:common/
             supplies   file:plan.py
             supplies   file:source/
             supplies   step:./plan.py
-            supplies   step:rr-convert-markdown source/demo.md source/demo.html --katex
+            supplies   step:rr-convert-markdown source/demo.md source/demo.html
 
 file:plan.py
                state = STATIC
@@ -26,7 +25,7 @@ step:./plan.py
              creates   dg:common/**
              creates   file:source/
              creates   file:source/demo.md
-             creates   step:rr-convert-markdown source/demo.md source/demo.html --katex
+             creates   step:rr-convert-markdown source/demo.md source/demo.html
 
 file:source/
                state = STATIC
@@ -34,26 +33,22 @@ file:source/
             consumes   file:./
             supplies   file:source/demo.html
             supplies   file:source/demo.md
-            supplies   step:rr-convert-markdown source/demo.md source/demo.html --katex
+            supplies   step:rr-convert-markdown source/demo.md source/demo.html
 
 file:source/demo.md
                state = STATIC
           created by   step:./plan.py
             consumes   file:source/
-            supplies   step:rr-convert-markdown source/demo.md source/demo.html --katex
+            supplies   step:rr-convert-markdown source/demo.md source/demo.html
 
 dg:common/**
           created by   step:./plan.py
-             creates   file:common/
-             creates   file:common/macros.tex
 
-step:rr-convert-markdown source/demo.md source/demo.html --katex
+step:rr-convert-markdown source/demo.md source/demo.html
                state = SUCCEEDED
-             env_var = REPREP_KATEX_MACROS [amended]
-                     = REPREP_MARKDOWN_CSS [amended]
+             env_var = REPREP_MARKDOWN_CSS [amended]
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:common/macros.tex [amended]
             consumes   file:source/
             consumes   file:source/demo.md
              creates   file:source/demo.html
@@ -61,18 +56,6 @@ step:rr-convert-markdown source/demo.md source/demo.html --katex
 
 file:source/demo.html
                state = BUILT
-          created by   step:rr-convert-markdown source/demo.md source/demo.html --katex
+          created by   step:rr-convert-markdown source/demo.md source/demo.html
             consumes   file:source/
-            consumes   step:rr-convert-markdown source/demo.md source/demo.html --katex
-
-file:common/macros.tex
-               state = STATIC
-          created by   dg:common/**
-            consumes   file:common/
-            supplies   step:rr-convert-markdown source/demo.md source/demo.html --katex
-
-file:common/
-               state = STATIC
-          created by   dg:common/**
-            consumes   file:./
-            supplies   file:common/macros.tex
+            consumes   step:rr-convert-markdown source/demo.md source/demo.html

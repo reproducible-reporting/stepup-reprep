@@ -274,6 +274,8 @@ def compile_typst(
 
     !!! warning
 
+        This feature will only work well with typst 0.13 or later.
+
         Support for typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
         Some limitations include:
@@ -599,8 +601,6 @@ def convert_markdown(
     path_md: str,
     dest: str | None = None,
     *,
-    katex: bool = False,
-    path_macros: str | None = None,
     paths_css: str | Collection[str] = (),
     optional: bool = False,
     block: bool = False,
@@ -613,12 +613,6 @@ def convert_markdown(
         The markdown input file.
     dest
         Output destination: `None`, a directory or a file.
-    katex
-        Set to `True` to enable KaTeX support.
-    path_macros
-        A file with macro definitions for KaTeX.
-        Defaults to `${REPREP_KATEX_MACROS}` if the variable is set,
-        which is interpreted as a colon-separated list of files.
     paths_css
         Path or multiple paths of a local CSS file, or a list of multiple such paths,
         to be included in the HTML header.
@@ -643,11 +637,6 @@ def convert_markdown(
     path_html = make_path_out(path_md, dest, ".html")
     inp = [path_md]
     args = ["rr-convert-markdown", shlex.quote(path_md), shlex.quote(path_html)]
-    if katex:
-        args.append("--katex")
-        if path_macros is not None:
-            args.append("--katex-macros=" + shlex.quote(path_macros))
-            inp.append(path_macros)
     if len(paths_css) > 0:
         if isinstance(paths_css, str):
             paths_css = [paths_css]

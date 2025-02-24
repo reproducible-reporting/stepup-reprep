@@ -12,6 +12,21 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [2.3.2][] - 2025-02-24 {: #v2.3.2 }
+
+This release makes `compile_typst` compatible with Typst 0.13,
+and drops support for markdown-katex.
+
+### Added
+
+- Configuration for development with [devenv](https://devenv.sh/)
+
+### Changed
+
+- Drop support for the ailing markdown_katex integration.
+  (Typst can be used to achieve similar results much more efficiently).
+- Update `compile_typst` for [Typst 0.13](https://github.com/typst/typst/releases/tag/v0.13.0)
+
 ## [2.3.1][] - 2025-02-12 {: #v2.3.1 }
 
 This is a minor bugfix release.
@@ -280,6 +295,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.2
 [2.3.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.1
 [2.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.0
 [2.2.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.3

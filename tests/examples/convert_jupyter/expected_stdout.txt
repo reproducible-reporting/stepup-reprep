@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-   SUCCESS │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+     START │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+   SUCCESS │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────
@@ -12,8 +12,8 @@
      PHASE │ watch
    DELETED │ demo.html
      PHASE │ run
-     START │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-   SUCCESS │ jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+     START │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+   SUCCESS │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────

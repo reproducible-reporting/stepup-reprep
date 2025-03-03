@@ -513,8 +513,10 @@ def convert_jupyter(
     out: str | Collection[str] = (),
     execute: bool = True,
     to: str | None = None,
+    nbargs: str | dict | list | None = None,
     jupyter: str | None = None,
     optional: bool = False,
+    pool: str | None = None,
     block: bool = False,
 ) -> StepInfo:
     """Convert a Jupyter notebook, by default to HTML with execution of cells.
@@ -545,11 +547,23 @@ def convert_jupyter(
         The output format. The default depends on the extension of the output file.
         if `to` is given and `dest` is `None` or a directory,
         the `to` argument is used to determine the output file extension.
+    nbargs
+        If `str`, it is passed literally as additional argument to the notebook
+        through the environment variable `REPREP_NBARGS`.
+        If `dict` or `list`, it is converted to a JSON string first.
+        The notebook should read this variable with `os.getenv("REPREP_NBARGS")`
+        and not `stepup.core.api.getenv()` because the variable is local to the process.
+        It is impossible (and pointless) for the StepUp director to detect changes in this variable.
+        Even if it is globally defined, it will be overridden in this step.
     jupyter
         The path to the jupyter executable.
         Defaults to `${REPREP_JUPYTER}` variable or `jupyter` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
+    pool
+        The pool in which the step is executed,
+        which may be convenient to limit the number of parallel notebooks being executed,
+        e.g. when the already run calculations in parallel.
     block
         If `True`, the step will always remain pending.
 
@@ -593,8 +607,21 @@ def convert_jupyter(
     args = [jupyter, "nbconvert", shlex.quote(path_nb), "--stdout", "--to", to]
     if execute:
         args.append("--execute")
+    if nbargs is not None:
+        if isinstance(nbargs, dict | list):
+            nbargs = json.dumps(nbargs)
+        elif not isinstance(nbargs, str):
+            nbargs = str(nbargs)
+        args.insert(0, "REPREP_NBARGS=" + shlex.quote(nbargs))
     args.extend([">", shlex.quote(path_out)])
-    step(" ".join(args), inp=[path_nb, *inp], out=[path_out, *out], optional=optional, block=block)
+    step(
+        " ".join(args),
+        inp=[path_nb, *inp],
+        out=[path_out, *out],
+        optional=optional,
+        pool=pool,
+        block=block,
+    )
 
 
 def convert_markdown(
@@ -790,9 +817,6 @@ def convert_odf_pdf(
     -----
     This function does not yet scan the source document for reference to external files.
     which should ideally be added as dependencies.
-
-    The conversion is executed in a pool of size 1, due to a bug in libreoffice.
-    It cannot perform multiple PDF conversions in parallel.
     """
     with subs_env_vars() as subs:
         path_odf = subs(path_odf)

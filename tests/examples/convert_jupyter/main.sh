@@ -41,4 +41,5 @@ set +e; wait -fn $PID; RETURNCODE=$?; set -e
 [[ -f demo.html ]] || exit 1
 [[ -f demo1.html ]] || exit 1
 [[ -f result.txt ]] || exit 1
+grep "dpi: 50" result.txt
 [[ -f reproducibility_inventory.txt ]] || exit 1

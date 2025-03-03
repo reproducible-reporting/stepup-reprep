@@ -14,7 +14,7 @@ file:./
             supplies   file:points.txt
             supplies   file:result.txt
             supplies   step:./plan.py
-            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:plan.py
                state = STATIC
@@ -31,27 +31,27 @@ step:./plan.py
              creates   file:data.json
              creates   file:demo.ipynb
              creates   file:points.txt
-             creates   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+             creates   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:data.json
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:demo.ipynb
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:points.txt
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
-step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
@@ -67,18 +67,18 @@ step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:demo.html
                state = BUILT
-          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
             consumes   file:./
-            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:plot.png
                state = BUILT
-          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
             consumes   file:./
-            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
 
 file:result.txt
                state = BUILT
-          created by   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
             consumes   file:./
-            consumes   step:jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html

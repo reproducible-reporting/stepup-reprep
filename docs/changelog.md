@@ -10,7 +10,13 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- Add `nbargs` option to [`convert_jupyter()`][stepup.reprep.api.convert_jupyter],
+  to call a notebook with arguments.
+  If a `list` or a `dict` is given, the data is convert to JSON.
 
 ## [2.3.2][] - 2025-02-24 {: #v2.3.2 }
 

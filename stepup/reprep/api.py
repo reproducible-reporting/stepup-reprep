@@ -1149,6 +1149,7 @@ def sanitize_bibtex(
     *paths_aux: str,
     path_cfg: str | None = None,
     path_out: str | None = None,
+    overwrite: bool = False,
     optional: bool = False,
     block: bool = False,
 ) -> StepInfo:
@@ -1166,6 +1167,9 @@ def sanitize_bibtex(
         If not given, the original bibtex file is overwritten (if there is only one),
         which will drain the scheduler.
         You then check if the updated version is correct and rerun the build to approve.
+    overwrite
+        If `True`, it is assumed that you want to overwrite an input bibtex file,
+        in which case `path_out` is not treated as a new output file in the workflow.
     optional
         If `True`, the step is only executed when needed by other steps.
     block
@@ -1188,8 +1192,9 @@ def sanitize_bibtex(
         paths_inp.append(path_cfg)
     paths_out = []
     if path_out is not None:
-        args.append("--out=${out}")
-        paths_out.append(path_out)
+        args.append("--out=" + shlex.quote(path_out))
+        if not overwrite:
+            paths_out.append(path_out)
     return step(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, block=block)
 
 

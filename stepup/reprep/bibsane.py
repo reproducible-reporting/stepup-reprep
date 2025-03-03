@@ -146,7 +146,7 @@ IGNORED_CITATIONS = {"REVTEX41Control"}
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    fns_aux, verbose, path_out, config = parse_args()
+    fns_aux, verbose, path_out, config = parse_args(argv)
     if len(fns_aux) == 0:
         # Only select aux files for which corresponding tex files exist.
         fns_aux = [
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None):
     return -1
 
 
-def parse_args() -> tuple[list[str], bool, BibsaneConfig]:
+def parse_args(argv: list[str] | None = None) -> tuple[list[str], bool, BibsaneConfig]:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser("rr-bibsane")
     parser.add_argument("aux", nargs="*", help="The LaTeX aux file of your document")
@@ -179,7 +179,7 @@ def parse_args() -> tuple[list[str], bool, BibsaneConfig]:
         action="store_true",
         help="Amend the abbreviation cache as a volatile output, if any.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     config = BibsaneConfig.from_file(args.config, args.amend)
     return args.aux, not args.quiet, args.out, config
 

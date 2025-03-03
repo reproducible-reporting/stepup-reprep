@@ -10,14 +10,27 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no summary yet)
+(no changes yet)
+
+## [2.3.3][] - 2025-03-03 {: #v2.3.3 }
+
+A few minor improvements related to LaTeX and Bibtex, and parameterized Jupyter notebooks.
 
 ### Added
 
-- Improve detection of inputs and (volatile) outputs when compiling a LaTeX document.
+- Improve detection of inputs and (volatile) outputs when compiling a LaTeX document:
+    - The `-recorder` option of `latex` is used to identify inputs and outputs more precisely.
+    - The manual override `%REPREP input` is replaced by `%REPREP inp`.
+    - New manual overrides are supported for (volatile) outputs: `%REPREP out` and `%REPREP vol`.
 - Add `nbargs` option to [`convert_jupyter()`][stepup.reprep.api.convert_jupyter],
   to call a notebook with arguments.
   If a `list` or a `dict` is given, the data is convert to JSON.
+
+### Changed
+
+- Add `overwrite` option to [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex],
+  to flag that `path_out` refers to an input file to be overwritten,
+  instead of trying to track it as an output file.
 
 ## [2.3.2][] - 2025-02-24 {: #v2.3.2 }
 
@@ -302,6 +315,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.3
 [2.3.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.2
 [2.3.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.1
 [2.3.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.0

@@ -8,6 +8,7 @@
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ paper.aux
+   DELETED │ paper.log
    DELETED │ paper.pdf
      PHASE │ run
      START │ rr-compile-latex paper.tex --inventory=paper-inventory.txt

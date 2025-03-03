@@ -230,7 +230,7 @@ def compile_latex(
 
     args = ["rr-compile-latex", shlex.quote(path_tex)]
     inp_paths = [path_tex]
-    out_paths = [path_pdf, f"{prefix}.aux"]
+    out_paths = [path_pdf, f"{prefix}.aux", f"{prefix}.fls"]
     if maxrep != 5:
         args.append("--maxrep=" + shlex.quote(str(maxrep)))
     if latex is not None:

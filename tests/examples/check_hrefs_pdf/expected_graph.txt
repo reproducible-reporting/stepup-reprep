@@ -11,10 +11,10 @@ file:./
             supplies   file:check_hrefs.yaml
             supplies   file:main-inventory.txt
             supplies   file:main.aux
+            supplies   file:main.fls
             supplies   file:main.log
             supplies   file:main.out
             supplies   file:main.pdf
-            supplies   file:main.sh
             supplies   file:main.tex
             supplies   file:plan.py
             supplies   step:./plan.py
@@ -64,16 +64,16 @@ step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:main.tex
              creates   file:main-inventory.txt
              creates   file:main.aux
+             creates   file:main.fls
              creates   file:main.log
              creates   file:main.out
              creates   file:main.pdf
-             creates   file:main.sh
             supplies   file:main-inventory.txt
             supplies   file:main.aux
+            supplies   file:main.fls
             supplies   file:main.log [amended]
             supplies   file:main.out [amended]
             supplies   file:main.pdf
-            supplies   file:main.sh [amended]
 
 file:main-inventory.txt
                state = BUILT
@@ -82,6 +82,12 @@ file:main-inventory.txt
             consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.aux
+               state = BUILT
+          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            consumes   file:./
+            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+
+file:main.fls
                state = BUILT
           created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
@@ -105,19 +111,13 @@ step:rr-check-hrefs main.pdf
             consumes   file:main.pdf
 
 file:main.log
-               state = VOLATILE
+               state = BUILT
           created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.out
-               state = VOLATILE
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-
-file:main.sh
-               state = VOLATILE
+               state = BUILT
           created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt

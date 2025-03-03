@@ -17,6 +17,7 @@ generated.tex
    WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
    DELETED │ paper.aux
+   DELETED │ paper.log
    DELETED │ generated.tex
    DELETED │ paper.pdf
      PHASE │ run

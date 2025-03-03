@@ -32,6 +32,7 @@
   DIRECTOR │ Trying to delete 0 outdated output(s).
      PHASE │ watch
    DELETED │ paper.aux
+   DELETED │ paper.log
    DELETED │ paper.pdf
    DELETED │ paper.bbl
      PHASE │ run

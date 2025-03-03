@@ -9,6 +9,7 @@ file:./
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.bbl
+            supplies   file:paper.fls
             supplies   file:paper.log
             supplies   file:paper.pdf
             supplies   file:paper.tex
@@ -52,10 +53,12 @@ step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
             consumes   file:paper.tex
              creates   file:paper-inventory.txt
              creates   file:paper.aux
+             creates   file:paper.fls
              creates   file:paper.log
              creates   file:paper.pdf
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
+            supplies   file:paper.fls
             supplies   file:paper.log [amended]
             supplies   file:paper.pdf
 
@@ -71,6 +74,12 @@ file:paper.aux
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
 
+file:paper.fls
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
+
 file:paper.pdf
                state = BUILT
           created by   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
@@ -78,7 +87,7 @@ file:paper.pdf
             consumes   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
 
 file:paper.log
-               state = VOLATILE
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --inventory=paper-inventory.txt

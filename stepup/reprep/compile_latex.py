@@ -27,6 +27,7 @@ from path import Path
 
 from stepup.core.api import amend, getenv
 from stepup.core.hash import compute_file_digest
+from stepup.core.utils import filter_dependencies, mynormpath
 from stepup.reprep.make_inventory import write_inventory
 
 from .bibtex_log import parse_bibtex_log
@@ -55,7 +56,7 @@ def main(argv: list[str] | None = None):
         (workdir / f"{stem}.{ext}").remove_p()
 
     # Detect additional inputs
-    implicit, bib = scan_latex_deps(fn_tex)
+    inp, bib, out, vol = scan_latex_deps(fn_tex)
 
     # Get LaTeX executable
     if args.latex is None:
@@ -63,20 +64,21 @@ def main(argv: list[str] | None = None):
 
     aux_digest_hist = []
     if len(bib) == 0:
-        amend(inp=implicit)
-        inventory_files = list(implicit)
+        amend(inp=inp, out=out, vol=vol)
+        inventory_files = [*inp, *out]
     elif args.run_bibtex:
         # Get other executables and files
         if args.bibtex is None:
             args.bibtex = getenv("REPREP_BIBTEX", "bibtex")
 
-        amend(inp=implicit + bib, out=[f"{stem}.bbl"])
-        inventory_files = [*implicit, *bib, f"{stem}.bbl"]
+        amend(inp=inp + bib, out=[f"{stem}.bbl", *out], vol=vol)
+        inventory_files = [*inp, *bib, f"{stem}.bbl", *out]
 
         # LaTeX
         cp = subprocess.run(
             [
                 args.latex,
+                "-recorder",
                 "-interaction=errorstopmode",
                 "-draftmode",
                 stem,
@@ -110,13 +112,13 @@ def main(argv: list[str] | None = None):
             error_info.print(path_blg)
             sys.exit(1)
     else:
-        amend(inp=[*implicit, f"{stem}.bbl"])
-        inventory_files = [*implicit, f"{stem}.bbl"]
+        amend(inp=[*inp, f"{stem}.bbl"], out=out, vol=vol)
+        inventory_files = [*inp, f"{stem}.bbl", *out]
 
     for _ in range(args.maxrep):
         # LaTeX
         cp = subprocess.run(
-            [args.latex, "-interaction=errorstopmode", stem],
+            [args.latex, "-recorder", "-interaction=errorstopmode", stem],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -146,13 +148,22 @@ def main(argv: list[str] | None = None):
     if args.inventory is not None:
         write_inventory(args.inventory, inventory_files)
 
-    # Look for additional output files, which are considered to be volatile.
-    vol_paths = []
-    for path in Path(".").glob(f"{stem}.*"):
-        path = path.normpath()
-        if not (path in inventory_files or path == args.inventory):
-            vol_paths.append(path)
-    amend(vol=vol_paths)
+    # Look for input files and output files from the fls file.
+    # These are usually worth tracking, but are not needed for the inventory file.
+    fls_inp = set()
+    fls_out = set()
+    with open(f"{stem}.fls") as fh:
+        for line in fh:
+            if line.startswith("INPUT "):
+                path = mynormpath(Path(line[6:].strip()))
+                if not (path in inventory_files or path == args.inventory):
+                    fls_inp.add(path)
+            elif line.startswith("OUTPUT "):
+                path = mynormpath(Path(line[7:].strip()))
+                if not (path in inventory_files or path == args.inventory):
+                    fls_out.add(path)
+    fls_inp.difference_update(fls_out)
+    amend(inp=filter_dependencies(fls_inp), out=fls_out)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

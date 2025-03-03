@@ -3,6 +3,7 @@ current_*
 paper.pdf
 paper.log
 paper.aux
+paper.fls
 paper-inventory.txt
 paper1.pdf
 reproducibility_inventory.txt

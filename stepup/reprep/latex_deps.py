@@ -101,12 +101,18 @@ def scan_latex_deps(path_tex, tex_root=None):
 
     Returns
     -------
-    implicit
-        Filenames to be added to the implicit dependencies.
+    inp
+        Filenames to be added as amended inputs.
     bib
-        BibTeX files.
+        BibTeX files, a special case of inputs to amend.
+    out
+        Filenames to be added as amended outputs.
+    vol
+        Filenames to be added as amended volatile outputs.
     """
-    implicit = set()
+    inp = set()
+    out = set()
+    vol = set()
     bib = set()
 
     path_tex = Path(path_tex)
@@ -117,8 +123,12 @@ def scan_latex_deps(path_tex, tex_root=None):
             for line in fh:
                 if "%REPREP ignore" in line:
                     pass
-                elif line.startswith("%REPREP input "):
-                    implicit.add((tex_root / line[13:].strip()).normpath())
+                elif line.startswith("%REPREP inp "):
+                    inp.add((tex_root / line[12:].strip()).normpath())
+                elif line.startswith("%REPREP out "):
+                    out.add((tex_root / line[12:].strip()).normpath())
+                elif line.startswith("%REPREP vol "):
+                    vol.add((tex_root / line[12:].strip()).normpath())
                 else:
                     stripped.append(line[: line.find("%")].rstrip())
 
@@ -129,14 +139,16 @@ def scan_latex_deps(path_tex, tex_root=None):
                 if ext == ".bib":
                     bib.add(path_inc)
                 else:
-                    implicit.add(path_inc)
+                    inp.add(path_inc)
                 if ext == ".tex":
-                    sub_implicit, sub_bib = scan_latex_deps(path_inc, new_root)
-                    implicit.update(sub_implicit)
+                    sub_inp, sub_bib, sub_out, sub_vol = scan_latex_deps(path_inc, new_root)
+                    inp.update(sub_inp)
                     bib.update(sub_bib)
+                    out.update(sub_out)
+                    vol.update(sub_vol)
 
     # Filter dependencies to exclude global files
-    implicit = filter_dependencies(implicit)
+    inp = filter_dependencies(inp)
     bib = filter_dependencies(bib)
 
-    return sorted(implicit), sorted(bib)
+    return sorted(inp), sorted(bib), sorted(out), sorted(vol)

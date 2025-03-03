@@ -22,6 +22,7 @@
 from stepup.reprep.latex_deps import scan_latex_deps
 
 SCAN_LATEX_DEPS_EXAMPLE = r"""
+%REPREP vol volatile.txt
 \input{foo.tex}
 %\includegraphics{not.pdf}
 \includegraphics{figure}
@@ -42,7 +43,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
     works % comment 4
     % comment 5 }
 }
-%REPREP input implicit.txt
+%REPREP inp implicit.txt
 %\input{bar.tex}
 \bibliography {references}
 %\bibliography{old}
@@ -52,6 +53,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
 }    {inc.tex
 }
 %import{sub}{ex.tex}
+%REPREP out sideffect.txt
 """
 
 
@@ -59,8 +61,8 @@ def test_scan_latex_deps(monkeypatch, path_tmp):
     monkeypatch.chdir(path_tmp)
     with open("main.tex", "w") as fh:
         fh.write(SCAN_LATEX_DEPS_EXAMPLE)
-    implicit, bib = scan_latex_deps("main.tex", path_tmp)
-    implicit_ref = {
+    inp, bib, out, vol = scan_latex_deps("main.tex", "./")
+    inp_ref = {
         "foo.tex",
         "results/info.tex",
         "this also works.tex",
@@ -69,6 +71,8 @@ def test_scan_latex_deps(monkeypatch, path_tmp):
         "implicit.txt",
         "sub/inc.tex",
     }
-    assert set(implicit) == implicit_ref
+    assert set(inp) == inp_ref
     bib_ref = {"references.bib", "extra.bib"}
     assert set(bib) == bib_ref
+    assert out == ["sideffect.txt"]
+    assert vol == ["volatile.txt"]

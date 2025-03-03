@@ -21,6 +21,7 @@ subdir/generated.tex
    WARNING │ Check logs: .stepup/warning.log
      PHASE │ watch
    DELETED │ paper.aux
+   DELETED │ paper.log
    DELETED │ subdir/generated.tex
    DELETED │ subdir/code.txt
    DELETED │ paper.pdf

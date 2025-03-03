@@ -14,6 +14,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ### Added
 
+- Improve detection of inputs and (volatile) outputs when compiling a LaTeX document.
 - Add `nbargs` option to [`convert_jupyter()`][stepup.reprep.api.convert_jupyter],
   to call a notebook with arguments.
   If a `list` or a `dict` is given, the data is convert to JSON.

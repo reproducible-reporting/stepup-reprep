@@ -8,6 +8,7 @@ file:./
           created by   root:
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
+            supplies   file:paper.fls
             supplies   file:paper.log
             supplies   file:paper.out
             supplies   file:paper.pdf
@@ -70,11 +71,13 @@ step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:subdir/generated.tex [amended]
              creates   file:paper-inventory.txt
              creates   file:paper.aux
+             creates   file:paper.fls
              creates   file:paper.log
              creates   file:paper.out
              creates   file:paper.pdf
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
+            supplies   file:paper.fls
             supplies   file:paper.log [amended]
             supplies   file:paper.out [amended]
             supplies   file:paper.pdf
@@ -86,6 +89,12 @@ file:paper-inventory.txt
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+
+file:paper.fls
                state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
@@ -128,13 +137,13 @@ file:subdir/code.txt
             supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
-               state = VOLATILE
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.out
-               state = VOLATILE
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

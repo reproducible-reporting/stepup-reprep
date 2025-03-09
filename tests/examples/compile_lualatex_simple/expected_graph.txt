@@ -9,6 +9,7 @@ file:./
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.fls
+            supplies   file:paper.log
             supplies   file:paper.pdf
             supplies   file:paper.tex
             supplies   file:plan.py
@@ -36,7 +37,7 @@ file:paper.tex
             supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-               state = FAILED
+               state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
           created by   step:./plan.py
             consumes   file:./
@@ -44,32 +45,40 @@ step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
              creates   file:paper-inventory.txt
              creates   file:paper.aux
              creates   file:paper.fls
+             creates   file:paper.log
              creates   file:paper.pdf
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.fls
+            supplies   file:paper.log [amended]
             supplies   file:paper.pdf
 
 file:paper-inventory.txt
-               state = AWAITED
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
-               state = AWAITED
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.fls
-               state = AWAITED
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.pdf
-               state = AWAITED
+               state = BUILT
+          created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+            consumes   file:./
+            consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+
+file:paper.log
+               state = BUILT
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

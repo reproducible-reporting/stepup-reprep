@@ -163,7 +163,9 @@ def main(argv: list[str] | None = None):
                 if not (path in inventory_files or path == args.inventory):
                     fls_out.add(path)
     fls_inp.difference_update(fls_out)
-    amend(inp=filter_dependencies(fls_inp), out=fls_out)
+    # Both inputs and outputs must be filtered because, strangely,
+    # LaTeX sometimes outputs files in the weirdest places, e.g. in the TEXMF tree.
+    amend(inp=filter_dependencies(fls_inp), out=filter_dependencies(fls_out))
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

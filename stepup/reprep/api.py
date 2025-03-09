@@ -935,16 +935,20 @@ def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, bloc
 
 
 def make_inventory(
-    paths: Collection[str], path_inventory: str, *, optional: bool = False, block: bool = False
+    *paths: Collection[str],
+    path_def: str | None = None,
+    optional: bool = False,
+    block: bool = False,
 ) -> StepInfo:
     """Create an `inventory.txt` file.
 
     Parameters
     ----------
     paths
-        Paths to include in the `inventory.txt` file.
-    path_inventory
-        The inventory file to write.
+        Paths to include in the `inventory.txt` file,
+        except for the last, which is the inventory file to write.
+    path_def
+        An inventory definitions file, used to constructe the list of files.
     optional
         If `True`, the step is only executed when needed by other steps.
     block
@@ -955,10 +959,18 @@ def make_inventory(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
+    if len(paths) < 1:
+        raise ValueError("At least one path must be given.")
+    paths_inp = list(paths[:-1])
+    args = ["rr-make-inventory", *paths_inp]
+    if path_def is not None:
+        args.extend(["-i", path_def])
+        paths_inp.append(path_def)
+    args.extend(["-o", paths[-1]])
     return step(
-        "rr-make-inventory ${inp} -o ${out}",
-        inp=paths,
-        out=[path_inventory],
+        shlex.join(args),
+        inp=paths_inp,
+        out=[paths[-1]],
         optional=optional,
         block=block,
     )

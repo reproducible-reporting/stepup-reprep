@@ -56,6 +56,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "render_jinja_yaml",
         "sync_zenodo",
         "unplot",
+        "zip_def",
         "zip_inventory",
         "zip_tree",
     ],

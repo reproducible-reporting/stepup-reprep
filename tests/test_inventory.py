@@ -112,7 +112,7 @@ def test_symbolic_link_directory(path_tmp):
         check_main(["inventory.txt"])
 
 
-def test_git():
+def test_git1():
     with contextlib.chdir("tests/examples/check_hrefs_md"):
         paths = parse_inventory_def(["include-git\n"])
     assert paths == {
@@ -124,6 +124,23 @@ def test_git():
         "README.md",
         "check_hrefs.yaml",
         ".gitignore",
+    }
+
+
+def test_git2():
+    paths = parse_inventory_def(["include-git tests/examples/check_hrefs_md\n"])
+    assert paths == {
+        "tests/examples/check_hrefs_md/" + path
+        for path in [
+            "main.sh",
+            "expected_graph.txt",
+            "plan.py",
+            "test.md",
+            "expected_stdout.txt",
+            "README.md",
+            "check_hrefs.yaml",
+            ".gitignore",
+        ]
     }
 
 

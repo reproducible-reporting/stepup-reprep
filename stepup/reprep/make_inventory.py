@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None):
             raise ValueError("Whithout -i inventory.def, the -o option is no longer optional.")
     else:
         if not args.inventory_def.endswith(".def"):
-            raise ValueError("The inventory input file must end with .def")
+            raise ValueError("The inventory defintion file must end with .def")
         if args.inventory_txt is None:
             args.inventory_txt = args.inventory_def[:-4] + ".txt"
         elif Path(args.inventory_txt).parent != Path(args.inventory_def).parent:
@@ -88,46 +88,43 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "paths",
         nargs="*",
+        help="File to include in the inventory. "
+        "(Added after porcessing the inventory definition if any.)",
     )
-    parser.add_argument("-i", "--inventory-def", help="An inventory input file.", default=None)
+    parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
     parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
     return parser.parse_args(argv)
 
 
-def get_file_list_nglob(i: int, args: list[str]) -> Collection[str]:
+def get_file_list_nglob(i: int, args: list[str]) -> Collection[Path]:
     if len(args) == 0:
         raise ValueError(
-            f"Error on line {i} of the inventory input: include or exclude has no arguments."
+            f"Error on line {i} of the inventory definition: include or exclude has no arguments."
         )
     ngm = NGlobMulti.from_patterns(args)
     ngm.glob()
     return ngm.files()
 
 
-def get_file_list_git(i: int, args: list[str]) -> Collection[str]:
-    if len(args) != 0:
-        raise ValueError(
-            f"Error on line {i} of the inventory input: "
-            "include-git and exclude-git take no arguments."
-        )
+def get_file_list_git(i: int, args: list[str]) -> Collection[Path]:
     cp = subprocess.run(
-        ["git", "ls-files"],
+        ["git", "ls-files", *args],
         stdin=subprocess.DEVNULL,
         capture_output=True,
         check=True,
         encoding="utf-8",
     )
-    return [line.strip() for line in cp.stdout.splitlines()]
+    return [Path(line.strip()) for line in cp.stdout.splitlines()]
 
 
-def get_file_list_workflow(i: int, args: list[str]) -> Collection[str]:
+def get_file_list_workflow(i: int, args: list[str]) -> Collection[Path]:
     """Get a list of files from a StepUp graph.db workflow file.
 
     There must be at least two arguments: the state and one or more patterns of graph.db files.
     """
     if len(args) < 2:
         raise ValueError(
-            f"Error on line {i} of the inventory input: Expecting at least two arguments."
+            f"Error on line {i} of the inventory definition: Expecting at least two arguments."
         )
     state = FileState[args[0]]
     ngm = NGlobMulti.from_patterns(args[1:])
@@ -135,7 +132,7 @@ def get_file_list_workflow(i: int, args: list[str]) -> Collection[str]:
     paths_graph_db = ngm.files()
     if len(paths_graph_db) == 0:
         raise ValueError(
-            f"Error on line {i} of the inventory input: no matching graph.db workflow files."
+            f"Error on line {i} of the inventory definition: no matching graph.db workflow files."
         )
     paths = set()
     for path_graph_db in paths_graph_db:
@@ -163,7 +160,7 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
     Parameters
     ----------
     lines
-        A list of single lines from an inventory input file.
+        A list of single lines from an inventory definition file.
     paths
         A list of paths to use as a starting point, if any.
         When not given, this function starts from an empty list.
@@ -189,6 +186,7 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
         if file_list_function is None:
             raise ValueError(f"Unsupported command on line {i}: {command}")
         new_paths = file_list_function(i, args)
+        new_paths = [path for path in new_paths if not path.is_dir()]
         if len(new_paths) == 0:
             raise ValueError(f"Line {i} does not provide any paths: {line}")
         if action == "include":

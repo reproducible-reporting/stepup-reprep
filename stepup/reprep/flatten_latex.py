@@ -110,6 +110,7 @@ def flatten_latex(
     inp_paths = []
     path_tex = Path(path_tex)
     tex_root = path_tex.parent.normpath() if tex_root is None else Path(tex_root)
+    status = FlattenStatus.SUCCESS
     with open(path_tex) as fh:
         for iline, line in enumerate(fh):
             # Reduce line to standard form
@@ -117,7 +118,6 @@ def flatten_latex(
             stripped = stripped.replace(" ", "").replace("\t", "")
 
             # Try to find input or import
-            status = FlattenStatus.SUCCESS
             sub_path_tex = None
             new_root = tex_root
             if r"\input{" in stripped:

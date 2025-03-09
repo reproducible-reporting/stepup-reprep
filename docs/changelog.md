@@ -12,9 +12,28 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [2.3.4][] - 2025-03-09 {: #v2.3.4 }
+
+Improvements handling of LaTeX fls file and refactored `make_inventory()` function.
+
+### Changed
+
+- The arguments of [`make_inventory()`][stepup.reprep.api.make_inventory] are now variadic.
+  Files to be included are passed as positional arguments and the last positional argument
+  is the inventory file to be written.
+  An optional argument `path_def` can be used to specify an inventory definition file.
+- The `include-git` and `exclude-git` commands in an inventory definition now accept arguments,
+  which are passed to the `git ls-files` command.
+- LaTeX output files inferred from the `.fls` file are filtered in the same ways as input files.
+  LaTeX sometimes writes output files to `~/.texlive2023/` which should be ignored by StepUp.
+
+### Fixed
+
+- `rr-flatten-latex` now correctly handles empty tex files.
+
 ## [2.3.3][] - 2025-03-03 {: #v2.3.3 }
 
-A few minor improvements related to LaTeX and Bibtex, and parameterized Jupyter notebooks.
+A few minor improvements related to LaTeX and BibTeX, and parameterized Jupyter notebooks.
 
 ### Added
 
@@ -315,6 +334,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4
 [2.3.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.3
 [2.3.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.2
 [2.3.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.1

@@ -14,6 +14,9 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [2.3.5][] - 2025-03-13 {: v2.3.5 }
 
+Bug fix in `rr-cat-pdf` and simplify journal abbreviation in `rr-bibsane`.
+This requires an update the `bibsane.yaml` configuration file.
+
 ## Fixed
 
 - The `--insert-blank` opton of `rr-cat-pdf` was always active,
@@ -31,10 +34,12 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
   An external file with abbreviations is no longer needed.
   They are just included in the `bibsane.yaml` file.
+  (This also means that old bibsane.yaml config files may need to be updated.)
+  See [Sanitizing BibTeX files](advanced_topics/bibsane.md) for more details.
 
 ## [2.3.4][] - 2025-03-09 {: #v2.3.4 }
 
-Improvemed handling of LaTeX fls file and refactored `make_inventory()` function.
+Improved handling of LaTeX fls file and refactored `make_inventory()` function.
 
 ### Changed
 

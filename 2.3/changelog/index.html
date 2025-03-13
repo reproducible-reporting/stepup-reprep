@@ -2227,6 +2227,8 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <p>(no changes yet)</p>
 <h2 id="235-2025-03-13" v2.3.5="v2.3.5"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5">2.3.5</a> - 2025-03-13<a class="headerlink" href="#235-2025-03-13" title="Permanent link">&para;</a></h2>
+<p>Bug fix in <code>rr-cat-pdf</code> and simplify journal abbreviation in <code>rr-bibsane</code>.
+This requires an update the <code>bibsane.yaml</code> configuration file.</p>
 <h2 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The <code>--insert-blank</code> opton of <code>rr-cat-pdf</code> was always active,
@@ -2246,9 +2248,11 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 </li>
 </ul>
 <p>An external file with abbreviations is no longer needed.
-  They are just included in the <code>bibsane.yaml</code> file.</p>
+  They are just included in the <code>bibsane.yaml</code> file.
+  (This also means that old bibsane.yaml config files may need to be updated.)
+  See <a href="../advanced_topics/bibsane/">Sanitizing BibTeX files</a> for more details.</p>
 <h2 id="v2.3.4"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4">2.3.4</a> - 2025-03-09<a class="headerlink" href="#v2.3.4" title="Permanent link">&para;</a></h2>
-<p>Improvemed handling of LaTeX fls file and refactored <code>make_inventory()</code> function.</p>
+<p>Improved handling of LaTeX fls file and refactored <code>make_inventory()</code> function.</p>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>The arguments of <a class="autorefs autorefs-internal" title="make_inventory(*paths, path_def=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.make_inventory"><code>make_inventory()</code></a> are now variadic.

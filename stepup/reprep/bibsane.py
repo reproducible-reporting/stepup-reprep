@@ -20,7 +20,6 @@
 
 import argparse
 import enum
-import json
 import os
 import re
 import shutil
@@ -70,7 +69,7 @@ class BibsaneConfig:
     """The parent directory of the configuration file."""
 
     amend: bool = attrs.field(default=False)
-    """Set to `True` to amend inputs and outputs the StepUp workflow."""
+    """Set to `True` to amend loaded bibtex files as inputs to the StepUp workflow."""
 
     drop_entry_types: list[str] = attrs.field(default=attrs.Factory(list))
     """The entry types to drop from the BibTeX database."""
@@ -99,16 +98,13 @@ class BibsaneConfig:
     fix_page_double_hyphen: bool = attrs.field(default=False)
     """Set to `True` to fix the page ranges for which no double hyphen is used."""
 
-    abbreviate_journal: Path | None = attrs.field(default=None)
-    """The path to the journal abbreviation cache file.
+    abbreviate_journals: bool = attrs.field(default=True)
 
-    This must be a path relative to the parent of the configuration file.
-    If no configuration file is provided, it must be relative to the current working directory.
+    custom_abbreviations: dict[str, str] = attrs.field(factory=dict)
+    """Custom journal abbreviations.
 
-    If set, unabbreviated journal names will be substituted by their ISO abbreviation,
-    which are generated with pyiso4 and cached in the given file.
-    The main reason for the cache file is to provide a mechanism for customizing abbreviations
-    if pyiso4 does not provide the desired abbreviation.
+    By default, pyiso4 is used to abbreviate journal names.
+    The custom abbreviations can override those provided by pyiso4.
     """
 
     sort: bool = attrs.field(default=False)
@@ -177,7 +173,7 @@ def parse_args(argv: list[str] | None = None) -> tuple[list[str], bool, BibsaneC
         "--amend",
         default=False,
         action="store_true",
-        help="Amend the abbreviation cache as a volatile output, if any.",
+        help="Amend the bibtex files as inputs to the StepUp workflow.",
     )
     args = parser.parse_args(argv)
     config = BibsaneConfig.from_file(args.config, args.amend)
@@ -275,11 +271,10 @@ def process_aux(fn_aux: str, verbose: bool, path_out: Path | None, config: Bibsa
         entries = fix_page_double_hyphen(entries)
 
     # Abbreviate journal names
-    if config.abbreviate_journal is not None:
+    if config.abbreviate_journals:
         if verbose:
             print("🔨 Abbreviating journal names")
-        fn_cache = os.path.join(config.root, config.abbreviate_journal)
-        entries = abbreviate_journal_iso(entries, fn_cache, config.amend)
+        entries = abbreviate_journal_iso(entries, config.custom_abbreviations)
 
     # Merge entries
     if config.duplicate_id == DuplicatePolicy.MERGE:
@@ -534,23 +529,9 @@ def fix_page_double_hyphen(entries: list[dict[str, str]]) -> list[dict[str, str]
 
 
 def abbreviate_journal_iso(
-    entries: list[dict[str, str]], fn_cache: str, amend_cache: bool = False
+    entries: list[dict[str, str]], custom: dict[str, str]
 ) -> list[dict[str, str]]:
     """Replace journal names by their ISO abbreviation."""
-
-    # Interaction with StepUp if requested
-    if amend_cache:
-        from stepup.core.api import amend
-
-        amend(vol=fn_cache)
-
-    # Initialize cache
-    if fn_cache is None or not os.path.isfile(fn_cache):
-        cache = {}
-    else:
-        with open(fn_cache) as f:
-            cache = json.load(f)
-
     # Abbreviate journals
     result = []
     abbreviator = Abbreviate.create()
@@ -558,18 +539,12 @@ def abbreviate_journal_iso(
         journal = entry.get("journal")
         new_entry = entry
         if journal is not None and "." not in journal:
-            abbrev = cache.get(journal)
+            abbrev = custom.get(journal)
             if abbrev is None:
                 abbrev = abbreviator(journal, remove_part=True)
-                cache[journal] = abbrev
+            abbrev = custom.get(abbrev, abbrev)
             new_entry = new_entry | {"journal": abbrev}
         result.append(new_entry)
-
-    # Store cache
-    if fn_cache is not None:
-        with open(fn_cache, "w") as f:
-            json.dump(cache, f, indent=2)
-            f.write("\n")
     return result
 
 

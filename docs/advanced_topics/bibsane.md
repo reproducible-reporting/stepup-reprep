@@ -41,8 +41,10 @@ duplicate_doi: merge  # other options: fail or ignore
 preambles_allowed: false
 normalize_whitespace: true
 fix_page_double_hyphen: true
-# The json filename is relative to the location of the config file.
-abbreviate_journal: 'journal_abbreviation_cache.json'
+# PyISO4 can be used to abbreviate journal names.
+abbreviate_journal: true
+custom_abbreviations:
+    CRAZY J0rnAL: Crazy J.
 sort: true  # sort key = {year}{first author lowercase normalized name}
 citation_policies:
   article:

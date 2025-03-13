@@ -7,7 +7,6 @@ file:./
                state = STATIC
           created by   root:
             supplies   file:bibsane.yaml
-            supplies   file:journal_abbreviation_cache.json
             supplies   file:paper-inventory.txt
             supplies   file:paper.aux
             supplies   file:paper.bbl
@@ -111,8 +110,6 @@ step:rr-bibsane --amend paper.aux --config=bibsane.yaml
             consumes   file:bibsane.yaml
             consumes   file:paper.aux
             consumes   file:references.bib [amended]
-             creates   file:journal_abbreviation_cache.json
-            supplies   file:journal_abbreviation_cache.json [amended]
 
 file:paper.bbl
                state = BUILT
@@ -125,9 +122,3 @@ file:paper.log
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-
-file:journal_abbreviation_cache.json
-               state = VOLATILE
-          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
-            consumes   file:./
-            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml

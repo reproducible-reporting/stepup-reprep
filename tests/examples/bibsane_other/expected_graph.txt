@@ -9,7 +9,6 @@ file:./
             supplies   file:bibsane.yaml
             supplies   file:cleaned.bib
             supplies   file:copy.bib
-            supplies   file:journal_abbreviation_cache.json
             supplies   file:paper.aux
             supplies   file:plan.py
             supplies   file:references.bib
@@ -60,9 +59,7 @@ step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
             consumes   file:paper.aux
             consumes   file:references.bib [amended]
              creates   file:cleaned.bib
-             creates   file:journal_abbreviation_cache.json
             supplies   file:cleaned.bib
-            supplies   file:journal_abbreviation_cache.json [amended]
 
 file:cleaned.bib
                state = BUILT
@@ -84,9 +81,3 @@ file:copy.bib
           created by   step:cp -aT cleaned.bib copy.bib
             consumes   file:./
             consumes   step:cp -aT cleaned.bib copy.bib
-
-file:journal_abbreviation_cache.json
-               state = VOLATILE
-          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
-            consumes   file:./
-            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib

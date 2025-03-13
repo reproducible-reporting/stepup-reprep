@@ -10,12 +10,27 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no summary yet)
+(no changes yet)
+
+## [2.3.5][] - 2025-03-13 {: v2.3.5 }
 
 ## Fixed
 
 - The `--insert-blank` opton of `rr-cat-pdf` was always active,
   even when not present on the command line, which is now fixed.
+- The `abbreviate_journal` feature of bibsane used to work with a cache file,
+  which was a remnant from an older implementation.
+  This no longer made much sense (because pyiso4 is fast enough)
+  and it cache files may cause non-reproducible behavior.
+  (They are both inputs and outputs.)
+  For these reasons, the cache feature is replaced by two configuration fields in `bibsane.yaml`:
+
+    - A boolean flag `abbreviate_journals` to enable abbreviations.
+    - An optional mapping `custom_abbreviations` with abbreviation overrides
+      for when pyiso4 does not give the desired result.
+
+  An external file with abbreviations is no longer needed.
+  They are just included in the `bibsane.yaml` file.
 
 ## [2.3.4][] - 2025-03-09 {: #v2.3.4 }
 
@@ -339,6 +354,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5
 [2.3.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4
 [2.3.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.3
 [2.3.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.2

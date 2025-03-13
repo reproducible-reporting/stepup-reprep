@@ -5,7 +5,6 @@ duplicate_doi: merge
 preambles_allowed: false
 normalize_whitespace: true
 fix_page_double_hyphen: true
-abbreviate_journal: 'journal_abbreviation_cache.json'
 sort: true
 citation_policies:
   article:

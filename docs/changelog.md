@@ -10,11 +10,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+## Fixed
+
+- The `--insert-blank` opton of `rr-cat-pdf` was always active,
+  even when not present on the command line, which is now fixed.
 
 ## [2.3.4][] - 2025-03-09 {: #v2.3.4 }
 
-Improvements handling of LaTeX fls file and refactored `make_inventory()` function.
+Improvemed handling of LaTeX fls file and refactored `make_inventory()` function.
 
 ### Changed
 

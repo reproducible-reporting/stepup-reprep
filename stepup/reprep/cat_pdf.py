@@ -82,7 +82,7 @@ def cat_pdf(
         # See https://github.com/pymupdf/PyMuPDF/issues/3635
         src.scrub()
         dst.insert_pdf(src)
-        if src.page_count % 2 == 1:
+        if insert_blank and src.page_count % 2 == 1:
             last_page = src[-1]
             dst.insert_page(-1, width=last_page.rect.width, height=last_page.rect.height)
         src.close()

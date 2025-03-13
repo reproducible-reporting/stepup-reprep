@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.8">
     
     
       
@@ -891,6 +891,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#235-2025-03-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.5 - 2025-03-13
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
@@ -1576,6 +1585,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#235-2025-03-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.5 - 2025-03-13
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     <span class="md-ellipsis">
       Fixed
@@ -2207,12 +2225,28 @@
 and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-based Versioning</a>.
 (Changes to features documented as &ldquo;experimental&rdquo; will not increment macro and meso version numbers.)</p>
 <h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
-<p>(no summary yet)</p>
+<p>(no changes yet)</p>
+<h2 id="235-2025-03-13" v2.3.5="v2.3.5"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5">2.3.5</a> - 2025-03-13<a class="headerlink" href="#235-2025-03-13" title="Permanent link">&para;</a></h2>
 <h2 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The <code>--insert-blank</code> opton of <code>rr-cat-pdf</code> was always active,
   even when not present on the command line, which is now fixed.</li>
+<li>
+<p>The <code>abbreviate_journal</code> feature of bibsane used to work with a cache file,
+  which was a remnant from an older implementation.
+  This no longer made much sense (because pyiso4 is fast enough)
+  and it cache files may cause non-reproducible behavior.
+  (They are both inputs and outputs.)
+  For these reasons, the cache feature is replaced by two configuration fields in <code>bibsane.yaml</code>:</p>
+<ul>
+<li>A boolean flag <code>abbreviate_journals</code> to enable abbreviations.</li>
+<li>An optional mapping <code>custom_abbreviations</code> with abbreviation overrides
+  for when pyiso4 does not give the desired result.</li>
 </ul>
+</li>
+</ul>
+<p>An external file with abbreviations is no longer needed.
+  They are just included in the <code>bibsane.yaml</code> file.</p>
 <h2 id="v2.3.4"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4">2.3.4</a> - 2025-03-09<a class="headerlink" href="#v2.3.4" title="Permanent link">&para;</a></h2>
 <p>Improvemed handling of LaTeX fls file and refactored <code>make_inventory()</code> function.</p>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>

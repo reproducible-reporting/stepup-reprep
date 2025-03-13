@@ -1452,6 +1452,7 @@
 
 
 
+
   <div class="doc doc-children">
 
 
@@ -1535,6 +1536,7 @@
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -1680,6 +1682,7 @@ The last page of each PDF is used to determine the size of the added blank page.
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
@@ -1823,6 +1826,7 @@ Defaults to <code>${REPREP_CHECK_HREFS_CONFIG}</code> variable or <code>check_hr
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -2023,6 +2027,7 @@ When <code>inp_path</code> is a relative path,
 it is interpreted in the same way as the LaTeX compiler would resolve it.
 You can also hide lines from the dependency scanner by adding <code>%REPREP ignore</code>.</p>
 </details>
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-161">161</a></span>
@@ -2399,6 +2404,7 @@ the inventory file is always written, unless this argument is set to <code>False
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-259">259</a></span>
@@ -2768,6 +2774,7 @@ Depending on the extension of the output, the default is <code>${REPREP_INKSCAPE
   <p>A wrapper around inkscape is used to carry out the conversion: <code>stepup.reprep.convert_inkscape</code>.
 The wrapper scans the SVG for dependencies, which may be a bit slow in case of large files.</p>
 </details>
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-394">394</a></span>
@@ -2897,6 +2904,7 @@ The wrapper scans the SVG for dependencies, which may be a bit slow in case of l
         <p>Shorthand for <code>convert_inkscape</code> with the output file derived from the SVG file.</p>
 <p>The <code>dest</code> argument can be <code>None</code>, a directory or a file.</p>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-450">450</a></span>
@@ -2971,6 +2979,7 @@ The wrapper scans the SVG for dependencies, which may be a bit slow in case of l
 
         <p>Shorthand for <code>convert_inkscape</code> with the output file derived from the SVG file.</p>
 <p>The <code>dest</code> argument can be <code>None</code>, a directory or a file. See <code>make_path_out</code>.</p>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -3191,6 +3200,7 @@ e.g. when the already run calculations in parallel.</p>
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -3515,6 +3525,7 @@ which is interpreted as a colon-separated list of files.</p>
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-627">627</a></span>
@@ -3703,6 +3714,7 @@ Defaults to <code>${REPREP_MUTOOL}</code> variable or <code>mutool</code> if the
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-676">676</a></span>
@@ -3811,6 +3823,7 @@ Defaults to <code>${REPREP_MUTOOL}</code> variable or <code>mutool</code> if the
 
         <p>Shorthand for <code>convert_mutool</code> with the output file derived from the PDF file.</p>
 <p>The <code>dest</code> argument can be <code>None</code>, a directory or a file. See <code>make_path_out</code>.</p>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -3948,6 +3961,7 @@ Defaults to <code>${REPREP_LIBREOFFICE}</code> variable or <code>libreoffice</co
   <p>This function does not yet scan the source document for reference to external files.
 which should ideally be added as dependencies.</p>
 </details>
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-787">787</a></span>
@@ -4138,6 +4152,7 @@ Defaults to <code>${REPREP_WEASYPRINT}</code> variable or <code>weasyprint</code
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-746">746</a></span>
@@ -4323,6 +4338,7 @@ If this variable is unset, the following default is used:</p>
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -4517,6 +4533,7 @@ If this variable is unset, the following default is used:</p>
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-909">909</a></span>
@@ -4646,6 +4663,7 @@ except for the last, which is the inventory file to write.</p>
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -4843,6 +4861,7 @@ The default is <code>${REPREP_NUP_PAGE_FORMAT}</code> or A4-L if the variable is
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -5042,6 +5061,7 @@ The default value is taken from <code>${REPREP_RASTER_QUALITY}</code> or 50 if t
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1032">1032</a></span>
@@ -5219,6 +5239,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
   <summary>Notes</summary>
   <p>At least some variables must be given, either as a file containing variables or as a dictionary.</p>
 </details>
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1075">1075</a></span>
@@ -5487,6 +5508,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1160">1160</a></span>
@@ -5644,6 +5666,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
         </li>
     </ul>
 
+
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1213">1213</a></span>
@@ -5750,6 +5773,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
@@ -5874,6 +5898,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
           </div>
         </li>
     </ul>
+
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>

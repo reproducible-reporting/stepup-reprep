@@ -1273,7 +1273,7 @@ An exception is raised when no matching paths are found.</p>
 <p>See <code>rr-make-inventory --help</code> for more details.
 This tool is suitable for creating inventory files of external datasets.</p>
 <h3 id="stepup-reprep-function-make_inventory">StepUp RepRep Function <code>make_inventory</code><a class="headerlink" href="#stepup-reprep-function-make_inventory" title="Permanent link">&para;</a></h3>
-<p>One may include a <a class="autorefs autorefs-internal" href="../../reference/stepup.reprep.api/#stepup.reprep.api.make_inventory"><code>make_inventory()</code></a> step in <code>plan.py</code> as follows:</p>
+<p>One may include a <a class="autorefs autorefs-internal" title="make_inventory(*paths, path_def=None, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.make_inventory"><code>make_inventory()</code></a> step in <code>plan.py</code> as follows:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">stepup.reprep.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_inventory</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">make_inventory</span><span class="p">(</span><span class="s2">&quot;file1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;file2.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;inventory.txt&quot;</span><span class="p">)</span>
@@ -1292,7 +1292,7 @@ or one may provide an inventory definition files as follows:</p>
 </span></code></pre></div>
 <p>This is a command-line wrapper around the <code>zip_inventory</code> function discussed below.</p>
 <h3 id="stepup-reprep-function-zip_inventory">StepUp RepRep Function <code>zip_inventory</code><a class="headerlink" href="#stepup-reprep-function-zip_inventory" title="Permanent link">&para;</a></h3>
-<p>The function <a class="autorefs autorefs-internal" href="../../reference/stepup.reprep.api/#stepup.reprep.api.zip_inventory"><code>zip_inventory()</code></a> takes a <code>inventory.txt</code> file as input
+<p>The function <a class="autorefs autorefs-internal" title="zip_inventory(path_inventory, path_zip, *, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.zip_inventory"><code>zip_inventory()</code></a> takes a <code>inventory.txt</code> file as input
 and creates a ZIP file containing all the files listed in the inventory.
 It differs from the conventional <code>zip</code> program in the following ways:</p>
 <ul>

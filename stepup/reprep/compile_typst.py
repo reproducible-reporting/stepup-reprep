@@ -135,7 +135,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-typst",
+        prog="rr-compile-typst",
         description="Compile a Typst document and extract input and output info.",
     )
     parser.add_argument("path_typ", type=Path, help="The main typst source file.")

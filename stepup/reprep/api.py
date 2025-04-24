@@ -282,7 +282,7 @@ def compile_typst(
 
         - SVG figures with references to external bitmaps are not processed correctly.
           These bitmaps are not rendered, neither are they included in the dep file.
-          For this probem, a workaround was suggsted here:
+          For this problem, a workaround was suggested here:
           https://github.com/typst/typst/issues/5335
         - When the typst compiler detects an error in the input, it doesn't write the dep file.
           This means that StepUp cannot reschedule it, even if that would fix the problem.

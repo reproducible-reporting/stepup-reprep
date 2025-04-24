@@ -1,31 +1,31 @@
-   STARTUP │ (Re)initialized boot script
-  DIRECTOR │ Launched worker 0
-     PHASE │ run
-     START │ ./plan.py
-   SUCCESS │ ./plan.py
-     START │ rr-convert-inkscape hexagon.svg hexagon.pdf
-   SUCCESS │ rr-convert-inkscape hexagon.svg hexagon.pdf
-     START │ rr-convert-inkscape horizontal.svg horizontal.pdf
-   SUCCESS │ rr-convert-inkscape horizontal.svg horizontal.pdf
-     START │ rr-convert-inkscape pentagon.svg pentagon.pdf
-   SUCCESS │ rr-convert-inkscape pentagon.svg pentagon.pdf
-     START │ rr-convert-inkscape square.svg square.pdf
-   SUCCESS │ rr-convert-inkscape square.svg square.pdf
-     START │ rr-convert-inkscape triangle.svg triangle.pdf
-   SUCCESS │ rr-convert-inkscape triangle.svg triangle.pdf
-     START │ rr-convert-inkscape vertical.svg vertical.pdf
-   SUCCESS │ rr-convert-inkscape vertical.svg vertical.pdf
-     START │ ./tile.py plan
-   SUCCESS │ ./tile.py plan
-     START │ ./tile.py run
-   SUCCESS │ ./tile.py run
-  DIRECTOR │ Trying to delete 0 outdated output(s).
-     PHASE │ watch
-   DELETED │ figure.pdf
-     PHASE │ run
-     START │ ./tile.py run
-   SUCCESS │ ./tile.py run
-  DIRECTOR │ Trying to delete 0 outdated output(s).
-     PHASE │ watch
-  DIRECTOR │ Stopping workers.
-  DIRECTOR │ See you!
+        0/0 |    STARTUP │ (Re)initialized boot script
+        0/0 |   DIRECTOR │ Launched worker 0
+        0/1 |      PHASE │ run
+        0/1 |      START │ ./plan.py
+        1/8 |    SUCCESS │ ./plan.py
+        1/8 |      START │ rr-convert-inkscape hexagon.svg hexagon.pdf
+        2/8 |    SUCCESS │ rr-convert-inkscape hexagon.svg hexagon.pdf
+        2/8 |      START │ rr-convert-inkscape horizontal.svg horizontal.pdf
+        3/8 |    SUCCESS │ rr-convert-inkscape horizontal.svg horizontal.pdf
+        3/8 |      START │ rr-convert-inkscape pentagon.svg pentagon.pdf
+        4/8 |    SUCCESS │ rr-convert-inkscape pentagon.svg pentagon.pdf
+        4/8 |      START │ rr-convert-inkscape square.svg square.pdf
+        5/8 |    SUCCESS │ rr-convert-inkscape square.svg square.pdf
+        5/8 |      START │ rr-convert-inkscape triangle.svg triangle.pdf
+        6/8 |    SUCCESS │ rr-convert-inkscape triangle.svg triangle.pdf
+        6/8 |      START │ rr-convert-inkscape vertical.svg vertical.pdf
+        7/8 |    SUCCESS │ rr-convert-inkscape vertical.svg vertical.pdf
+        7/8 |      START │ ./tile.py plan
+        8/9 |    SUCCESS │ ./tile.py plan
+        8/9 |      START │ ./tile.py run
+        9/9 |    SUCCESS │ ./tile.py run
+        9/9 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        9/9 |      PHASE │ watch
+        9/9 |    DELETED │ figure.pdf
+        8/9 |      PHASE │ run
+        8/9 |      START │ ./tile.py run
+        9/9 |    SUCCESS │ ./tile.py run
+        9/9 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        9/9 |      PHASE │ watch
+        9/9 |   DIRECTOR │ Stopping workers.
+        9/9 |   DIRECTOR │ See you!

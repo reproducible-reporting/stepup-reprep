@@ -124,7 +124,6 @@ file:static/plan.py
 step:rr-render-jinja main.tex ../variables.py variables.py ../public/main.tex  # wd=static/
                state = SUCCEEDED
              env_var = PUBLIC [amended]
-                     = ROOT [amended]
           created by   step:./plan.py  # wd=static/
             consumes   file:./
             consumes   file:public/

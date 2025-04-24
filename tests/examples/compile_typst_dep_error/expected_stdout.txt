@@ -1,10 +1,10 @@
-   STARTUP │ (Re)initialized boot script
-  DIRECTOR │ Launched worker 0
-     PHASE │ run
-     START │ ./plan.py
-   SUCCESS │ ./plan.py
-     START │ rr-compile-typst --keep-deps document.typ
-      FAIL │ rr-compile-typst --keep-deps document.typ
+        0/0 |    STARTUP │ (Re)initialized boot script
+        0/0 |   DIRECTOR │ Launched worker 0
+        0/1 |      PHASE │ run
+        0/1 |      START │ ./plan.py
+        1/3 |    SUCCESS │ ./plan.py
+        1/3 |      START │ rr-compile-typst --keep-deps document.typ
+        1/2 |       FAIL │ rr-compile-typst --keep-deps document.typ
 ────────────────────────────────── Step info ───────────────────────────────────
 Command               rr-compile-typst --keep-deps document.typ
 Return code           1
@@ -14,11 +14,11 @@ document.pdf
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────
-     START │ echo 'fixed: new' > data.yaml
-   SUCCESS │ echo 'fixed: new' > data.yaml
-   WARNING │ 1 step(s) failed.
-   WARNING │ Skipping file cleanup due to incomplete build.
-   WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
-     PHASE │ watch
-  DIRECTOR │ Stopping workers.
-  DIRECTOR │ See you!
+        1/2 |      START │ echo 'fixed: new' > data.yaml
+        2/2 |    SUCCESS │ echo 'fixed: new' > data.yaml
+        2/2 |    WARNING │ 1 step(s) failed.
+        2/2 |    WARNING │ Skipping file cleanup due to incomplete build.
+        2/2 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+        2/2 |      PHASE │ watch
+        2/2 |   DIRECTOR │ Stopping workers.
+        2/2 |   DIRECTOR │ See you!

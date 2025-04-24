@@ -1,10 +1,10 @@
-   STARTUP │ (Re)initialized boot script
-  DIRECTOR │ Launched worker 0
-     PHASE │ run
-     START │ ./plan.py
-   SUCCESS │ ./plan.py
-     START │ rr-bibsane --amend paper.aux --config=bibsane.yaml
-      FAIL │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+        0/0 |    STARTUP │ (Re)initialized boot script
+        0/0 |   DIRECTOR │ Launched worker 0
+        0/1 |      PHASE │ run
+        0/1 |      START │ ./plan.py
+        1/3 |    SUCCESS │ ./plan.py
+        1/3 |      START │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+        1/2 |       FAIL │ rr-bibsane --amend paper.aux --config=bibsane.yaml
 ────────────────────────────────── Step info ───────────────────────────────────
 Command               rr-bibsane --amend paper.aux --config=bibsane.yaml
 Return code           0
@@ -26,13 +26,13 @@ Input changed unexpectedly: references.bib (digest bfc27a8d ➜ f933ff21, size 1
 🔨 Abbreviating journal names
 💾 Please check the new or corrected file: references.bib
 ────────────────────────────────────────────────────────────────────────────────
-     ERROR │ The scheduler has been drained due to unexpected input changes.
-   WARNING │ 1 step(s) failed.
-   WARNING │ Scheduler is put on hold. Not reporting pending steps.
-   WARNING │ Skipping file cleanup due to incomplete build.
-   WARNING │ Made 1 step(s) in the queue pending again.
-   WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
-     PHASE │ watch
-   UPDATED │ references.bib
-  DIRECTOR │ Stopping workers.
-  DIRECTOR │ See you!
+        1/2 |      ERROR │ The scheduler has been drained due to unexpected input changes.
+        1/2 |    WARNING │ 1 step(s) failed.
+        1/2 |    WARNING │ Scheduler is put on hold. Not reporting pending steps.
+        1/2 |    WARNING │ Skipping file cleanup due to incomplete build.
+        1/2 |    WARNING │ Made 1 step(s) in the queue pending again.
+        1/2 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+        1/2 |      PHASE │ watch
+        1/2 |    UPDATED │ references.bib
+        1/2 |   DIRECTOR │ Stopping workers.
+        1/2 |   DIRECTOR │ See you!

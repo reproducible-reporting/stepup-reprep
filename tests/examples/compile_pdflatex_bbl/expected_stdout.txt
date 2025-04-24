@@ -1,19 +1,19 @@
-   STARTUP │ (Re)initialized boot script
-  DIRECTOR │ Launched worker 0
-     PHASE │ run
-     START │ ./plan.py
-   SUCCESS │ ./plan.py
-     START │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
-   SUCCESS │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
-  DIRECTOR │ Trying to delete 0 outdated output(s).
-     PHASE │ watch
-   DELETED │ paper.aux
-   DELETED │ paper.log
-   DELETED │ paper.pdf
-     PHASE │ run
-     START │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
-   SUCCESS │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
-  DIRECTOR │ Trying to delete 0 outdated output(s).
-     PHASE │ watch
-  DIRECTOR │ Stopping workers.
-  DIRECTOR │ See you!
+        0/0 |    STARTUP │ (Re)initialized boot script
+        0/0 |   DIRECTOR │ Launched worker 0
+        0/1 |      PHASE │ run
+        0/1 |      START │ ./plan.py
+        1/2 |    SUCCESS │ ./plan.py
+        1/2 |      START │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
+        2/2 |    SUCCESS │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
+        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/2 |      PHASE │ watch
+        2/2 |    DELETED │ paper.aux
+        2/2 |    DELETED │ paper.log
+        2/2 |    DELETED │ paper.pdf
+        1/2 |      PHASE │ run
+        1/2 |      START │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
+        2/2 |    SUCCESS │ rr-compile-latex paper.tex --inventory=paper-inventory.txt
+        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/2 |      PHASE │ watch
+        2/2 |   DIRECTOR │ Stopping workers.
+        2/2 |   DIRECTOR │ See you!

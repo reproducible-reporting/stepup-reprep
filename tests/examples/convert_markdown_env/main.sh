@@ -8,7 +8,7 @@ rm -rvf $(cat .gitignore)
 export SOURCE_DATE_EPOCH="315532800"
 export REPREP_KATEX_MACROS="common/macros.tex"
 export REPREP_MARKDOWN_CSS="common/demo.css:common/page.css"
-stepup -w -n 1 plan.py & # > current_stdout.txt &
+stepup -w -n 1 & # > current_stdout.txt &
 PID=$!
 
 # Wait for the director and get its socket.

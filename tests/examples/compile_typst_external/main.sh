@@ -8,7 +8,7 @@ rm -rvf $(cat .gitignore)
 export SOURCE_DATE_EPOCH="315532800"
 export REPREP_TYPST_INVENTORY="1"
 cd stepup
-stepup -w -n 1 plan.py & # > ../current_stdout.txt &
+stepup -w -n 1 & # > ../current_stdout.txt &
 
 # Wait for the director and get its socket.
 export STEPUP_DIRECTOR_SOCKET=$(

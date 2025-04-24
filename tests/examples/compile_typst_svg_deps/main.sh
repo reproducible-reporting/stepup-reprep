@@ -9,7 +9,7 @@ typst compile - /dev/null -f pdf <<< '#import "@preview/based:0.1.0": encode64'
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
-stepup -w -n 1 plan.py & # > current_stdout.txt &
+stepup -w -n 1 & # > current_stdout.txt &
 
 # Wait for the director and get its socket.
 export STEPUP_DIRECTOR_SOCKET=$(

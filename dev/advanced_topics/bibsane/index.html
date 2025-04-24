@@ -994,7 +994,7 @@ to be able to identify unused records.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">compile_latex</span><span class="p">(</span><span class="s2">&quot;paper.tex&quot;</span><span class="p">)</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">sanitize_bibtex</span><span class="p">(</span><span class="s2">&quot;paper.aux&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The <a class="autorefs autorefs-internal" title="sanitize_bibtex(*paths_aux, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> function will read the <code>.aux</code> file(s)
+<p>The <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> function will read the <code>.aux</code> file(s)
 to identify the <code>.bib</code> files used.
 By default, it assumes there is just one <code>.bib</code> file and rewrites it with the cleaned-up content.
 If there are multiple <code>.bib</code> files, you can specify an output file with <code>path_out="clean.bib"</code>.</p>

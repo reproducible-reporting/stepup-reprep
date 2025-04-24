@@ -5437,7 +5437,7 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 
 
 <h2 id="stepup.reprep.api.sanitize_bibtex" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sanitize_bibtex</span><span class="p">(</span><span class="o">*</span><span class="n">paths_aux</span><span class="p">,</span> <span class="n">path_cfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">sanitize_bibtex</span><span class="p">(</span><span class="n">path_bib</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path_aux</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_cfg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#stepup.reprep.api.sanitize_bibtex" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -5450,13 +5450,22 @@ The latex style replaces curly brackets by angle brackets: &lt;&lt; &gt;&gt; etc
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-            <b><code>paths_aux</code></b>
-              (<code><span title="str">str</span></code>, default:
-                  <code>()</code>
+            <b><code>path_bib</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Path to the BibTeX file to be sanitized.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>path_aux</code></b>
+              (<code><span title="str">str</span> | None</code>, default:
+                  <code>None</code>
 )
           –
           <div class="doc-md-description">
-            <p>Paths to LaTeX aux files.</p>
+            <p>Paths to LaTeX aux file if any.
+This is used to detect unused or missing citations.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -5581,57 +5590,75 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 <span class="normal"><a href="#__codelineno-0-1203">1203</a></span>
 <span class="normal"><a href="#__codelineno-0-1204">1204</a></span>
 <span class="normal"><a href="#__codelineno-0-1205">1205</a></span>
-<span class="normal"><a href="#__codelineno-0-1206">1206</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1156"><a id="__codelineno-0-1156" name="__codelineno-0-1156"></a><span class="k">def</span><span class="w"> </span><span class="nf">sanitize_bibtex</span><span class="p">(</span>
-</span><span id="__span-0-1157"><a id="__codelineno-0-1157" name="__codelineno-0-1157"></a>    <span class="o">*</span><span class="n">paths_aux</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="__span-0-1158"><a id="__codelineno-0-1158" name="__codelineno-0-1158"></a>    <span class="n">path_cfg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-0-1159"><a id="__codelineno-0-1159" name="__codelineno-0-1159"></a>    <span class="n">path_out</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-0-1160"><a id="__codelineno-0-1160" name="__codelineno-0-1160"></a>    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-1161"><a id="__codelineno-0-1161" name="__codelineno-0-1161"></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-1162"><a id="__codelineno-0-1162" name="__codelineno-0-1162"></a>    <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-1163"><a id="__codelineno-0-1163" name="__codelineno-0-1163"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1164"><a id="__codelineno-0-1164" name="__codelineno-0-1164"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Sanitize a BibTeX file.</span>
-</span><span id="__span-0-1165"><a id="__codelineno-0-1165" name="__codelineno-0-1165"></a>
-</span><span id="__span-0-1166"><a id="__codelineno-0-1166" name="__codelineno-0-1166"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1167"><a id="__codelineno-0-1167" name="__codelineno-0-1167"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1168"><a id="__codelineno-0-1168" name="__codelineno-0-1168"></a><span class="sd">    paths_aux</span>
-</span><span id="__span-0-1169"><a id="__codelineno-0-1169" name="__codelineno-0-1169"></a><span class="sd">        Paths to LaTeX aux files.</span>
-</span><span id="__span-0-1170"><a id="__codelineno-0-1170" name="__codelineno-0-1170"></a><span class="sd">    path_cfg</span>
-</span><span id="__span-0-1171"><a id="__codelineno-0-1171" name="__codelineno-0-1171"></a><span class="sd">        The YAML configuration file for the `rr-sanitize-bibtex` script.</span>
-</span><span id="__span-0-1172"><a id="__codelineno-0-1172" name="__codelineno-0-1172"></a><span class="sd">    path_out</span>
-</span><span id="__span-0-1173"><a id="__codelineno-0-1173" name="__codelineno-0-1173"></a><span class="sd">        If given, a single cleaned-up bibtex file is written as output,</span>
-</span><span id="__span-0-1174"><a id="__codelineno-0-1174" name="__codelineno-0-1174"></a><span class="sd">        which you can manually copy back to the original if you approve of the cleanup.</span>
-</span><span id="__span-0-1175"><a id="__codelineno-0-1175" name="__codelineno-0-1175"></a><span class="sd">        If not given, the original bibtex file is overwritten (if there is only one),</span>
-</span><span id="__span-0-1176"><a id="__codelineno-0-1176" name="__codelineno-0-1176"></a><span class="sd">        which will drain the scheduler.</span>
-</span><span id="__span-0-1177"><a id="__codelineno-0-1177" name="__codelineno-0-1177"></a><span class="sd">        You then check if the updated version is correct and rerun the build to approve.</span>
-</span><span id="__span-0-1178"><a id="__codelineno-0-1178" name="__codelineno-0-1178"></a><span class="sd">    overwrite</span>
-</span><span id="__span-0-1179"><a id="__codelineno-0-1179" name="__codelineno-0-1179"></a><span class="sd">        If `True`, it is assumed that you want to overwrite an input bibtex file,</span>
-</span><span id="__span-0-1180"><a id="__codelineno-0-1180" name="__codelineno-0-1180"></a><span class="sd">        in which case `path_out` is not treated as a new output file in the workflow.</span>
-</span><span id="__span-0-1181"><a id="__codelineno-0-1181" name="__codelineno-0-1181"></a><span class="sd">    optional</span>
-</span><span id="__span-0-1182"><a id="__codelineno-0-1182" name="__codelineno-0-1182"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
-</span><span id="__span-0-1183"><a id="__codelineno-0-1183" name="__codelineno-0-1183"></a><span class="sd">    block</span>
-</span><span id="__span-0-1184"><a id="__codelineno-0-1184" name="__codelineno-0-1184"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1185"><a id="__codelineno-0-1185" name="__codelineno-0-1185"></a>
-</span><span id="__span-0-1186"><a id="__codelineno-0-1186" name="__codelineno-0-1186"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1187"><a id="__codelineno-0-1187" name="__codelineno-0-1187"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1188"><a id="__codelineno-0-1188" name="__codelineno-0-1188"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1189"><a id="__codelineno-0-1189" name="__codelineno-0-1189"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1190"><a id="__codelineno-0-1190" name="__codelineno-0-1190"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1191"><a id="__codelineno-0-1191" name="__codelineno-0-1191"></a>    <span class="k">with</span> <span class="n">subs_env_vars</span><span class="p">()</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
-</span><span id="__span-0-1192"><a id="__codelineno-0-1192" name="__codelineno-0-1192"></a>        <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span>
-</span><span id="__span-0-1193"><a id="__codelineno-0-1193" name="__codelineno-0-1193"></a>        <span class="n">paths_aux</span> <span class="o">=</span> <span class="p">[</span><span class="n">subs</span><span class="p">(</span><span class="n">path_aux</span><span class="p">)</span> <span class="k">for</span> <span class="n">path_aux</span> <span class="ow">in</span> <span class="n">paths_aux</span><span class="p">]</span>
-</span><span id="__span-0-1194"><a id="__codelineno-0-1194" name="__codelineno-0-1194"></a>        <span class="n">path_out</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
-</span><span id="__span-0-1195"><a id="__codelineno-0-1195" name="__codelineno-0-1195"></a>
-</span><span id="__span-0-1196"><a id="__codelineno-0-1196" name="__codelineno-0-1196"></a>    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rr-bibsane&quot;</span><span class="p">,</span> <span class="s2">&quot;--amend&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_aux</span><span class="p">)</span> <span class="k">for</span> <span class="n">path_aux</span> <span class="ow">in</span> <span class="n">paths_aux</span><span class="p">)]</span>
-</span><span id="__span-0-1197"><a id="__codelineno-0-1197" name="__codelineno-0-1197"></a>    <span class="n">paths_inp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">paths_aux</span><span class="p">)</span>
-</span><span id="__span-0-1198"><a id="__codelineno-0-1198" name="__codelineno-0-1198"></a>    <span class="k">if</span> <span class="n">path_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-1199"><a id="__codelineno-0-1199" name="__codelineno-0-1199"></a>        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--config=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">))</span>
-</span><span id="__span-0-1200"><a id="__codelineno-0-1200" name="__codelineno-0-1200"></a>        <span class="n">paths_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span>
-</span><span id="__span-0-1201"><a id="__codelineno-0-1201" name="__codelineno-0-1201"></a>    <span class="n">paths_out</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="__span-0-1202"><a id="__codelineno-0-1202" name="__codelineno-0-1202"></a>    <span class="k">if</span> <span class="n">path_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-1203"><a id="__codelineno-0-1203" name="__codelineno-0-1203"></a>        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--out=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_out</span><span class="p">))</span>
-</span><span id="__span-0-1204"><a id="__codelineno-0-1204" name="__codelineno-0-1204"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
-</span><span id="__span-0-1205"><a id="__codelineno-0-1205" name="__codelineno-0-1205"></a>            <span class="n">paths_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
-</span><span id="__span-0-1206"><a id="__codelineno-0-1206" name="__codelineno-0-1206"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="n">inp</span><span class="o">=</span><span class="n">paths_inp</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">paths_out</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-1206">1206</a></span>
+<span class="normal"><a href="#__codelineno-0-1207">1207</a></span>
+<span class="normal"><a href="#__codelineno-0-1208">1208</a></span>
+<span class="normal"><a href="#__codelineno-0-1209">1209</a></span>
+<span class="normal"><a href="#__codelineno-0-1210">1210</a></span>
+<span class="normal"><a href="#__codelineno-0-1211">1211</a></span>
+<span class="normal"><a href="#__codelineno-0-1212">1212</a></span>
+<span class="normal"><a href="#__codelineno-0-1213">1213</a></span>
+<span class="normal"><a href="#__codelineno-0-1214">1214</a></span>
+<span class="normal"><a href="#__codelineno-0-1215">1215</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1156"><a id="__codelineno-0-1156" name="__codelineno-0-1156"></a><span class="k">def</span><span class="w"> </span><span class="nf">sanitize_bibtex</span><span class="p">(</span>
+</span><span id="__span-0-1157"><a id="__codelineno-0-1157" name="__codelineno-0-1157"></a>    <span class="n">path_bib</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="__span-0-1158"><a id="__codelineno-0-1158" name="__codelineno-0-1158"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-0-1159"><a id="__codelineno-0-1159" name="__codelineno-0-1159"></a>    <span class="n">path_aux</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-1160"><a id="__codelineno-0-1160" name="__codelineno-0-1160"></a>    <span class="n">path_cfg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-1161"><a id="__codelineno-0-1161" name="__codelineno-0-1161"></a>    <span class="n">path_out</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-1162"><a id="__codelineno-0-1162" name="__codelineno-0-1162"></a>    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-1163"><a id="__codelineno-0-1163" name="__codelineno-0-1163"></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-1164"><a id="__codelineno-0-1164" name="__codelineno-0-1164"></a>    <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-1165"><a id="__codelineno-0-1165" name="__codelineno-0-1165"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1166"><a id="__codelineno-0-1166" name="__codelineno-0-1166"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Sanitize a BibTeX file.</span>
+</span><span id="__span-0-1167"><a id="__codelineno-0-1167" name="__codelineno-0-1167"></a>
+</span><span id="__span-0-1168"><a id="__codelineno-0-1168" name="__codelineno-0-1168"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1169"><a id="__codelineno-0-1169" name="__codelineno-0-1169"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1170"><a id="__codelineno-0-1170" name="__codelineno-0-1170"></a><span class="sd">    path_bib</span>
+</span><span id="__span-0-1171"><a id="__codelineno-0-1171" name="__codelineno-0-1171"></a><span class="sd">        Path to the BibTeX file to be sanitized.</span>
+</span><span id="__span-0-1172"><a id="__codelineno-0-1172" name="__codelineno-0-1172"></a><span class="sd">    path_aux</span>
+</span><span id="__span-0-1173"><a id="__codelineno-0-1173" name="__codelineno-0-1173"></a><span class="sd">        Paths to LaTeX aux file if any.</span>
+</span><span id="__span-0-1174"><a id="__codelineno-0-1174" name="__codelineno-0-1174"></a><span class="sd">        This is used to detect unused or missing citations.</span>
+</span><span id="__span-0-1175"><a id="__codelineno-0-1175" name="__codelineno-0-1175"></a><span class="sd">    path_cfg</span>
+</span><span id="__span-0-1176"><a id="__codelineno-0-1176" name="__codelineno-0-1176"></a><span class="sd">        The YAML configuration file for the `rr-sanitize-bibtex` script.</span>
+</span><span id="__span-0-1177"><a id="__codelineno-0-1177" name="__codelineno-0-1177"></a><span class="sd">    path_out</span>
+</span><span id="__span-0-1178"><a id="__codelineno-0-1178" name="__codelineno-0-1178"></a><span class="sd">        If given, a single cleaned-up bibtex file is written as output,</span>
+</span><span id="__span-0-1179"><a id="__codelineno-0-1179" name="__codelineno-0-1179"></a><span class="sd">        which you can manually copy back to the original if you approve of the cleanup.</span>
+</span><span id="__span-0-1180"><a id="__codelineno-0-1180" name="__codelineno-0-1180"></a><span class="sd">        If not given, the original bibtex file is overwritten (if there is only one),</span>
+</span><span id="__span-0-1181"><a id="__codelineno-0-1181" name="__codelineno-0-1181"></a><span class="sd">        which will drain the scheduler.</span>
+</span><span id="__span-0-1182"><a id="__codelineno-0-1182" name="__codelineno-0-1182"></a><span class="sd">        You then check if the updated version is correct and rerun the build to approve.</span>
+</span><span id="__span-0-1183"><a id="__codelineno-0-1183" name="__codelineno-0-1183"></a><span class="sd">    overwrite</span>
+</span><span id="__span-0-1184"><a id="__codelineno-0-1184" name="__codelineno-0-1184"></a><span class="sd">        If `True`, it is assumed that you want to overwrite an input bibtex file,</span>
+</span><span id="__span-0-1185"><a id="__codelineno-0-1185" name="__codelineno-0-1185"></a><span class="sd">        in which case `path_out` is not treated as a new output file in the workflow.</span>
+</span><span id="__span-0-1186"><a id="__codelineno-0-1186" name="__codelineno-0-1186"></a><span class="sd">    optional</span>
+</span><span id="__span-0-1187"><a id="__codelineno-0-1187" name="__codelineno-0-1187"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-1188"><a id="__codelineno-0-1188" name="__codelineno-0-1188"></a><span class="sd">    block</span>
+</span><span id="__span-0-1189"><a id="__codelineno-0-1189" name="__codelineno-0-1189"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1190"><a id="__codelineno-0-1190" name="__codelineno-0-1190"></a>
+</span><span id="__span-0-1191"><a id="__codelineno-0-1191" name="__codelineno-0-1191"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1192"><a id="__codelineno-0-1192" name="__codelineno-0-1192"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1193"><a id="__codelineno-0-1193" name="__codelineno-0-1193"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1194"><a id="__codelineno-0-1194" name="__codelineno-0-1194"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1195"><a id="__codelineno-0-1195" name="__codelineno-0-1195"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1196"><a id="__codelineno-0-1196" name="__codelineno-0-1196"></a>    <span class="k">with</span> <span class="n">subs_env_vars</span><span class="p">()</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
+</span><span id="__span-0-1197"><a id="__codelineno-0-1197" name="__codelineno-0-1197"></a>        <span class="n">path_bib</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_bib</span><span class="p">)</span>
+</span><span id="__span-0-1198"><a id="__codelineno-0-1198" name="__codelineno-0-1198"></a>        <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span>
+</span><span id="__span-0-1199"><a id="__codelineno-0-1199" name="__codelineno-0-1199"></a>        <span class="n">path_aux</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_aux</span><span class="p">)</span>
+</span><span id="__span-0-1200"><a id="__codelineno-0-1200" name="__codelineno-0-1200"></a>        <span class="n">path_out</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+</span><span id="__span-0-1201"><a id="__codelineno-0-1201" name="__codelineno-0-1201"></a>
+</span><span id="__span-0-1202"><a id="__codelineno-0-1202" name="__codelineno-0-1202"></a>    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rr-bibsane&quot;</span><span class="p">,</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_bib</span><span class="p">)]</span>
+</span><span id="__span-0-1203"><a id="__codelineno-0-1203" name="__codelineno-0-1203"></a>    <span class="n">paths_inp</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_bib</span><span class="p">]</span>
+</span><span id="__span-0-1204"><a id="__codelineno-0-1204" name="__codelineno-0-1204"></a>    <span class="k">if</span> <span class="n">path_aux</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-1205"><a id="__codelineno-0-1205" name="__codelineno-0-1205"></a>        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--aux=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_aux</span><span class="p">))</span>
+</span><span id="__span-0-1206"><a id="__codelineno-0-1206" name="__codelineno-0-1206"></a>        <span class="n">paths_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_aux</span><span class="p">)</span>
+</span><span id="__span-0-1207"><a id="__codelineno-0-1207" name="__codelineno-0-1207"></a>    <span class="k">if</span> <span class="n">path_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-1208"><a id="__codelineno-0-1208" name="__codelineno-0-1208"></a>        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--config=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">))</span>
+</span><span id="__span-0-1209"><a id="__codelineno-0-1209" name="__codelineno-0-1209"></a>        <span class="n">paths_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span>
+</span><span id="__span-0-1210"><a id="__codelineno-0-1210" name="__codelineno-0-1210"></a>    <span class="n">paths_out</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-0-1211"><a id="__codelineno-0-1211" name="__codelineno-0-1211"></a>    <span class="k">if</span> <span class="n">path_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-1212"><a id="__codelineno-0-1212" name="__codelineno-0-1212"></a>        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--out=&quot;</span> <span class="o">+</span> <span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">path_out</span><span class="p">))</span>
+</span><span id="__span-0-1213"><a id="__codelineno-0-1213" name="__codelineno-0-1213"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+</span><span id="__span-0-1214"><a id="__codelineno-0-1214" name="__codelineno-0-1214"></a>            <span class="n">paths_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+</span><span id="__span-0-1215"><a id="__codelineno-0-1215" name="__codelineno-0-1215"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="n">inp</span><span class="o">=</span><span class="n">paths_inp</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">paths_out</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5689,37 +5716,37 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1209">1209</a></span>
-<span class="normal"><a href="#__codelineno-0-1210">1210</a></span>
-<span class="normal"><a href="#__codelineno-0-1211">1211</a></span>
-<span class="normal"><a href="#__codelineno-0-1212">1212</a></span>
-<span class="normal"><a href="#__codelineno-0-1213">1213</a></span>
-<span class="normal"><a href="#__codelineno-0-1214">1214</a></span>
-<span class="normal"><a href="#__codelineno-0-1215">1215</a></span>
-<span class="normal"><a href="#__codelineno-0-1216">1216</a></span>
-<span class="normal"><a href="#__codelineno-0-1217">1217</a></span>
-<span class="normal"><a href="#__codelineno-0-1218">1218</a></span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1218">1218</a></span>
 <span class="normal"><a href="#__codelineno-0-1219">1219</a></span>
 <span class="normal"><a href="#__codelineno-0-1220">1220</a></span>
 <span class="normal"><a href="#__codelineno-0-1221">1221</a></span>
 <span class="normal"><a href="#__codelineno-0-1222">1222</a></span>
 <span class="normal"><a href="#__codelineno-0-1223">1223</a></span>
-<span class="normal"><a href="#__codelineno-0-1224">1224</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1209"><a id="__codelineno-0-1209" name="__codelineno-0-1209"></a><span class="k">def</span><span class="w"> </span><span class="nf">sync_zenodo</span><span class="p">(</span><span class="n">path_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1210"><a id="__codelineno-0-1210" name="__codelineno-0-1210"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize data with an draft dataset on Zenodo.</span>
-</span><span id="__span-0-1211"><a id="__codelineno-0-1211" name="__codelineno-0-1211"></a>
-</span><span id="__span-0-1212"><a id="__codelineno-0-1212" name="__codelineno-0-1212"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1213"><a id="__codelineno-0-1213" name="__codelineno-0-1213"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1214"><a id="__codelineno-0-1214" name="__codelineno-0-1214"></a><span class="sd">    path_config</span>
-</span><span id="__span-0-1215"><a id="__codelineno-0-1215" name="__codelineno-0-1215"></a><span class="sd">        The YAML configuration file for the Zenodo upload.</span>
-</span><span id="__span-0-1216"><a id="__codelineno-0-1216" name="__codelineno-0-1216"></a><span class="sd">    block</span>
-</span><span id="__span-0-1217"><a id="__codelineno-0-1217" name="__codelineno-0-1217"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1218"><a id="__codelineno-0-1218" name="__codelineno-0-1218"></a>
-</span><span id="__span-0-1219"><a id="__codelineno-0-1219" name="__codelineno-0-1219"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1220"><a id="__codelineno-0-1220" name="__codelineno-0-1220"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1221"><a id="__codelineno-0-1221" name="__codelineno-0-1221"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1222"><a id="__codelineno-0-1222" name="__codelineno-0-1222"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1223"><a id="__codelineno-0-1223" name="__codelineno-0-1223"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1224"><a id="__codelineno-0-1224" name="__codelineno-0-1224"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot;rr-sync-zenodo $</span><span class="si">{inp}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_config</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-1224">1224</a></span>
+<span class="normal"><a href="#__codelineno-0-1225">1225</a></span>
+<span class="normal"><a href="#__codelineno-0-1226">1226</a></span>
+<span class="normal"><a href="#__codelineno-0-1227">1227</a></span>
+<span class="normal"><a href="#__codelineno-0-1228">1228</a></span>
+<span class="normal"><a href="#__codelineno-0-1229">1229</a></span>
+<span class="normal"><a href="#__codelineno-0-1230">1230</a></span>
+<span class="normal"><a href="#__codelineno-0-1231">1231</a></span>
+<span class="normal"><a href="#__codelineno-0-1232">1232</a></span>
+<span class="normal"><a href="#__codelineno-0-1233">1233</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1218"><a id="__codelineno-0-1218" name="__codelineno-0-1218"></a><span class="k">def</span><span class="w"> </span><span class="nf">sync_zenodo</span><span class="p">(</span><span class="n">path_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1219"><a id="__codelineno-0-1219" name="__codelineno-0-1219"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize data with an draft dataset on Zenodo.</span>
+</span><span id="__span-0-1220"><a id="__codelineno-0-1220" name="__codelineno-0-1220"></a>
+</span><span id="__span-0-1221"><a id="__codelineno-0-1221" name="__codelineno-0-1221"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1222"><a id="__codelineno-0-1222" name="__codelineno-0-1222"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1223"><a id="__codelineno-0-1223" name="__codelineno-0-1223"></a><span class="sd">    path_config</span>
+</span><span id="__span-0-1224"><a id="__codelineno-0-1224" name="__codelineno-0-1224"></a><span class="sd">        The YAML configuration file for the Zenodo upload.</span>
+</span><span id="__span-0-1225"><a id="__codelineno-0-1225" name="__codelineno-0-1225"></a><span class="sd">    block</span>
+</span><span id="__span-0-1226"><a id="__codelineno-0-1226" name="__codelineno-0-1226"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1227"><a id="__codelineno-0-1227" name="__codelineno-0-1227"></a>
+</span><span id="__span-0-1228"><a id="__codelineno-0-1228" name="__codelineno-0-1228"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1229"><a id="__codelineno-0-1229" name="__codelineno-0-1229"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1230"><a id="__codelineno-0-1230" name="__codelineno-0-1230"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1231"><a id="__codelineno-0-1231" name="__codelineno-0-1231"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1232"><a id="__codelineno-0-1232" name="__codelineno-0-1232"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1233"><a id="__codelineno-0-1233" name="__codelineno-0-1233"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="s2">&quot;rr-sync-zenodo $</span><span class="si">{inp}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_config</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5797,16 +5824,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1227">1227</a></span>
-<span class="normal"><a href="#__codelineno-0-1228">1228</a></span>
-<span class="normal"><a href="#__codelineno-0-1229">1229</a></span>
-<span class="normal"><a href="#__codelineno-0-1230">1230</a></span>
-<span class="normal"><a href="#__codelineno-0-1231">1231</a></span>
-<span class="normal"><a href="#__codelineno-0-1232">1232</a></span>
-<span class="normal"><a href="#__codelineno-0-1233">1233</a></span>
-<span class="normal"><a href="#__codelineno-0-1234">1234</a></span>
-<span class="normal"><a href="#__codelineno-0-1235">1235</a></span>
-<span class="normal"><a href="#__codelineno-0-1236">1236</a></span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1236">1236</a></span>
 <span class="normal"><a href="#__codelineno-0-1237">1237</a></span>
 <span class="normal"><a href="#__codelineno-0-1238">1238</a></span>
 <span class="normal"><a href="#__codelineno-0-1239">1239</a></span>
@@ -5821,31 +5839,40 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 <span class="normal"><a href="#__codelineno-0-1248">1248</a></span>
 <span class="normal"><a href="#__codelineno-0-1249">1249</a></span>
 <span class="normal"><a href="#__codelineno-0-1250">1250</a></span>
-<span class="normal"><a href="#__codelineno-0-1251">1251</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1227"><a id="__codelineno-0-1227" name="__codelineno-0-1227"></a><span class="k">def</span><span class="w"> </span><span class="nf">unplot</span><span class="p">(</span>
-</span><span id="__span-0-1228"><a id="__codelineno-0-1228" name="__codelineno-0-1228"></a>    <span class="n">path_svg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="__span-0-1229"><a id="__codelineno-0-1229" name="__codelineno-0-1229"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1230"><a id="__codelineno-0-1230" name="__codelineno-0-1230"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a plot back to data.</span>
-</span><span id="__span-0-1231"><a id="__codelineno-0-1231" name="__codelineno-0-1231"></a>
-</span><span id="__span-0-1232"><a id="__codelineno-0-1232" name="__codelineno-0-1232"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1233"><a id="__codelineno-0-1233" name="__codelineno-0-1233"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1234"><a id="__codelineno-0-1234" name="__codelineno-0-1234"></a><span class="sd">    path_svg</span>
-</span><span id="__span-0-1235"><a id="__codelineno-0-1235" name="__codelineno-0-1235"></a><span class="sd">        The SVG file with paths to be converted back.</span>
-</span><span id="__span-0-1236"><a id="__codelineno-0-1236" name="__codelineno-0-1236"></a><span class="sd">    dest</span>
-</span><span id="__span-0-1237"><a id="__codelineno-0-1237" name="__codelineno-0-1237"></a><span class="sd">        An output directory or file.</span>
-</span><span id="__span-0-1238"><a id="__codelineno-0-1238" name="__codelineno-0-1238"></a>
-</span><span id="__span-0-1239"><a id="__codelineno-0-1239" name="__codelineno-0-1239"></a><span class="sd">    optional</span>
-</span><span id="__span-0-1240"><a id="__codelineno-0-1240" name="__codelineno-0-1240"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
-</span><span id="__span-0-1241"><a id="__codelineno-0-1241" name="__codelineno-0-1241"></a><span class="sd">    block</span>
-</span><span id="__span-0-1242"><a id="__codelineno-0-1242" name="__codelineno-0-1242"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1243"><a id="__codelineno-0-1243" name="__codelineno-0-1243"></a>
-</span><span id="__span-0-1244"><a id="__codelineno-0-1244" name="__codelineno-0-1244"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1245"><a id="__codelineno-0-1245" name="__codelineno-0-1245"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1246"><a id="__codelineno-0-1246" name="__codelineno-0-1246"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1247"><a id="__codelineno-0-1247" name="__codelineno-0-1247"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1248"><a id="__codelineno-0-1248" name="__codelineno-0-1248"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1249"><a id="__codelineno-0-1249" name="__codelineno-0-1249"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-</span><span id="__span-0-1250"><a id="__codelineno-0-1250" name="__codelineno-0-1250"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-unplot $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
-</span><span id="__span-0-1251"><a id="__codelineno-0-1251" name="__codelineno-0-1251"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">path_out</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-1251">1251</a></span>
+<span class="normal"><a href="#__codelineno-0-1252">1252</a></span>
+<span class="normal"><a href="#__codelineno-0-1253">1253</a></span>
+<span class="normal"><a href="#__codelineno-0-1254">1254</a></span>
+<span class="normal"><a href="#__codelineno-0-1255">1255</a></span>
+<span class="normal"><a href="#__codelineno-0-1256">1256</a></span>
+<span class="normal"><a href="#__codelineno-0-1257">1257</a></span>
+<span class="normal"><a href="#__codelineno-0-1258">1258</a></span>
+<span class="normal"><a href="#__codelineno-0-1259">1259</a></span>
+<span class="normal"><a href="#__codelineno-0-1260">1260</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1236"><a id="__codelineno-0-1236" name="__codelineno-0-1236"></a><span class="k">def</span><span class="w"> </span><span class="nf">unplot</span><span class="p">(</span>
+</span><span id="__span-0-1237"><a id="__codelineno-0-1237" name="__codelineno-0-1237"></a>    <span class="n">path_svg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="__span-0-1238"><a id="__codelineno-0-1238" name="__codelineno-0-1238"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1239"><a id="__codelineno-0-1239" name="__codelineno-0-1239"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a plot back to data.</span>
+</span><span id="__span-0-1240"><a id="__codelineno-0-1240" name="__codelineno-0-1240"></a>
+</span><span id="__span-0-1241"><a id="__codelineno-0-1241" name="__codelineno-0-1241"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1242"><a id="__codelineno-0-1242" name="__codelineno-0-1242"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1243"><a id="__codelineno-0-1243" name="__codelineno-0-1243"></a><span class="sd">    path_svg</span>
+</span><span id="__span-0-1244"><a id="__codelineno-0-1244" name="__codelineno-0-1244"></a><span class="sd">        The SVG file with paths to be converted back.</span>
+</span><span id="__span-0-1245"><a id="__codelineno-0-1245" name="__codelineno-0-1245"></a><span class="sd">    dest</span>
+</span><span id="__span-0-1246"><a id="__codelineno-0-1246" name="__codelineno-0-1246"></a><span class="sd">        An output directory or file.</span>
+</span><span id="__span-0-1247"><a id="__codelineno-0-1247" name="__codelineno-0-1247"></a>
+</span><span id="__span-0-1248"><a id="__codelineno-0-1248" name="__codelineno-0-1248"></a><span class="sd">    optional</span>
+</span><span id="__span-0-1249"><a id="__codelineno-0-1249" name="__codelineno-0-1249"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-1250"><a id="__codelineno-0-1250" name="__codelineno-0-1250"></a><span class="sd">    block</span>
+</span><span id="__span-0-1251"><a id="__codelineno-0-1251" name="__codelineno-0-1251"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1252"><a id="__codelineno-0-1252" name="__codelineno-0-1252"></a>
+</span><span id="__span-0-1253"><a id="__codelineno-0-1253" name="__codelineno-0-1253"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1254"><a id="__codelineno-0-1254" name="__codelineno-0-1254"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1255"><a id="__codelineno-0-1255" name="__codelineno-0-1255"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1256"><a id="__codelineno-0-1256" name="__codelineno-0-1256"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1257"><a id="__codelineno-0-1257" name="__codelineno-0-1257"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1258"><a id="__codelineno-0-1258" name="__codelineno-0-1258"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+</span><span id="__span-0-1259"><a id="__codelineno-0-1259" name="__codelineno-0-1259"></a>    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;rr-unplot $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-1260"><a id="__codelineno-0-1260" name="__codelineno-0-1260"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">path_svg</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">path_out</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5922,16 +5949,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 
             <details class="quote">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1254">1254</a></span>
-<span class="normal"><a href="#__codelineno-0-1255">1255</a></span>
-<span class="normal"><a href="#__codelineno-0-1256">1256</a></span>
-<span class="normal"><a href="#__codelineno-0-1257">1257</a></span>
-<span class="normal"><a href="#__codelineno-0-1258">1258</a></span>
-<span class="normal"><a href="#__codelineno-0-1259">1259</a></span>
-<span class="normal"><a href="#__codelineno-0-1260">1260</a></span>
-<span class="normal"><a href="#__codelineno-0-1261">1261</a></span>
-<span class="normal"><a href="#__codelineno-0-1262">1262</a></span>
-<span class="normal"><a href="#__codelineno-0-1263">1263</a></span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1263">1263</a></span>
 <span class="normal"><a href="#__codelineno-0-1264">1264</a></span>
 <span class="normal"><a href="#__codelineno-0-1265">1265</a></span>
 <span class="normal"><a href="#__codelineno-0-1266">1266</a></span>
@@ -5950,35 +5968,44 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 <span class="normal"><a href="#__codelineno-0-1279">1279</a></span>
 <span class="normal"><a href="#__codelineno-0-1280">1280</a></span>
 <span class="normal"><a href="#__codelineno-0-1281">1281</a></span>
-<span class="normal"><a href="#__codelineno-0-1282">1282</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1254"><a id="__codelineno-0-1254" name="__codelineno-0-1254"></a><span class="k">def</span><span class="w"> </span><span class="nf">zip_inventory</span><span class="p">(</span>
-</span><span id="__span-0-1255"><a id="__codelineno-0-1255" name="__codelineno-0-1255"></a>    <span class="n">path_inventory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="__span-0-1256"><a id="__codelineno-0-1256" name="__codelineno-0-1256"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1257"><a id="__codelineno-0-1257" name="__codelineno-0-1257"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.</span>
-</span><span id="__span-0-1258"><a id="__codelineno-0-1258" name="__codelineno-0-1258"></a>
-</span><span id="__span-0-1259"><a id="__codelineno-0-1259" name="__codelineno-0-1259"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1260"><a id="__codelineno-0-1260" name="__codelineno-0-1260"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1261"><a id="__codelineno-0-1261" name="__codelineno-0-1261"></a><span class="sd">    path_inventory</span>
-</span><span id="__span-0-1262"><a id="__codelineno-0-1262" name="__codelineno-0-1262"></a><span class="sd">        A file created with the `make_inventory` API or with the command-line script</span>
-</span><span id="__span-0-1263"><a id="__codelineno-0-1263" name="__codelineno-0-1263"></a><span class="sd">        `rr-make-inventory`.</span>
-</span><span id="__span-0-1264"><a id="__codelineno-0-1264" name="__codelineno-0-1264"></a><span class="sd">    path_zip</span>
-</span><span id="__span-0-1265"><a id="__codelineno-0-1265" name="__codelineno-0-1265"></a><span class="sd">        The output ZIP file</span>
-</span><span id="__span-0-1266"><a id="__codelineno-0-1266" name="__codelineno-0-1266"></a><span class="sd">    optional</span>
-</span><span id="__span-0-1267"><a id="__codelineno-0-1267" name="__codelineno-0-1267"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
-</span><span id="__span-0-1268"><a id="__codelineno-0-1268" name="__codelineno-0-1268"></a><span class="sd">    block</span>
-</span><span id="__span-0-1269"><a id="__codelineno-0-1269" name="__codelineno-0-1269"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1270"><a id="__codelineno-0-1270" name="__codelineno-0-1270"></a>
-</span><span id="__span-0-1271"><a id="__codelineno-0-1271" name="__codelineno-0-1271"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1272"><a id="__codelineno-0-1272" name="__codelineno-0-1272"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1273"><a id="__codelineno-0-1273" name="__codelineno-0-1273"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1274"><a id="__codelineno-0-1274" name="__codelineno-0-1274"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1275"><a id="__codelineno-0-1275" name="__codelineno-0-1275"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1276"><a id="__codelineno-0-1276" name="__codelineno-0-1276"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-1277"><a id="__codelineno-0-1277" name="__codelineno-0-1277"></a>        <span class="s2">&quot;rr-zip-inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-0-1278"><a id="__codelineno-0-1278" name="__codelineno-0-1278"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_inventory</span><span class="p">,</span>
-</span><span id="__span-0-1279"><a id="__codelineno-0-1279" name="__codelineno-0-1279"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_zip</span><span class="p">,</span>
-</span><span id="__span-0-1280"><a id="__codelineno-0-1280" name="__codelineno-0-1280"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
-</span><span id="__span-0-1281"><a id="__codelineno-0-1281" name="__codelineno-0-1281"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
-</span><span id="__span-0-1282"><a id="__codelineno-0-1282" name="__codelineno-0-1282"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-1282">1282</a></span>
+<span class="normal"><a href="#__codelineno-0-1283">1283</a></span>
+<span class="normal"><a href="#__codelineno-0-1284">1284</a></span>
+<span class="normal"><a href="#__codelineno-0-1285">1285</a></span>
+<span class="normal"><a href="#__codelineno-0-1286">1286</a></span>
+<span class="normal"><a href="#__codelineno-0-1287">1287</a></span>
+<span class="normal"><a href="#__codelineno-0-1288">1288</a></span>
+<span class="normal"><a href="#__codelineno-0-1289">1289</a></span>
+<span class="normal"><a href="#__codelineno-0-1290">1290</a></span>
+<span class="normal"><a href="#__codelineno-0-1291">1291</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1263"><a id="__codelineno-0-1263" name="__codelineno-0-1263"></a><span class="k">def</span><span class="w"> </span><span class="nf">zip_inventory</span><span class="p">(</span>
+</span><span id="__span-0-1264"><a id="__codelineno-0-1264" name="__codelineno-0-1264"></a>    <span class="n">path_inventory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="__span-0-1265"><a id="__codelineno-0-1265" name="__codelineno-0-1265"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1266"><a id="__codelineno-0-1266" name="__codelineno-0-1266"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.</span>
+</span><span id="__span-0-1267"><a id="__codelineno-0-1267" name="__codelineno-0-1267"></a>
+</span><span id="__span-0-1268"><a id="__codelineno-0-1268" name="__codelineno-0-1268"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1269"><a id="__codelineno-0-1269" name="__codelineno-0-1269"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1270"><a id="__codelineno-0-1270" name="__codelineno-0-1270"></a><span class="sd">    path_inventory</span>
+</span><span id="__span-0-1271"><a id="__codelineno-0-1271" name="__codelineno-0-1271"></a><span class="sd">        A file created with the `make_inventory` API or with the command-line script</span>
+</span><span id="__span-0-1272"><a id="__codelineno-0-1272" name="__codelineno-0-1272"></a><span class="sd">        `rr-make-inventory`.</span>
+</span><span id="__span-0-1273"><a id="__codelineno-0-1273" name="__codelineno-0-1273"></a><span class="sd">    path_zip</span>
+</span><span id="__span-0-1274"><a id="__codelineno-0-1274" name="__codelineno-0-1274"></a><span class="sd">        The output ZIP file</span>
+</span><span id="__span-0-1275"><a id="__codelineno-0-1275" name="__codelineno-0-1275"></a><span class="sd">    optional</span>
+</span><span id="__span-0-1276"><a id="__codelineno-0-1276" name="__codelineno-0-1276"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-1277"><a id="__codelineno-0-1277" name="__codelineno-0-1277"></a><span class="sd">    block</span>
+</span><span id="__span-0-1278"><a id="__codelineno-0-1278" name="__codelineno-0-1278"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1279"><a id="__codelineno-0-1279" name="__codelineno-0-1279"></a>
+</span><span id="__span-0-1280"><a id="__codelineno-0-1280" name="__codelineno-0-1280"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1281"><a id="__codelineno-0-1281" name="__codelineno-0-1281"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1282"><a id="__codelineno-0-1282" name="__codelineno-0-1282"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1283"><a id="__codelineno-0-1283" name="__codelineno-0-1283"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1284"><a id="__codelineno-0-1284" name="__codelineno-0-1284"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1285"><a id="__codelineno-0-1285" name="__codelineno-0-1285"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
+</span><span id="__span-0-1286"><a id="__codelineno-0-1286" name="__codelineno-0-1286"></a>        <span class="s2">&quot;rr-zip-inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-1287"><a id="__codelineno-0-1287" name="__codelineno-0-1287"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_inventory</span><span class="p">,</span>
+</span><span id="__span-0-1288"><a id="__codelineno-0-1288" name="__codelineno-0-1288"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_zip</span><span class="p">,</span>
+</span><span id="__span-0-1289"><a id="__codelineno-0-1289" name="__codelineno-0-1289"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
+</span><span id="__span-0-1290"><a id="__codelineno-0-1290" name="__codelineno-0-1290"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
+</span><span id="__span-0-1291"><a id="__codelineno-0-1291" name="__codelineno-0-1291"></a>    <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>

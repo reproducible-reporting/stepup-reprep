@@ -13,6 +13,6 @@ max_line_length = 100
 [Makefile]
 indent_style = tab
 
-[{*.json,*.yml,*.yaml,*.html}]
+[{*.json,*.yml,*.yaml,*.html,*.typ}]
 indent_style = space
 indent_size = 2

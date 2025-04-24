@@ -12,6 +12,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [2.3.6][] - 2025-04-24 {: v2.3.6 }
+
+Make `sanitize_bibtex()` work without LaTeX and add support for TOML files in `render_jinja()`.
+
 ### Added
 
 - Support for TOML files in [`render_jinja()`][stepup.reprep.api.render_jinja].
@@ -368,6 +372,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[2.3.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.6
 [2.3.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5
 [2.3.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4
 [2.3.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.3

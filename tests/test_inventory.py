@@ -121,7 +121,7 @@ def test_git1():
         "plan.py",
         "test.md",
         "expected_stdout.txt",
-        "README.md",
+        "README.txt",
         "check_hrefs.yaml",
         ".gitignore",
     }
@@ -137,7 +137,7 @@ def test_git2():
             "plan.py",
             "test.md",
             "expected_stdout.txt",
-            "README.md",
+            "README.txt",
             "check_hrefs.yaml",
             ".gitignore",
         ]

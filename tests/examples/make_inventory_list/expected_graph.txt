@@ -6,11 +6,11 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:README.md
+            supplies   file:README.txt
             supplies   file:inventory.txt
             supplies   file:plan.py
             supplies   step:./plan.py
-            supplies   step:rr-make-inventory README.md -o inventory.txt
+            supplies   step:rr-make-inventory README.txt -o inventory.txt
 
 file:plan.py
                state = STATIC
@@ -23,25 +23,25 @@ step:./plan.py
           created by   root:
             consumes   file:./
             consumes   file:plan.py
-             creates   file:README.md
-             creates   step:rr-make-inventory README.md -o inventory.txt
+             creates   file:README.txt
+             creates   step:rr-make-inventory README.txt -o inventory.txt
 
-file:README.md
+file:README.txt
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-make-inventory README.md -o inventory.txt
+            supplies   step:rr-make-inventory README.txt -o inventory.txt
 
-step:rr-make-inventory README.md -o inventory.txt
+step:rr-make-inventory README.txt -o inventory.txt
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:README.md
+            consumes   file:README.txt
              creates   file:inventory.txt
             supplies   file:inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:rr-make-inventory README.md -o inventory.txt
+          created by   step:rr-make-inventory README.txt -o inventory.txt
             consumes   file:./
-            consumes   step:rr-make-inventory README.md -o inventory.txt
+            consumes   step:rr-make-inventory README.txt -o inventory.txt

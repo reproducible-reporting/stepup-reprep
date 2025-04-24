@@ -7,7 +7,7 @@ file:./
                state = STATIC
           created by   root:
             supplies   (file:BROKEN.md)
-            supplies   file:README.md
+            supplies   file:README.txt
             supplies   file:check_hrefs.yaml
             supplies   file:main-inventory.txt
             supplies   file:main.aux
@@ -32,13 +32,13 @@ step:./plan.py
           created by   root:
             consumes   file:./
             consumes   file:plan.py
-             creates   file:README.md
+             creates   file:README.txt
              creates   file:check_hrefs.yaml
              creates   file:main.tex
              creates   step:rr-check-hrefs main.pdf
              creates   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
-file:README.md
+file:README.txt
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
@@ -106,7 +106,7 @@ step:rr-check-hrefs main.pdf
           created by   step:./plan.py
             consumes   (file:BROKEN.md) [amended]
             consumes   file:./
-            consumes   file:README.md [amended]
+            consumes   file:README.txt [amended]
             consumes   file:check_hrefs.yaml [amended]
             consumes   file:main.pdf
 

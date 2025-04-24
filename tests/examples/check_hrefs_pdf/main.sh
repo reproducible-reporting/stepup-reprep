@@ -29,5 +29,5 @@ wait
 [[ -f main.pdf ]] || exit 1
 [[ -f main.log ]] || exit 1
 [[ -f main.aux ]] || exit 1
-[[ -f README.md ]] || exit 1
+[[ -f README.txt ]] || exit 1
 rr-check-inventory main-inventory.txt

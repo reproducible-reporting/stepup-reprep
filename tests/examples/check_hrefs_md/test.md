@@ -1,4 +1,4 @@
-A working local link: [README.md](README.md).
+A working local link: [README.txt](README.txt).
 A broken local link: [BROKEN.md](BROKEN.md)
 A working https link: [example.com](https://www.iana.org/help/example-domains).
 A https link that is not allowed: [speedtest.net](https://www.speedtest.net/).

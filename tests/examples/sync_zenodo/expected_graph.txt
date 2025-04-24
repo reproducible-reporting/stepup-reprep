@@ -6,7 +6,7 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:README.md
+            supplies   file:README.txt
             supplies   file:plan.py
             supplies   file:zenodo.md
             supplies   file:zenodo.yaml
@@ -24,12 +24,12 @@ step:./plan.py
           created by   root:
             consumes   file:./
             consumes   file:plan.py
-             creates   file:README.md
+             creates   file:README.txt
              creates   file:zenodo.md
              creates   file:zenodo.yaml
              creates   step:rr-sync-zenodo zenodo.yaml
 
-file:README.md
+file:README.txt
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
@@ -51,6 +51,6 @@ step:rr-sync-zenodo zenodo.yaml
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
-            consumes   file:README.md [amended]
+            consumes   file:README.txt [amended]
             consumes   file:zenodo.md [amended]
             consumes   file:zenodo.yaml

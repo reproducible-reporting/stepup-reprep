@@ -16,7 +16,7 @@ BROKEN.md
 Command               rr-check-hrefs test.md
 Working directory     ./
 Inputs        STATIC  ./
-              STATIC  README.md [amended]
+              STATIC  README.txt [amended]
               STATIC  check_hrefs.yaml [amended]
               STATIC  test.md
              AWAITED  (BROKEN.md) [amended]

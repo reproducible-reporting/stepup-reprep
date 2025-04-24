@@ -280,20 +280,16 @@ def compile_typst(
         Expect breaking changes in future releases.
         Some limitations include:
 
-        - The relative paths in the depfile written by typst are inconsistent.
-          A workaround is implemented in RepRep, which can hopefully be removed in the future.
-          https://github.com/typst/typst/issues/5857
-        - Multi-page SVG and PNG outputs are not yet supported,
-          due to a bug in the depfile created by typst.
-          https://github.com/typst/typst/issues/5861
         - SVG figures with references to external bitmaps are not processed correctly.
           These bitmaps are not rendered, neither are they included in the dep file.
           For this probem, a workaround was suggsted here:
           https://github.com/typst/typst/issues/5335
         - When the typst compiler detects an error in the input, it doesn't write the dep file.
           This means that StepUp cannot reschedule it, even if that would fix the problem.
-          (If it would know which files are used, it would see which ones are outdated,
-          rebuild them and then retry the typst command.)
+          If it would know which files are used, it would see which ones are outdated,
+          rebuild them and then retry the typst command.
+          For more details, see:
+          https://github.com/typst/typst/issues/5886
 
     Parameters
     ----------

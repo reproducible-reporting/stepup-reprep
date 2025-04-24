@@ -12,12 +12,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Added
+
+- Support for TOML files in [`render_jinja()`][stepup.reprep.api.render_jinja].
+
 ## [2.3.5][] - 2025-03-13 {: v2.3.5 }
 
 Bug fix in `rr-cat-pdf` and simplify journal abbreviation in `rr-bibsane`.
 This requires an update the `bibsane.yaml` configuration file.
 
-## Fixed
+### Fixed
 
 - The `--insert-blank` opton of `rr-cat-pdf` was always active,
   even when not present on the command line, which is now fixed.

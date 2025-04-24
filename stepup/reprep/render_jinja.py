@@ -28,6 +28,7 @@ import contextlib
 import importlib.util
 import json
 import sys
+import tomllib
 from types import ModuleType
 
 import jinja2
@@ -64,7 +65,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "paths_variables",
         nargs="*",
         type=Path,
-        help="Python, JSON or YAML files defining variables."
+        help="Python, JSON, TOML or YAML files defining variables."
         "They are loaded in the given order, "
         "so later variable definitions may overrule earlier ones. "
         "Python files have the advantage of supporting more types and logic. "
@@ -90,7 +91,7 @@ def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
     Parameters
     ----------
     paths_variables
-        paths of Python, JSON or YAML files containing variable definitions.
+        paths of Python, JSON, TOML or YAML files containing variable definitions.
         They are loaded in the given order, so later variable definitions may overrule earlier ones.
     dir_out
         This is used to translate paths defined the variables files to relative paths with respect
@@ -107,6 +108,9 @@ def load_variables(paths_variables: list[str], dir_out: str) -> dict[str, str]:
         if path_var.suffix == ".json":
             with open(path_var) as fh:
                 variables.update(json.load(fh))
+        elif path_var.suffix == ".toml":
+            with open(path_var, "rb") as fh:
+                variables.update(tomllib.load(fh))
         elif path_var.suffix in (".yaml", ".yml"):
             with open(path_var) as fh:
                 variables.update(yaml.safe_load(fh))

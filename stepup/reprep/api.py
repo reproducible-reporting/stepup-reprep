@@ -1082,7 +1082,7 @@ def render_jinja(
         The first argument is the path to the template file.
         All the following position arguments can be one of the following two types:
 
-        - Paths to Python, JSON or YAML files with variable definitions.
+        - Paths to Python, JSON, TOML or YAML files with variable definitions.
           Variables defined in later files take precedence.
         - A dictionary with additional variables.
           These will be JSON-serialized and passed on the command-line to the Jinja renderer.

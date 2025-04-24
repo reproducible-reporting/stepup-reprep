@@ -53,6 +53,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "render_jinja_dict",
         "render_jinja_json",
         "render_jinja_python",
+        "render_jinja_toml",
         "render_jinja_yaml",
         "sync_zenodo",
         "unplot",

@@ -188,7 +188,7 @@ file:public/main.pdf
             consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
 
 file:public/main.log
-               state = BUILT
+               state = VOLATILE
           created by   step:rr-compile-latex main.tex --run-bibtex  # wd=public/
             consumes   file:public/
             consumes   step:rr-compile-latex main.tex --run-bibtex  # wd=public/

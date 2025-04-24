@@ -5,14 +5,14 @@
         1/3 |    SUCCESS │ ./plan.py
         1/3 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
         2/3 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |      START │ rr-bibsane --amend paper.aux --config=bibsane.yaml
-        3/3 |    SUCCESS │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+        2/3 |      START │ rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+        3/3 |    SUCCESS │ rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ─────────────────────────────── Standard output ────────────────────────────────
+📂 Loading references.bib
+   Found 1 BibTeX entries
 📂 Loading paper.aux
    Found 1 citations
    Found 1 unique citations
-📂 Loading references.bib
-   Found 1 BibTeX entries
 🔨 Checking unused and missing citations
    Found 1 used BibTeX entries
 🔨 Validating citation policies
@@ -32,13 +32,12 @@
         3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
         3/3 |      PHASE │ watch
         3/3 |    DELETED │ paper.aux
-        3/3 |    DELETED │ paper.log
         3/3 |    DELETED │ paper.pdf
         3/3 |    DELETED │ paper.bbl
         1/3 |      PHASE │ run
         1/3 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
         2/3 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |       SKIP │ rr-bibsane --amend paper.aux --config=bibsane.yaml
+        2/3 |       SKIP │ rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
         3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
         3/3 |      PHASE │ watch
         3/3 |   DIRECTOR │ Stopping workers.

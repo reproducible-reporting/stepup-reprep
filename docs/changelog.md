@@ -16,6 +16,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 - Support for TOML files in [`render_jinja()`][stepup.reprep.api.render_jinja].
 
+### Changed
+
+- Make [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex] usable without LaTeX.
+- New output files in the LaTeX fls file are treated as volatile outputs.
+
 ## [2.3.5][] - 2025-03-13 {: v2.3.5 }
 
 Bug fix in `rr-cat-pdf` and simplify journal abbreviation in `rr-bibsane`.

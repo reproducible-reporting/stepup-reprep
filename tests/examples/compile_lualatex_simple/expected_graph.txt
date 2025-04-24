@@ -78,7 +78,7 @@ file:paper.pdf
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
-               state = BUILT
+               state = VOLATILE
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

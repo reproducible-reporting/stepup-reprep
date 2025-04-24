@@ -17,7 +17,7 @@ file:./
             supplies   file:plan.py
             supplies   file:references.bib
             supplies   step:./plan.py
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
             supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:plan.py
@@ -35,7 +35,7 @@ step:./plan.py
              creates   file:bibsane.yaml
              creates   file:paper.tex
              creates   file:references.bib
-             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+             creates   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
              creates   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
@@ -48,13 +48,13 @@ file:bibsane.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:references.bib
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
             supplies   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
@@ -89,7 +89,7 @@ file:paper.aux
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:paper.fls
                state = BUILT
@@ -103,13 +103,13 @@ file:paper.pdf
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
-step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
             consumes   file:bibsane.yaml
             consumes   file:paper.aux
-            consumes   file:references.bib [amended]
+            consumes   file:references.bib
 
 file:paper.bbl
                state = BUILT
@@ -118,7 +118,7 @@ file:paper.bbl
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
-               state = BUILT
+               state = VOLATILE
           created by   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
             consumes   file:./
             consumes   step:rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

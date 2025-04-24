@@ -151,7 +151,7 @@ def main(argv: list[str] | None = None):
     # Look for input files and output files from the fls file.
     # These are usually worth tracking, but are not needed for the inventory file.
     fls_inp = set()
-    fls_out = set()
+    fls_vol = set()
     with open(f"{stem}.fls") as fh:
         for line in fh:
             if line.startswith("INPUT "):
@@ -161,11 +161,11 @@ def main(argv: list[str] | None = None):
             elif line.startswith("OUTPUT "):
                 path = mynormpath(Path(line[7:].strip()))
                 if not (path in inventory_files or path == args.inventory):
-                    fls_out.add(path)
-    fls_inp.difference_update(fls_out)
+                    fls_vol.add(path)
+    fls_inp.difference_update(fls_vol)
     # Both inputs and outputs must be filtered because, strangely,
     # LaTeX sometimes outputs files in the weirdest places, e.g. in the TEXMF tree.
-    amend(inp=filter_dependencies(fls_inp), out=filter_dependencies(fls_out))
+    amend(inp=filter_dependencies(fls_inp), vol=filter_dependencies(fls_vol))
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

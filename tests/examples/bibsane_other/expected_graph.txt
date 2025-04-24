@@ -14,7 +14,7 @@ file:./
             supplies   file:references.bib
             supplies   step:./plan.py
             supplies   step:cp -aT cleaned.bib copy.bib
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 
 file:plan.py
                state = STATIC
@@ -31,41 +31,41 @@ step:./plan.py
              creates   file:paper.aux
              creates   file:references.bib
              creates   step:cp -aT cleaned.bib copy.bib
-             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+             creates   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 
 file:bibsane.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 
 file:paper.aux
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 
 file:references.bib
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 
-step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
                state = SUCCEEDED
           created by   step:./plan.py
             consumes   file:./
             consumes   file:bibsane.yaml
             consumes   file:paper.aux
-            consumes   file:references.bib [amended]
+            consumes   file:references.bib
              creates   file:cleaned.bib
             supplies   file:cleaned.bib
 
 file:cleaned.bib
                state = BUILT
-          created by   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+          created by   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
             consumes   file:./
-            consumes   step:rr-bibsane --amend paper.aux --config=bibsane.yaml --out=cleaned.bib
+            consumes   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
             supplies   step:cp -aT cleaned.bib copy.bib
 
 step:cp -aT cleaned.bib copy.bib

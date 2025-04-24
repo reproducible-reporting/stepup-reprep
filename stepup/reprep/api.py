@@ -1154,7 +1154,9 @@ def render_jinja(
 
 
 def sanitize_bibtex(
-    *paths_aux: str,
+    path_bib: str,
+    *,
+    path_aux: str | None = None,
     path_cfg: str | None = None,
     path_out: str | None = None,
     overwrite: bool = False,
@@ -1165,8 +1167,11 @@ def sanitize_bibtex(
 
     Parameters
     ----------
-    paths_aux
-        Paths to LaTeX aux files.
+    path_bib
+        Path to the BibTeX file to be sanitized.
+    path_aux
+        Paths to LaTeX aux file if any.
+        This is used to detect unused or missing citations.
     path_cfg
         The YAML configuration file for the `rr-sanitize-bibtex` script.
     path_out
@@ -1189,12 +1194,16 @@ def sanitize_bibtex(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
+        path_bib = subs(path_bib)
         path_cfg = subs(path_cfg)
-        paths_aux = [subs(path_aux) for path_aux in paths_aux]
+        path_aux = subs(path_aux)
         path_out = subs(path_out)
 
-    args = ["rr-bibsane", "--amend", *(shlex.quote(path_aux) for path_aux in paths_aux)]
-    paths_inp = list(paths_aux)
+    args = ["rr-bibsane", shlex.quote(path_bib)]
+    paths_inp = [path_bib]
+    if path_aux is not None:
+        args.append("--aux=" + shlex.quote(path_aux))
+        paths_inp.append(path_aux)
     if path_cfg is not None:
         args.append("--config=" + shlex.quote(path_cfg))
         paths_inp.append(path_cfg)

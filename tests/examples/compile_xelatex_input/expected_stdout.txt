@@ -21,7 +21,6 @@ subdir/generated.tex
         5/5 |    WARNING │ Check logs: .stepup/warning.log
         5/5 |      PHASE │ watch
         5/5 |    DELETED │ paper.aux
-        5/5 |    DELETED │ paper.log
         5/5 |    DELETED │ subdir/generated.tex
         5/5 |    DELETED │ subdir/code.txt
         5/5 |    DELETED │ paper.pdf

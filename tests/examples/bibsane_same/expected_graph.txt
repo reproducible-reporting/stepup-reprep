@@ -13,7 +13,7 @@ file:./
             supplies   file:references.bib
             supplies   step:./plan.py
             supplies   step:cp -aT references.bib copy.bib
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:plan.py
                state = STATIC
@@ -30,34 +30,34 @@ step:./plan.py
              creates   file:paper.aux
              creates   file:references.bib
              creates   step:cp -aT references.bib copy.bib
-             creates   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+             creates   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:bibsane.yaml
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:paper.aux
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:references.bib
                state = STATIC
           created by   step:./plan.py
             consumes   file:./
             supplies   step:cp -aT references.bib copy.bib
-            supplies   step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
-step:rr-bibsane --amend paper.aux --config=bibsane.yaml
+step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
                state = FAILED
           created by   step:./plan.py
             consumes   file:./
             consumes   file:bibsane.yaml
             consumes   file:paper.aux
-            consumes   file:references.bib [amended]
+            consumes   file:references.bib
 
 step:cp -aT references.bib copy.bib
                state = PENDING

@@ -6,20 +6,12 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
-stepup -w -n 1 & # > current_stdout.txt &
-
-# Wait for the director and get its socket.
-export STEPUP_DIRECTOR_SOCKET=$(
-  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
-)
+stepup boot -w -n 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
-python3 - << EOD
-from stepup.core.interact import *
-wait()
-graph("current_graph")
-join()
-EOD
+stepup wait
+stepup graph current_graph
+stepup join
 
 # Wait for background processes, if any.
 wait
@@ -31,4 +23,4 @@ wait
 [[ -f document-inventory.txt ]] || exit 1
 grep document.typ document-inventory.txt
 grep out.pdf document-inventory.txt
-rr-check-inventory document-inventory.txt
+stepup check-inventory document-inventory.txt

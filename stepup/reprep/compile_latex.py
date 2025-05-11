@@ -20,7 +20,8 @@
 """RepRep Wrapper for LaTeX."""
 
 import argparse
-import subprocess
+import contextlib
+import shlex
 import sys
 
 from path import Path
@@ -28,16 +29,19 @@ from path import Path
 from stepup.core.api import amend, getenv
 from stepup.core.hash import compute_file_digest
 from stepup.core.utils import filter_dependencies, mynormpath
-from stepup.reprep.make_inventory import write_inventory
+from stepup.core.worker import WorkThread
 
 from .bibtex_log import parse_bibtex_log
 from .latex_deps import scan_latex_deps
 from .latex_log import parse_latex_log
+from .make_inventory import write_inventory
 
 
-def main(argv: list[str] | None = None):
+def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
+    if work_thread is None:
+        work_thread = WorkThread("stub")
 
     workdir, fn_tex = args.path_tex.splitpath()
     workdir = workdir.normpath()
@@ -74,22 +78,12 @@ def main(argv: list[str] | None = None):
         amend(inp=inp + bib, out=[f"{stem}.bbl", *out], vol=vol)
         inventory_files = [*inp, *bib, f"{stem}.bbl", *out]
 
-        # LaTeX
-        cp = subprocess.run(
-            [
-                args.latex,
-                "-recorder",
-                "-interaction=errorstopmode",
-                "-draftmode",
-                stem,
-            ],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-            cwd=workdir,
-        )
-        if cp.returncode != 0:
+        # Run LaTeX once to generate the .aux file
+        with contextlib.chdir(workdir):
+            returncode, _, _ = work_thread.runsh(
+                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode -draftmode {stem}"
+            )
+        if returncode != 0:
             path_log = workdir / f"{stem}.log"
             error_info = parse_latex_log(path_log)
             error_info.print(path_log)
@@ -98,15 +92,9 @@ def main(argv: list[str] | None = None):
         aux_digest_hist.append(compute_file_digest(path_aux))
 
         # BibTeX
-        cp = subprocess.run(
-            [args.bibtex, stem],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-            cwd=workdir,
-        )
-        if cp.returncode != 0:
+        with contextlib.chdir(workdir):
+            returncode, _, _ = work_thread.runsh(f"{shlex.quote(args.bibtex)} {stem}")
+        if returncode != 0:
             path_blg = workdir / f"{stem}.blg"
             error_info = parse_bibtex_log(path_blg)
             error_info.print(path_blg)
@@ -115,19 +103,15 @@ def main(argv: list[str] | None = None):
         amend(inp=[*inp, f"{stem}.bbl"], out=out, vol=vol)
         inventory_files = [*inp, f"{stem}.bbl", *out]
 
+    # Keep running LaTeX until the .aux file converges.
     for _ in range(args.maxrep):
-        # LaTeX
-        cp = subprocess.run(
-            [args.latex, "-recorder", "-interaction=errorstopmode", stem],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-            cwd=workdir,
-        )
+        with contextlib.chdir(workdir):
+            returncode, _, _ = work_thread.runsh(
+                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode {stem}"
+            )
         path_log = workdir / f"{stem}.log"
         error_info = parse_latex_log(path_log)
-        if cp.returncode != 0:
+        if returncode != 0:
             error_info.print(path_log)
             sys.exit(1)
         aux_digest_hist.append(compute_file_digest(path_aux))

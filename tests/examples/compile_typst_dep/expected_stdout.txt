@@ -1,26 +1,26 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ rr-compile-typst --keep-deps document.typ
-        1/3 | RESCHEDULE │ rr-compile-typst --keep-deps document.typ
+        0/1 |      START │ runpy ./plan.py
+        1/3 |    SUCCESS │ runpy ./plan.py
+        1/3 |      START │ compile-typst --keep-deps document.typ
+        1/3 | RESCHEDULE │ compile-typst --keep-deps document.typ
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 Missing inputs and/or required directories:
 image.jpg
 ────────────────────────────────────────────────────────────────────────────────
-        1/3 |      START │ ./image.py
-        2/3 |    SUCCESS │ ./image.py
-        2/3 |      START │ rr-compile-typst --keep-deps document.typ
-        3/3 |    SUCCESS │ rr-compile-typst --keep-deps document.typ
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        1/3 |      START │ runsh ./image.py
+        2/3 |    SUCCESS │ runsh ./image.py
+        2/3 |      START │ compile-typst --keep-deps document.typ
+        3/3 |    SUCCESS │ compile-typst --keep-deps document.typ
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |    WARNING │ Check logs: .stepup/warning.log
         3/3 |      PHASE │ watch
         3/3 |    DELETED │ document.pdf
         2/3 |      PHASE │ run
-        2/3 |      START │ rr-compile-typst --keep-deps document.typ
-        3/3 |    SUCCESS │ rr-compile-typst --keep-deps document.typ
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/3 |      START │ compile-typst --keep-deps document.typ
+        3/3 |    SUCCESS │ compile-typst --keep-deps document.typ
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ Stopping workers.
+        3/3 |   DIRECTOR │ Stopping workers
         3/3 |   DIRECTOR │ See you!

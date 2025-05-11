@@ -37,7 +37,6 @@ dependencies = [
     "cattrs>=23.2.3",
     "defusedxml>=0.7.0",
     "ipykernel>=6.20.1",
-    "jinja2>=3.1.6",
     "markdown>=3.6",
     "nbconvert>=7.1.0",
     "numpy>=1.24.3",
@@ -48,7 +47,7 @@ dependencies = [
     "requests>=2.32.3",
     "scipy>=1.11.1",
     "semver>=3.0.0",
-    "stepup>=2.1.7,<3.0.0",
+    "stepup>=3.0.0,<4.0.0",
     "svg.path>=6.0",
     "weasyprint>=62.0",
 ]
@@ -74,26 +73,28 @@ Issues = "https://github.com/reproducible-reporting/stepup-reprep/issues"
 Source = "https://github.com/reproducible-reporting/stepup-reprep/"
 Changelog = "https://reproducible-reporting.github.io/stepup-reprep/changelog/"
 
-[project.scripts]
-rr-add-notes-pdf = "stepup.reprep.add_notes_pdf:main"
-rr-cat-pdf = "stepup.reprep.cat_pdf:main"
-rr-check-hrefs = "stepup.reprep.check_hrefs:main"
-rr-check-inventory = "stepup.reprep.check_inventory:main"
-rr-compile-latex = "stepup.reprep.compile_latex:main"
-rr-compile-typst = "stepup.reprep.compile_typst:main"
-rr-convert-inkscape = "stepup.reprep.convert_inkscape:main"
-rr-convert-markdown = "stepup.reprep.convert_markdown:main"
-rr-convert-weasyprint = "stepup.reprep.convert_weasyprint:main"
-rr-flatten-latex = "stepup.reprep.flatten_latex:main"
-rr-make-inventory = "stepup.reprep.make_inventory:main"
-rr-normalize-pdf = "stepup.reprep.normalize_pdf:main"
-rr-nup-pdf = "stepup.reprep.nup_pdf:main"
-rr-raster-pdf = "stepup.reprep.raster_pdf:main"
-rr-render-jinja = "stepup.reprep.render_jinja:main"
-rr-bibsane = "stepup.reprep.bibsane:main"
-rr-sync-zenodo = "stepup.reprep.sync_zenodo:main"
-rr-unplot = "stepup.reprep.unplot:main"
-rr-zip-inventory = "stepup.reprep.zip_inventory:main"
+[project.entry-points."stepup.tools"]
+check-inventory = "stepup.reprep.check_inventory:check_subcommand"
+make-inventory = "stepup.reprep.make_inventory:make_subcommand"
+zip-inventory = "stepup.reprep.zip_inventory:zip_subcommand"
+
+[project.entry-points."stepup.actions"]
+add-notes-pdf = "stepup.reprep.actions:add_notes_pdf"
+cat-pdf = "stepup.reprep.actions:cat_pdf"
+check-hrefs = "stepup.reprep.actions:check_hrefs"
+compile-latex = "stepup.reprep.actions:compile_latex"
+compile-typst = "stepup.reprep.actions:compile_typst"
+convert-inkscape = "stepup.reprep.actions:convert_inkscape"
+convert-markdown = "stepup.reprep.actions:convert_markdown"
+convert-weasyprint = "stepup.reprep.actions:convert_weasyprint"
+flatten-latex = "stepup.reprep.actions:flatten_latex"
+make-inventory = "stepup.reprep.actions:make_inventory"
+nup-pdf = "stepup.reprep.actions:nup_pdf"
+raster-pdf = "stepup.reprep.actions:raster_pdf"
+bibsane = "stepup.reprep.actions:bibsane"
+sync-zenodo = "stepup.reprep.actions:sync_zenodo"
+unplot = "stepup.reprep.actions:unplot"
+zip-inventory = "stepup.reprep.actions:zip_inventory"
 
 [tool.pytest.ini_options]
 addopts = "-n auto -W error --strict-markers -m 'not heavy'"

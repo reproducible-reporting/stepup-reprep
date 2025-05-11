@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,39 +10,39 @@ file:./
             supplies   file:doc1.pdf
             supplies   file:doc2.pdf
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:doc1.pdf
              creates   file:doc2.pdf
-             creates   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creates   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc1.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc2.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
 
-step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+step:cat-pdf doc1.pdf doc2.pdf cat.pdf
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:doc1.pdf
             consumes   file:doc2.pdf
@@ -51,6 +51,6 @@ step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:cat.pdf
                state = BUILT
-          created by   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+          created by   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
             consumes   file:./
-            consumes   step:rr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+            consumes   step:cat-pdf doc1.pdf doc2.pdf cat.pdf

@@ -6,20 +6,12 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 cp plan1.py plan.py
-stepup -w -n 1 & # > current_stdout1.txt &
-
-# Wait for the director and get its socket.
-export STEPUP_DIRECTOR_SOCKET=$(
-  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
-)
+stepup boot -w -n 1 & # > current_stdout1.txt &
 
 # Get the graph after completion of the pending steps.
-python3 - << EOD
-from stepup.core.interact import *
-wait()
-graph("current_graph1")
-join()
-EOD
+stepup wait
+stepup graph current_graph1
+stepup join
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
@@ -33,18 +25,12 @@ wait
 cp plan2.py plan.py
 cp sub/original.tex sub/other.tex
 rm .stepup/*.log
-stepup -w -n 1 & # > current_stdout2.txt &
+stepup boot -w -n 1 & # > current_stdout2.txt &
 
 # Wait for the director and get its socket.
-export STEPUP_DIRECTOR_SOCKET=$(
-  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
-)
-python3 - << EOD
-from stepup.core.interact import *
-wait()
-graph("current_graph2")
-join()
-EOD
+stepup wait
+stepup graph current_graph2
+stepup join
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1

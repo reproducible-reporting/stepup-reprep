@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,16 +10,16 @@ file:./
             supplies   file:new.tex
             supplies   file:old.tex
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+            supplies   step:runpy ./plan.py
+            supplies   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_LATEXDIFF [amended]
           created by   root:
@@ -27,23 +27,23 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:new.tex
              creates   file:old.tex
-             creates   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+             creates   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:new.tex
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+            supplies   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:old.tex
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+            supplies   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
-step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:new.tex
             consumes   file:old.tex
@@ -52,6 +52,6 @@ step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,fund
 
 file:diff.tex
                state = BUILT
-          created by   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+          created by   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
             consumes   file:./
-            consumes   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+            consumes   step:runsh latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex

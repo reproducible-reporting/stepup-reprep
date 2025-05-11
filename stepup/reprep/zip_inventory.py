@@ -38,15 +38,16 @@ TIMESTAMP = datetime.datetime(1980, 1, 1).timestamp()
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args(argv)
-    zip_inventory(args.inventory_txt, args.output_zip)
-
-
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="rr-zip-inventory", description="Create a reproducible ZIP file."
     )
+    add_parser_args(parser)
+    args = parser.parse_args(argv)
+    zip_inventory(args.inventory_txt, args.output_zip)
+
+
+def add_parser_args(parser: argparse.ArgumentParser):
+    """Define command-line arguments."""
     parser.add_argument(
         "inventory_txt",
         help="The inventory file with all files to be zipped. "
@@ -54,7 +55,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "The inventory file will be included in the ZIP.",
     )
     parser.add_argument("output_zip", nargs="?", help="Destination zip file.")
-    return parser.parse_args(argv)
+
+
+def zip_subcommand(subparser: argparse.ArgumentParser) -> callable:
+    parser = subparser.add_parser(
+        "zip-inventory",
+        help="Create a reproducible ZIP file.",
+    )
+    add_parser_args(parser)
+    return zip_tool
+
+
+def zip_tool(args: argparse.Namespace) -> int:
+    """Create a reproducible ZIP file."""
+    zip_inventory(args.inventory_txt, args.output_zip)
+    return 0
 
 
 def zip_inventory(path_inventory: str, path_zip: str | None = None):

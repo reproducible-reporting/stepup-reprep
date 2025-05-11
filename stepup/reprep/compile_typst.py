@@ -30,20 +30,22 @@ making it inefficient to plan ahead and build all missing required inputs early.
 import argparse
 import contextlib
 import shlex
-import subprocess
 import sys
 
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies, myparent
+from stepup.core.utils import filter_dependencies
+from stepup.core.worker import WorkThread
 
 from .make_inventory import write_inventory
 
 
-def main(argv: list[str] | None = None):
+def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     """Main program."""
     args = parse_args(argv)
+    if work_thread is None:
+        work_thread = WorkThread("stub")
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
@@ -55,24 +57,23 @@ def main(argv: list[str] | None = None):
         args.typst = getenv("REPREP_TYPST", "typst")
 
     # Prepare the command to run Typst
-    openargs = [args.typst, "compile", args.path_typ]
+    typargs = [args.typst, "compile", args.path_typ]
     if args.path_out is not None:
-        openargs.append(args.path_out)
+        typargs.append(args.path_out)
     else:
         args.path_out = Path(args.path_typ[:-4] + ".pdf")
     if args.path_out.suffix == ".png":
         resolution = args.resolution
         if resolution is None:
             resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
-        openargs.append(f"--ppi={resolution}")
+        typargs.append(f"--ppi={resolution}")
     for keyval in args.sysinp:
-        openargs.append("--input")
-        openargs.append(keyval)
+        typargs.append("--input")
+        typargs.append(keyval)
     if len(args.typst_args) == 0:
         args.typst_args = shlex.split(getenv("REPREP_TYPST_ARGS", ""))
-    openargs.extend(args.typst_args)
+    typargs.extend(args.typst_args)
 
-    typst_root = myparent(args.path_typ)
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
@@ -81,15 +82,11 @@ def main(argv: list[str] | None = None):
         else:
             # Use a temporary file for the make-deps output.
             path_dep = stack.enter_context(TempDir()) / "typst.dep"
+        typargs.extend(["--make-deps", path_dep])
 
         # Run typst compile
-        openargs.extend(["--make-deps", path_dep])
-        cp = subprocess.run(
-            openargs,
-            stdin=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
-            check=False,
-        )
+        returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))
+        print(stdout)
         # Get existing input files from the dependency file and amend.
         # Note that the deps file does not escape colons in paths,
         # so the code below assumes one never uses colons in paths.
@@ -105,15 +102,13 @@ def main(argv: list[str] | None = None):
             out_paths = [args.path_out]
 
     # Look for missing input files in the standard error stream and amend them.
-    if cp.returncode != 0:
+    if returncode != 0:
         lead = "error: file not found (searched at "
         inp_paths.extend(
-            line[len(lead) : -1]
-            for line in cp.stderr.decode().splitlines()
-            if line.startswith(lead)
+            line[len(lead) : -1] for line in stderr.splitlines() if line.startswith(lead)
         )
-    sys.stderr.write(cp.stderr.decode())
-    inp_paths = filter_dependencies(inp_paths, typst_root)
+    sys.stderr.write(stderr)
+    inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
     # Write inventory
@@ -126,10 +121,10 @@ def main(argv: list[str] | None = None):
     if any(p in args.path_out for p in ("{p}", "{0p}", "{t}")):
         amend(out=out_paths)
 
-    if cp.returncode != 0:
+    if returncode != 0:
         # Only use sys.exit in cases of an error,
         # so other programs may call this function without exiting.
-        sys.exit(cp.returncode)
+        sys.exit(returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

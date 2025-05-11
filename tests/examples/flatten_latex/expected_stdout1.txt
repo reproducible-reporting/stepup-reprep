@@ -1,10 +1,10 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ rr-flatten-latex article_structured.tex article.tex
-        1/2 | RESCHEDULE │ rr-flatten-latex article_structured.tex article.tex
+        0/1 |      START │ runpy ./plan.py
+        1/2 |    SUCCESS │ runpy ./plan.py
+        1/2 |      START │ flatten-latex article_structured.tex article.tex
+        1/2 | RESCHEDULE │ flatten-latex article_structured.tex article.tex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 Missing inputs and/or required directories:
 sub/other.tex
@@ -14,7 +14,7 @@ sub/other.tex
              AWAITED  sub/other.tex
              AWAITED  sub/
 ───────────────────────────────── PENDING Step ─────────────────────────────────
-Command               rr-flatten-latex article_structured.tex article.tex
+Action                flatten-latex article_structured.tex article.tex
 Working directory     ./
 Inputs        STATIC  ./
               STATIC  article_structured.tex
@@ -23,8 +23,8 @@ Inputs        STATIC  ./
              AWAITED  (sub/other.tex) [amended]
 Outputs      AWAITED  article.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ Skipping file cleanup due to incomplete build.
+        1/2 |    WARNING │ Skipping file cleanup due to incomplete build
         1/2 |    WARNING │ Check logs: .stepup/warning.log
         1/2 |      PHASE │ watch
-        1/2 |   DIRECTOR │ Stopping workers.
+        1/2 |   DIRECTOR │ Stopping workers
         1/2 |   DIRECTOR │ See you!

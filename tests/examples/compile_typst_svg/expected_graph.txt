@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,16 +9,16 @@ file:./
             supplies   file:out.svg
             supplies   file:plan.py
             supplies   file:weather.typ
-            supplies   step:./plan.py
-            supplies   step:rr-compile-typst weather.typ --out=out.svg
+            supplies   step:compile-typst weather.typ --out=out.svg
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
@@ -26,19 +26,19 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:weather.typ
-             creates   step:rr-compile-typst weather.typ --out=out.svg
+             creates   step:compile-typst weather.typ --out=out.svg
 
 file:weather.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst weather.typ --out=out.svg
+            supplies   step:compile-typst weather.typ --out=out.svg
 
-step:rr-compile-typst weather.typ --out=out.svg
+step:compile-typst weather.typ --out=out.svg
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:weather.typ
              creates   file:out.svg
@@ -46,6 +46,6 @@ step:rr-compile-typst weather.typ --out=out.svg
 
 file:out.svg
                state = BUILT
-          created by   step:rr-compile-typst weather.typ --out=out.svg
+          created by   step:compile-typst weather.typ --out=out.svg
             consumes   file:./
-            consumes   step:rr-compile-typst weather.typ --out=out.svg
+            consumes   step:compile-typst weather.typ --out=out.svg

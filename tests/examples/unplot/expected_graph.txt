@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -11,41 +11,41 @@ file:./
             supplies   file:plan.py
             supplies   file:plot1.svg
             supplies   file:plot2.svg
-            supplies   step:./plan.py
-            supplies   step:rr-unplot plot1.svg current_plot1.json
-            supplies   step:rr-unplot plot2.svg current_plot2.json
+            supplies   step:runpy ./plan.py
+            supplies   step:unplot plot1.svg current_plot1.json
+            supplies   step:unplot plot2.svg current_plot2.json
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:plot1.svg
              creates   file:plot2.svg
-             creates   step:rr-unplot plot1.svg current_plot1.json
-             creates   step:rr-unplot plot2.svg current_plot2.json
+             creates   step:unplot plot1.svg current_plot1.json
+             creates   step:unplot plot2.svg current_plot2.json
 
 file:plot1.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-unplot plot1.svg current_plot1.json
+            supplies   step:unplot plot1.svg current_plot1.json
 
 file:plot2.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-unplot plot2.svg current_plot2.json
+            supplies   step:unplot plot2.svg current_plot2.json
 
-step:rr-unplot plot1.svg current_plot1.json
+step:unplot plot1.svg current_plot1.json
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:plot1.svg
              creates   file:current_plot1.json
@@ -53,13 +53,13 @@ step:rr-unplot plot1.svg current_plot1.json
 
 file:current_plot1.json
                state = BUILT
-          created by   step:rr-unplot plot1.svg current_plot1.json
+          created by   step:unplot plot1.svg current_plot1.json
             consumes   file:./
-            consumes   step:rr-unplot plot1.svg current_plot1.json
+            consumes   step:unplot plot1.svg current_plot1.json
 
-step:rr-unplot plot2.svg current_plot2.json
+step:unplot plot2.svg current_plot2.json
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:plot2.svg
              creates   file:current_plot2.json
@@ -67,6 +67,6 @@ step:rr-unplot plot2.svg current_plot2.json
 
 file:current_plot2.json
                state = BUILT
-          created by   step:rr-unplot plot2.svg current_plot2.json
+          created by   step:unplot plot2.svg current_plot2.json
             consumes   file:./
-            consumes   step:rr-unplot plot2.svg current_plot2.json
+            consumes   step:unplot plot2.svg current_plot2.json

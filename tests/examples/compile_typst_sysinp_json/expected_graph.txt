@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,16 +10,16 @@ file:./
             supplies   file:persons.pdf
             supplies   file:plan.py
             supplies   file:template.typ
-            supplies   step:./plan.py
-            supplies   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+            supplies   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
@@ -28,25 +28,25 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:persons.json
              creates   file:template.typ
-             creates   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+             creates   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:persons.json
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+            supplies   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:template.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+            supplies   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
-step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:persons.json
             consumes   file:template.typ
@@ -55,6 +55,6 @@ step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:persons.pdf
                state = BUILT
-          created by   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+          created by   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
             consumes   file:./
-            consumes   step:rr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+            consumes   step:compile-typst template.typ --out=persons.pdf --sysinp json=persons.json

@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,33 +9,33 @@ file:./
             supplies   file:example.pdf
             supplies   file:example.png
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:mutool draw -q -o example.png -r 100 example.pdf
+            supplies   step:runpy ./plan.py
+            supplies   step:runsh mutool draw -q -o example.png -r 100 example.pdf
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_MUTOOL [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:example.pdf
-             creates   step:mutool draw -q -o example.png -r 100 example.pdf
+             creates   step:runsh mutool draw -q -o example.png -r 100 example.pdf
 
 file:example.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:mutool draw -q -o example.png -r 100 example.pdf
+            supplies   step:runsh mutool draw -q -o example.png -r 100 example.pdf
 
-step:mutool draw -q -o example.png -r 100 example.pdf
+step:runsh mutool draw -q -o example.png -r 100 example.pdf
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:example.pdf
              creates   file:example.png
@@ -43,6 +43,6 @@ step:mutool draw -q -o example.png -r 100 example.pdf
 
 file:example.png
                state = BUILT
-          created by   step:mutool draw -q -o example.png -r 100 example.pdf
+          created by   step:runsh mutool draw -q -o example.png -r 100 example.pdf
             consumes   file:./
-            consumes   step:mutool draw -q -o example.png -r 100 example.pdf
+            consumes   step:runsh mutool draw -q -o example.png -r 100 example.pdf

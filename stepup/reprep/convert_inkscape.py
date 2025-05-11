@@ -22,7 +22,6 @@
 import argparse
 import os
 import shlex
-import subprocess
 import sys
 from collections.abc import Iterator
 
@@ -31,11 +30,15 @@ from path import Path
 
 from stepup.core.api import amend, getenv
 from stepup.core.utils import filter_dependencies
+from stepup.core.worker import WorkThread
 
 
-def main(argv: list[str] | None = None):
+def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     """Main program."""
     args = parse_args(argv)
+    if work_thread is None:
+        work_thread = WorkThread("stub")
+
     path_out = Path(args.path_out)
     allowed_extensions = [".pdf", ".png"]
     if not any(path_out.endswith(ext) for ext in allowed_extensions):
@@ -48,7 +51,19 @@ def main(argv: list[str] | None = None):
         args.inkscape_args = shlex.split(
             getenv(f"REPREP_INKSCAPE_{path_out.suffix[1:].upper()}_ARGS", "")
         )
-    convert_inkscape(args.path_svg, path_out, args.inkscape, args.inkscape_args)
+    inp_paths = filter_dependencies(search_svg_deps(args.path_svg))
+    amend(inp=inp_paths)
+    args = [
+        args.inkscape,
+        args.path_svg,
+        *args.inkscape_args,
+        f"--export-filename={path_out}",
+        f"--export-type={path_out.suffix[1:]}",
+    ]
+    os.environ["SELF_CALL"] = "x"
+    returncode = work_thread.runsh_verbose(shlex.join(args))
+    if returncode != 0:
+        sys.exit(returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -73,27 +88,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.",
     )
     return parser.parse_args(argv)
-
-
-def convert_inkscape(path_svg: str, path_out: Path, inkscape: str, inkscape_args: list[str]):
-    inp_paths = filter_dependencies(search_svg_deps(path_svg))
-    amend(inp=inp_paths)
-    args = [
-        inkscape,
-        path_svg,
-        *inkscape_args,
-        f"--export-filename={path_out}",
-        f"--export-type={path_out.suffix[1:]}",
-    ]
-    cp = subprocess.run(args, capture_output=True, env=os.environ | {"SELF_CALL": "x"}, check=False)
-    stdout = cp.stdout.decode()
-    stderr = cp.stderr.decode()
-    if len(stdout) > 0 or len(stderr) > 0:
-        print(f"Command: {' '.join(args)}")
-        sys.stdout.write(stdout)
-        sys.stderr.write(stderr)
-    if cp.returncode != 0:
-        raise subprocess.CalledProcessError(cp.returncode, args)
 
 
 def search_svg_deps(src: str) -> list[str]:

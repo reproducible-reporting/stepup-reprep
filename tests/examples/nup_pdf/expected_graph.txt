@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,35 +9,35 @@ file:./
             supplies   file:dst.pdf
             supplies   file:plan.py
             supplies   file:src.pdf
-            supplies   step:./plan.py
-            supplies   step:rr-nup-pdf src.pdf dst.pdf -p A4
+            supplies   step:nup-pdf src.pdf dst.pdf -p A4
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:src.pdf
-             creates   step:rr-nup-pdf src.pdf dst.pdf -p A4
+             creates   step:nup-pdf src.pdf dst.pdf -p A4
 
 file:src.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-nup-pdf src.pdf dst.pdf -p A4
+            supplies   step:nup-pdf src.pdf dst.pdf -p A4
 
-step:rr-nup-pdf src.pdf dst.pdf -p A4
+step:nup-pdf src.pdf dst.pdf -p A4
                state = SUCCEEDED
              env_var = REPREP_NUP_MARGIN [amended]
                      = REPREP_NUP_NCOL [amended]
                      = REPREP_NUP_NROW [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:src.pdf
              creates   file:dst.pdf
@@ -45,6 +45,6 @@ step:rr-nup-pdf src.pdf dst.pdf -p A4
 
 file:dst.pdf
                state = BUILT
-          created by   step:rr-nup-pdf src.pdf dst.pdf -p A4
+          created by   step:nup-pdf src.pdf dst.pdf -p A4
             consumes   file:./
-            consumes   step:rr-nup-pdf src.pdf dst.pdf -p A4
+            consumes   step:nup-pdf src.pdf dst.pdf -p A4

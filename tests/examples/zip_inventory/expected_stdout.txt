@@ -1,25 +1,25 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/4 |    SUCCESS │ ./plan.py
-        1/4 |      START │ echo hello > built.txt
-        2/4 |    SUCCESS │ echo hello > built.txt
-        2/4 |      START │ rr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |    SUCCESS │ rr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |      START │ rr-zip-inventory inventory.txt upload.zip
-        4/4 |    SUCCESS │ rr-zip-inventory inventory.txt upload.zip
-        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        0/1 |      START │ runpy ./plan.py
+        1/4 |    SUCCESS │ runpy ./plan.py
+        1/4 |      START │ runsh echo hello > built.txt
+        2/4 |    SUCCESS │ runsh echo hello > built.txt
+        2/4 |      START │ make-inventory static.txt built.txt -o inventory.txt
+        3/4 |    SUCCESS │ make-inventory static.txt built.txt -o inventory.txt
+        3/4 |      START │ zip-inventory inventory.txt upload.zip
+        4/4 |    SUCCESS │ zip-inventory inventory.txt upload.zip
+        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         4/4 |      PHASE │ watch
         4/4 |    DELETED │ built.txt
         4/4 |    DELETED │ upload.zip
         1/4 |      PHASE │ run
-        1/4 |      START │ echo hello > built.txt
-        2/4 |    SUCCESS │ echo hello > built.txt
-        2/4 |       SKIP │ rr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |      START │ rr-zip-inventory inventory.txt upload.zip
-        4/4 |    SUCCESS │ rr-zip-inventory inventory.txt upload.zip
-        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        1/4 |      START │ runsh echo hello > built.txt
+        2/4 |    SUCCESS │ runsh echo hello > built.txt
+        2/4 |       SKIP │ make-inventory static.txt built.txt -o inventory.txt
+        3/4 |      START │ zip-inventory inventory.txt upload.zip
+        4/4 |    SUCCESS │ zip-inventory inventory.txt upload.zip
+        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         4/4 |      PHASE │ watch
-        4/4 |   DIRECTOR │ Stopping workers.
+        4/4 |   DIRECTOR │ Stopping workers
         4/4 |   DIRECTOR │ See you!

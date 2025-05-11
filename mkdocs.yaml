@@ -3,7 +3,7 @@ repo_url: https://github.com/reproducible-reporting/stepup-reprep
 edit_uri: edit/main/docs/
 site_description: StepUp RepRep Documentation
 site_author: Toon Verstraelen
-copyright: 2024, Toon Verstraelen
+copyright: 2024-2025, Toon Verstraelen
 
 watch:
   - stepup

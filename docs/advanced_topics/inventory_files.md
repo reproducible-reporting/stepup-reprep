@@ -57,15 +57,15 @@ An exception is raised when no matching paths are found.
 
 ## Creating `inventory.txt` Files
 
-### Command-line Tool `rr-make-inventory`
+### Command-line Tool `stepup make-inventory`
 
 One can create an inventory file on the command-line as follows:
 
 ```bash
-rr-make-inventory -i inventory.def -o inventory.txt
+stepup make-inventory -i inventory.def -o inventory.txt
 ```
 
-See `rr-make-inventory --help` for more details.
+See `stepup make-inventory --help` for more details.
 This tool is suitable for creating inventory files of external datasets.
 
 ### StepUp RepRep Function `make_inventory`
@@ -90,12 +90,12 @@ make_inventory("inventory.txt", path_def="inventory.def")
 
 ## Creating a ZIP Archive From a `inventory.txt` File
 
-### Command-line Tool `rr-zip-inventory`
+### Command-line Tool `stepup zip-inventory`
 
 Given an `inventory.txt` file, the corresponding ZIP file is created with:
 
 ```bash
-rr-zip-inventory inventory.txt
+stepup zip-inventory inventory.txt
 ```
 
 This is a command-line wrapper around the `zip_inventory` function discussed below.
@@ -130,11 +130,11 @@ for more details on Python's (lacking) support for symbolic links in ZIP files.
 If you just want to check the file sizes, modes and hashes of an inventory, run:
 
 ```bash
-rr-check-inventory inventory.txt
+stepup check-inventory inventory.txt
 ```
 
 This can be useful in the following cases:
 
 - When you work with a remote dataset, you can check if the files in the inventory have changed.
-- When you unpack a ZIP file created `rr-zip-inventory` or `zip_inventory()`,
+- When you unpack a ZIP file created `stepup zip-inventory` or `zip_inventory()`,
   you can check if the files are not affected by bit rot or other data integrity issues.

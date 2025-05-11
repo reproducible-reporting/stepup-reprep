@@ -1,10 +1,10 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
-        2/3 |    SUCCESS │ rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
+        0/1 |      START │ runpy ./plan.py
+        1/3 |    SUCCESS │ runpy ./plan.py
+        1/3 |      START │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
+        2/3 |    SUCCESS │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Loading references.bib
    Found 1 BibTeX entries
@@ -25,9 +25,9 @@
 🔨 Abbreviating journal names
 💾 Please check the new or corrected file: cleaned.bib
 ────────────────────────────────────────────────────────────────────────────────
-        2/3 |      START │ cp -aT cleaned.bib copy.bib
-        3/3 |    SUCCESS │ cp -aT cleaned.bib copy.bib
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/3 |      START │ copy cleaned.bib copy.bib
+        3/3 |    SUCCESS │ copy cleaned.bib copy.bib
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ Stopping workers.
+        3/3 |   DIRECTOR │ Stopping workers
         3/3 |   DIRECTOR │ See you!

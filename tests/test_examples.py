@@ -50,11 +50,6 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "make_inventory_list",
         "nup_pdf",
         "raster_pdf",
-        "render_jinja_dict",
-        "render_jinja_json",
-        "render_jinja_python",
-        "render_jinja_toml",
-        "render_jinja_yaml",
         "sync_zenodo",
         "unplot",
         "zip_def",
@@ -103,7 +98,6 @@ def has_texlive_2023():
         "compile_pdflatex_bibtex",
         "compile_pdflatex_input",
         "compile_xelatex_input",
-        "render_jinja_relpath",
     ],
 )
 @pytest.mark.asyncio

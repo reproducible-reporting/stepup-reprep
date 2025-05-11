@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,51 +9,51 @@ file:./
             supplies   file:plan.py
             supplies   file:rastered/
             supplies   file:smile.pdf
-            supplies   step:./plan.py
-            supplies   step:mkdir -p rastered/
-            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+            supplies   step:mkdir rastered/
+            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:smile.pdf
-             creates   step:mkdir -p rastered/
-             creates   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+             creates   step:mkdir rastered/
+             creates   step:raster-pdf smile.pdf rastered/smile.pdf
 
 file:smile.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
 
-step:mkdir -p rastered/
+step:mkdir rastered/
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
              creates   file:rastered/
             supplies   file:rastered/
 
 file:rastered/
                state = BUILT
-          created by   step:mkdir -p rastered/
+          created by   step:mkdir rastered/
             consumes   file:./
-            consumes   step:mkdir -p rastered/
+            consumes   step:mkdir rastered/
             supplies   file:rastered/smile.pdf
-            supplies   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
 
-step:rr-raster-pdf smile.pdf rastered/smile.pdf
+step:raster-pdf smile.pdf rastered/smile.pdf
                state = SUCCEEDED
              env_var = REPREP_RASTER_QUALITY [amended]
                      = REPREP_RASTER_RESOLUTION [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:rastered/
             consumes   file:smile.pdf
@@ -62,6 +62,6 @@ step:rr-raster-pdf smile.pdf rastered/smile.pdf
 
 file:rastered/smile.pdf
                state = BUILT
-          created by   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+          created by   step:raster-pdf smile.pdf rastered/smile.pdf
             consumes   file:rastered/
-            consumes   step:rr-raster-pdf smile.pdf rastered/smile.pdf
+            consumes   step:raster-pdf smile.pdf rastered/smile.pdf

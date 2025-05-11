@@ -7,21 +7,13 @@ rm -rvf $(cat .gitignore)
 # Run the example
 echo "broken: old" > data.yaml
 export REPREP_KEEP_TYPST_DEPS="1"
-stepup -w -n 1 & # > current_stdout.txt &
+stepup boot -w -n 1 & # > current_stdout.txt &
 PID=$!
 
-# Wait for the director and get its socket.
-export STEPUP_DIRECTOR_SOCKET=$(
-  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
-)
-
 # Get the graph after completion of the pending steps.
-python3 - << EOD
-from stepup.core.interact import *
-wait()
-graph("current_graph")
-join()
-EOD
+stepup wait
+stepup graph current_graph
+stepup join
 
 # Wait for background processes, if any.
 set +e; wait -fn $PID; RETURNCODE=$?; set -e

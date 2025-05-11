@@ -20,8 +20,7 @@
 """Wrapper for HTML to PDF conversion."""
 
 import argparse
-import os
-import subprocess
+import shlex
 import sys
 from collections.abc import Iterator
 
@@ -29,16 +28,25 @@ from defusedxml import ElementTree
 from path import Path
 
 from stepup.core.api import amend, getenv
+from stepup.core.worker import WorkThread
 
 
-def main(argv: list[str] | None = None):
+def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     """Main program."""
     args = parse_args(argv)
+    if work_thread is None:
+        work_thread = WorkThread("stub")
+
     if not args.path_pdf.endswith(".pdf"):
         raise ValueError("The output must have a pdf extensions.")
     if args.weasyprint is None:
         args.weasyprint = getenv("REPREP_WEASYPRINT", "weasyprint")
-    convert_html_pdf(args.path_html, args.path_pdf, args.weasyprint)
+    inp_paths = search_html_deps(args.path_html)
+    amend(inp=inp_paths)
+    popenargs = [args.weasyprint, args.path_html, args.path_pdf]
+    returncode = work_thread.runsh_verbose(shlex.join(popenargs))
+    if returncode != 0:
+        sys.exit(returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -55,12 +63,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.",
     )
     return parser.parse_args(argv)
-
-
-def convert_html_pdf(path_html: str, path_pdf: str, weasyprint: str):
-    inp_paths = search_html_deps(path_html)
-    amend(inp=inp_paths)
-    subprocess.run([weasyprint, path_html, path_pdf], check=True, env=os.environ)
 
 
 def search_html_deps(src: str) -> list[str]:

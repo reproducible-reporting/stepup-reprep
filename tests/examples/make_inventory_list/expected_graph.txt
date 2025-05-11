@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,32 +9,32 @@ file:./
             supplies   file:README.txt
             supplies   file:inventory.txt
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:rr-make-inventory README.txt -o inventory.txt
+            supplies   step:make-inventory README.txt -o inventory.txt
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:README.txt
-             creates   step:rr-make-inventory README.txt -o inventory.txt
+             creates   step:make-inventory README.txt -o inventory.txt
 
 file:README.txt
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-make-inventory README.txt -o inventory.txt
+            supplies   step:make-inventory README.txt -o inventory.txt
 
-step:rr-make-inventory README.txt -o inventory.txt
+step:make-inventory README.txt -o inventory.txt
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:README.txt
              creates   file:inventory.txt
@@ -42,6 +42,6 @@ step:rr-make-inventory README.txt -o inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:rr-make-inventory README.txt -o inventory.txt
+          created by   step:make-inventory README.txt -o inventory.txt
             consumes   file:./
-            consumes   step:rr-make-inventory README.txt -o inventory.txt
+            consumes   step:make-inventory README.txt -o inventory.txt

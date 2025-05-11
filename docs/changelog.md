@@ -12,13 +12,23 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [3.0.0][] - 2025-05-11 {: v3.0.0 }
+
+Major release with breaking changes, compatible with StepUp Core 3.
+
+### Changed
+
+- Breaking:
+    - Compatibility with StepUp Core 3.
+    - Migrated `render_jinja()` to StepUp Core 3.
+
 ## [2.3.6][] - 2025-04-24 {: v2.3.6 }
 
 Make `sanitize_bibtex()` work without LaTeX and add support for TOML files in `render_jinja()`.
 
 ### Added
 
-- Support for TOML files in [`render_jinja()`][stepup.reprep.api.render_jinja].
+- Support for TOML files in `render_jinja()`.
 
 ### Changed
 
@@ -155,14 +165,14 @@ more ways to specify variables in `render_jinja()`.
       when the LaTeX source has a BibTeX bibliography.
       If you want to sanitize the BibTeX file, call [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex]
       after `compile_latex()`.
-    - The `paths_variables` argument of [`render_jinja()`][stepup.reprep.api.render_jinja]
+    - The `paths_variables` argument of `render_jinja()`
       has been replaced by a variadic positional parameter (i.e. `*paths_variables`).
 - Other changes
     - Change [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint]
       to perform the conversion in a single step.
     - Improve handling of arguments and dependencies in
       [`convert_markdown()`][stepup.reprep.api.convert_markdown]
-    - [`render_jinja()`][stepup.reprep.api.render_jinja] now accepts JSON and YAML files
+    - `render_jinja()` now accepts JSON and YAML files
       with variables for Jinja2 templates.
       In addition, one may specify a dictionary with variables directly when calling the function.
     - Documentation improvements.
@@ -232,7 +242,7 @@ This release contains a few minor breaking changes for the sake of internal cons
 - Add more entrypoints for command-line utilities in StepUp RepRep.
   Existing ones were renamed from `reprep-*` to `rr-*`.
 - Rename module `stepup.reprep.render` to `stepup.reprep.render_jinja`.
-- Rename API function: `render()` -> [`render_jinja()`][stepup.reprep.api.render_jinja]
+- Rename API function: `render()` -> `render_jinja()`
 
 ## [2.0.2][] - 2025-01-22 {: #v2.0.2 }
 
@@ -372,6 +382,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.0
 [2.3.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.6
 [2.3.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5
 [2.3.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4

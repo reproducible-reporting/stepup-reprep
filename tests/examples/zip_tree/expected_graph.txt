@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,17 +10,17 @@ file:./
             supplies   file:inventory.txt
             supplies   file:plan.py
             supplies   file:upload.zip
-            supplies   step:./plan.py
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-            supplies   step:rr-zip-inventory inventory.txt upload.zip
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:runpy ./plan.py
+            supplies   step:zip-inventory inventory.txt upload.zip
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
                  ngm = ['data/**/*.out'] {}
           created by   root:
@@ -30,20 +30,20 @@ step:./plan.py
              creates   file:data/fine.out
              creates   file:data/sub/deeper/nested.out
              creates   file:data/sub/works.out
-             creates   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-             creates   step:rr-zip-inventory inventory.txt upload.zip
+             creates   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+             creates   step:zip-inventory inventory.txt upload.zip
 
 dg:data/**/
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
              creates   file:data/
              creates   file:data/sub/
              creates   file:data/sub/deeper/
 
 file:data/fine.out
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:data/
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/
                state = STATIC
@@ -51,20 +51,20 @@ file:data/
             consumes   file:./
             supplies   file:data/fine.out
             supplies   file:data/sub/
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/deeper/nested.out
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:data/sub/deeper/
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/deeper/
                state = STATIC
           created by   dg:data/**/
             consumes   file:data/sub/
             supplies   file:data/sub/deeper/nested.out
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/
                state = STATIC
@@ -72,17 +72,17 @@ file:data/sub/
             consumes   file:data/
             supplies   file:data/sub/deeper/
             supplies   file:data/sub/works.out
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/works.out
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:data/sub/
-            supplies   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
-step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:data/
             consumes   file:data/fine.out
@@ -95,14 +95,14 @@ step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.o
 
 file:inventory.txt
                state = BUILT
-          created by   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+          created by   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
             consumes   file:./
-            consumes   step:rr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-            supplies   step:rr-zip-inventory inventory.txt upload.zip
+            consumes   step:make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+            supplies   step:zip-inventory inventory.txt upload.zip
 
-step:rr-zip-inventory inventory.txt upload.zip
+step:zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:inventory.txt
              creates   file:upload.zip
@@ -110,6 +110,6 @@ step:rr-zip-inventory inventory.txt upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:rr-zip-inventory inventory.txt upload.zip
+          created by   step:zip-inventory inventory.txt upload.zip
             consumes   file:./
-            consumes   step:rr-zip-inventory inventory.txt upload.zip
+            consumes   step:zip-inventory inventory.txt upload.zip

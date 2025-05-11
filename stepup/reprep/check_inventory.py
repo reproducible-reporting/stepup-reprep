@@ -32,19 +32,35 @@ __all__ = ("check_inventory", "iter_inventory", "main")
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args(argv)
+    parser = argparse.ArgumentParser(
+        prog="rr-check-inventory", description="Check an inventory.txt."
+    )
+    add_parser_args(parser)
+    args = parser.parse_args(argv)
     if not args.inventory_txt.endswith(".txt"):
         raise ValueError("The inventory file must end with .txt")
     check_inventory(args.inventory_txt)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="rr-check-inventory", description="Check an inventory.txt."
-    )
+def add_parser_args(parser: argparse.ArgumentParser):
+    """Define command-line arguments."""
     parser.add_argument("inventory_txt", help="An inventory.txt file generated with RepRep")
-    return parser.parse_args(argv)
+
+
+def check_subcommand(subparser: argparse.ArgumentParser) -> callable:
+    """Add subcommand to check inventory."""
+    parser = subparser.add_parser(
+        "check-inventory",
+        help="Check the inventory file.",
+    )
+    add_parser_args(parser)
+    return check_tool
+
+
+def check_tool(args: argparse.Namespace) -> int:
+    """Check the inventory file."""
+    check_inventory(args.inventory_txt)
+    return 0
 
 
 def iter_inventory(path_inventory: str) -> Iterator[FileSummary]:

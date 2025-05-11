@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -22,23 +22,23 @@ file:./
             supplies   file:vera.ttf
             supplies   file:vertical.pdf
             supplies   file:vertical.svg
-            supplies   step:./plan.py
-            supplies   step:./tile.py plan
-            supplies   step:./tile.py run
-            supplies   step:rr-convert-inkscape hexagon.svg hexagon.pdf
-            supplies   step:rr-convert-inkscape horizontal.svg horizontal.pdf
-            supplies   step:rr-convert-inkscape pentagon.svg pentagon.pdf
-            supplies   step:rr-convert-inkscape square.svg square.pdf
-            supplies   step:rr-convert-inkscape triangle.svg triangle.pdf
-            supplies   step:rr-convert-inkscape vertical.svg vertical.pdf
+            supplies   step:convert-inkscape hexagon.svg hexagon.pdf
+            supplies   step:convert-inkscape horizontal.svg horizontal.pdf
+            supplies   step:convert-inkscape pentagon.svg pentagon.pdf
+            supplies   step:convert-inkscape square.svg square.pdf
+            supplies   step:convert-inkscape triangle.svg triangle.pdf
+            supplies   step:convert-inkscape vertical.svg vertical.pdf
+            supplies   step:runpy ./plan.py
+            supplies   step:runpy ./tile.py plan
+            supplies   step:runpy ./tile.py run
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
                  ngm = ['*.svg'] {}
           created by   root:
@@ -52,55 +52,55 @@ step:./plan.py
              creates   file:triangle.svg
              creates   file:vera.ttf
              creates   file:vertical.svg
-             creates   step:./tile.py plan
-             creates   step:rr-convert-inkscape hexagon.svg hexagon.pdf
-             creates   step:rr-convert-inkscape horizontal.svg horizontal.pdf
-             creates   step:rr-convert-inkscape pentagon.svg pentagon.pdf
-             creates   step:rr-convert-inkscape square.svg square.pdf
-             creates   step:rr-convert-inkscape triangle.svg triangle.pdf
-             creates   step:rr-convert-inkscape vertical.svg vertical.pdf
+             creates   step:convert-inkscape hexagon.svg hexagon.pdf
+             creates   step:convert-inkscape horizontal.svg horizontal.pdf
+             creates   step:convert-inkscape pentagon.svg pentagon.pdf
+             creates   step:convert-inkscape square.svg square.pdf
+             creates   step:convert-inkscape triangle.svg triangle.pdf
+             creates   step:convert-inkscape vertical.svg vertical.pdf
+             creates   step:runpy ./tile.py plan
 
 file:hexagon.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape hexagon.svg hexagon.pdf
+            supplies   step:convert-inkscape hexagon.svg hexagon.pdf
 
 file:horizontal.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape horizontal.svg horizontal.pdf
+            supplies   step:convert-inkscape horizontal.svg horizontal.pdf
 
 file:pentagon.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape pentagon.svg pentagon.pdf
+            supplies   step:convert-inkscape pentagon.svg pentagon.pdf
 
 file:square.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape square.svg square.pdf
+            supplies   step:convert-inkscape square.svg square.pdf
 
 file:triangle.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape triangle.svg triangle.pdf
+            supplies   step:convert-inkscape triangle.svg triangle.pdf
 
 file:vertical.svg
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-inkscape vertical.svg vertical.pdf
+            supplies   step:convert-inkscape vertical.svg vertical.pdf
 
-step:rr-convert-inkscape hexagon.svg hexagon.pdf
+step:convert-inkscape hexagon.svg hexagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:hexagon.svg
              creates   file:hexagon.pdf
@@ -108,16 +108,16 @@ step:rr-convert-inkscape hexagon.svg hexagon.pdf
 
 file:hexagon.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape hexagon.svg hexagon.pdf
+          created by   step:convert-inkscape hexagon.svg hexagon.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape hexagon.svg hexagon.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape hexagon.svg hexagon.pdf
+            supplies   step:runpy ./tile.py run
 
-step:rr-convert-inkscape horizontal.svg horizontal.pdf
+step:convert-inkscape horizontal.svg horizontal.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:horizontal.svg
              creates   file:horizontal.pdf
@@ -125,16 +125,16 @@ step:rr-convert-inkscape horizontal.svg horizontal.pdf
 
 file:horizontal.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape horizontal.svg horizontal.pdf
+          created by   step:convert-inkscape horizontal.svg horizontal.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape horizontal.svg horizontal.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape horizontal.svg horizontal.pdf
+            supplies   step:runpy ./tile.py run
 
-step:rr-convert-inkscape pentagon.svg pentagon.pdf
+step:convert-inkscape pentagon.svg pentagon.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:pentagon.svg
              creates   file:pentagon.pdf
@@ -142,16 +142,16 @@ step:rr-convert-inkscape pentagon.svg pentagon.pdf
 
 file:pentagon.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape pentagon.svg pentagon.pdf
+          created by   step:convert-inkscape pentagon.svg pentagon.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape pentagon.svg pentagon.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape pentagon.svg pentagon.pdf
+            supplies   step:runpy ./tile.py run
 
-step:rr-convert-inkscape square.svg square.pdf
+step:convert-inkscape square.svg square.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:square.svg
              creates   file:square.pdf
@@ -159,16 +159,16 @@ step:rr-convert-inkscape square.svg square.pdf
 
 file:square.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape square.svg square.pdf
+          created by   step:convert-inkscape square.svg square.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape square.svg square.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape square.svg square.pdf
+            supplies   step:runpy ./tile.py run
 
-step:rr-convert-inkscape triangle.svg triangle.pdf
+step:convert-inkscape triangle.svg triangle.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:triangle.svg
              creates   file:triangle.pdf
@@ -176,16 +176,16 @@ step:rr-convert-inkscape triangle.svg triangle.pdf
 
 file:triangle.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape triangle.svg triangle.pdf
+          created by   step:convert-inkscape triangle.svg triangle.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape triangle.svg triangle.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape triangle.svg triangle.pdf
+            supplies   step:runpy ./tile.py run
 
-step:rr-convert-inkscape vertical.svg vertical.pdf
+step:convert-inkscape vertical.svg vertical.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:vertical.svg
              creates   file:vertical.pdf
@@ -193,34 +193,34 @@ step:rr-convert-inkscape vertical.svg vertical.pdf
 
 file:vertical.pdf
                state = BUILT
-          created by   step:rr-convert-inkscape vertical.svg vertical.pdf
+          created by   step:convert-inkscape vertical.svg vertical.pdf
             consumes   file:./
-            consumes   step:rr-convert-inkscape vertical.svg vertical.pdf
-            supplies   step:./tile.py run
+            consumes   step:convert-inkscape vertical.svg vertical.pdf
+            supplies   step:runpy ./tile.py run
 
 file:tile.py
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:./tile.py plan
-            supplies   step:./tile.py run
+            supplies   step:runpy ./tile.py plan
+            supplies   step:runpy ./tile.py run
 
 file:vera.ttf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:./tile.py run
+            supplies   step:runpy ./tile.py run
 
-step:./tile.py plan
+step:runpy ./tile.py plan
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:tile.py
-             creates   step:./tile.py run
+             creates   step:runpy ./tile.py run
 
-step:./tile.py run
+step:runpy ./tile.py run
                state = SUCCEEDED
-          created by   step:./tile.py plan
+          created by   step:runpy ./tile.py plan
             consumes   file:./
             consumes   file:hexagon.pdf
             consumes   file:horizontal.pdf
@@ -235,6 +235,6 @@ step:./tile.py run
 
 file:figure.pdf
                state = BUILT
-          created by   step:./tile.py run
+          created by   step:runpy ./tile.py run
             consumes   file:./
-            consumes   step:./tile.py run
+            consumes   step:runpy ./tile.py run

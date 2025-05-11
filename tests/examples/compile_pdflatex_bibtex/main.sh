@@ -7,34 +7,22 @@ rm -rvf $(cat .gitignore)
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
 export LATEX_MAIN="paper"
-stepup -w -n 1 & # > current_stdout.txt &
-
-# Wait for the director and get its socket.
-export STEPUP_DIRECTOR_SOCKET=$(
-  python -c "import stepup.core.director; print(stepup.core.director.get_socket())"
-)
+stepup boot -w -n 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
-python3 - << EOD
-from stepup.core.interact import *
-wait()
-graph("current_graph")
-EOD
+stepup wait
+stepup graph current_graph
 
 # Reproducibility test
 rm paper.aux paper.log
 mv paper.pdf paper1.pdf
 mv paper.bbl paper1.bbl
-python3 - << EOD
-from stepup.core.interact import *
-from stepup.reprep.make_inventory import write_inventory
-watch_delete("paper.pdf")
-watch_delete("paper.bbl")
-run()
-join()
-write_inventory("reproducibility_pdf_inventory.txt", ["paper.pdf", "paper1.pdf"])
-write_inventory("reproducibility_bbl_inventory.txt", ["paper.bbl", "paper1.bbl"])
-EOD
+stepup watch-delete paper.pdf
+stepup watch-delete paper.bbl
+stepup run
+stepup join
+stepup make-inventory -o reproducibility_pdf_inventory.txt paper.pdf paper1.pdf
+stepup make-inventory -o reproducibility_bbl_inventory.txt paper.bbl paper1.bbl
 
 # Wait for background processes, if any.
 wait
@@ -49,4 +37,4 @@ wait
 [[ -f paper1.bbl ]] || exit 1
 [[ -f reproducibility_pdf_inventory.txt ]] || exit 1
 [[ -f reproducibility_bbl_inventory.txt ]] || exit 1
-rr-check-inventory paper-inventory.txt
+stepup check-inventory paper-inventory.txt

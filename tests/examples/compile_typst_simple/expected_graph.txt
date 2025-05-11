@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,35 +10,35 @@ file:./
             supplies   file:document.typ
             supplies   file:out.pdf
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            supplies   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
-             creates   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creates   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            supplies   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
-step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:document.typ
              creates   file:document-inventory.txt
@@ -48,12 +48,12 @@ step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.
 
 file:document-inventory.txt
                state = BUILT
-          created by   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+          created by   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
             consumes   file:./
-            consumes   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            consumes   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:out.pdf
                state = BUILT
-          created by   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+          created by   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
             consumes   file:./
-            consumes   step:rr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            consumes   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf

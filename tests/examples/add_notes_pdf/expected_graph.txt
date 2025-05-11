@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -10,39 +10,39 @@ file:./
             supplies   file:notes.pdf
             supplies   file:plan.py
             supplies   file:src.pdf
-            supplies   step:./plan.py
-            supplies   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:notes.pdf
              creates   file:src.pdf
-             creates   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+             creates   step:add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:notes.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:src.pdf
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
 
-step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+step:add-notes-pdf src.pdf notes.pdf dst.pdf
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:notes.pdf
             consumes   file:src.pdf
@@ -51,6 +51,6 @@ step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:dst.pdf
                state = BUILT
-          created by   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+          created by   step:add-notes-pdf src.pdf notes.pdf dst.pdf
             consumes   file:./
-            consumes   step:rr-add-notes-pdf src.pdf notes.pdf dst.pdf
+            consumes   step:add-notes-pdf src.pdf notes.pdf dst.pdf

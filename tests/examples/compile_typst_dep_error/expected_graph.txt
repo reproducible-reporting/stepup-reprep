@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -11,17 +11,17 @@ file:./
             supplies   file:document.pdf
             supplies   file:document.typ
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:echo 'fixed: new' > data.yaml
-            supplies   step:rr-compile-typst --keep-deps document.typ
+            supplies   step:compile-typst --keep-deps document.typ
+            supplies   step:runpy ./plan.py
+            supplies   step:runsh echo 'fixed: new' > data.yaml
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
@@ -29,20 +29,20 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
-             creates   step:echo 'fixed: new' > data.yaml
-             creates   step:rr-compile-typst --keep-deps document.typ
+             creates   step:compile-typst --keep-deps document.typ
+             creates   step:runsh echo 'fixed: new' > data.yaml
 
 file:document.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst --keep-deps document.typ
+            supplies   step:compile-typst --keep-deps document.typ
 
-step:rr-compile-typst --keep-deps document.typ
+step:compile-typst --keep-deps document.typ
                state = FAILED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:document.typ
              creates   file:document.dep
@@ -52,25 +52,25 @@ step:rr-compile-typst --keep-deps document.typ
 
 file:document.dep
                state = AWAITED
-          created by   step:rr-compile-typst --keep-deps document.typ
+          created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
-            consumes   step:rr-compile-typst --keep-deps document.typ
+            consumes   step:compile-typst --keep-deps document.typ
 
 file:document.pdf
                state = AWAITED
-          created by   step:rr-compile-typst --keep-deps document.typ
+          created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
-            consumes   step:rr-compile-typst --keep-deps document.typ
+            consumes   step:compile-typst --keep-deps document.typ
 
-step:echo 'fixed: new' > data.yaml
+step:runsh echo 'fixed: new' > data.yaml
                state = SUCCEEDED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
              creates   file:data.yaml
             supplies   file:data.yaml
 
 file:data.yaml
                state = BUILT
-          created by   step:echo 'fixed: new' > data.yaml
+          created by   step:runsh echo 'fixed: new' > data.yaml
             consumes   file:./
-            consumes   step:echo 'fixed: new' > data.yaml
+            consumes   step:runsh echo 'fixed: new' > data.yaml

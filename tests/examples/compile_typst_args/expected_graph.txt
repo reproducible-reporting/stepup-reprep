@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -9,16 +9,16 @@ file:./
             supplies   file:lorem.pdf
             supplies   file:lorem.typ
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:rr-compile-typst lorem.typ -- --pages 2
+            supplies   step:compile-typst lorem.typ -- --pages 2
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
@@ -26,18 +26,18 @@ step:./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:lorem.typ
-             creates   step:rr-compile-typst lorem.typ -- --pages 2
+             creates   step:compile-typst lorem.typ -- --pages 2
 
 file:lorem.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst lorem.typ -- --pages 2
+            supplies   step:compile-typst lorem.typ -- --pages 2
 
-step:rr-compile-typst lorem.typ -- --pages 2
+step:compile-typst lorem.typ -- --pages 2
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:lorem.typ
              creates   file:lorem.pdf
@@ -45,6 +45,6 @@ step:rr-compile-typst lorem.typ -- --pages 2
 
 file:lorem.pdf
                state = BUILT
-          created by   step:rr-compile-typst lorem.typ -- --pages 2
+          created by   step:compile-typst lorem.typ -- --pages 2
             consumes   file:./
-            consumes   step:rr-compile-typst lorem.typ -- --pages 2
+            consumes   step:compile-typst lorem.typ -- --pages 2

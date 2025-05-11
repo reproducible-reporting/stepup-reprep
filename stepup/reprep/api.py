@@ -25,7 +25,7 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import StepInfo, getenv, step, subs_env_vars
+from stepup.core.api import StepInfo, getenv, runsh, step, subs_env_vars
 from stepup.core.utils import make_path_out, string_to_bool
 
 __all__ = (
@@ -48,7 +48,6 @@ __all__ = (
     "make_inventory",
     "nup_pdf",
     "raster_pdf",
-    "render_jinja",
     "sanitize_bibtex",
     "sync_zenodo",
     "unplot",
@@ -80,7 +79,7 @@ def add_notes_pdf(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "rr-add-notes-pdf ${inp} ${out}",
+        "add-notes-pdf ${inp} ${out}",
         inp=[path_src, path_notes],
         out=path_dst,
         optional=optional,
@@ -117,7 +116,7 @@ def cat_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["rr-cat-pdf", "${inp}", "${out}"]
+    args = ["cat-pdf", "${inp}", "${out}"]
     if insert_blank:
         args.append("--insert-blank")
     return step(
@@ -150,7 +149,7 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     with subs_env_vars() as subs:
         path_src = subs(path_src)
         path_config = subs(path_config)
-    args = ["rr-check-hrefs", shlex.quote(path_src)]
+    args = ["check_hrefs", shlex.quote(path_src)]
     inp_paths = [path_src]
     if path_config is not None:
         inp_paths.append(path_config)
@@ -228,7 +227,7 @@ def compile_latex(
     prefix = path_tex[:-4]
     path_pdf = f"{prefix}.pdf"
 
-    args = ["rr-compile-latex", shlex.quote(path_tex)]
+    args = ["compile-latex", shlex.quote(path_tex)]
     inp_paths = [path_tex]
     out_paths = [path_pdf, f"{prefix}.aux", f"{prefix}.fls"]
     if maxrep != 5:
@@ -345,7 +344,7 @@ def compile_typst(
     path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png"])
 
     stem = path_typ[:-4]
-    args = ["rr-compile-typst"]
+    args = ["compile-typst"]
     if resolution is not None:
         args.append(f"--resolution={shlex.quote(str(resolution))}")
     if typst is not None:
@@ -434,7 +433,7 @@ def convert_inkscape(
         raise ValueError("The SVG file must have extension .svg")
     if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
-    args = ["rr-convert-inkscape", shlex.quote(path_svg), shlex.quote(path_out)]
+    args = ["convert-inkscape", shlex.quote(path_svg), shlex.quote(path_out)]
     if inkscape is not None:
         args.append("--inkscape=" + shlex.quote(inkscape))
     if len(inkscape_args) > 0:
@@ -610,7 +609,7 @@ def convert_jupyter(
             nbargs = str(nbargs)
         args.insert(0, "REPREP_NBARGS=" + shlex.quote(nbargs))
     args.extend([">", shlex.quote(path_out)])
-    step(
+    runsh(
         " ".join(args),
         inp=[path_nb, *inp],
         out=[path_out, *out],
@@ -659,7 +658,7 @@ def convert_markdown(
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, dest, ".html")
     inp = [path_md]
-    args = ["rr-convert-markdown", shlex.quote(path_md), shlex.quote(path_html)]
+    args = ["convert-markdown", shlex.quote(path_md), shlex.quote(path_html)]
     if len(paths_css) > 0:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
@@ -706,7 +705,7 @@ def convert_mutool(
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
     args = [shlex.quote(mutool), "draw -q -o ${out} -r", shlex.quote(str(resolution)), "${inp}"]
-    return step(
+    return runsh(
         " ".join(args),
         inp=path_pdf,
         out=path_out,
@@ -774,7 +773,11 @@ def convert_weasyprint(
     if not path_html.endswith(".html"):
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, dest, ".pdf")
-    args = ["rr-convert-weasyprint", shlex.quote(path_html), shlex.quote(path_pdf)]
+    args = [
+        "convert-weasyprint",
+        shlex.quote(path_html),
+        shlex.quote(path_pdf),
+    ]
     if weasyprint is not None:
         args.append("--weasyprint=" + shlex.quote(weasyprint))
     return step(" ".join(args), inp=path_html, out=path_pdf, block=block, optional=optional)
@@ -831,7 +834,7 @@ def convert_odf_pdf(
         "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
     path_pdf = make_path_out(path_odf, dest, ".pdf")
-    return step(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
+    return runsh(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
 
 
 DEFAULT_LATEXDIFF_ARGS = (
@@ -893,7 +896,7 @@ def diff_latex(
     args = [shlex.quote(latexdiff)]
     args.extend(shlex.quote(latexdiff_arg) for latexdiff_arg in latexdiff_args)
     args.extend(["${inp}", "--no-label", ">", "${out}"])
-    return step(
+    return runsh(
         " ".join(args),
         inp=[path_old, path_new],
         out=path_diff,
@@ -922,7 +925,7 @@ def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, bloc
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "rr-flatten-latex ${inp} ${out}",
+        "flatten-latex ${inp} ${out}",
         inp=path_tex,
         out=path_flat,
         optional=optional,
@@ -958,7 +961,7 @@ def make_inventory(
     if len(paths) < 1:
         raise ValueError("At least one path must be given.")
     paths_inp = list(paths[:-1])
-    args = ["rr-make-inventory", *paths_inp]
+    args = ["make-inventory", *paths_inp]
     if path_def is not None:
         args.extend(["-i", path_def])
         paths_inp.append(path_def)
@@ -1013,7 +1016,7 @@ def nup_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["rr-nup-pdf", "${inp}", "${out}"]
+    args = ["nup-pdf", "${inp}", "${out}"]
     if nrow is not None:
         args.extend(["-r", str(nrow)])
     if ncol is not None:
@@ -1059,98 +1062,13 @@ def raster_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["rr-raster-pdf", "${inp}", "${out}"]
+    args = ["raster-pdf", "${inp}", "${out}"]
     if resolution is not None:
         args.extend(["-r", str(resolution)])
     if quality is not None:
         args.extend(["-q", shlex.quote(str(quality))])
     path_out = make_path_out(path_inp, dest, ".pdf")
     return step(" ".join(args), inp=path_inp, out=path_out, optional=optional, block=block)
-
-
-def render_jinja(
-    *args: str | dict,
-    mode: str = "auto",
-    optional: bool = False,
-    block: bool = False,
-) -> StepInfo:
-    """Render the template with Jinja2.
-
-    Parameters
-    ----------
-    args
-        The first argument is the path to the template file.
-        All the following position arguments can be one of the following two types:
-
-        - Paths to Python, JSON, TOML or YAML files with variable definitions.
-          Variables defined in later files take precedence.
-        - A dictionary with additional variables.
-          These will be JSON-serialized and passed on the command-line to the Jinja renderer.
-          Variables in dictionaries take precedence over variables from files.
-          When multiple dictionaries are given, later ones take precedence.
-
-        The very last argument is an output destination (directory or file).
-    mode
-        The format of the Jinja placeholders.
-        The default (auto) selects either plain or latex based on the extension of the template.
-        The plain format is the default Jinja style with curly brackets: {{ }} etc.
-        The latex style replaces curly brackets by angle brackets: << >> etc.
-    optional
-        If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
-
-    Returns
-    -------
-    step_info
-        Holds relevant information of the step, useful for defining follow-up steps.
-
-    Notes
-    -----
-    At least some variables must be given, either as a file containing variables or as a dictionary.
-    """
-    # Parse the positional arguments
-    if len(args) < 3:
-        raise ValueError(
-            "At least three positional arguments must be given: "
-            "the template, at least one file or dict with variables, and the destination."
-        )
-    path_template = args[0]
-    if not isinstance(path_template, str):
-        raise TypeError("The template argument must be a string.")
-    dest = args[-1]
-    if not isinstance(dest, str):
-        raise TypeError("The destination argument must be a string.")
-    variables = {}
-    paths_variables = []
-    for arg in args[1:-1]:
-        if isinstance(arg, str):
-            paths_variables.append(arg)
-        elif isinstance(arg, dict):
-            variables.update(arg)
-        else:
-            raise TypeError("The variables arguments must be strings (paths) or dictionaries.")
-
-    # Parse other arguments.
-    if mode not in ["auto", "plain", "latex"]:
-        raise ValueError(f"Unsupported mode {mode!r}. Must be one of 'auto', 'plain', 'latex'")
-    if len(paths_variables) == 0 and len(variables) == 0:
-        raise ValueError("At least one file with variable definitions needed.")
-    path_out = make_path_out(path_template, dest, None)
-
-    # Create the command
-    args = ["rr-render-jinja", "${inp}", "${out}"]
-    if mode != "auto":
-        args.append(f"--mode={mode}")
-    if len(variables) > 0:
-        args.append("--json=" + shlex.quote(json.dumps(variables)))
-    return step(
-        " ".join(args),
-        inp=[path_template, *paths_variables],
-        out=path_out,
-        optional=optional,
-        block=block,
-    )
 
 
 def sanitize_bibtex(
@@ -1199,7 +1117,7 @@ def sanitize_bibtex(
         path_aux = subs(path_aux)
         path_out = subs(path_out)
 
-    args = ["rr-bibsane", shlex.quote(path_bib)]
+    args = ["bibsane", shlex.quote(path_bib)]
     paths_inp = [path_bib]
     if path_aux is not None:
         args.append("--aux=" + shlex.quote(path_aux))
@@ -1230,7 +1148,7 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step("rr-sync-zenodo ${inp}", inp=path_config, block=block)
+    return step("sync-zenodo ${inp}", inp=path_config, block=block)
 
 
 def unplot(
@@ -1256,7 +1174,7 @@ def unplot(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     path_out = make_path_out(path_svg, dest, ".json")
-    command = "rr-unplot ${inp} ${out}"
+    command = "unplot ${inp} ${out}"
     return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
 
 
@@ -1283,7 +1201,7 @@ def zip_inventory(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return step(
-        "rr-zip-inventory ${inp} ${out}",
+        "zip-inventory ${inp} ${out}",
         inp=path_inventory,
         out=path_zip,
         optional=optional,

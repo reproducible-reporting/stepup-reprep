@@ -1,12 +1,11 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
           created by   root:
-            supplies   (file:BROKEN.md)
             supplies   file:README.txt
             supplies   file:check_hrefs.yaml
             supplies   file:main-inventory.txt
@@ -17,17 +16,17 @@ file:./
             supplies   file:main.pdf
             supplies   file:main.tex
             supplies   file:plan.py
-            supplies   step:./plan.py
-            supplies   step:rr-check-hrefs main.pdf
-            supplies   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            supplies   step:check_hrefs main.pdf
+            supplies   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
@@ -35,31 +34,29 @@ step:./plan.py
              creates   file:README.txt
              creates   file:check_hrefs.yaml
              creates   file:main.tex
-             creates   step:rr-check-hrefs main.pdf
-             creates   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creates   step:check_hrefs main.pdf
+             creates   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:README.txt
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-check-hrefs main.pdf
 
 file:check_hrefs.yaml
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-check-hrefs main.pdf
 
 file:main.tex
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            supplies   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
-step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:main.tex
              creates   file:main-inventory.txt
@@ -77,52 +74,43 @@ step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main-inventory.txt
                state = BUILT
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.aux
                state = BUILT
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.fls
                state = BUILT
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.pdf
                state = BUILT
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            supplies   step:rr-check-hrefs main.pdf
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            supplies   step:check_hrefs main.pdf
 
-step:rr-check-hrefs main.pdf
-               state = PENDING
-             env_var = REPREP_CHECK_HREFS_CONFIG [amended]
-          created by   step:./plan.py
-            consumes   (file:BROKEN.md) [amended]
+step:check_hrefs main.pdf
+               state = FAILED
+          created by   step:runpy ./plan.py
             consumes   file:./
-            consumes   file:README.txt [amended]
-            consumes   file:check_hrefs.yaml [amended]
             consumes   file:main.pdf
 
 file:main.log
                state = VOLATILE
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.out
                state = VOLATILE
-          created by   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+          created by   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
             consumes   file:./
-            consumes   step:rr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-
-(file:BROKEN.md)
-               state = AWAITED
-            consumes   file:./
-            supplies   step:rr-check-hrefs main.pdf
+            consumes   step:compile-latex main.tex --run-bibtex --inventory=main-inventory.txt

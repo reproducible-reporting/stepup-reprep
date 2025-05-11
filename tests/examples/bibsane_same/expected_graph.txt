@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -11,17 +11,17 @@ file:./
             supplies   file:paper.aux
             supplies   file:plan.py
             supplies   file:references.bib
-            supplies   step:./plan.py
-            supplies   step:cp -aT references.bib copy.bib
-            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:copy references.bib copy.bib
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
@@ -29,39 +29,39 @@ step:./plan.py
              creates   file:bibsane.yaml
              creates   file:paper.aux
              creates   file:references.bib
-             creates   step:cp -aT references.bib copy.bib
-             creates   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+             creates   step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+             creates   step:copy references.bib copy.bib
 
 file:bibsane.yaml
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:paper.aux
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:references.bib
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:cp -aT references.bib copy.bib
-            supplies   step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+            supplies   step:copy references.bib copy.bib
 
-step:rr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+step:bibsane references.bib --aux=paper.aux --config=bibsane.yaml
                state = FAILED
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:bibsane.yaml
             consumes   file:paper.aux
             consumes   file:references.bib
 
-step:cp -aT references.bib copy.bib
+step:copy references.bib copy.bib
                state = PENDING
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:references.bib
              creates   file:copy.bib
@@ -69,6 +69,6 @@ step:cp -aT references.bib copy.bib
 
 file:copy.bib
                state = AWAITED
-          created by   step:cp -aT references.bib copy.bib
+          created by   step:copy references.bib copy.bib
             consumes   file:./
-            consumes   step:cp -aT references.bib copy.bib
+            consumes   step:copy references.bib copy.bib

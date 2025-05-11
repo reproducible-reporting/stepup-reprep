@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -12,17 +12,17 @@ file:./
             supplies   file:image.jpg
             supplies   file:image.py
             supplies   file:plan.py
-            supplies   step:./image.py
-            supplies   step:./plan.py
-            supplies   step:rr-compile-typst --keep-deps document.typ
+            supplies   step:compile-typst --keep-deps document.typ
+            supplies   step:runpy ./plan.py
+            supplies   step:runsh ./image.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
@@ -31,25 +31,25 @@ step:./plan.py
             consumes   file:plan.py
              creates   file:document.typ
              creates   file:image.py
-             creates   step:./image.py
-             creates   step:rr-compile-typst --keep-deps document.typ
+             creates   step:compile-typst --keep-deps document.typ
+             creates   step:runsh ./image.py
 
 file:document.typ
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-compile-typst --keep-deps document.typ
+            supplies   step:compile-typst --keep-deps document.typ
 
 file:image.py
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
 
-step:rr-compile-typst --keep-deps document.typ
+step:compile-typst --keep-deps document.typ
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:document.typ
             consumes   file:image.jpg [amended]
@@ -60,28 +60,28 @@ step:rr-compile-typst --keep-deps document.typ
 
 file:document.dep
                state = BUILT
-          created by   step:rr-compile-typst --keep-deps document.typ
+          created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
-            consumes   step:rr-compile-typst --keep-deps document.typ
+            consumes   step:compile-typst --keep-deps document.typ
 
 file:document.pdf
                state = BUILT
-          created by   step:rr-compile-typst --keep-deps document.typ
+          created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
-            consumes   step:rr-compile-typst --keep-deps document.typ
+            consumes   step:compile-typst --keep-deps document.typ
 
-step:./image.py
+step:runsh ./image.py
                state = SUCCEEDED
              env_var = BG_COLOR [amended]
                      = FG_COLOR [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
              creates   file:image.jpg
             supplies   file:image.jpg
 
 file:image.jpg
                state = BUILT
-          created by   step:./image.py
+          created by   step:runsh ./image.py
             consumes   file:./
-            consumes   step:./image.py
-            supplies   step:rr-compile-typst --keep-deps document.typ
+            consumes   step:runsh ./image.py
+            supplies   step:compile-typst --keep-deps document.typ

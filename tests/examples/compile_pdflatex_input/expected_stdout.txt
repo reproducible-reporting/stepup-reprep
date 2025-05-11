@@ -1,30 +1,30 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        1/3 | RESCHEDULE │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        0/1 |      START │ runpy ./plan.py
+        1/3 |    SUCCESS │ runpy ./plan.py
+        1/3 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        1/3 | RESCHEDULE │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 Missing inputs and/or required directories:
 generated.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/3 |      START │ echo 'Hi there!' > generated.tex
-        2/3 |    SUCCESS │ echo 'Hi there!' > generated.tex
-        2/3 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        3/3 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        1/3 |      START │ runsh echo 'Hi there!' > generated.tex
+        2/3 |    SUCCESS │ runsh echo 'Hi there!' > generated.tex
+        2/3 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        3/3 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |    WARNING │ Check logs: .stepup/warning.log
         3/3 |      PHASE │ watch
         3/3 |    DELETED │ paper.aux
         3/3 |    DELETED │ generated.tex
         3/3 |    DELETED │ paper.pdf
         1/3 |      PHASE │ run
-        1/3 |      START │ echo 'Hi there!' > generated.tex
-        2/3 |    SUCCESS │ echo 'Hi there!' > generated.tex
-        2/3 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        3/3 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        1/3 |      START │ runsh echo 'Hi there!' > generated.tex
+        2/3 |    SUCCESS │ runsh echo 'Hi there!' > generated.tex
+        2/3 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        3/3 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ Stopping workers.
+        3/3 |   DIRECTOR │ Stopping workers
         3/3 |   DIRECTOR │ See you!

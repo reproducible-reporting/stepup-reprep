@@ -1,23 +1,23 @@
         0/0 |    STARTUP │ (Re)initialized boot script
         0/0 |   DIRECTOR │ Launched worker 0
         0/1 |      PHASE │ run
-        0/1 |      START │ ./plan.py
-        1/5 |    SUCCESS │ ./plan.py
-        1/5 |      START │ mkdir -p subdir/
-        2/5 |    SUCCESS │ mkdir -p subdir/
-        2/5 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/5 | RESCHEDULE │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        0/1 |      START │ runpy ./plan.py
+        1/5 |    SUCCESS │ runpy ./plan.py
+        1/5 |      START │ mkdir subdir/
+        2/5 |    SUCCESS │ mkdir subdir/
+        2/5 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        2/5 | RESCHEDULE │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
 Missing inputs and/or required directories:
 subdir/generated.tex
 ────────────────────────────────────────────────────────────────────────────────
-        2/5 |      START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-        3/5 |    SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-        3/5 |      START │ echo '2 + 2' > subdir/code.txt
-        4/5 |    SUCCESS │ echo '2 + 2' > subdir/code.txt
-        4/5 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        5/5 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        5/5 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/5 |      START │ runsh echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+        3/5 |    SUCCESS │ runsh echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+        3/5 |      START │ runsh echo '2 + 2' > subdir/code.txt
+        4/5 |    SUCCESS │ runsh echo '2 + 2' > subdir/code.txt
+        4/5 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        5/5 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        5/5 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         5/5 |    WARNING │ Check logs: .stepup/warning.log
         5/5 |      PHASE │ watch
         5/5 |    DELETED │ paper.aux
@@ -25,13 +25,13 @@ subdir/generated.tex
         5/5 |    DELETED │ subdir/code.txt
         5/5 |    DELETED │ paper.pdf
         2/5 |      PHASE │ run
-        2/5 |      START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-        3/5 |    SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-        3/5 |      START │ echo '2 + 2' > subdir/code.txt
-        4/5 |    SUCCESS │ echo '2 + 2' > subdir/code.txt
-        4/5 |      START │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        5/5 |    SUCCESS │ rr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        5/5 |   DIRECTOR │ Trying to delete 0 outdated output(s).
+        2/5 |      START │ runsh echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+        3/5 |    SUCCESS │ runsh echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+        3/5 |      START │ runsh echo '2 + 2' > subdir/code.txt
+        4/5 |    SUCCESS │ runsh echo '2 + 2' > subdir/code.txt
+        4/5 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        5/5 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        5/5 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         5/5 |      PHASE │ watch
-        5/5 |   DIRECTOR │ Stopping workers.
+        5/5 |   DIRECTOR │ Stopping workers
         5/5 |   DIRECTOR │ See you!

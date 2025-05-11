@@ -1,7 +1,7 @@
 root:
              creates   file:./
              creates   file:plan.py
-             creates   step:./plan.py
+             creates   step:runpy ./plan.py
 
 file:./
                state = STATIC
@@ -11,16 +11,16 @@ file:./
             supplies   file:doc.pdf
             supplies   file:plan.py
             supplies   file:style.css
-            supplies   step:./plan.py
-            supplies   step:rr-convert-weasyprint doc.html doc.pdf
+            supplies   step:convert-weasyprint doc.html doc.pdf
+            supplies   step:runpy ./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
             consumes   file:./
-            supplies   step:./plan.py
+            supplies   step:runpy ./plan.py
 
-step:./plan.py
+step:runpy ./plan.py
                state = SUCCEEDED
           created by   root:
             consumes   file:./
@@ -28,30 +28,30 @@ step:./plan.py
              creates   file:block.png
              creates   file:doc.html
              creates   file:style.css
-             creates   step:rr-convert-weasyprint doc.html doc.pdf
+             creates   step:convert-weasyprint doc.html doc.pdf
 
 file:block.png
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-weasyprint doc.html doc.pdf
+            supplies   step:convert-weasyprint doc.html doc.pdf
 
 file:doc.html
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-weasyprint doc.html doc.pdf
+            supplies   step:convert-weasyprint doc.html doc.pdf
 
 file:style.css
                state = STATIC
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:rr-convert-weasyprint doc.html doc.pdf
+            supplies   step:convert-weasyprint doc.html doc.pdf
 
-step:rr-convert-weasyprint doc.html doc.pdf
+step:convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
              env_var = REPREP_WEASYPRINT [amended]
-          created by   step:./plan.py
+          created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:block.png [amended]
             consumes   file:doc.html
@@ -61,6 +61,6 @@ step:rr-convert-weasyprint doc.html doc.pdf
 
 file:doc.pdf
                state = BUILT
-          created by   step:rr-convert-weasyprint doc.html doc.pdf
+          created by   step:convert-weasyprint doc.html doc.pdf
             consumes   file:./
-            consumes   step:rr-convert-weasyprint doc.html doc.pdf
+            consumes   step:convert-weasyprint doc.html doc.pdf

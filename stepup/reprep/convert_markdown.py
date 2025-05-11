@@ -27,8 +27,7 @@ import markdown
 from path import Path
 
 from stepup.core.api import amend, getenv
-
-from .render_jinja import render
+from stepup.core.render_jinja import render_jinja
 
 __all__ = ("convert_markdown",)
 
@@ -138,7 +137,7 @@ def convert_markdown(
         "title": md_ctx.Meta.get("title", ["Untitled"])[0],
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }
-    return render("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
+    return render_jinja("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
 
 
 if __name__ == "__main__":

@@ -46,8 +46,43 @@ __all__ = ("main", "write_inventory")
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args(argv)
+    parser = argparse.ArgumentParser(
+        prog="rr-make-inventory", description="Make an inventory.txt file."
+    )
+    add_parser_args(parser)
+    args = parser.parse_args(argv)
+    make_inventory(args)
 
+
+def add_parser_args(parser: argparse.ArgumentParser):
+    """Define command-line arguments."""
+    parser.add_argument(
+        "paths",
+        nargs="*",
+        help="File to include in the inventory. "
+        "(Added after porcessing the inventory definition if any.)",
+    )
+    parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
+    parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
+
+
+def make_subcommand(subparser: argparse.ArgumentParser) -> callable:
+    """Create a subcommand for the command line interface."""
+    parser = subparser.add_parser(
+        "make-inventory",
+        help="Create an inventory.txt file.",
+    )
+    add_parser_args(parser)
+    return make_tool
+
+
+def make_tool(args: argparse.Namespace) -> int:
+    """Create an inventory.txt file."""
+    make_inventory(args)
+    return 0
+
+
+def make_inventory(args: argparse.Namespace):
     # Check arguments
     if args.inventory_def is None:
         if len(args.paths) == 0:
@@ -78,22 +113,6 @@ def main(argv: list[str] | None = None):
             paths = {root / path for path in parse_inventory_def(lines)}
     paths.update(args.paths)
     write_inventory(path_inventory_txt, sorted(paths))
-
-
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="rr-make-inventory", description="Make an inventory.txt file."
-    )
-    parser.add_argument(
-        "paths",
-        nargs="*",
-        help="File to include in the inventory. "
-        "(Added after porcessing the inventory definition if any.)",
-    )
-    parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
-    parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
-    return parser.parse_args(argv)
 
 
 def get_file_list_nglob(i: int, args: list[str]) -> Collection[Path]:

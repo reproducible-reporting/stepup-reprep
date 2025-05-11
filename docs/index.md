@@ -17,7 +17,7 @@ will take you through all the basics.
 
 The following screen cast shows StepUp RepRep in action:
 
-- First, StepUp is started with 9 workers
+- First, StepUp is started with 4 workers
   to complete the steps in the RepRep publication template from scratch.
 - After the build has completed,
   the file `generate.py` is modified,
@@ -29,7 +29,7 @@ The following screen cast shows StepUp RepRep in action:
   that are (indirectly) affected by the change in `generate.py`.
 - Finally, the user presses `q` to exit StepUp.
 
-<script src="https://asciinema.org/a/665096.js" id="asciicast-665096" async="true"></script>
+<script src="https://asciinema.org/a/718835.js" id="asciicast-718835" async="true"></script>
 
 ## Why Was StepUp RepRep Created?
 

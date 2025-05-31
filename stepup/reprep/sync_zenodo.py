@@ -327,7 +327,17 @@ class Config:
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    args = parse_args(argv)
+    parser = argparse.ArgumentParser(
+        prog="rr-sync-zenodo",
+        description="Synchronize a draft dataset on Zenodo with your local files.",
+    )
+    add_parser_args(parser)
+    args = parser.parse_args(argv)
+    sync_zenodo_tool(args)
+
+
+def sync_zenodo_tool(args: argparse.Namespace) -> int:
+    """Main program."""
     with open(args.config) as fh:
         data = yaml.safe_load(fh)
         if not isinstance(data.get("metadata").get("version"), str):
@@ -337,13 +347,21 @@ def main(argv: list[str] | None = None):
             )
         config = cattrs.structure(data, Config)
     update_online(config, args.verbose)
+    return 0
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="rr-sync-zenodo", description="Sync a draft dataset on Zenodo."
+def sync_zenodo_subcommand(subparser: argparse.ArgumentParser) -> callable:
+    """Create parser for command-line options."""
+    parser = subparser.add_parser(
+        "sync-zenodo",
+        help="Synchronize a draft dataset on Zenodo with your local files.",
     )
+    add_parser_args(parser)
+    return sync_zenodo_tool
+
+
+def add_parser_args(parser: argparse.ArgumentParser):
+    """Define command-line arguments."""
     parser.add_argument("config", help="Configuration YAML file.")
     parser.add_argument(
         "--verbose",
@@ -352,7 +370,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Show details of communication with Zenodo endpoint.",
     )
-    return parser.parse_args(argv)
 
 
 def load_version(path_versions: str, version: str) -> int:
@@ -505,7 +522,7 @@ def _refresh_files(
 ) -> bool:
     """Refresh the online files.
 
-    This function only uploads files that do not exit yet online or have changed locally.
+    This function only uploads files that do not exist online yet or have changed locally.
     Files removed from the local YAML config will also be removed online.
     """
     changed = False

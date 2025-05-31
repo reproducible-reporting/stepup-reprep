@@ -12,10 +12,15 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no summary yet)
 
-### Added
+## Added
 
 - Execution of notebooks with [papermill](https://papermill.readthedocs.io),
   using the [`execute_papermill()`][stepup.reprep.api.execute_papermill] API function.
+
+## Fixed
+
+- Fixed outdated information in the Zenodo synchronization documentation,
+  and fixed corresponding outdated code.
 
 ## [3.0.0][] - 2025-05-11 {: v3.0.0 }
 

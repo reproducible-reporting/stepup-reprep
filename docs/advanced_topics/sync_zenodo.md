@@ -59,7 +59,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
 - `path_versions`:
   A JSON file containing all versions of the dataset in chronological order
   and their corresponding record IDs.
-  This file is updated by the `rr-sync-zenodo` script.
+  This file is updated by the `stepup sync-zenodo` script.
   You should not need to modify it unless you created or discarded new records
   manually through the Zenodo web interface.
   It is recommended to commit this file to the Git history.
@@ -81,7 +81,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
     Save the token immediately, as it cannot be retrieved later.
 
 - `metadata`:
-  A section with metadat fields to describe the dataset on Zenodo.
+  A section with metadata fields to describe the dataset on Zenodo.
 
     - `title`:
       A short description of the dataset.
@@ -95,7 +95,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
         If you have published the dataset, only metadata of the published versions
         can be updated, but not the files.
         If you want to upload newer files, you can increment this version number.
-        The `rr-sync-zenodo` script will create a new version for you on Zenodo,
+        The `stepup sync-zenodo` script will create a new version for you on Zenodo,
         which stays in draft mode until you manually publish it through the Zenodo web interface.
 
     - `license`:
@@ -118,7 +118,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
           The full address including affiliation.
 
 - `path_readme`:
-  This field is optionoal.
+  This field is optional.
   If given, the Markdown file will be converted to HTML and used as description metadata.
   Alternatively, you can add a `description` field with an HTML value to the metadata.
 
@@ -134,14 +134,14 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
 
 ## Synchronize your dataset
 
-The command `rr-sync-zenodo` will create or synchronize the online dataset
+The command `stepup sync-zenodo` will create or synchronize the online dataset
 and store the `record_id` in the versions JSON file.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.
 
 Once you have all the files you need, execute the script:
 
 ```bash
-rr-sync-zenodo zenodo.yaml
+stepup sync-zenodo zenodo.yaml
 ```
 
 You can also include this command as a step in your `plan.py` file:

@@ -1,0 +1,9 @@
+{
+  "pizza": "pepperoni",
+  "toppings": [
+    "mushrooms",
+    "onions",
+    "peppers"
+  ],
+  "price": 15.99
+}

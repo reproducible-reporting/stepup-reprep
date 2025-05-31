@@ -1,0 +1,83 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:runpy ./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:data.json
+            supplies   file:demo.ipynb
+            supplies   file:demo_out.ipynb
+            supplies   file:plan.py
+            supplies   file:plot.png
+            supplies   file:points.txt
+            supplies   file:result.txt
+            supplies   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+            supplies   step:runpy ./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:runpy ./plan.py
+
+step:runpy ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:data.json
+             creates   file:demo.ipynb
+             creates   file:points.txt
+             creates   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+file:data.json
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+file:demo.ipynb
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+file:points.txt
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+               state = SUCCEEDED
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:data.json [amended]
+            consumes   file:demo.ipynb
+            consumes   file:points.txt
+             creates   file:demo_out.ipynb
+             creates   file:plot.png
+             creates   file:result.txt
+            supplies   file:demo_out.ipynb
+            supplies   file:plot.png
+            supplies   file:result.txt [amended]
+
+file:demo_out.ipynb
+               state = BUILT
+          created by   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+            consumes   file:./
+            consumes   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+file:plot.png
+               state = BUILT
+          created by   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+            consumes   file:./
+            consumes   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+
+file:result.txt
+               state = BUILT
+          created by   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+            consumes   file:./
+            consumes   step:execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb

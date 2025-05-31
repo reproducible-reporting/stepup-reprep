@@ -34,6 +34,7 @@ from .compile_typst import main as compile_typst_main
 from .convert_inkscape import main as convert_inkscape_main
 from .convert_markdown import main as convert_markdown_main
 from .convert_weasyprint import main as convert_weasyprint_main
+from .execute_papermill import main as execute_papermill_main
 from .flatten_latex import main as flatten_latex_main
 from .make_inventory import main as make_inventory_main
 from .nup_pdf import main as nup_pdf_main
@@ -77,6 +78,7 @@ bibsane = ActionWrapper(bibsane_main)
 cat_pdf = ActionWrapper(cat_pdf_main)
 check_hrefs = ActionWrapper(check_hrefs_main)
 convert_markdown = ActionWrapper(convert_markdown_main)
+execute_papermill = ActionWrapper(execute_papermill_main)
 flatten_latex = ActionWrapper(flatten_latex_main)
 make_inventory = ActionWrapper(make_inventory_main)
 nup_pdf = ActionWrapper(nup_pdf_main)

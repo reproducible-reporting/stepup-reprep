@@ -10,7 +10,12 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- Execution of notebooks with [papermill](https://papermill.readthedocs.io),
+  using the [`execute_papermill()`][stepup.reprep.api.execute_papermill] API function.
 
 ## [3.0.0][] - 2025-05-11 {: v3.0.0 }
 

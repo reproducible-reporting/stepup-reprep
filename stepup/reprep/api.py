@@ -905,6 +905,78 @@ def diff_latex(
     )
 
 
+def execute_papermill(
+    path_nb: str,
+    dest: str,
+    *,
+    inp: str | Collection[str] = (),
+    out: str | Collection[str] = (),
+    parameters: dict[str] | None = None,
+    optional: bool = False,
+    pool: str | None = None,
+    block: bool = False,
+) -> StepInfo:
+    """Execute a Jupyter Notebook with papermill and save the notebook with outputs as a new file.
+
+    Parameters
+    ----------
+    path_nb
+        The input Jupyter notebook.
+    dest
+        Output destination: a directory or a file.
+        The output format is always IPYNB.
+    inp
+        One or more input files used by the notebook.
+        You can also declare inputs with `amend(inp=...)` in the notebook,
+        but specifying them here will make the scheduling more efficient.
+    out
+        One or more output files produced by the notebook.
+        You can also declare outputs with `amend(out=...)` in the notebook,
+        but you can specify them here if you want to make the notebook execution optional,
+        i.e. dependent on whether the outputs are used in other steps.
+    parameters
+        The dictionary, if any, must be JSON-serializable.
+        It will be passed to the parameters argument of `papermill.execute_notebook()`.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    pool
+        The pool in which the step is executed,
+        which may be convenient to limit the number of parallel notebooks being executed,
+        e.g. when the already run calculations in parallel.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_nb = subs(path_nb)
+        dest = subs(dest)
+    if not path_nb.endswith(".ipynb"):
+        raise ValueError("The notebook file must have extension .ipynb")
+    if isinstance(inp, str):
+        inp = [inp]
+    if isinstance(out, str):
+        out = [out]
+    path_out = make_path_out(path_nb, dest, ".ipynb")
+    if parameters is None:
+        parameters = {}
+    args = ["execute-papermill", shlex.quote(path_nb)]
+    if len(parameters) > 0:
+        args.append(shlex.quote(json.dumps(parameters)))
+    args.append(shlex.quote(path_out))
+    step(
+        " ".join(args),
+        inp=[path_nb, *inp],
+        out=[path_out, *out],
+        optional=optional,
+        pool=pool,
+        block=block,
+    )
+
+
 def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, block: bool = False):
     r"""Flatten structured LaTeX source files (substitute `\input` and friends by their content).
 

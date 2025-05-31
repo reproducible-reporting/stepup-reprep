@@ -2449,6 +2449,10 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <ul>
 <li>Fixed outdated information in the Zenodo synchronization documentation,
   and fixed corresponding outdated code.</li>
+<li>Remove <code>linear=True</code> argument when saving a PDF with MuPDF
+  because it is no longer supported as of MuPDF 1.26.
+  (It was not terribly useful in the first place.)
+  For more details, see <a href="https://artifex.com/blog/mupdf-removes-linearisation">https://artifex.com/blog/mupdf-removes-linearisation</a>.</li>
 </ul>
 <h2 id="300-2025-05-11" v3.0.0="v3.0.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.0">3.0.0</a> - 2025-05-11<a class="headerlink" href="#300-2025-05-11" title="Permanent link">&para;</a></h2>
 <p>Major release with breaking changes, compatible with StepUp Core 3.</p>

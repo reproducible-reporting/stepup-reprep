@@ -74,7 +74,7 @@ def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
             stream = pix.tobytes(output="jpg", jpg_quality=quality)
             dst_page = dst.new_page(-1, width, height)
             dst_page.insert_image(dst_page.rect, stream=stream)
-        dst.save(path_out, garbage=4, deflate=True, linear=True, no_new_id=True)
+        dst.save(path_out, garbage=4, deflate=True, no_new_id=True)
 
 
 if __name__ == "__main__":

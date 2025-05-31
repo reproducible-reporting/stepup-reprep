@@ -25,6 +25,10 @@ Integrration with papermill to execute notebooks, and a few bug fixes.
 
 - Fixed outdated information in the Zenodo synchronization documentation,
   and fixed corresponding outdated code.
+- Remove `linear=True` argument when saving a PDF with MuPDF
+  because it is no longer supported as of MuPDF 1.26.
+  (It was not terribly useful in the first place.)
+  For more details, see <https://artifex.com/blog/mupdf-removes-linearisation>.
 
 ## [3.0.0][] - 2025-05-11 {: v3.0.0 }
 

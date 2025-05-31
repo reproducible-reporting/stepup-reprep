@@ -109,7 +109,7 @@ class Figure:
         out.set_metadata({})
         out.del_xml_metadata()
         out.scrub()
-        out.save(self.path_out, garbage=4, deflate=True, linear=True, no_new_id=True)
+        out.save(self.path_out, garbage=4, deflate=True, no_new_id=True)
 
 
 def _load_pdfs(panels: Collection[Panel]):

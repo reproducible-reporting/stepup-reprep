@@ -53,7 +53,7 @@ def pdf_normalize(path_pdf: str):
     pdf.scrub()
     with tempfile.TemporaryDirectory(suffix="rr-normalize-pdf", prefix="rr") as dn:
         path_out = Path(dn) / "out.pdf"
-        pdf.save(path_out, garbage=4, deflate=True, linear=True, no_new_id=True)
+        pdf.save(path_out, garbage=4, deflate=True, no_new_id=True)
         pdf.close()
         shutil.copy(path_out, path_pdf)
 

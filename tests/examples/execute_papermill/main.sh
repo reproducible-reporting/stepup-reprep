@@ -6,6 +6,7 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
+export PYDEVD_DISABLE_FILE_VALIDATION=1
 stepup boot -w -n 1 & # > current_stdout.txt &
 PID=$!
 

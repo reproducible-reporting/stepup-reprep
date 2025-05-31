@@ -44,6 +44,7 @@ __all__ = (
     "convert_odf_pdf",
     "convert_weasyprint",
     "diff_latex",
+    "execute_papermill",
     "flatten_latex",
     "make_inventory",
     "nup_pdf",

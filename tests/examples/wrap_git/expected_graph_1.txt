@@ -1,0 +1,81 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:runpy ./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:.git/
+            supplies   file:gitlog.txt
+            supplies   file:plan.py
+            supplies   step:runpy ./plan.py
+            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:runpy ./plan.py
+
+step:runpy ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   dg:.git/**
+             creates   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+
+dg:.git/**
+          created by   step:runpy ./plan.py
+             creates   file:.git/
+             creates   file:.git/HEAD
+             creates   file:.git/refs/
+             creates   file:.git/refs/heads/
+             creates   file:.git/refs/heads/main
+
+step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+               state = SUCCEEDED
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:.git/HEAD [amended]
+            consumes   file:.git/refs/heads/main [amended]
+             creates   file:gitlog.txt
+            supplies   file:gitlog.txt
+
+file:gitlog.txt
+               state = BUILT
+          created by   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            consumes   file:./
+            consumes   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+
+file:.git/HEAD
+               state = STATIC
+          created by   dg:.git/**
+            consumes   file:.git/
+            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+
+file:.git/
+               state = STATIC
+          created by   dg:.git/**
+            consumes   file:./
+            supplies   file:.git/HEAD
+            supplies   file:.git/refs/
+
+file:.git/refs/heads/main
+               state = STATIC
+          created by   dg:.git/**
+            consumes   file:.git/refs/heads/
+            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+
+file:.git/refs/heads/
+               state = STATIC
+          created by   dg:.git/**
+            consumes   file:.git/refs/
+            supplies   file:.git/refs/heads/main
+
+file:.git/refs/
+               state = STATIC
+          created by   dg:.git/**
+            consumes   file:.git/
+            supplies   file:.git/refs/heads/

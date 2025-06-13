@@ -10,11 +10,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- [`wrap_git()`][stepup.reprep.api.wrap_git] to define shell commands
+  (typically `git ...`) that need to be re-executed when the current git branch or commit changes.
 
 ## [3.0.1][] - 2025-05-31 {: v3.0.1 }
 
-Integrration with papermill to execute notebooks, and a few bug fixes.
+Integration with papermill to execute notebooks, and a few bug fixes.
 
 ## Added
 

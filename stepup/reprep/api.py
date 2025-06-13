@@ -52,6 +52,7 @@ __all__ = (
     "sanitize_bibtex",
     "sync_zenodo",
     "unplot",
+    "wrap_git",
     "zip_inventory",
 )
 
@@ -1249,6 +1250,69 @@ def unplot(
     path_out = make_path_out(path_svg, dest, ".json")
     command = "unplot ${inp} ${out}"
     return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
+
+
+def wrap_git(
+    command: str,
+    *,
+    out: str | None = None,
+    workdir: str = "./",
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Create a step to run a git command.
+
+    The provide the necessary input for StepUp, git is called through a wrapper script.
+    This wrapper first infers the git root directory with `git rev-parse --show-toplevel`.
+    It then amends the input dependencies with the following two files:
+
+      - gitroot / '.git/HEAD'
+      - gitroot / '.git/refs/branches/<branch>'
+
+    As a result, the step will be rescheduled when the current commit id or branch changes.
+
+    It is recommended to make gitroot / '.git/' and all of its contents static
+    with recursive deferred glob as follows:
+
+    ```python
+    glob(".git/**", _defer=True)
+    ```
+
+    Parameters
+    ----------
+    command
+        The git command to run, e.g. `git describe --tags`
+        or `git log -n1 --pretty='format:%cs (%h)`.
+    out
+        An output file for the stdout of the git command.
+    workdir
+        The working directory where the git command must be executed.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    if not isinstance(command, str):
+        raise TypeError("The git command must be a string.")
+    if not (out is None or isinstance(out, str)):
+        raise TypeError("The output of the git command must be a string or None.")
+
+    action = "wrap_git"
+    if out is not None:
+        action += f" --out={shlex.quote(out)}"
+    action += f" -- {command}"
+    return step(
+        action,
+        out=out,
+        workdir=workdir,
+        optional=optional,
+        block=block,
+    )
 
 
 def zip_inventory(

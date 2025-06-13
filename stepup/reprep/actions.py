@@ -41,6 +41,7 @@ from .nup_pdf import main as nup_pdf_main
 from .raster_pdf import main as raster_pdf_main
 from .sync_zenodo import main as sync_zenodo_main
 from .unplot import main as unplot_main
+from .wrap_git import main as wrap_git_main
 from .zip_inventory import main as zip_inventory_main
 
 __all__ = (
@@ -58,6 +59,7 @@ __all__ = (
     "raster_pdf",
     "sync_zenodo",
     "unplot",
+    "wrap_git",
     "zip_inventory",
 )
 
@@ -103,3 +105,4 @@ compile_latex = WorkThreadActionWrapper(compile_latex_main)
 compile_typst = WorkThreadActionWrapper(compile_typst_main)
 convert_inkscape = WorkThreadActionWrapper(convert_inkscape_main)
 convert_weasyprint = WorkThreadActionWrapper(convert_weasyprint_main)
+wrap_git = WorkThreadActionWrapper(wrap_git_main)

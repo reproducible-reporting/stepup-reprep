@@ -7,6 +7,8 @@ rm -rvf $(cat .gitignore)
 
 # Prepare a git repo
 git init
+git config user.email "tester@no-email.com"
+git config user.name "Tester"
 touch foo.txt
 git add -f foo.txt
 git commit -m "Initial commit with foo.txt"

@@ -4,7 +4,8 @@ bibtexparser==1.4.1
 cattrs==23.2.3
 defusedxml==0.7.0
 ipykernel==6.20.1
-markdown==3.6
+markdown-it-py==3.0.0
+mdit-py-plugins==0.4.2
 nbconvert==7.1.0
 numpy==1.24.3
 path==16.14.0

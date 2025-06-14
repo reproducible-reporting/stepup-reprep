@@ -23,7 +23,10 @@ import argparse
 import sys
 from collections.abc import Collection
 
-import markdown
+import yaml
+from markdown_it import MarkdownIt
+from mdit_py_plugins.anchors import anchors_plugin
+from mdit_py_plugins.front_matter import front_matter_plugin
 from path import Path
 
 from stepup.core.api import amend, getenv
@@ -102,25 +105,20 @@ def convert_markdown(
     html
         The HTML conversion.
     """
-    extensions = [
-        "fenced_code",
-        "tables",
-        "meta",
-        "smarty",
-    ]
-    configs = {}
+    md = MarkdownIt().use(front_matter_plugin).use(anchors_plugin)
 
-    md_ctx = markdown.Markdown(
-        extensions=extensions,
-        extension_configs=configs,
-    )
-
-    # Convert to HTML and split into HEAD and BODY parts
-    body = md_ctx.convert(text_md)
+    # Convert to HTML and get front matter.
+    tokens = md.parse(text_md)
+    body = md.renderer.render(tokens, md.options, {})
+    meta = {}
+    if tokens[0].type == "front_matter":
+        meta = yaml.safe_load(tokens[0].content)
 
     # Collect CSS paths from the source and amend them
     parent_html = Path(parent_html)
-    paths_doc_css = md_ctx.Meta.get("css", [])
+    paths_doc_css = meta.get("css", [])
+    if isinstance(paths_doc_css, str):
+        paths_doc_css = [paths_doc_css]
     amend(inp=[parent_html / path_css for path_css in paths_doc_css if "://" not in path_css])
 
     # Convert the given CSS files to be relative to the parent of the HTML file.
@@ -134,7 +132,7 @@ def convert_markdown(
     # Use Jinja to finalize the HTML page.
     variables = {
         "body": body,
-        "title": md_ctx.Meta.get("title", ["Untitled"])[0],
+        "title": meta.get("title", "Untitled"),
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }
     return render_jinja("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)

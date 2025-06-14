@@ -17,6 +17,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 - [`wrap_git()`][stepup.reprep.api.wrap_git] to define shell commands
   (typically `git ...`) that need to be re-executed when the current git branch or commit changes.
 
+### Changed
+
+- Use the `markdown-it-py` package instead of `markdown`
+  for more precise and faster markdown rendering.
+
 ## [3.0.1][] - 2025-05-31 {: v3.0.1 }
 
 Integration with papermill to execute notebooks, and a few bug fixes.

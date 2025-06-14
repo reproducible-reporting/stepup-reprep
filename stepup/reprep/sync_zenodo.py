@@ -47,10 +47,10 @@ from typing import Any
 
 import attrs
 import cattrs
-import markdown
 import requests
 import semver
 import yaml
+from markdown_it import MarkdownIt
 from path import Path
 
 from stepup.core.api import amend
@@ -416,9 +416,9 @@ def update_online(config: Config, verbose: bool):
     if config.path_readme is not None:
         if not config.path_readme.endswith(".md"):
             raise ValueError("The README Markdown file must end with the .md extension.")
-        md_ctx = markdown.Markdown(extensions=["fenced_code"])
+        md = MarkdownIt()
         with open(config.path_readme) as fh:
-            config.metadata.description = md_ctx.convert(fh.read())
+            config.metadata.description = md.render(fh.read())
 
     # Run sanity check on paths: duplicate filenames not allowed.
     paths = {}

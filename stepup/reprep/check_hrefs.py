@@ -26,9 +26,9 @@ import sys
 import attrs
 import cattrs.preconf.pyyaml
 import fitz
-import markdown
 import yaml
 from bs4 import BeautifulSoup
+from markdown_it import MarkdownIt
 from path import Path
 
 from stepup.core.api import amend, getenv
@@ -100,8 +100,9 @@ def collect_hrefs(path_src: str) -> list[HRef]:
 
 def collect_hrefs_md(fn_md: str) -> list[HRef]:
     """Find all hyper references in a Markdown file."""
+    md = MarkdownIt()
     with open(fn_md) as fh:
-        html = markdown.markdown(fh.read())
+        html = md.render(fh.read())
     soup = BeautifulSoup(html, "html.parser")
     return [HRef(link.attrs["href"]) for link in soup.find_all("a")]
 

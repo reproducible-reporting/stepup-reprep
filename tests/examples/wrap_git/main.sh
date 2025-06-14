@@ -6,7 +6,7 @@ rm -rf .git
 rm -rvf $(cat .gitignore)
 
 # Prepare a git repo
-git init
+git init --initial-branch=main
 git config user.email "tester@no-email.com"
 git config user.name "Tester"
 touch foo.txt

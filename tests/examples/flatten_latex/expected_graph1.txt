@@ -11,6 +11,7 @@ file:./
             supplies   file:article_structured.tex
             supplies   file:part1.tex
             supplies   file:part2.tex
+            supplies   file:part3.txt
             supplies   file:plan.py
             supplies   step:flatten-latex article_structured.tex article.tex
             supplies   step:runpy ./plan.py
@@ -29,6 +30,7 @@ step:runpy ./plan.py
              creates   file:article_structured.tex
              creates   file:part1.tex
              creates   file:part2.tex
+             creates   file:part3.txt
              creates   step:flatten-latex article_structured.tex article.tex
 
 file:article_structured.tex
@@ -49,6 +51,12 @@ file:part2.tex
             consumes   file:./
             supplies   step:flatten-latex article_structured.tex article.tex
 
+file:part3.txt
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:flatten-latex article_structured.tex article.tex
+
 step:flatten-latex article_structured.tex article.tex
                state = PENDING
           created by   step:runpy ./plan.py
@@ -57,6 +65,7 @@ step:flatten-latex article_structured.tex article.tex
             consumes   file:article_structured.tex
             consumes   file:part1.tex [amended]
             consumes   file:part2.tex [amended]
+            consumes   file:part3.txt [amended]
              creates   file:article.tex
             supplies   file:article.tex
 

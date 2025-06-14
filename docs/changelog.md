@@ -22,6 +22,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 - Use the `markdown-it-py` package instead of `markdown`
   for more precise and faster markdown rendering.
 
+### Fixed
+
+- Make `flatten_latex()` work with other file extensions.
+
 ## [3.0.1][] - 2025-05-31 {: v3.0.1 }
 
 Integration with papermill to execute notebooks, and a few bug fixes.

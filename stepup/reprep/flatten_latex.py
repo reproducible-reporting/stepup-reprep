@@ -62,7 +62,7 @@ def main(argv: list[str] | None = None):
         if status == FlattenStatus.SUCCESS:
             path_flat_tmp.copy(args.path_flat)
         else:
-            sys.exit(1)
+            raise RuntimeError(f"Flattening failed with status {status.name}. ")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -123,7 +123,7 @@ def flatten_latex(
             if r"\input{" in stripped:
                 if stripped.startswith(r"\input{") and stripped.endswith("}"):
                     sub_path_tex = tex_root / stripped[7:-1]
-                    if not sub_path_tex.endswith(".tex"):
+                    if sub_path_tex.suffix == "":
                         sub_path_tex = sub_path_tex.with_suffix(".tex")
                     if not sub_path_tex.is_file():
                         status = FlattenStatus.FILE_NOT_FOUND
@@ -134,7 +134,7 @@ def flatten_latex(
                     new_root, sub_path_tex = stripped[8:-1].split("}{")
                     new_root = (tex_root / new_root).normpath()
                     sub_path_tex = new_root / sub_path_tex
-                    if not sub_path_tex.endswith(".tex"):
+                    if sub_path_tex.suffix == "":
                         sub_path_tex = sub_path_tex.with_suffix(".tex")
                     if not sub_path_tex.is_file():
                         status = FlattenStatus.FILE_NOT_FOUND

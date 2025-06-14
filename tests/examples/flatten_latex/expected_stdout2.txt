@@ -1,7 +1,7 @@
         0/0 |    STARTUP │ Making failed steps pending
         0/0 |    STARTUP │ Watching 2 director(y|ies) from initial database
         0/0 |    STARTUP │ Scanning initial database for changed files
-        0/0 |    UPDATED │ plan.py (digest d6b8414a ➜ e7a7a736, size 217 ➜ 256)
+        0/0 |    UPDATED │ plan.py (digest 2619dd39 ➜ 7c30ad99, size 230 ➜ 269)
         0/0 |    STARTUP │ Scanning initial database for new nglob matches
         0/0 |   DIRECTOR │ Launched worker 0
         0/2 |      PHASE │ run

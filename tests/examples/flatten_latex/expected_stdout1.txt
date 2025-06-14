@@ -20,6 +20,7 @@ Inputs        STATIC  ./
               STATIC  article_structured.tex
               STATIC  part1.tex [amended]
               STATIC  part2.tex [amended]
+              STATIC  part3.txt [amended]
              AWAITED  (sub/other.tex) [amended]
 Outputs      AWAITED  article.tex
 ────────────────────────────────────────────────────────────────────────────────

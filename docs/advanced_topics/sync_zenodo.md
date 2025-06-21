@@ -121,6 +121,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
         - `orcid`:
           The ORCID of the creator.
           Format this field as `0000-0002-1825-0097`.
+          (This field is optional, but recommended.)
 
 - `path_readme`:
   This field is optional.

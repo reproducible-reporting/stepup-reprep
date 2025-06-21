@@ -39,6 +39,7 @@ metadata:
         ZIP code
         City,
         Country
+      orcid: '0000-0002-1825-0097'
     - name: 'Last name 2, First name 2'
       affiliation: >-
         Research group,
@@ -47,6 +48,7 @@ metadata:
         ZIP code
         City,
         Country
+      orcid: '0000-0002-1825-0098'
     - ...
 path_readme: zenodo.md
 paths:
@@ -116,6 +118,9 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
           Format this field as `Last name, First name`
         - `affiliation`
           The full address including affiliation.
+        - `orcid`:
+          The ORCID of the creator.
+          Format this field as `0000-0002-1825-0097`.
 
 - `path_readme`:
   This field is optional.
@@ -171,5 +176,7 @@ in this case to give them access to the most recent build of the publication PDF
   Also, adding funding details manually does not seem to work yet,
   because not all funding organizations are included.
   For now, just add funding details to the dataset description.
+- The Zenodo API does not support multiple affiliations.
+  See [zenodo/zenodo#1608](https://github.com/zenodo/zenodo/issues/1608)
 - Not all Zenodo metadata fields are supported.
   We may add more in future versions of StepUp RepRep.

@@ -41,6 +41,7 @@ which are normalized in the `ZenodoWrapper` class to become identical.
 import argparse
 import hashlib
 import json
+import re
 import sys
 from datetime import date
 from typing import Any
@@ -119,6 +120,9 @@ class RESTWrapper:
         return self.request("DELETE", loc, **kwargs)
 
 
+ORCID_PATTERN = re.compile(r"^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$", re.IGNORECASE)
+
+
 @attrs.define
 class Creator:
     """A Zenodo creator"""
@@ -127,6 +131,29 @@ class Creator:
     """Formatted as `last, first`."""
 
     affiliation: str = attrs.field(converter=str.strip)
+    """The affiliation of the creator, e.g. a university or research institute."""
+
+    orcid: str = attrs.field(default=None, converter=str.strip)
+    """The ORCID of the creator."""
+
+    @orcid.validator
+    def _validate_orcid(self, _attribute, value):
+        """Validate the ORCID."""
+        if len(value) != 19:
+            raise ValueError("The ORCID must be 19 characters long, including the hyphens.")
+        if not ORCID_PATTERN.match(value):
+            raise ValueError(
+                "The ORCID must be formatted as `0000-0000-0000-0000` "
+                "(4 digits, hyphen, 4 digits, hyphen, 4 digits, hyphen, 3 digits or X)."
+            )
+        total = 0
+        for char in value[:-1].replace("-", ""):
+            total = (total + int(char)) * 2
+        checksum = (12 - (total % 11)) % 11
+        if checksum == 10 and value[-1].upper() != "X":
+            raise ValueError("ORCID checksum failed, please check for typos.")
+        if checksum != 10 and value[-1] != str(checksum):
+            raise ValueError("ORCID checksum failed, please check for typos.")
 
 
 @attrs.define

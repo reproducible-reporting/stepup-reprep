@@ -12,6 +12,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Changed
+
+- Added ORCID field to the author metadata in the `sync_zenodo` configuration file.
+
 ## [3.0.3][] - 2025-06-14 {: v3.0.3 }
 
 Replace a few more markdown imports.

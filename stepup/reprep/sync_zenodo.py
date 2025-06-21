@@ -133,12 +133,17 @@ class Creator:
     affiliation: str = attrs.field(converter=str.strip)
     """The affiliation of the creator, e.g. a university or research institute."""
 
-    orcid: str = attrs.field(default=None, converter=str.strip)
+    orcid: str | None = attrs.field(
+        converter=(lambda s: None if s is None else s.strip()),
+        default=None,
+    )
     """The ORCID of the creator."""
 
     @orcid.validator
     def _validate_orcid(self, _attribute, value):
         """Validate the ORCID."""
+        if value is None:
+            return
         if len(value) != 19:
             raise ValueError("The ORCID must be 19 characters long, including the hyphens.")
         if not ORCID_PATTERN.match(value):
@@ -325,7 +330,7 @@ class ZenodoWrapper:
 
     @staticmethod
     def _normalize_metadata(metadata: dict[str]):
-        """Normalize metadata receivd from Zenodo or taken from the YAML config."""
+        """Normalize metadata received from Zenodo or taken from the YAML config."""
         if metadata["description"] is None:
             del metadata["description"]
         if "upload_type" not in metadata and "resource_type" in metadata:
@@ -334,6 +339,9 @@ class ZenodoWrapper:
             metadata["license"] = metadata["license"]["id"]
         if "version" not in metadata:
             metadata["version"] = "TODO"
+        for creator in metadata.get("creators", []):
+            if "orcid" in creator and creator["orcid"] is None:
+                del creator["orcid"]
 
 
 @attrs.define
@@ -370,7 +378,7 @@ def sync_zenodo_tool(args: argparse.Namespace) -> int:
         if not isinstance(data.get("metadata").get("version"), str):
             raise TypeError(
                 "The version in the YAML config file is missing or is not a string. "
-                "Enclose the versionin quotes to make it a string."
+                "Enclose the version in quotes to make it a string."
             )
         config = cattrs.structure(data, Config)
     update_online(config, args.verbose)

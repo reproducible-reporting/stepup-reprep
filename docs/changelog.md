@@ -12,7 +12,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
-## [3.0.5][] - 2025-06-21 {: v3.0.5 }
+## [3.0.5][] - 2025-06-22 {: v3.0.5 }
 
 This is a bugfix release.
 

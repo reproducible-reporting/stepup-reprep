@@ -6,6 +6,7 @@ root:
 file:./
                state = STATIC
           created by   root:
+            supplies   file:data/
             supplies   file:inventory.def
             supplies   file:inventory.txt
             supplies   file:plan.py
@@ -38,11 +39,24 @@ file:inventory.def
 
 dg:data/**
           created by   step:runpy ./plan.py
+             creates   file:data/
+             creates   file:data/bla.inp
+             creates   file:data/fine.out
+             creates   file:data/sub/
+             creates   file:data/sub/deeper/
+             creates   file:data/sub/deeper/brrr.inp
+             creates   file:data/sub/deeper/nested.out
+             creates   file:data/sub/works.out
 
 step:make-inventory -i inventory.def -o inventory.txt
                state = SUCCEEDED
           created by   step:runpy ./plan.py
             consumes   file:./
+            consumes   file:data/bla.inp [amended]
+            consumes   file:data/fine.out [amended]
+            consumes   file:data/sub/deeper/brrr.inp [amended]
+            consumes   file:data/sub/deeper/nested.out [amended]
+            consumes   file:data/sub/works.out [amended]
             consumes   file:inventory.def
              creates   file:inventory.txt
             supplies   file:inventory.txt
@@ -67,3 +81,55 @@ file:upload.zip
           created by   step:zip-inventory inventory.txt upload.zip
             consumes   file:./
             consumes   step:zip-inventory inventory.txt upload.zip
+
+file:data/bla.inp
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/
+            supplies   step:make-inventory -i inventory.def -o inventory.txt
+
+file:data/
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:./
+            supplies   file:data/bla.inp
+            supplies   file:data/fine.out
+            supplies   file:data/sub/
+
+file:data/fine.out
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/
+            supplies   step:make-inventory -i inventory.def -o inventory.txt
+
+file:data/sub/deeper/brrr.inp
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/sub/deeper/
+            supplies   step:make-inventory -i inventory.def -o inventory.txt
+
+file:data/sub/deeper/
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/sub/
+            supplies   file:data/sub/deeper/brrr.inp
+            supplies   file:data/sub/deeper/nested.out
+
+file:data/sub/
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/
+            supplies   file:data/sub/deeper/
+            supplies   file:data/sub/works.out
+
+file:data/sub/deeper/nested.out
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/sub/deeper/
+            supplies   step:make-inventory -i inventory.def -o inventory.txt
+
+file:data/sub/works.out
+               state = STATIC
+          created by   dg:data/**
+            consumes   file:data/sub/
+            supplies   step:make-inventory -i inventory.def -o inventory.txt

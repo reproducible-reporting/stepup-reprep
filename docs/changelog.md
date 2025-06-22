@@ -10,7 +10,12 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Fixed
+
+- Ignore links returned by the Zenodo API that are not strings in `sync_zenodo`.
+- Amend a `make_inventory` step with all files in an inventory as inputs.
 
 ## [3.0.4][] - 2025-06-21 {: v3.0.4 }
 

@@ -36,6 +36,7 @@ from collections.abc import Collection
 
 from path import Path
 
+from stepup.core.api import amend
 from stepup.core.file import FileState
 from stepup.core.nglob import NGlobMulti
 
@@ -215,7 +216,7 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
     return paths
 
 
-def write_inventory(path_txt: str, paths: Collection[str]):
+def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True):
     """Write an inventory file.
 
     Parameters
@@ -228,6 +229,15 @@ def write_inventory(path_txt: str, paths: Collection[str]):
         They will be written to the inventory file
         as paths relative to the parent of the inventory file.
     """
+    # Amend all paths included in the inventory file as inputs.
+    # This is needed to ensure that the inventory is rebuilt when the paths change.
+    # Other actions calling this function may not want this,
+    # because they already take care of file dependencies and amendments
+    # may then cause cyclic dependencies.
+    if do_amend:
+        amend(inp=paths)
+
+    # Write the inventory file.
     path_txt = Path(path_txt)
     root = path_txt.parent.normpath()
     with open(path_txt, "w") as fh:

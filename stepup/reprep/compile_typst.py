@@ -114,7 +114,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     # Write inventory
     if args.inventory is not None:
         inventory_paths = sorted(inp_paths) + out_paths
-        write_inventory(args.inventory, inventory_paths)
+        write_inventory(args.inventory, inventory_paths, do_amend=False)
 
     # If the output path contains placeholders `{p}`, `{0p}`, or `{t}`,
     # we need to amend the output.

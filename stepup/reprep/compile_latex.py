@@ -130,7 +130,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
     # Write inventory
     inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
     if args.inventory is not None:
-        write_inventory(args.inventory, inventory_files)
+        write_inventory(args.inventory, inventory_files, do_amend=False)
 
     # Look for input files and output files from the fls file.
     # These are usually worth tracking, but are not needed for the inventory file.

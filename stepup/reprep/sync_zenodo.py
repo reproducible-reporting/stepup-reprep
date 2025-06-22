@@ -323,10 +323,10 @@ class ZenodoWrapper:
     def _normalize_links(self, links: dict[str, str]):
         """Normalize the links received from Zenodo: remove non-API urls and remove endpoint."""
         for key, url in list(links.items()):
-            if not url.startswith(self.endpoint):
-                del links[key]
-            else:
+            if isinstance(url, str) and url.startswith(self.endpoint):
                 links[key] = url[len(self.endpoint) + 1 :]
+            else:
+                del links[key]
 
     @staticmethod
     def _normalize_metadata(metadata: dict[str]):

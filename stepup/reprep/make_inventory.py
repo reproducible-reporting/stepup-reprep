@@ -208,7 +208,7 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
         new_paths = file_list_function(i, args)
         new_paths = [path for path in new_paths if not path.is_dir()]
         if len(new_paths) == 0:
-            raise ValueError(f"Line {i} does not provide any paths: {line}")
+            raise ValueError(f"Line {i} matches no paths: {line}")
         if action == "include":
             paths.update(new_paths)
         else:
@@ -235,7 +235,13 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
     # because they already take care of file dependencies and amendments
     # may then cause cyclic dependencies.
     if do_amend:
-        amend(inp=paths)
+        inp_paths = []
+        for path in paths:
+            path = Path(path)
+            if path.is_dir() and not path.endswith("/"):
+                path = path / ""
+            inp_paths.append(path)
+        amend(inp=inp_paths)
 
     # Write the inventory file.
     path_txt = Path(path_txt)

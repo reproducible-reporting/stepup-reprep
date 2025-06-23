@@ -1,0 +1,3156 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="StepUp RepRep Documentation">
+      
+      
+        <meta name="author" content="Toon Verstraelen">
+      
+      
+      
+        <link rel="prev" href="../reference/stepup.reprep.tile_pdf/">
+      
+      
+        <link rel="next" href="../development/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Changelog - StepUp RepRep</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,300i,400,400i,700,700i%7CSource+Code+Pro:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Sans";--md-code-font:"Source Code Pro"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the documentation of the stable version.
+  <a href="../..">
+    <strong>Click here to go to stable.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="StepUp RepRep" class="md-header__button md-logo" aria-label="StepUp RepRep" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            StepUp RepRep
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5M7 15a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/reproducible-reporting/stepup-reprep" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="StepUp RepRep" class="md-nav__button md-logo" aria-label="StepUp RepRep" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    StepUp RepRep
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/reproducible-reporting/stepup-reprep" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Template Tutorial
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Template Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_template/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_template/before_you_begin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Before You Begin
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_template/create_or_clone_a_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Create or Clone a Project
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_template/working_on_a_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Working on a Project
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    From Scratch
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            From Scratch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_scratch/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced Topics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced Topics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/inventory_files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inventory Files
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/bibsane/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sanitizing BibTeX files
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/tile_pdfs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tile PDFs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/good_practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Good practices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/archive_git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Archive a Git Repository (of a StepUp project)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/unplot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unplot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced_topics/sync_zenodo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upload a dataset to Zenodo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/stepup.reprep.api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    stepup.reprep.api
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/stepup.reprep.bibsane/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    stepup.reprep.bibsane
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/stepup.reprep.tile_pdf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    stepup.reprep.tile_pdf
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unreleased
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#310-2025-06-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1.0 - 2025-06-23
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1.0 - 2025-06-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#305-2025-06-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.5 - 2025-06-22
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.5 - 2025-06-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#304-2025-06-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.4 - 2025-06-21
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.4 - 2025-06-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#303-2025-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.3 - 2025-06-14
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#302-2025-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.2 - 2025-06-14
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.2 - 2025-06-14">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#301-2025-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.1 - 2025-05-31
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#300-2025-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.0 - 2025-05-11
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.0 - 2025-05-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#236-2025-04-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.6 - 2025-04-24
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.6 - 2025-04-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#235-2025-03-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.5 - 2025-03-13
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.5 - 2025-03-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.4" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.4 - 2025-03-09
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.4 - 2025-03-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.3" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.3 - 2025-03-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.3 - 2025-03-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.2 - 2025-02-24
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.2 - 2025-02-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.1 - 2025-02-12
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.1 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.0 - 2025-02-12
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.0 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.3" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.3 - 2025-02-05
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.3 - 2025-02-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.2 - 2025-01-31
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.2 - 2025-01-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.1 - 2025-01-31
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.1 - 2025-01-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.0 - 2025-01-29
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.0 - 2025-01-29">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.1.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1.0 - 2025-01-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1.0 - 2025-01-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.0.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.0.2 - 2025-01-22
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.2 - 2025-01-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.4.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4.1 - 2024-09-02
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.1 - 2024-09-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.4.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4.0 - 2024-08-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.0 - 2024-08-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.3.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3.0 - 2024-06-28
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.0 - 2024-06-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.2.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.1 - 2024-05-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.1 - 2024-05-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.2.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.0 - 2024-05-20
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.0 - 2024-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.2 - 2024-05-16
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.2 - 2024-05-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.1 - 2024-05-07
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.1 - 2024-05-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.0 - 2024-05-02
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.0 - 2024-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.0.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0 - 2024-04-25
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Developer Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    License
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unreleased
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#310-2025-06-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1.0 - 2025-06-23
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1.0 - 2025-06-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#305-2025-06-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.5 - 2025-06-22
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.5 - 2025-06-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#304-2025-06-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.4 - 2025-06-21
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.4 - 2025-06-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#303-2025-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.3 - 2025-06-14
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#302-2025-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.2 - 2025-06-14
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.2 - 2025-06-14">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#301-2025-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.1 - 2025-05-31
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#300-2025-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.0.0 - 2025-05-11
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.0.0 - 2025-05-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#236-2025-04-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.6 - 2025-04-24
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.6 - 2025-04-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#235-2025-03-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.5 - 2025-03-13
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.5 - 2025-03-13">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.4" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.4 - 2025-03-09
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.4 - 2025-03-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.3" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.3 - 2025-03-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.3 - 2025-03-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.2 - 2025-02-24
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.2 - 2025-02-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.1 - 2025-02-12
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.1 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.3.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3.0 - 2025-02-12
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3.0 - 2025-02-12">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.3" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.3 - 2025-02-05
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.3 - 2025-02-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.2 - 2025-01-31
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.2 - 2025-01-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.1 - 2025-01-31
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.1 - 2025-01-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.2.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2.0 - 2025-01-29
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2.0 - 2025-01-29">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.1.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1.0 - 2025-01-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1.0 - 2025-01-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v2.0.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.0.2 - 2025-01-22
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.2 - 2025-01-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.4.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4.1 - 2024-09-02
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.1 - 2024-09-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.4.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4.0 - 2024-08-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.0 - 2024-08-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.3.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3.0 - 2024-06-28
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.0 - 2024-06-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.2.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.1 - 2024-05-27
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.1 - 2024-05-27">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.2.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.0 - 2024-05-20
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.0 - 2024-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Added
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.2 - 2024-05-16
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.2 - 2024-05-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.1 - 2024-05-07
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.1 - 2024-05-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.1.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.0 - 2024-05-02
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1.0 - 2024-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changed
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1.0.0" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0 - 2024-04-25
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/reproducible-reporting/stepup-reprep/edit/main/docs/changelog.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<!-- markdownlint-disable no-duplicate-heading -->
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
+and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-based Versioning</a>.
+(Changes to features documented as &ldquo;experimental&rdquo; will not increment macro and meso version numbers.)</p>
+<h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<p>(no changes yet)</p>
+<h2 id="310-2025-06-23" v3.1.0="v3.1.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.0">3.1.0</a> - 2025-06-23<a class="headerlink" href="#310-2025-06-23" title="Permanent link">&para;</a></h2>
+<p>More powerful <code>sync_zenodo</code> command that uses the Invenio RDM API.</p>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Switch from the official Zenodo API to the Invenio RDM API.
+  This is a breaking change, with a new layout of the <code>zenodo.yaml</code> configuration file.
+  See the <a href="../advanced_topics/sync_zenodo/">Zenodo synchronization documentation</a> for details.</li>
+<li>Add support for more metadata fields in the <code>zenodo.yaml</code> configuration file.
+  This includes support for keywords, multiple affiliations, RORs, related identifiers,
+  funding information and code repository.</li>
+<li>Add the <code>--clean</code> option to <code>sync_zenodo</code> to remove all draft uploads from Zenodo.
+  (Mainly useful for testing purposes.)</li>
+<li>Human-readable output when the <code>zenodo.yaml</code> configuration file contains schema errors.</li>
+</ul>
+<h2 id="305-2025-06-22" v3.0.5="v3.0.5"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.5">3.0.5</a> - 2025-06-22<a class="headerlink" href="#305-2025-06-22" title="Permanent link">&para;</a></h2>
+<p>This is a bugfix release.</p>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ignore links returned by the Zenodo API that are not strings in <code>sync_zenodo</code>.</li>
+<li>Amend a <code>make_inventory</code> step with all files in an inventory as inputs.</li>
+</ul>
+<h2 id="304-2025-06-21" v3.0.4="v3.0.4"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.4">3.0.4</a> - 2025-06-21<a class="headerlink" href="#304-2025-06-21" title="Permanent link">&para;</a></h2>
+<p>Support for ORCID field in <code>sync_zenodo</code>.</p>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added ORCID field to the author metadata in the <code>sync_zenodo</code> configuration file.</li>
+</ul>
+<h2 id="303-2025-06-14" v3.0.3="v3.0.3"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.3">3.0.3</a> - 2025-06-14<a class="headerlink" href="#303-2025-06-14" title="Permanent link">&para;</a></h2>
+<p>Replace a few more markdown imports.</p>
+<h2 id="302-2025-06-14" v3.0.2="v3.0.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.2">3.0.2</a> - 2025-06-14<a class="headerlink" href="#302-2025-06-14" title="Permanent link">&para;</a></h2>
+<p>Small improvements and a wrapper for git commands that depend on the commit id.</p>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a class="autorefs autorefs-internal" title="wrap_git(command, *, out=None, workdir='./', optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.wrap_git"><code>wrap_git()</code></a> to define shell commands
+  (typically <code>git ...</code>) that need to be re-executed when the current git branch or commit changes.</li>
+</ul>
+<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use the <code>markdown-it-py</code> package instead of <code>markdown</code>
+  for more precise and faster markdown rendering.</li>
+</ul>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Make <code>flatten_latex()</code> work with other file extensions.</li>
+</ul>
+<h2 id="301-2025-05-31" v3.0.1="v3.0.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.1">3.0.1</a> - 2025-05-31<a class="headerlink" href="#301-2025-05-31" title="Permanent link">&para;</a></h2>
+<p>Integration with papermill to execute notebooks, and a few bug fixes.</p>
+<h2 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Execution of notebooks with <a href="https://papermill.readthedocs.io">papermill</a>,
+  using the <a class="autorefs autorefs-internal" title="execute_papermill(path_nb, dest, *, inp=(), out=(), parameters=None, optional=False, pool=None, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.execute_papermill"><code>execute_papermill()</code></a> API function.</li>
+</ul>
+<h2 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Fixed outdated information in the Zenodo synchronization documentation,
+  and fixed corresponding outdated code.</li>
+<li>Remove <code>linear=True</code> argument when saving a PDF with MuPDF
+  because it is no longer supported as of MuPDF 1.26.
+  (It was not terribly useful in the first place.)
+  For more details, see <a href="https://artifex.com/blog/mupdf-removes-linearisation">https://artifex.com/blog/mupdf-removes-linearisation</a>.</li>
+</ul>
+<h2 id="300-2025-05-11" v3.0.0="v3.0.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.0">3.0.0</a> - 2025-05-11<a class="headerlink" href="#300-2025-05-11" title="Permanent link">&para;</a></h2>
+<p>Major release with breaking changes, compatible with StepUp Core 3.</p>
+<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Breaking:<ul>
+<li>Compatibility with StepUp Core 3.</li>
+<li>Migrated <code>render_jinja()</code> to StepUp Core 3.</li>
+</ul>
+</li>
+</ul>
+<h2 id="236-2025-04-24" v2.3.6="v2.3.6"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.6">2.3.6</a> - 2025-04-24<a class="headerlink" href="#236-2025-04-24" title="Permanent link">&para;</a></h2>
+<p>Make <code>sanitize_bibtex()</code> work without LaTeX and add support for TOML files in <code>render_jinja()</code>.</p>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Support for TOML files in <code>render_jinja()</code>.</li>
+</ul>
+<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Make <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> usable without LaTeX.</li>
+<li>New output files in the LaTeX fls file are treated as volatile outputs.</li>
+</ul>
+<h2 id="235-2025-03-13" v2.3.5="v2.3.5"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.5">2.3.5</a> - 2025-03-13<a class="headerlink" href="#235-2025-03-13" title="Permanent link">&para;</a></h2>
+<p>Bug fix in <code>rr-cat-pdf</code> and simplify journal abbreviation in <code>rr-bibsane</code>.
+This requires an update the <code>bibsane.yaml</code> configuration file.</p>
+<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The <code>--insert-blank</code> opton of <code>rr-cat-pdf</code> was always active,
+  even when not present on the command line, which is now fixed.</li>
+<li>
+<p>The <code>abbreviate_journal</code> feature of bibsane used to work with a cache file,
+  which was a remnant from an older implementation.
+  This no longer made much sense (because pyiso4 is fast enough)
+  and it cache files may cause non-reproducible behavior.
+  (They are both inputs and outputs.)
+  For these reasons, the cache feature is replaced by two configuration fields in <code>bibsane.yaml</code>:</p>
+<ul>
+<li>A boolean flag <code>abbreviate_journals</code> to enable abbreviations.</li>
+<li>An optional mapping <code>custom_abbreviations</code> with abbreviation overrides
+  for when pyiso4 does not give the desired result.</li>
+</ul>
+</li>
+</ul>
+<p>An external file with abbreviations is no longer needed.
+  They are just included in the <code>bibsane.yaml</code> file.
+  (This also means that old bibsane.yaml config files may need to be updated.)
+  See <a href="../advanced_topics/bibsane/">Sanitizing BibTeX files</a> for more details.</p>
+<h2 id="v2.3.4"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.4">2.3.4</a> - 2025-03-09<a class="headerlink" href="#v2.3.4" title="Permanent link">&para;</a></h2>
+<p>Improved handling of LaTeX fls file and refactored <code>make_inventory()</code> function.</p>
+<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The arguments of <a class="autorefs autorefs-internal" title="make_inventory(*paths, path_def=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.make_inventory"><code>make_inventory()</code></a> are now variadic.
+  Files to be included are passed as positional arguments and the last positional argument
+  is the inventory file to be written.
+  An optional argument <code>path_def</code> can be used to specify an inventory definition file.</li>
+<li>The <code>include-git</code> and <code>exclude-git</code> commands in an inventory definition now accept arguments,
+  which are passed to the <code>git ls-files</code> command.</li>
+<li>LaTeX output files inferred from the <code>.fls</code> file are filtered in the same ways as input files.
+  LaTeX sometimes writes output files to <code>~/.texlive2023/</code> which should be ignored by StepUp.</li>
+</ul>
+<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>rr-flatten-latex</code> now correctly handles empty tex files.</li>
+</ul>
+<h2 id="v2.3.3"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.3">2.3.3</a> - 2025-03-03<a class="headerlink" href="#v2.3.3" title="Permanent link">&para;</a></h2>
+<p>A few minor improvements related to LaTeX and BibTeX, and parameterized Jupyter notebooks.</p>
+<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Improve detection of inputs and (volatile) outputs when compiling a LaTeX document:<ul>
+<li>The <code>-recorder</code> option of <code>latex</code> is used to identify inputs and outputs more precisely.</li>
+<li>The manual override <code>%REPREP input</code> is replaced by <code>%REPREP inp</code>.</li>
+<li>New manual overrides are supported for (volatile) outputs: <code>%REPREP out</code> and <code>%REPREP vol</code>.</li>
+</ul>
+</li>
+<li>Add <code>nbargs</code> option to <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, nbargs=None, jupyter=None, optional=False, pool=None, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>,
+  to call a notebook with arguments.
+  If a <code>list</code> or a <code>dict</code> is given, the data is convert to JSON.</li>
+</ul>
+<h3 id="changed_6">Changed<a class="headerlink" href="#changed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add <code>overwrite</code> option to <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a>,
+  to flag that <code>path_out</code> refers to an input file to be overwritten,
+  instead of trying to track it as an output file.</li>
+</ul>
+<h2 id="v2.3.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.2">2.3.2</a> - 2025-02-24<a class="headerlink" href="#v2.3.2" title="Permanent link">&para;</a></h2>
+<p>This release makes <code>compile_typst</code> compatible with Typst 0.13,
+and drops support for markdown-katex.</p>
+<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Configuration for development with <a href="https://devenv.sh/">devenv</a></li>
+</ul>
+<h3 id="changed_7">Changed<a class="headerlink" href="#changed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Drop support for the ailing markdown_katex integration.
+  (Typst can be used to achieve similar results much more efficiently).</li>
+<li>Update <code>compile_typst</code> for <a href="https://github.com/typst/typst/releases/tag/v0.13.0">Typst 0.13</a></li>
+</ul>
+<h2 id="v2.3.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.1">2.3.1</a> - 2025-02-12<a class="headerlink" href="#v2.3.1" title="Permanent link">&para;</a></h2>
+<p>This is a minor bugfix release.</p>
+<h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Remove some debug output.</li>
+</ul>
+<h2 id="v2.3.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.3.0">2.3.0</a> - 2025-02-12<a class="headerlink" href="#v2.3.0" title="Permanent link">&para;</a></h2>
+<p>This release adds support for Jupyter notebooks with <code>convert_jupyter()</code>
+and introduces small breaking changes to the API.
+Other noteworthy changes include new options to the <code>compile_typst()</code> function,
+more ways to specify variables in <code>render_jinja()</code>.</p>
+<h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Execute and convert Jupyter notebooks with <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, nbargs=None, jupyter=None, optional=False, pool=None, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>.</li>
+<li><code>rr-bibsane</code> is now part of StepUp RepRep, instead of using the (retired) <code>bibsane</code> package.
+  The main difference, other than the improved integration with StepUp RepRep,
+  is that journal abbreviations are now generated with <a href="https://github.com/pierre-24/pyiso4">pyiso4</a>
+  instead of the <a href="https://abbreviso.toolforge.org">abrevvIso</a> Web API.
+  It has a corresponding <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> function
+  in <code>stepup.reprep.api</code>.</li>
+</ul>
+<h3 id="changed_8">Changed<a class="headerlink" href="#changed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Extend <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> with additional options:<ul>
+<li>Specification of the output file.</li>
+<li>Key-value pairs for the <code>--input</code> argument.</li>
+<li>PNG and SVG output formats (multipage is not working yet).</li>
+<li>Optional inventory output file.</li>
+<li>Pass-through arguments for <code>typst</code></li>
+</ul>
+</li>
+<li>Breaking changes to existing API:<ul>
+<li><code>convert_pdf()</code> and related functions are renamed:<ul>
+<li><code>convert_pdf()</code> becomes <a class="autorefs autorefs-internal" title="convert_mutool(path_pdf, path_out, *, resolution=None, mutool=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_mutool"><code>convert_mutool()</code></a></li>
+<li><code>convert_pdf_png()</code> becomes <a class="autorefs autorefs-internal" title="convert_mutool_png(path_pdf, dest=None, *, resolution=None, mutool=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_mutool_png"><code>convert_mutool_png()</code></a></li>
+</ul>
+</li>
+<li><code>convert_svg()</code> and related functions are renamed:<ul>
+<li><code>convert_svg()</code> becomes <a class="autorefs autorefs-internal" title="convert_inkscape(path_svg, path_out, *, inkscape=None, inkscape_args=(), optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_inkscape"><code>convert_inkscape()</code></a></li>
+<li><code>convert_svg_pdf()</code> becomes <a class="autorefs autorefs-internal" title="convert_inkscape_pdf(path_svg, dest=None, *, inkscape=None, inkscape_args=(), optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_inkscape_pdf"><code>convert_inkscape_pdf()</code></a></li>
+<li><code>convert_svg_png()</code> becomes <a class="autorefs autorefs-internal" title="convert_inkscape_png(path_svg, dest=None, *, inkscape=None, inkscape_args=(), optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_inkscape_png"><code>convert_inkscape_png()</code></a></li>
+</ul>
+</li>
+<li>The <code>inkscape_args</code> of <a class="autorefs autorefs-internal" title="convert_inkscape(path_svg, path_out, *, inkscape=None, inkscape_args=(), optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_inkscape"><code>convert_inkscape()</code></a>
+  must now be a list instead of a string.</li>
+<li><a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a> no longer creates
+  an inventory file by default.
+  To recover the old behavior, add <code>inventory=True</code> to the arguments
+  or set the environment variable <code>REPREP_LATEX_INVENTORY="1"</code>.</li>
+<li><a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a> no longer calls <code>bibsane</code>
+  when the LaTeX source has a BibTeX bibliography.
+  If you want to sanitize the BibTeX file, call <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a>
+  after <code>compile_latex()</code>.</li>
+<li>The <code>paths_variables</code> argument of <code>render_jinja()</code>
+  has been replaced by a variadic positional parameter (i.e. <code>*paths_variables</code>).</li>
+</ul>
+</li>
+<li>Other changes<ul>
+<li>Change <a class="autorefs autorefs-internal" title="convert_weasyprint(path_html, dest=None, *, weasyprint=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_weasyprint"><code>convert_weasyprint()</code></a>
+  to perform the conversion in a single step.</li>
+<li>Improve handling of arguments and dependencies in
+  <a class="autorefs autorefs-internal" title="convert_markdown(path_md, dest=None, *, paths_css=(), optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_markdown"><code>convert_markdown()</code></a></li>
+<li><code>render_jinja()</code> now accepts JSON and YAML files
+  with variables for Jinja2 templates.
+  In addition, one may specify a dictionary with variables directly when calling the function.</li>
+<li>Documentation improvements.</li>
+</ul>
+</li>
+</ul>
+<h2 id="v2.2.3"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.3">2.2.3</a> - 2025-02-05<a class="headerlink" href="#v2.2.3" title="Permanent link">&para;</a></h2>
+<p>This release uses the new <code>STEPUP_EXTERNAL_SOURCES</code> environment variable
+introduced in StepUp Core 2.0.6.</p>
+<h3 id="changed_9">Changed<a class="headerlink" href="#changed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Switch from <a href="https://semver.org/spec/v2.0.0.html">SemVer</a> to
+  <a href="https://jacobtomlinson.dev/effver/">EffVer</a>.</li>
+<li>Scripts that automatically detect dependencies
+  (<code>rr-compile-latex</code>, <code>rr-compile-typst</code> and <code>rr-convert-inkscape</code>)
+  now also use the new <code>STEPUP_EXTERNAL_SOURCES</code> environment variable
+  introduced in StepUp Core 2.0.6.</li>
+</ul>
+<h2 id="v2.2.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.2">2.2.2</a> - 2025-01-31<a class="headerlink" href="#v2.2.2" title="Permanent link">&para;</a></h2>
+<p>This is a bugfix release addressing minor issues in the Typst support.</p>
+<h3 id="fixed_6">Fixed<a class="headerlink" href="#fixed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Only call <code>sys.exit</code> in <code>rr-compile-typst</code> if the returncode is non-zero.
+  This allows for other scripts to call its main function without exiting
+  in case of a succeeded typst build.</li>
+</ul>
+<h2 id="v2.2.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.1">2.2.1</a> - 2025-01-31<a class="headerlink" href="#v2.2.1" title="Permanent link">&para;</a></h2>
+<p>This is a bugfix release addressing minor issues in the Typst support.</p>
+<h3 id="fixed_7">Fixed<a class="headerlink" href="#fixed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix returncode of the <code>rr-compile-typst</code> command (now passes through returncode of <code>typst build</code>).</li>
+<li>By default, depfiles created by <code>typst build</code> are now stored in a temporary directory,
+  to avoid littering the working directory.
+  You can keep depfiles by setting the environment variable <code>REPREP_KEEP_TYPST_DEPS="1"</code>,
+  or with the argument <code>keep_deps=True</code> in <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.
+  (Either one will .)</li>
+</ul>
+<h2 id="v2.2.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0">2.2.0</a> - 2025-01-29<a class="headerlink" href="#v2.2.0" title="Permanent link">&para;</a></h2>
+<p>This release adds experimental support for <a href="https://github.com/typst">typst</a>.
+It also introduces a few breaking API changes for the sake of consistency.
+(More breaking changes should be expected in the near future.)</p>
+<h3 id="added_6">Added<a class="headerlink" href="#added_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Experimental support for Typst.</li>
+</ul>
+<h3 id="changed_10">Changed<a class="headerlink" href="#changed_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Rename API functions:<ul>
+<li><code>latex()</code> -&gt; <a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a></li>
+<li><code>latex_flat()</code> -&gt; <a class="autorefs autorefs-internal" title="flatten_latex(path_tex, path_flat, *, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.flatten_latex"><code>flatten_latex()</code></a></li>
+<li><code>latex_diff()</code> -&gt; <a class="autorefs autorefs-internal" title="diff_latex(path_old, path_new, path_diff, *, latexdiff=None, latexdiff_args=DEFAULT_LATEXDIFF_ARGS, optional=False, block=False)" href="../reference/stepup.reprep.api/#stepup.reprep.api.diff_latex"><code>diff_latex()</code></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="v2.1.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.1.0">2.1.0</a> - 2025-01-27<a class="headerlink" href="#v2.1.0" title="Permanent link">&para;</a></h2>
+<p>This release contains a few minor breaking changes for the sake of internal consistency.</p>
+<h3 id="changed_11">Changed<a class="headerlink" href="#changed_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The conversion with Inkscape has become a single step.
+  (It was first split up in a step scanning for dependencies followed by the actual conversion.)</li>
+<li>Add more entrypoints for command-line utilities in StepUp RepRep.
+  Existing ones were renamed from <code>reprep-*</code> to <code>rr-*</code>.</li>
+<li>Rename module <code>stepup.reprep.render</code> to <code>stepup.reprep.render_jinja</code>.</li>
+<li>Rename API function: <code>render()</code> -&gt; <code>render_jinja()</code></li>
+</ul>
+<h2 id="v2.0.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.0.2">2.0.2</a> - 2025-01-22<a class="headerlink" href="#v2.0.2" title="Permanent link">&para;</a></h2>
+<p>This is the first release of StepUp RepRep that is compatible with StepUp Core 2.0.0.
+(Earlier 2.0 releases were yanked due to packaging issues.)</p>
+<h3 id="added_7">Added<a class="headerlink" href="#added_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add <code>smarty</code> extension to markdown conversion.</li>
+<li>Add option to insert blank page after odd-paged PDF when concatenating PDFs.</li>
+</ul>
+<h3 id="changed_12">Changed<a class="headerlink" href="#changed_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Compatibility with StepUp Core 2.0.0, which breaks compatibility with older StepUp Core versions.</li>
+</ul>
+<h3 id="fixed_8">Fixed<a class="headerlink" href="#fixed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use <code>shlex</code> for building shell commands in <code>stepup.reprep.api</code> to avoid shell injection.</li>
+</ul>
+<h2 id="v1.4.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.1">1.4.1</a> - 2024-09-02<a class="headerlink" href="#v1.4.1" title="Permanent link">&para;</a></h2>
+<h3 id="added_8">Added<a class="headerlink" href="#added_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>An extra argument was added to <code>convert_markdown</code> to specify CSS files.</li>
+<li>Support default arguments for <code>convert_markdown</code> defined as environment variables:
+  <code>${REPREP_KATEX_MACROS}</code> and <code>${REPREP_MARKDOWN_CSS}</code>.</li>
+</ul>
+<h3 id="fixed_9">Fixed<a class="headerlink" href="#fixed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix bug: put header output of <code>markdown_katex</code> plugin in the HTML header.</li>
+<li>Fix bug: rewrite paths to CSS files in <code>convert_markdown</code>
+  to be relative to the parent of the output HTML file.</li>
+</ul>
+<h2 id="v1.4.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.4.0">1.4.0</a> - 2024-08-27<a class="headerlink" href="#v1.4.0" title="Permanent link">&para;</a></h2>
+<h3 id="added_9">Added<a class="headerlink" href="#added_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The unplot script, a sanitized version of <a href="https://github.com/tovrstra/depix">Depix</a>.
+  It converts paths from SVG files back into data,
+  which can be used to reverse-engineer data sets from plots.</li>
+</ul>
+<h3 id="changed_13">Changed<a class="headerlink" href="#changed_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Move <code>load_module_file</code> from StepUp Core to <code>stepup.reprep.render</code>
+  and improve it to facilitate local imports.</li>
+</ul>
+<h2 id="v1.3.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.3.0">1.3.0</a> - 2024-06-28<a class="headerlink" href="#v1.3.0" title="Permanent link">&para;</a></h2>
+<h3 id="added_10">Added<a class="headerlink" href="#added_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The script <code>rr-sync-zenodo</code> and corresponding StepUp API function <code>sync_zenodo()</code>
+  synchronize your local data with a draft dataset on Zenodo.</li>
+<li>Small documentation updates</li>
+</ul>
+<h3 id="fixed_10">Fixed<a class="headerlink" href="#fixed_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Upgraded dependency markdown-katex to version 202406.1035
+  and enabled concurrency for markdown conversion with equations.</li>
+<li>Scrub PDF files after opening them with <code>fitz</code>.
+  See <a href="https://github.com/pymupdf/PyMuPDF/issues/3635">https://github.com/pymupdf/PyMuPDF/issues/3635</a></li>
+</ul>
+<h2 id="v1.2.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.1">1.2.1</a> - 2024-05-27<a class="headerlink" href="#v1.2.1" title="Permanent link">&para;</a></h2>
+<h3 id="changed_14">Changed<a class="headerlink" href="#changed_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Conversion from HTML to weasyprint is now a two-step process and includes detection
+  of implicit input files used in the HTML to PDF conversion. (Images and external CCS)</li>
+<li>Improved reusability of script modules:
+  <code>add_notes_pdf</code>, <code>check_hrefs</code>, <code>convert_inkscape</code>, <code>convert_markdown</code>,
+  <code>convert_weasyprint</code>, <code>latex</code>, <code>latex_flat</code>, <code>make_inventory</code>, <code>normalized_pdf</code>,
+  <code>nup_pdf</code>, <code>raster_pdf</code>, <code>render</code> and <code>zip_inventory</code>.</li>
+</ul>
+<h3 id="fixed_11">Fixed<a class="headerlink" href="#fixed_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed a few errors in the HTML generated by <code>convert_markdown()</code></li>
+</ul>
+<h2 id="v1.2.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.2.0">1.2.0</a> - 2024-05-20<a class="headerlink" href="#v1.2.0" title="Permanent link">&para;</a></h2>
+<h3 id="added_11">Added<a class="headerlink" href="#added_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>rr-zip-inventory</code> command to manually create a reproducible ZIP file from an <code>inventory.txt</code> file.</li>
+<li>More documentation on how to work with inventory files.</li>
+<li>Tutorial for archiving StepUp publication Git repositories.</li>
+</ul>
+<h3 id="changed_15">Changed<a class="headerlink" href="#changed_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Renamed all <code>MANIFEST</code> and <code>manifest</code> occurrences to <code>inventory</code>
+  and removed dependency of setuptools for processing such files.</li>
+<li>The API of <code>make_inventory</code> is made simpler than that of <code>make_manifest</code>.</li>
+<li>The commands supported in <code>inventory.def</code> files now differ from those in setuptools:
+  <code>include</code>, <code>exclude</code>, <code>include-git</code>, <code>exclude-git</code>, <code>include-workflow</code> and <code>exclude-workflow</code>.</li>
+<li>The css style has been made customizable in <code>convert_markdown</code>.</li>
+<li>KaTeX is now optional in <code>convert_markdown</code>.</li>
+</ul>
+<h3 id="fixed_12">Fixed<a class="headerlink" href="#fixed_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>An error message is raised when trying to a put a directory in an inventory file.</li>
+<li>Symbolic links are no longer dereferenced when they are listed in an inventory file.</li>
+<li>Symbolic links are archived in ZIP files without dereferencing.</li>
+</ul>
+<h2 id="v1.1.2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.1.2">1.1.2</a> - 2024-05-16<a class="headerlink" href="#v1.1.2" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_13">Fixed<a class="headerlink" href="#fixed_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Nicer fix for concurrent Inkscape SVG to PDF or PNG conversion
+  (with <code>SELF_CALL=x</code>).
+  See: <a href="https://gitlab.com/inkscape/inkscape/-/issues/4716">https://gitlab.com/inkscape/inkscape/-/issues/4716</a></li>
+<li>Make unit tests work with stepup-core 1.2.2.</li>
+</ul>
+<h2 id="v1.1.1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.1.1">1.1.1</a> - 2024-05-07<a class="headerlink" href="#v1.1.1" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_14">Fixed<a class="headerlink" href="#fixed_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Inkscape SVG to PDF or PNG conversion now works also in parallel,
+  thanks to the workaround posted here:
+  <a href="https://gitlab.com/inkscape/inkscape/-/issues/4716">https://gitlab.com/inkscape/inkscape/-/issues/4716</a></li>
+<li>LibrOffice PDF conversion now works also in parallel,
+  thanks to the workaround posted here:
+  <a href="https://bugs.documentfoundation.org/show_bug.cgi?id=106134">https://bugs.documentfoundation.org/show_bug.cgi?id=106134</a></li>
+<li>Inkscape conversion no longer opens files in write mode,
+  which triggered the watcher of StepUp Core.</li>
+<li>Fixed packaging mistake that confused PyCharm and Pytest.</li>
+</ul>
+<h3 id="changed_16">Changed<a class="headerlink" href="#changed_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Documentation improvements</li>
+</ul>
+<h2 id="v1.1.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.1.0">1.1.0</a> - 2024-05-02<a class="headerlink" href="#v1.1.0" title="Permanent link">&para;</a></h2>
+<h3 id="changed_17">Changed<a class="headerlink" href="#changed_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Documentation improvements</li>
+<li>Unit tests are made compatible with StepUp Core 1.2.0.</li>
+</ul>
+<h2 id="v1.0.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v1.0.0">1.0.0</a> - 2024-04-25<a class="headerlink" href="#v1.0.0" title="Permanent link">&para;</a></h2>
+<p>Initial release</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2024-2025, Toon Verstraelen
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["search.highlight", "search.suggest", "search.share", "navigation.instant", "navigation.instant.prefetch", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "stable", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

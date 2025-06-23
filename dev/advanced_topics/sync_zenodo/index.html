@@ -796,15 +796,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#known-limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Known limitations
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1054,15 +1045,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#known-limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Known limitations
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1091,6 +1073,10 @@
 <div class="admonition note">
 <p class="admonition-title">Version history</p>
 <p>This feature was added to StepUp RepRep 1.3.</p>
+<p>As of StepUp RepRep 3.1, the schema of the <code>zenodo.yaml</code> file has changed.
+The <code>sync_zenodo()</code> function interacts with Zenodo through the invenio RMD REST API,
+which is not officially documented yet,
+but it offers more features than the official Zenodo API.</p>
 </div>
 <p>StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
@@ -1098,56 +1084,88 @@ You can also provide metadata within your StepUp project,
 which minimizes the amount of GUI interaction required in the Zenodo web interface.
 This approach also makes it easier for all your collaborators
 to review and contribute to the (meta)data before the dataset is published on Zenodo.</p>
-<p>You will still need to use the Zenodo web interface to publish the dataset.
-If your files change and you want to create a new version,
+<p>You will still need to use the Zenodo web interface to publish the dataset,
+and to add it to a community for review.
+If your files change, and you want to create a new version,
 you must increment the version numbers
 using the <a href="https://semver.org/">semantic version numbering</a> format.</p>
 <h2 id="configure-a-zenodo-dataset">Configure a Zenodo dataset<a class="headerlink" href="#configure-a-zenodo-dataset" title="Permanent link">&para;</a></h2>
 <p>To prepare a dataset, you need to create a <code>zenodo.yaml</code> file
 by filling in the following template:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">path_versions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.zenodo-versions.json</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">path_record_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.zenodo-record-id.txt</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sandbox.zenodo.org/api</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">path_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">~/.config/sandbox-zenodo-org-token.txt</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">metadata</span><span class="p">:</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;A</span><span class="nv"> </span><span class="s">title&#39;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1.0.0&#39;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cc-by-nc-4.0</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">upload_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dataset</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">creators</span><span class="p">:</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Last</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">1,</span><span class="nv"> </span><span class="s">First</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">1&#39;</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">affiliation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="no">Research group,</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="no">University,</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">        </span><span class="no">Street and number,</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">        </span><span class="no">ZIP code</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">        </span><span class="no">City,</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">        </span><span class="no">Country</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">      </span><span class="nt">orcid</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0000-0002-1825-0097&#39;</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Last</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">2,</span><span class="nv"> </span><span class="s">First</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">2&#39;</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="nt">affiliation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">        </span><span class="no">Research group,</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">        </span><span class="no">University,</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">        </span><span class="no">Street and number,</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">        </span><span class="no">ZIP code</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">        </span><span class="no">City,</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">        </span><span class="no">Country</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="nt">orcid</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0000-0002-1825-0098&#39;</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="nt">path_readme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zenodo.md</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="nt">paths</span><span class="p">:</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file1</span>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sub/file2</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">keywords</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keyword1</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keyword2</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cc-by-nc-4.0</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">resource_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dataset</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nt">publisher</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Publisher</span><span class="nv"> </span><span class="s">name&#39;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">creators</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">family_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Last</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">1&#39;</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="nt">given_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;First</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">1&#39;</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="nt">identifiers</span><span class="p">:</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">        </span><span class="nt">orcid</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0000-0002-1825-0097&#39;</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">      </span><span class="nt">affiliations</span><span class="p">:</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ror</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROR_CODE</span><span class="w">  </span><span class="c1"># See https://ror.org/</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">            </span><span class="no">Research group,</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">            </span><span class="no">University,</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">            </span><span class="no">Street and number,</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">            </span><span class="no">ZIP code</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">            </span><span class="no">City,</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">            </span><span class="no">Country</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">            </span><span class="no">Consortium name,</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">            </span><span class="no">Some more details,</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">            </span><span class="no">...</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Last</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">2,</span><span class="nv"> </span><span class="s">First</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">2&#39;</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="nt">identifiers</span><span class="p">:</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">        </span><span class="nt">orcid</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0000-0002-1825-0098&#39;</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">      </span><span class="nt">affiliations</span><span class="p">:</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">            </span><span class="no">Research group,</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">            </span><span class="no">University,</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">            </span><span class="no">Street and number,</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">            </span><span class="no">ZIP code</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">            </span><span class="no">City,</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">            </span><span class="no">Country</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">  </span><span class="nt">related</span><span class="p">:</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doi</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1234/zenodo.1234567</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">      </span><span class="nt">relation_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cites</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">      </span><span class="nt">resource_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">publication</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="w">  </span><span class="nt">funding</span><span class="p">:</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">funder</span><span class="p">:</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="w">        </span><span class="nt">ror</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROR_CODE</span><span class="w">  </span><span class="c1"># See https://ror.org/</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">      </span><span class="nt">award</span><span class="p">:</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a><span class="w">        </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Full</span><span class="nv"> </span><span class="s">title</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">award&#39;</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a><span class="w">        </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Award</span><span class="nv"> </span><span class="s">number&#39;</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="w">        </span><span class="nt">identifiers</span><span class="p">:</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;https://example.org/award/1234&#39;</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;https://example.org/award/5678&#39;</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a><span class="nt">code_repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/example/repo2</span>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a><span class="nt">path_readme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zenodo.md</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a><span class="nt">paths</span><span class="p">:</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file1</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sub/file2</span>
 </span></code></pre></div>
 <p>Documentation of the fields in the <code>zenodo.yaml</code> configuration file:</p>
 <ul>
 <li>
-<p><code>path_versions</code>:
-  A JSON file containing all versions of the dataset in chronological order
-  and their corresponding record IDs.
+<p><code>path_record_id</code>:
+  A TXT file containing the record ID of the most recent version of the resource on Zenodo.
   This file is updated by the <code>stepup sync-zenodo</code> script.
   You should not need to modify it unless you created or discarded new records
   manually through the Zenodo web interface.
-  It is recommended to commit this file to the Git history.</p>
+  It is recommended to commit this file to the Git history.
+  Changes to this file are not tracked by StepUp.</p>
 </li>
 <li>
 <p><code>endpoint</code>:
@@ -1170,8 +1188,20 @@ Save the token immediately, as it cannot be retrieved later.</p>
 <p><code>metadata</code>:
   A section with metadata fields to describe the dataset on Zenodo.</p>
 <ul>
-<li><code>title</code>:
-  A short description of the dataset.</li>
+<li>
+<p><code>title</code>:
+  A short description of the dataset.</p>
+</li>
+<li>
+<p><code>keywords</code>:
+  A list of keywords to describe the dataset.
+  (Optional)</p>
+</li>
+<li>
+<p><code>publisher</code>:
+  The name of the publisher of the dataset.
+  (Optional)</p>
+</li>
 <li>
 <p><code>version</code>:
   The version of your current data.</p>
@@ -1191,33 +1221,143 @@ which stays in draft mode until you manually publish it through the Zenodo web i
   can be found in <a href="https://spdx.org/licenses/">SPDX License list</a>.</p>
 </li>
 <li>
-<p><code>upload_type</code>
-  Select one of:
-  <code>publication</code>, <code>poster</code>, <code>presentation</code>, <code>dataset</code>, <code>image</code>,
-  <code>video</code>, <code>software</code>, <code>lesson</code>, <code>physicalobject</code>, or <code>other</code>.</p>
+<p><code>resource_type</code>
+  Select one of:</p>
+<ul>
+<li><code>dataset</code></li>
+<li><code>image</code></li>
+<li><code>lesson</code></li>
+<li><code>other</code></li>
+<li><code>physicalobject</code></li>
+<li><code>poster</code></li>
+<li><code>presentation</code></li>
+<li><code>publication</code></li>
+<li><code>software</code></li>
+<li><code>video</code></li>
+</ul>
 </li>
 <li>
 <p><code>creators</code>:
   List one or more creators of the data.</p>
 <ul>
-<li><code>name</code>:
-  The full name of a creator.
-  Format this field as <code>Last name, First name</code></li>
-<li><code>affiliation</code>
-  The full address including affiliation.</li>
-<li><code>orcid</code>:
-  The ORCID of the creator.
-  Format this field as <code>0000-0002-1825-0097</code>.
-  (This field is optional, but recommended.)</li>
+<li><code>family_name</code>:
+  The last name of a creator.</li>
+<li><code>given_name</code>:
+  The first name of a creator.</li>
+<li><code>identifiers</code>:
+  A dictionary with identifiers of the creator.
+  The only supported identifier are <code>orcid</code> and <code>isni</code>.</li>
+<li><code>affiliations</code>
+  The list of affiliations of the creator.
+  Each affiliation is a dictionary with either a <code>ror</code> or <code>name</code> field.</li>
+</ul>
+</li>
+<li>
+<p><code>related</code>:
+  A list of related resources. (Optional)
+  Each resource is a dictionary with the following fields:</p>
+<ul>
+<li><code>scheme</code>: The identifier scheme, e.g., <code>doi</code>, <code>arxiv</code>, <code>url</code>.</li>
+<li><code>identifier</code>: The identifier of the resource.</li>
+<li><code>resource_type</code>:
+  The type of the related resource, can be any of the values listed above for <code>resource_type</code>.</li>
+<li>
+<p><code>relation_type</code>: The type of relation, which can be any of the following:</p>
+<ul>
+<li><code>cites</code></li>
+<li><code>compiles</code></li>
+<li><code>continues</code></li>
+<li><code>describes</code></li>
+<li><code>documents</code></li>
+<li><code>hasmetadata</code></li>
+<li><code>haspart</code></li>
+<li><code>hasversion</code></li>
+<li><code>iscitedby</code></li>
+<li><code>iscompiledby</code></li>
+<li><code>iscontinuedby</code></li>
+<li><code>isderivedfrom</code></li>
+<li><code>isdescribedby</code></li>
+<li><code>isdocumentedby</code></li>
+<li><code>isidenticalto</code></li>
+<li><code>ismetadatafor</code></li>
+<li><code>isnewversionof</code></li>
+<li><code>isobsoletedby</code></li>
+<li><code>isoriginalformof</code></li>
+<li><code>ispartof</code></li>
+<li><code>ispreviousversionof</code></li>
+<li><code>ispublishedin</code></li>
+<li><code>isreferencedby</code></li>
+<li><code>isrequiredby</code></li>
+<li><code>isreviewedby</code></li>
+<li><code>issourceof</code></li>
+<li><code>issupplementedby</code></li>
+<li><code>issupplementto</code></li>
+<li><code>isvariantformof</code></li>
+<li><code>isversionof</code></li>
+<li><code>obsoletes</code></li>
+<li><code>references</code></li>
+<li><code>requires</code></li>
+<li><code>reviews</code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>
+<p><code>funding</code>:
+  A list of funding information. (Optional)
+  Each funding entry is a dictionary with the following fields:</p>
+<ul>
+<li><code>funder</code>: A dictionary with either the ROR code of the funder or its name.
+  The ROR code can be found on <a href="https://ror.org/">ROR.org</a>.</li>
+<li><code>award</code>: A dictionary with the details of the award.
+  It can contain the following fields:<ul>
+<li><code>title</code>: The full title of the award.</li>
+<li><code>number</code>: The award number.</li>
+<li>
+<p><code>identifiers</code>: A list of identifiers for the award, such as URLs.
+  Each identifiers is a dictionary with a single key, the scheme,
+  and the identifier as value.
+  Supported schemes are:</p>
+<ul>
+<li><code>ark</code></li>
+<li><code>arxiv</code></li>
+<li><code>ads</code></li>
+<li><code>crossreffunderid</code></li>
+<li><code>doi</code></li>
+<li><code>ean13</code></li>
+<li><code>eissn</code></li>
+<li><code>grid</code></li>
+<li><code>handle</code></li>
+<li><code>igsn</code></li>
+<li><code>isbn</code></li>
+<li><code>isni</code></li>
+<li><code>issn</code></li>
+<li><code>istc</code></li>
+<li><code>lissn</code></li>
+<li><code>lsid</code></li>
+<li><code>pmid</code></li>
+<li><code>purl</code></li>
+<li><code>upc</code></li>
+<li><code>url</code></li>
+<li><code>urn</code></li>
+<li><code>w3id</code></li>
+<li><code>other</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>code_repository</code>
+  Software resources, can specify the URL of the git repository. (Optional)</p>
+</li>
+<li>
 <p><code>path_readme</code>:
-  This field is optional.
-  If given, the Markdown file will be converted to HTML and used as description metadata.
-  Alternatively, you can add a <code>description</code> field with an HTML value to the metadata.</p>
+  If given, it will be used as description metadata. (Optional)
+  When the file has a <code>.md</code> extension, it will be converted to HTML.</p>
 </li>
 <li>
 <p><code>paths</code>:
@@ -1250,20 +1390,6 @@ one can use the <a class="autorefs autorefs-internal" title="sync_zenodo(path_co
 continuously synchronize the latest version of a publication with co-authors.
 Drafts of datasets can be shared with co-authors,
 in this case to give them access to the most recent build of the publication PDFs.</p>
-<h2 id="known-limitations">Known limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Funding information cannot be included in the YAML config file yet.
-  The Zenodo API documentation still needs to be written to support this feature.
-  See <a href="https://github.com/zenodo/zenodo/issues/950">zenodo/zenodo#950</a>.
-  (The corresponding documentation for the Web interface does not exist either.)
-  Also, adding funding details manually does not seem to work yet,
-  because not all funding organizations are included.
-  For now, just add funding details to the dataset description.</li>
-<li>The Zenodo API does not support multiple affiliations.
-  See <a href="https://github.com/zenodo/zenodo/issues/1608">zenodo/zenodo#1608</a></li>
-<li>Not all Zenodo metadata fields are supported.
-  We may add more in future versions of StepUp RepRep.</li>
-</ul>
 
 
 

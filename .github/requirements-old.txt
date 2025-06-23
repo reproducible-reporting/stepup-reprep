@@ -3,6 +3,7 @@ attrs==23.1.0
 bibtexparser==1.4.1
 cattrs==23.2.3
 defusedxml==0.7.0
+idutils==1.4.5
 ipykernel==6.20.1
 markdown-it-py==3.0.0
 mdit-py-plugins==0.4.2

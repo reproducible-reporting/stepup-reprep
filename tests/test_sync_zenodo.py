@@ -21,14 +21,7 @@
 
 import pytest
 
-from stepup.reprep.sync_zenodo import Creator, ZenodoWrapper
-
-
-def test_links():
-    zenodo = ZenodoWrapper("")
-    links = {"foo": f"{zenodo.endpoint}/foo"}
-    zenodo._normalize_links(links)
-    assert links == {"foo": "foo"}
+from stepup.reprep.sync_zenodo import Creator
 
 
 @pytest.mark.parametrize(
@@ -36,7 +29,7 @@ def test_links():
     ["0000-0001-9288-5608", "0000-0001-6785-333X", "0000-0001-6785-333x", "0000-0002-0257-4687"],
 )
 def test_creator_orcid_valid(orcid):
-    Creator("Test User", "StepUp RepRep", orcid)
+    Creator("Test User", "StepUp RepRep", {"orcid": orcid})
 
 
 @pytest.mark.parametrize(
@@ -60,4 +53,4 @@ def test_creator_orcid_valid(orcid):
 )
 def test_creator_orcid_invalid(orcid):
     with pytest.raises(ValueError):
-        Creator("Test User", "StepUp RepRep", orcid)
+        Creator("Test User", "StepUp RepRep", {"orcid": orcid})

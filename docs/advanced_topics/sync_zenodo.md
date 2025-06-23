@@ -4,6 +4,11 @@
 
     This feature was added to StepUp RepRep 1.3.
 
+    As of StepUp RepRep 3.1, the schema of the `zenodo.yaml` file has changed.
+    The `sync_zenodo()` function interacts with Zenodo through the invenio RMD REST API,
+    which is not officially documented yet,
+    but it offers more features than the official Zenodo API.
+
 StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
 You can also provide metadata within your StepUp project,
@@ -11,8 +16,9 @@ which minimizes the amount of GUI interaction required in the Zenodo web interfa
 This approach also makes it easier for all your collaborators
 to review and contribute to the (meta)data before the dataset is published on Zenodo.
 
-You will still need to use the Zenodo web interface to publish the dataset.
-If your files change and you want to create a new version,
+You will still need to use the Zenodo web interface to publish the dataset,
+and to add it to a community for review.
+If your files change, and you want to create a new version,
 you must increment the version numbers
 using the [semantic version numbering](https://semver.org/) format.
 
@@ -22,34 +28,65 @@ To prepare a dataset, you need to create a `zenodo.yaml` file
 by filling in the following template:
 
 ```yaml
-path_versions: .zenodo-versions.json
+path_record_id: .zenodo-record-id.txt
 endpoint: https://sandbox.zenodo.org/api
 path_token: ~/.config/sandbox-zenodo-org-token.txt
 metadata:
   title: 'A title'
   version: '1.0.0'
+  keywords:
+    - keyword1
+    - keyword2
   license: cc-by-nc-4.0
-  upload_type: dataset
+  resource_type: dataset
+  publisher: 'Publisher name'
   creators:
-    - name: 'Last name 1, First name 1'
-      affiliation: >-
-        Research group,
-        University,
-        Street and number,
-        ZIP code
-        City,
-        Country
-      orcid: '0000-0002-1825-0097'
+    - family_name: 'Last name 1'
+      given_name: 'First name 1'
+      identifiers:
+        orcid: '0000-0002-1825-0097'
+      affiliations:
+        - ror: ROR_CODE  # See https://ror.org/
+        - name: >-
+            Research group,
+            University,
+            Street and number,
+            ZIP code
+            City,
+            Country
+        - name: >-
+            Consortium name,
+            Some more details,
+            ...
     - name: 'Last name 2, First name 2'
-      affiliation: >-
-        Research group,
-        University,
-        Street and number,
-        ZIP code
-        City,
-        Country
-      orcid: '0000-0002-1825-0098'
+      identifiers:
+        orcid: '0000-0002-1825-0098'
+      affiliations:
+        - name: >-
+            Research group,
+            University,
+            Street and number,
+            ZIP code
+            City,
+            Country
     - ...
+  related:
+    - scheme: doi
+      identifier: 10.1234/zenodo.1234567
+      relation_type: cites
+      resource_type: publication
+    - ...
+  funding:
+    - funder:
+        ror: ROR_CODE  # See https://ror.org/
+      award:
+        title: 'Full title of the award'
+        number: 'Award number'
+        identifiers:
+          - url: 'https://example.org/award/1234'
+          - url: 'https://example.org/award/5678'
+          - ...
+code_repository: https://github.com/example/repo2
 path_readme: zenodo.md
 paths:
   - file1
@@ -58,13 +95,13 @@ paths:
 
 Documentation of the fields in the `zenodo.yaml` configuration file:
 
-- `path_versions`:
-  A JSON file containing all versions of the dataset in chronological order
-  and their corresponding record IDs.
+- `path_record_id`:
+  A TXT file containing the record ID of the most recent version of the resource on Zenodo.
   This file is updated by the `stepup sync-zenodo` script.
   You should not need to modify it unless you created or discarded new records
   manually through the Zenodo web interface.
   It is recommended to commit this file to the Git history.
+  Changes to this file are not tracked by StepUp.
 
 - `endpoint`:
   If you want to test the upload without using the production Zenodo platform,
@@ -87,6 +124,15 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
 
     - `title`:
       A short description of the dataset.
+
+    - `keywords`:
+      A list of keywords to describe the dataset.
+      (Optional)
+
+    - `publisher`:
+      The name of the publisher of the dataset.
+      (Optional)
+
     - `version`:
       The version of your current data.
 
@@ -105,28 +151,124 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
       The list of licenses supported by Zenodo (and their identifiers)
       can be found in [SPDX License list](https://spdx.org/licenses/).
 
-    - `upload_type`
+    - `resource_type`
       Select one of:
-      `publication`, `poster`, `presentation`, `dataset`, `image`,
-      `video`, `software`, `lesson`, `physicalobject`, or `other`.
+
+        - `dataset`
+        - `image`
+        - `lesson`
+        - `other`
+        - `physicalobject`
+        - `poster`
+        - `presentation`
+        - `publication`
+        - `software`
+        - `video`
 
     - `creators`:
       List one or more creators of the data.
 
-        - `name`:
-          The full name of a creator.
-          Format this field as `Last name, First name`
-        - `affiliation`
-          The full address including affiliation.
-        - `orcid`:
-          The ORCID of the creator.
-          Format this field as `0000-0002-1825-0097`.
-          (This field is optional, but recommended.)
+        - `family_name`:
+          The last name of a creator.
+        - `given_name`:
+          The first name of a creator.
+        - `identifiers`:
+          A dictionary with identifiers of the creator.
+          The only supported identifier are `orcid` and `isni`.
+        - `affiliations`
+          The list of affiliations of the creator.
+          Each affiliation is a dictionary with either a `ror` or `name` field.
+
+    - `related`:
+      A list of related resources. (Optional)
+      Each resource is a dictionary with the following fields:
+
+        - `scheme`: The identifier scheme, e.g., `doi`, `arxiv`, `url`.
+        - `identifier`: The identifier of the resource.
+        - `resource_type`:
+          The type of the related resource, can be any of the values listed above for `resource_type`.
+        - `relation_type`: The type of relation, which can be any of the following:
+
+            - `cites`
+            - `compiles`
+            - `continues`
+            - `describes`
+            - `documents`
+            - `hasmetadata`
+            - `haspart`
+            - `hasversion`
+            - `iscitedby`
+            - `iscompiledby`
+            - `iscontinuedby`
+            - `isderivedfrom`
+            - `isdescribedby`
+            - `isdocumentedby`
+            - `isidenticalto`
+            - `ismetadatafor`
+            - `isnewversionof`
+            - `isobsoletedby`
+            - `isoriginalformof`
+            - `ispartof`
+            - `ispreviousversionof`
+            - `ispublishedin`
+            - `isreferencedby`
+            - `isrequiredby`
+            - `isreviewedby`
+            - `issourceof`
+            - `issupplementedby`
+            - `issupplementto`
+            - `isvariantformof`
+            - `isversionof`
+            - `obsoletes`
+            - `references`
+            - `requires`
+            - `reviews`
+
+- `funding`:
+  A list of funding information. (Optional)
+  Each funding entry is a dictionary with the following fields:
+
+    - `funder`: A dictionary with either the ROR code of the funder or its name.
+      The ROR code can be found on [ROR.org](https://ror.org/).
+    - `award`: A dictionary with the details of the award.
+      It can contain the following fields:
+        - `title`: The full title of the award.
+        - `number`: The award number.
+        - `identifiers`: A list of identifiers for the award, such as URLs.
+          Each identifiers is a dictionary with a single key, the scheme,
+          and the identifier as value.
+          Supported schemes are:
+
+            - `ark`
+            - `arxiv`
+            - `ads`
+            - `crossreffunderid`
+            - `doi`
+            - `ean13`
+            - `eissn`
+            - `grid`
+            - `handle`
+            - `igsn`
+            - `isbn`
+            - `isni`
+            - `issn`
+            - `istc`
+            - `lissn`
+            - `lsid`
+            - `pmid`
+            - `purl`
+            - `upc`
+            - `url`
+            - `urn`
+            - `w3id`
+            - `other`
+
+- `code_repository`
+  Software resources, can specify the URL of the git repository. (Optional)
 
 - `path_readme`:
-  This field is optional.
-  If given, the Markdown file will be converted to HTML and used as description metadata.
-  Alternatively, you can add a `description` field with an HTML value to the metadata.
+  If given, it will be used as description metadata. (Optional)
+  When the file has a `.md` extension, it will be converted to HTML.
 
 - `paths`:
   The dataset files to be uploaded.
@@ -167,17 +309,3 @@ one can use the [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] function to
 continuously synchronize the latest version of a publication with co-authors.
 Drafts of datasets can be shared with co-authors,
 in this case to give them access to the most recent build of the publication PDFs.
-
-## Known limitations
-
-- Funding information cannot be included in the YAML config file yet.
-  The Zenodo API documentation still needs to be written to support this feature.
-  See [zenodo/zenodo#950](https://github.com/zenodo/zenodo/issues/950).
-  (The corresponding documentation for the Web interface does not exist either.)
-  Also, adding funding details manually does not seem to work yet,
-  because not all funding organizations are included.
-  For now, just add funding details to the dataset description.
-- The Zenodo API does not support multiple affiliations.
-  See [zenodo/zenodo#1608](https://github.com/zenodo/zenodo/issues/1608)
-- Not all Zenodo metadata fields are supported.
-  We may add more in future versions of StepUp RepRep.

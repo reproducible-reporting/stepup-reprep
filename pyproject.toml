@@ -35,6 +35,7 @@ dependencies = [
     "bibtexparser>=1.4.1",
     "cattrs>=23.2.3",
     "defusedxml>=0.7.0",
+    "idutils>=1.4.5",
     "ipykernel>=6.20.1",
     "markdown-it-py>=3.0.0",
     "mdit-py-plugins>=0.4.2",
@@ -101,9 +102,13 @@ wrap_git = "stepup.reprep.actions:wrap_git"
 zip-inventory = "stepup.reprep.actions:zip_inventory"
 
 [tool.pytest.ini_options]
-addopts = "-n auto -W error --strict-markers -m 'not heavy'"
+addopts = "-n auto --strict-markers -m 'not heavy'"
 markers = ["heavy: requires CPU or memory resources not available in GitHub Actions"]
 asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "error",
+    "ignore:.*idutils.*:DeprecationWarning",
+]
 
 [tool.ruff]
 line-length = 100

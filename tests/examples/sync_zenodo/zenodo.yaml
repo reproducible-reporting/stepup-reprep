@@ -1,21 +1,49 @@
-path_versions: .zenodo-versions.json
+path_record_id: .zenodo-record-id.txt
 endpoint: https://sandbox.zenodo.org/api
 path_token: does-not-exist.txt
 metadata:
   title: 'Drink a coffee and try to think of a better title'
+  keywords:
+    - coffee
+    - zenodo
+    - example
   version: '1.0.0'
   # See identifies on https://spdx.org/licenses/ (make lowercase)
   license: cc-by-nc-4.0
-  upload_type: dataset
+  publisher: Zenodo
+  resource_type: dataset
   creators:
-    - name: 'Verstraelen, Toon'
-      affiliation: >-
-        Center for Molecular Modeling (CMM),
-        Ghent University,
-        Technologiepark-Zwijnaarde 46,
-        B-9052,
-        Zwijnaarde, Belgium
-      orcid: '0000-0001-9288-5608'
+    - family_name: Verstraelen
+      given_name: Toon
+      identifiers:
+        orcid: '0000-0001-9288-5608'
+        isni: '0000 0003 5124 9044'
+      affiliations:
+        # For ROR, see https://ror.org/
+        - name: >-
+            Center for Molecular Modeling (CMM),
+            Ghent University,
+            Technologiepark-Zwijnaarde 46,
+            B-9052,
+            Zwijnaarde, Belgium
+  related:
+    # For supported schemes, see
+    # https://inveniordm.docs.cern.ch/reference/metadata/#identifier-schemes
+    # For relation types, see
+    # https://github.com/inveniosoftware/invenio-rdm-records/blob/master/invenio_rdm_records/fixtures/data/vocabularies/relation_types.yaml
+    - identifier: '10.5281/zenodo.1234567'
+      scheme: doi
+      relation_type: continues
+      resource_type: publication
+  funding:
+    - funder:
+        ror: 00cv9y106  # Ghent University
+      award:
+        title: 'Title of the award'
+        number: 'GN23549'
+        identifiers:
+          - url: 'https://example.com/award/123456789'
+code_repository: https://github.com/example/repo2
 path_readme: zenodo.md
 paths:
   - README.txt

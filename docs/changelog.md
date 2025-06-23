@@ -10,7 +10,19 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+More powerful `sync_zenodo` command that uses the Invenio RDM API.
+
+### Changed
+
+- Switch from the official Zenodo API to the Invenio RDM API.
+  This is a breaking change, with a new layout of the `zenodo.yaml` configuration file.
+  See the [Zenodo synchronization documentation](advanced_topics/sync_zenodo.md) for details.
+- Add support for more metadata fields in the `zenodo.yaml` configuration file.
+  This includes support for keywords, multiple affiliations, RORs, related identifiers,
+  funding information and code repository.
+- Add the `--clean` option to `sync_zenodo` to remove all draft uploads from Zenodo.
+  (Mainly useful for testing purposes.)
+- Human-readable output when the `zenodo.yaml` configuration file contains schema errors.
 
 ## [3.0.5][] - 2025-06-22 {: v3.0.5 }
 

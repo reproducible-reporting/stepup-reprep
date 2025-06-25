@@ -31,6 +31,7 @@ RE_VERBATIMINPUT = re.compile(r"\\verbatiminput\s*\{([^}]*)}", RE_OPTIONS)
 RE_INCLUDEGRAPHICS = re.compile(r"\\includegraphics(?:\s*\[[^]]*])?\s*\{([^}]*)}", RE_OPTIONS)
 RE_BIBLIOGRAPHY = re.compile(r"\\bibliography\s*\{([^}]*)}", RE_OPTIONS)
 RE_IMPORT = re.compile(r"\\import\s*\{([^}]*)}\s*\{([^}]*)}", RE_OPTIONS)
+RE_INCLUDPDF = re.compile(r"\\includepdf(?:\s*\[[^]]*])?\s*\{([^}]*)}", RE_OPTIONS)
 
 
 def cleanup_path(path, ext=None):
@@ -87,6 +88,8 @@ def iter_latex_references(tex_no_comments):
         yield ".", fn_inc, ".bib"
     for new_root, fn_inc in re.findall(RE_IMPORT, tex_no_comments):
         yield new_root, fn_inc, ".tex"
+    for fn_inc in re.findall(RE_INCLUDPDF, tex_no_comments):
+        yield ".", fn_inc, ".pdf"
 
 
 def scan_latex_deps(path_tex, tex_root=None):

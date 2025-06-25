@@ -52,6 +52,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
 \import  {sub  % poor formatting
 }    {inc.tex
 }
+\includepdf[pages=-]{somepages.pdf}
 %import{sub}{ex.tex}
 %REPREP out sideffect.txt
 """
@@ -70,6 +71,7 @@ def test_scan_latex_deps(monkeypatch, path_tmp):
         "plot.pdf",
         "implicit.txt",
         "sub/inc.tex",
+        "somepages.pdf",
     }
     assert set(inp) == inp_ref
     bib_ref = {"references.bib", "extra.bib"}

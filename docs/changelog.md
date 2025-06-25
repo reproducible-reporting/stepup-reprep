@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- Detect dependencies in LaTeX from `includepdf` commands.
 
 ## [3.1.0][] - 2025-06-23 {: v3.1.0 }
 

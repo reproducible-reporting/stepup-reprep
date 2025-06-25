@@ -53,7 +53,6 @@ import argparse
 import datetime
 import hashlib
 import json
-import re
 import sys
 from typing import Any
 
@@ -138,22 +137,56 @@ class RESTWrapper:
         return self.request("DELETE", loc, **kwargs)
 
 
-ROR_PATTERN = re.compile(r"^0[a-z0-9]{6}[0-9]{2}$")
-
-
+# See https://datacite-metadata-schema.readthedocs.io/en/4.6/properties/resourcetype/
 RESOURCE_TYPES = [
+    "audio",
     "dataset",
+    "event",
     "image",
+    "image-diagram",
+    "image-drawing",
+    "image-figure",
+    "image-other",
+    "image-photo",
+    "image-plot",
     "lesson",
+    "model",
     "other",
     "physicalobject",
     "poster",
     "presentation",
     "publication",
+    "publication-annotationcollection",
+    "publication-article",
+    "publication-book",
+    "publication-conferencepaper",
+    "publication-conferenceproceeding",
+    "publication-datamanagementplan",
+    "publication-datapaper",
+    "publication-deliverable",
+    "publication-dissertation",
+    "publication-journal",
+    "publication-milestone",
+    "publication-other",
+    "publication-patent",
+    "publication-peerreview",
+    "publication-preprint",
+    "publication-proposal",
+    "publication-report",
+    "publication-section",
+    "publication-softwaredocumentation",
+    "publication-standard",
+    "publication-taxonomictreatment",
+    "publication-technicalnote",
+    "publication-thesis",
+    "publication-workingpaper",
     "software",
+    "software-computationalnotebook",
     "video",
+    "workflow",
 ]
 
+# See https://github.com/inveniosoftware/invenio-rdm-records/blob/master/invenio_rdm_records/config.py
 IDENTIFIER_SCHEMES = {
     "ark": idutils.is_ark,
     "arxiv": idutils.is_arxiv,
@@ -180,6 +213,7 @@ IDENTIFIER_SCHEMES = {
     "other": lambda _: True,
 }
 
+# See https://github.com/inveniosoftware/invenio-rdm-records/blob/master/invenio_rdm_records/fixtures/data/vocabularies/relation_types.yaml
 RELATION_TYPES = [
     "cites",
     "compiles",
@@ -231,7 +265,7 @@ class Organization:
     @ror.validator
     def _validate_ror(self, attribute, value):
         """Validate the ROR identifiers."""
-        if not (value is None or ROR_PATTERN.match(value)):
+        if not (value is None or idutils.is_ror(value)):
             raise ValueError("Invalid ROR identifier format.")
 
     def __attrs_post_init__(self):

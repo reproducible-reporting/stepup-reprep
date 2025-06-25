@@ -1,4 +1,4 @@
-# Upload a dataset to Zenodo
+# Synchronize a Zenodo Dataset With Your Local Files
 
 !!! note "Version history"
 
@@ -154,24 +154,59 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
     - `resource_type`
       Select one of:
 
+        - `audio`
         - `dataset`
+        - `event`
         - `image`
+        - `image-diagram`
+        - `image-drawing`
+        - `image-figure`
+        - `image-other`
+        - `image-photo`
+        - `image-plot`
         - `lesson`
+        - `model`
         - `other`
         - `physicalobject`
         - `poster`
         - `presentation`
         - `publication`
+        - `publication-annotationcollection`
+        - `publication-article`
+        - `publication-book`
+        - `publication-conferencepaper`
+        - `publication-conferenceproceeding`
+        - `publication-datamanagementplan`
+        - `publication-datapaper`
+        - `publication-deliverable`
+        - `publication-dissertation`
+        - `publication-journal`
+        - `publication-milestone`
+        - `publication-other`
+        - `publication-patent`
+        - `publication-peerreview`
+        - `publication-preprint`
+        - `publication-proposal`
+        - `publication-report`
+        - `publication-section`
+        - `publication-softwaredocumentation`
+        - `publication-standard`
+        - `publication-taxonomictreatment`
+        - `publication-technicalnote`
+        - `publication-thesis`
+        - `publication-workingpaper`
         - `software`
+        - `software-computationalnotebook`
         - `video`
+        - `workflow`
 
     - `creators`:
       List one or more creators of the data.
 
         - `family_name`:
-          The last name of a creator.
+          The last name(s) of a creator.
         - `given_name`:
-          The first name of a creator.
+          The first name(s) of a creator.
         - `identifiers`:
           A dictionary with identifiers of the creator.
           The only supported identifier are `orcid` and `isni`.
@@ -183,11 +218,37 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
       A list of related resources. (Optional)
       Each resource is a dictionary with the following fields:
 
-        - `scheme`: The identifier scheme, e.g., `doi`, `arxiv`, `url`.
+        - `scheme`: The identifier scheme, can be any of the following:
+
+            - `ark`
+            - `arxiv`
+            - `ads`
+            - `crossreffunderid`
+            - `doi`
+            - `ean13`
+            - `eissn`
+            - `grid`
+            - `handle`
+            - `igsn`
+            - `isbn`
+            - `isni`
+            - `issn`
+            - `istc`
+            - `lissn`
+            - `lsid`
+            - `pmid`
+            - `purl`
+            - `upc`
+            - `url`
+            - `urn`
+            - `w3id`
+            - `other`
+
         - `identifier`: The identifier of the resource.
         - `resource_type`:
           The type of the related resource, can be any of the values listed above for `resource_type`.
-        - `relation_type`: The type of relation, which can be any of the following:
+        - `relation_type`: The type of relation, which can be any of the following.
+          Use this a in the following sentence: *This resource {relation_type} the related resource*.
 
             - `cites`
             - `compiles`
@@ -237,31 +298,7 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
         - `identifiers`: A list of identifiers for the award, such as URLs.
           Each identifiers is a dictionary with a single key, the scheme,
           and the identifier as value.
-          Supported schemes are:
-
-            - `ark`
-            - `arxiv`
-            - `ads`
-            - `crossreffunderid`
-            - `doi`
-            - `ean13`
-            - `eissn`
-            - `grid`
-            - `handle`
-            - `igsn`
-            - `isbn`
-            - `isni`
-            - `issn`
-            - `istc`
-            - `lissn`
-            - `lsid`
-            - `pmid`
-            - `purl`
-            - `upc`
-            - `url`
-            - `urn`
-            - `w3id`
-            - `other`
+          The same schemes as for the `related` section can be used here.
 
 - `code_repository`
   Software resources, can specify the URL of the git repository. (Optional)

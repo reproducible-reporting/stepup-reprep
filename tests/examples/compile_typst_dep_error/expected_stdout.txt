@@ -6,7 +6,7 @@
         1/3 |      START │ compile-typst --keep-deps document.typ
         1/2 |       FAIL │ compile-typst --keep-deps document.typ
 ────────────────────────────────── Step info ───────────────────────────────────
-Command               stepup act compile-typst --keep-deps document.typ
+Command               stepup act -- compile-typst --keep-deps document.typ
 Return code           1
 ───────────────────────── Expected outputs not created ─────────────────────────
 document.dep

@@ -24,7 +24,7 @@
     
     
       
-        <title>Upload a dataset to Zenodo - StepUp RepRep</title>
+        <title>Synchronize a Zenodo Dataset With Your Local Files - StepUp RepRep</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#upload-a-dataset-to-zenodo" class="md-skip">
+        <a href="#synchronize-a-zenodo-dataset-with-your-local-files" class="md-skip">
           Skip to content
         </a>
       
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Upload a dataset to Zenodo
+              Synchronize a Zenodo Dataset With Your Local Files
             
           </span>
         </div>
@@ -734,7 +734,7 @@
   
   
   <span class="md-ellipsis">
-    Upload a dataset to Zenodo
+    Synchronize a Zenodo Dataset With Your Local Files
     
   </span>
   
@@ -747,7 +747,7 @@
   
   
   <span class="md-ellipsis">
-    Upload a dataset to Zenodo
+    Synchronize a Zenodo Dataset With Your Local Files
     
   </span>
   
@@ -1069,7 +1069,7 @@
   
 
 
-<h1 id="upload-a-dataset-to-zenodo">Upload a dataset to Zenodo<a class="headerlink" href="#upload-a-dataset-to-zenodo" title="Permanent link">&para;</a></h1>
+<h1 id="synchronize-a-zenodo-dataset-with-your-local-files">Synchronize a Zenodo Dataset With Your Local Files<a class="headerlink" href="#synchronize-a-zenodo-dataset-with-your-local-files" title="Permanent link">&para;</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Version history</p>
 <p>This feature was added to StepUp RepRep 1.3.</p>
@@ -1215,6 +1215,11 @@ The <code>stepup sync-zenodo</code> script will create a new version for you on 
 which stays in draft mode until you manually publish it through the Zenodo web interface.</p>
 </li>
 <li>
+<p><code>copyright</code>:
+  A copyright statement describing the ownership of the dataset.
+  (Optional)</p>
+</li>
+<li>
 <p><code>license</code>:
   Lowercase license SPDX identifier.
   The list of licenses supported by Zenodo (and their identifiers)
@@ -1224,16 +1229,51 @@ which stays in draft mode until you manually publish it through the Zenodo web i
 <p><code>resource_type</code>
   Select one of:</p>
 <ul>
+<li><code>audio</code></li>
 <li><code>dataset</code></li>
+<li><code>event</code></li>
 <li><code>image</code></li>
+<li><code>image-diagram</code></li>
+<li><code>image-drawing</code></li>
+<li><code>image-figure</code></li>
+<li><code>image-other</code></li>
+<li><code>image-photo</code></li>
+<li><code>image-plot</code></li>
 <li><code>lesson</code></li>
+<li><code>model</code></li>
 <li><code>other</code></li>
 <li><code>physicalobject</code></li>
 <li><code>poster</code></li>
 <li><code>presentation</code></li>
 <li><code>publication</code></li>
+<li><code>publication-annotationcollection</code></li>
+<li><code>publication-article</code></li>
+<li><code>publication-book</code></li>
+<li><code>publication-conferencepaper</code></li>
+<li><code>publication-conferenceproceeding</code></li>
+<li><code>publication-datamanagementplan</code></li>
+<li><code>publication-datapaper</code></li>
+<li><code>publication-deliverable</code></li>
+<li><code>publication-dissertation</code></li>
+<li><code>publication-journal</code></li>
+<li><code>publication-milestone</code></li>
+<li><code>publication-other</code></li>
+<li><code>publication-patent</code></li>
+<li><code>publication-peerreview</code></li>
+<li><code>publication-preprint</code></li>
+<li><code>publication-proposal</code></li>
+<li><code>publication-report</code></li>
+<li><code>publication-section</code></li>
+<li><code>publication-softwaredocumentation</code></li>
+<li><code>publication-standard</code></li>
+<li><code>publication-taxonomictreatment</code></li>
+<li><code>publication-technicalnote</code></li>
+<li><code>publication-thesis</code></li>
+<li><code>publication-workingpaper</code></li>
 <li><code>software</code></li>
+<li><code>software-computationalnotebook</code></li>
 <li><code>video</code></li>
+<li><code>workflow</code></li>
 </ul>
 </li>
 <li>
@@ -1241,9 +1281,9 @@ which stays in draft mode until you manually publish it through the Zenodo web i
   List one or more creators of the data.</p>
 <ul>
 <li><code>family_name</code>:
-  The last name of a creator.</li>
+  The last name(s) of a creator.</li>
 <li><code>given_name</code>:
-  The first name of a creator.</li>
+  The first name(s) of a creator.</li>
 <li><code>identifiers</code>:
   A dictionary with identifiers of the creator.
   The only supported identifier are <code>orcid</code> and <code>isni</code>.</li>
@@ -1257,12 +1297,42 @@ which stays in draft mode until you manually publish it through the Zenodo web i
   A list of related resources. (Optional)
   Each resource is a dictionary with the following fields:</p>
 <ul>
-<li><code>scheme</code>: The identifier scheme, e.g., <code>doi</code>, <code>arxiv</code>, <code>url</code>.</li>
-<li><code>identifier</code>: The identifier of the resource.</li>
+<li>
+<p><code>scheme</code>: The identifier scheme, can be any of the following:</p>
+<ul>
+<li><code>ark</code></li>
+<li><code>arxiv</code></li>
+<li><code>ads</code></li>
+<li><code>crossreffunderid</code></li>
+<li><code>doi</code></li>
+<li><code>ean13</code></li>
+<li><code>eissn</code></li>
+<li><code>grid</code></li>
+<li><code>handle</code></li>
+<li><code>igsn</code></li>
+<li><code>isbn</code></li>
+<li><code>isni</code></li>
+<li><code>issn</code></li>
+<li><code>istc</code></li>
+<li><code>lissn</code></li>
+<li><code>lsid</code></li>
+<li><code>pmid</code></li>
+<li><code>purl</code></li>
+<li><code>upc</code></li>
+<li><code>url</code></li>
+<li><code>urn</code></li>
+<li><code>w3id</code></li>
+<li><code>other</code></li>
+</ul>
+</li>
+<li>
+<p><code>identifier</code>: The identifier of the resource.</p>
+</li>
 <li><code>resource_type</code>:
   The type of the related resource, can be any of the values listed above for <code>resource_type</code>.</li>
 <li>
-<p><code>relation_type</code>: The type of relation, which can be any of the following:</p>
+<p><code>relation_type</code>: The type of relation, which can be any of the following.
+  Use this a in the following sentence: <em>This resource {relation_type} the related resource</em>.</p>
 <ul>
 <li><code>cites</code></li>
 <li><code>compiles</code></li>
@@ -1315,37 +1385,10 @@ which stays in draft mode until you manually publish it through the Zenodo web i
   It can contain the following fields:<ul>
 <li><code>title</code>: The full title of the award.</li>
 <li><code>number</code>: The award number.</li>
-<li>
-<p><code>identifiers</code>: A list of identifiers for the award, such as URLs.
+<li><code>identifiers</code>: A list of identifiers for the award, such as URLs.
   Each identifiers is a dictionary with a single key, the scheme,
   and the identifier as value.
-  Supported schemes are:</p>
-<ul>
-<li><code>ark</code></li>
-<li><code>arxiv</code></li>
-<li><code>ads</code></li>
-<li><code>crossreffunderid</code></li>
-<li><code>doi</code></li>
-<li><code>ean13</code></li>
-<li><code>eissn</code></li>
-<li><code>grid</code></li>
-<li><code>handle</code></li>
-<li><code>igsn</code></li>
-<li><code>isbn</code></li>
-<li><code>isni</code></li>
-<li><code>issn</code></li>
-<li><code>istc</code></li>
-<li><code>lissn</code></li>
-<li><code>lsid</code></li>
-<li><code>pmid</code></li>
-<li><code>purl</code></li>
-<li><code>upc</code></li>
-<li><code>url</code></li>
-<li><code>urn</code></li>
-<li><code>w3id</code></li>
-<li><code>other</code></li>
-</ul>
-</li>
+  The same schemes as for the <code>related</code> section can be used here.</li>
 </ul>
 </li>
 </ul>

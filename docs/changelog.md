@@ -16,6 +16,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 - Detect dependencies in LaTeX from `includepdf` commands.
 
+### Fixed
+
+- Minor documentation inaccuracies were fixed.
+
 ## [3.1.0][] - 2025-06-23 {: v3.1.0 }
 
 More powerful `sync_zenodo` command that uses the Invenio RDM API.

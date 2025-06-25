@@ -216,10 +216,16 @@ def compile_latex(
     which can detect dependencies on other files by scanning for
     `\\input`, `\\include`, `\\includegraphics`, etc.
     Due to the complexity of LaTeX, the dependency scanning is not perfect.
-    You can manually specify dependencies in the LaTeX source with `%REPREP input inp_path`.
-    When `inp_path` is a relative path,
+    You can manually specify dependencies in the LaTeX source with the following comments:
+
+    -  `%REPREP inp inp_path`
+    -  `%REPREP out out_path`
+    -  `%REPREP vol vol_path`
+
+    When any of these paths is a relative path,
     it is interpreted in the same way as the LaTeX compiler would resolve it.
-    You can also hide lines from the dependency scanner by adding `%REPREP ignore`.
+    You can also hide lines from the dependency scanner by adding `%REPREP ignore`
+    at the end of a line.
     """
     with subs_env_vars() as subs:
         path_tex = subs(path_tex)

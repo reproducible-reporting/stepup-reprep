@@ -15,6 +15,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ### Added
 
 - Detect dependencies in LaTeX from `includepdf` commands.
+- Add `copyright` field to Zenodo metadata.
 
 ### Fixed
 

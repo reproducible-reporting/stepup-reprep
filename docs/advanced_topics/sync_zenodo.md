@@ -146,6 +146,10 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
         The `stepup sync-zenodo` script will create a new version for you on Zenodo,
         which stays in draft mode until you manually publish it through the Zenodo web interface.
 
+    - `copyright`:
+      A copyright statement describing the ownership of the dataset.
+      (Optional)
+
     - `license`:
       Lowercase license SPDX identifier.
       The list of licenses supported by Zenodo (and their identifiers)

@@ -47,6 +47,7 @@ Unofficial information on how to use the Invenio RDM API with Zenodo:
 - https://github.com/zenodo/zenodo/issues/2544
 
 Note that the new Zenodo API (based on Invenio RDM) is still not fully stable.
+Some of the features implemented in this module were deduced from the Zenodo web interface.
 """
 
 import argparse
@@ -500,6 +501,7 @@ class Metadata:
     version: str = attrs.field()
     license: str = attrs.field(converter=lambda s: s.strip().lower())
     resource_type: str = attrs.field(validator=attrs.validators.in_(RESOURCE_TYPES))
+    copyright: str | None = attrs.field(default=None)
     publisher: str | None = attrs.field(default=None)
     keywords: list[str] = attrs.field(factory=list)
     creators: list[Creator] = attrs.field(factory=list)
@@ -520,6 +522,8 @@ class Metadata:
             "related_identifiers": [rel.to_zenodo() for rel in self.related],
             "funding": [fund.to_zenodo() for fund in self.funding],
         }
+        if self.copyright is not None:
+            data["copyright"] = self.copyright
         if self.publisher is not None:
             data["publisher"] = self.publisher
         if len(self.keywords) > 0:

@@ -1,0 +1,108 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:runpy ./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:dest/
+            supplies   file:doc.tex
+            supplies   file:first.dat
+            supplies   file:plan.py
+            supplies   file:second.dat
+            supplies   file:snippet.tex
+            supplies   step:copy first.dat dest/first.dat
+            supplies   step:copy snippet.tex dest/snippet.tex
+            supplies   step:mkdir dest/
+            supplies   step:runpy ./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:runpy ./plan.py
+
+step:runpy ./plan.py
+               state = SUCCEEDED
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+            consumes   file:snippet.tex [amended]
+             creates   file:doc.tex
+             creates   file:first.dat
+             creates   file:second.dat
+             creates   file:snippet.tex
+             creates   step:copy first.dat dest/first.dat
+             creates   step:copy snippet.tex dest/snippet.tex
+             creates   step:mkdir dest/
+
+file:doc.tex
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+
+file:first.dat
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:copy first.dat dest/first.dat
+
+file:second.dat
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+
+file:snippet.tex
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:copy snippet.tex dest/snippet.tex
+            supplies   step:runpy ./plan.py
+
+step:mkdir dest/
+               state = SUCCEEDED
+          created by   step:runpy ./plan.py
+            consumes   file:./
+             creates   file:dest/
+            supplies   file:dest/
+
+file:dest/
+               state = BUILT
+          created by   step:mkdir dest/
+            consumes   file:./
+            consumes   step:mkdir dest/
+            supplies   file:dest/first.dat
+            supplies   file:dest/snippet.tex
+            supplies   step:copy first.dat dest/first.dat
+            supplies   step:copy snippet.tex dest/snippet.tex
+
+step:copy first.dat dest/first.dat
+               state = SUCCEEDED
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:dest/
+            consumes   file:first.dat
+             creates   file:dest/first.dat
+            supplies   file:dest/first.dat
+
+file:dest/first.dat
+               state = BUILT
+          created by   step:copy first.dat dest/first.dat
+            consumes   file:dest/
+            consumes   step:copy first.dat dest/first.dat
+
+step:copy snippet.tex dest/snippet.tex
+               state = SUCCEEDED
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:dest/
+            consumes   file:snippet.tex
+             creates   file:dest/snippet.tex
+            supplies   file:dest/snippet.tex
+
+file:dest/snippet.tex
+               state = BUILT
+          created by   step:copy snippet.tex dest/snippet.tex
+            consumes   file:dest/
+            consumes   step:copy snippet.tex dest/snippet.tex

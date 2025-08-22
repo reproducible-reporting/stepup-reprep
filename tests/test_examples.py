@@ -45,6 +45,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         pytest.param("convert_markdown_concurrency", marks=pytest.mark.heavy),
         "convert_markdown_env",
         "convert_weasyprint",
+        "copy_latex_with_deps",
         "execute_papermill",
         "flatten_latex",
         "flatten_latex_subdir",

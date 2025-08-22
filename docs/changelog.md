@@ -10,7 +10,13 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+This is a minor feature release.
+
+### Added
+
+- The function `scan_latex_deps` now has a `amend=True` optional argument.
+  If it is used in a workflow, it will by default amend the current step with
+  all scanned TeX sources as inputs.
 
 ## [3.1.1][] - 2025-06-25 {: v3.1.1 }
 

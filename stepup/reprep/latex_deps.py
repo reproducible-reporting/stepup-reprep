@@ -23,6 +23,7 @@ import re
 
 from path import Path
 
+from stepup.core.api import amend
 from stepup.core.utils import filter_dependencies
 
 RE_OPTIONS = re.MULTILINE | re.DOTALL
@@ -92,7 +93,7 @@ def iter_latex_references(tex_no_comments):
         yield ".", fn_inc, ".pdf"
 
 
-def scan_latex_deps(path_tex, tex_root=None):
+def scan_latex_deps(path_tex, tex_root=None, do_amend=True):
     """Scan LaTeX source code for dependencies.
 
     Parameters
@@ -101,6 +102,8 @@ def scan_latex_deps(path_tex, tex_root=None):
         The path to the LaTeX source to scan.
     tex_root
         The directory with respect to which the latex file references should be interpreted.
+    do_amend
+        When True, all opened TeX files are amended as input to the current step.
 
     Returns
     -------
@@ -153,5 +156,7 @@ def scan_latex_deps(path_tex, tex_root=None):
     # Filter dependencies to exclude global files
     inp = filter_dependencies(inp)
     bib = filter_dependencies(bib)
+    if do_amend:
+        amend(inp=[path for path in inp if path.endswith(".tex")])
 
     return sorted(inp), sorted(bib), sorted(out), sorted(vol)

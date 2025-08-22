@@ -1,0 +1,17 @@
+        0/0 |    STARTUP │ Making failed steps pending
+        0/0 |    STARTUP │ Watching 2 director(y|ies) from initial database
+        0/0 |    STARTUP │ Scanning initial database for changed files
+        0/0 |    UPDATED │ snippet.tex (digest 1b8b2139 ➜ 13ed4e24, size 35 ➜ 58)
+        0/0 |    STARTUP │ Scanning initial database for new nglob matches
+        0/0 |   DIRECTOR │ Launched worker 0
+        2/4 |      PHASE │ run
+        0/1 |      START │ runpy ./plan.py
+        3/5 |    SUCCESS │ runpy ./plan.py
+        3/5 |      START │ copy second.dat dest/second.dat
+        4/5 |    SUCCESS │ copy second.dat dest/second.dat
+        4/5 |      START │ copy snippet.tex dest/snippet.tex
+        5/5 |    SUCCESS │ copy snippet.tex dest/snippet.tex
+        5/5 |   DIRECTOR │ Trying to delete 0 outdated output(s)
+        5/5 |      PHASE │ watch
+        5/5 |   DIRECTOR │ Stopping workers
+        5/5 |   DIRECTOR │ See you!

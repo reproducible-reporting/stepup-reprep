@@ -60,7 +60,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
         (workdir / f"{stem}.{ext}").remove_p()
 
     # Detect additional inputs
-    inp, bib, out, vol = scan_latex_deps(fn_tex)
+    inp, bib, out, vol = scan_latex_deps(fn_tex, do_amend=False)
 
     # Get LaTeX executable
     if args.latex is None:

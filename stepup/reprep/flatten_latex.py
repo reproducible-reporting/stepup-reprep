@@ -148,12 +148,12 @@ def flatten_latex(
                 if status == FlattenStatus.FILE_NOT_FOUND:
                     print(
                         f"Could not locate input file '{sub_path_tex}' "
-                        f"on line {iline+1} in '{path_tex}'",
+                        f"on line {iline + 1} in '{path_tex}'",
                         file=sys.stderr,
                     )
                 elif status == FlattenStatus.ILL_FORMATTED:
                     print(
-                        f"Could not parse '{stripped}' on line {iline+1} in '{path_tex}'",
+                        f"Could not parse '{stripped}' on line {iline + 1} in '{path_tex}'",
                         file=sys.stderr,
                     )
                 else:

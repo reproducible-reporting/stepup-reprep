@@ -10,6 +10,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+(no changes yet)
+
+## [3.1.2][] - 2025-08-25 {: v3.1.2 }
+
 This is a minor feature release.
 
 ### Added
@@ -474,6 +478,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.2
 [3.1.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.1
 [3.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.0
 [3.0.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.0.5

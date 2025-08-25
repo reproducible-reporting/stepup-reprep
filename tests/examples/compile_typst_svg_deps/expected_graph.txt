@@ -25,6 +25,7 @@ file:plan.py
 step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_TYPST_INVENTORY [amended]
+                     = STEPUP_PATH_FILTER [amended]
                  ngm = ['*.typ'] {}
                  ngm = ['*.svg'] {}
                  ngm = ['*.png'] {}
@@ -65,6 +66,7 @@ step:compile-typst --keep-deps demo.typ
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:demo.typ

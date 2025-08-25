@@ -28,6 +28,7 @@ file:plan.py
 step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_LATEX_INVENTORY [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -51,6 +52,7 @@ file:smile.pdf
 step:compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:generated.tex [amended]

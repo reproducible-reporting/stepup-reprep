@@ -23,6 +23,7 @@ file:plan.py
 
 step:runpy ./plan.py
                state = SUCCEEDED
+             env_var = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -48,6 +49,7 @@ step:convert-inkscape glasses.svg glasses.png
            mandatory = REQUIRED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PNG_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:glasses.svg
@@ -65,6 +67,7 @@ step:convert-inkscape smile.svg final.pdf
                state = SUCCEEDED
              env_var = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:glasses.png [amended]

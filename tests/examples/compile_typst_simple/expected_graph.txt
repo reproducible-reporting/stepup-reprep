@@ -22,6 +22,7 @@ file:plan.py
 step:runpy ./plan.py
                state = SUCCEEDED
              env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -38,6 +39,7 @@ step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:document.typ

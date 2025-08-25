@@ -25,6 +25,7 @@ file:plan.py
 
 step:runpy ./plan.py
                state = SUCCEEDED
+             env_var = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
@@ -47,6 +48,7 @@ file:paper.bbl
 step:compile-latex paper.tex --inventory=paper-inventory.txt
                state = SUCCEEDED
              env_var = REPREP_LATEX [amended]
+                     = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:paper.bbl [amended]

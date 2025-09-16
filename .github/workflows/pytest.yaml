@@ -21,6 +21,7 @@ on:
       - stepup/**
       - tests/**
       - pyproject.toml
+      - .github/requirements-old.txt
       - .github/workflows/pytest.yaml
 
 jobs:

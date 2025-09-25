@@ -313,6 +313,7 @@ def compile_typst(
         Keys and values are converted to strings.
         When values are `Path` instances, they are treated as input dependencies for the step.
         These parameters are available in the document as `#sys.inputs.key`.
+        One may also provide an object, which is converted into a `dict` with the `vars()` built-in.
     resolution
         The resolution of the bitmap in dots per inch (dpi),
         only relevant for PNG output.
@@ -374,12 +375,15 @@ def compile_typst(
     if path_typ[:-4] != path_out[:-4]:
         args.append("--out=" + shlex.quote(path_out))
     path_inp = [path_typ]
-    if sysinp is not None and len(sysinp) > 0:
-        args.append("--sysinp")
-        for key, val in sysinp.items():
-            args.append(shlex.quote(str(key)) + "=" + shlex.quote(str(val)))
-            if isinstance(val, Path):
-                path_inp.append(val)
+    if sysinp is not None:
+        if not isinstance(sysinp, dict):
+            sysinp = vars(sysinp)
+        if len(sysinp) > 0:
+            args.append("--sysinp")
+            for key, val in sysinp.items():
+                args.append(shlex.quote(str(key)) + "=" + shlex.quote(str(val)))
+                if isinstance(val, Path):
+                    path_inp.append(val)
     if len(typst_args) > 0:
         args.append("--")
         args.extend(shlex.quote(typst_arg) for typst_arg in typst_args)

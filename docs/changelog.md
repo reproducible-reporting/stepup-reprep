@@ -10,7 +10,12 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Changes
+
+- Add support for other objects than `dict` for the `sysinp` argument of
+  [`compile_typst()`][stepup.reprep.api.compile_typst].
 
 ## [3.1.2][] - 2025-08-25 {: v3.1.2 }
 

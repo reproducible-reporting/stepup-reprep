@@ -1200,6 +1200,8 @@ def sanitize_bibtex(
         path_cfg = subs(path_cfg)
         path_aux = subs(path_aux)
         path_out = subs(path_out)
+    if not path_bib.endswith(".bib"):
+        raise ValueError("The BibTeX file must have extension .bib")
 
     args = ["bibsane", shlex.quote(path_bib)]
     paths_inp = [path_bib]

@@ -14,7 +14,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [3.1.3][] - 2025-09-28 {: v3.1.3 }
 
-Improved `sysinp` argument of `compile_typst()`.
+Minor API improvements.
 
 ### Changes
 
@@ -24,6 +24,9 @@ Improved `sysinp` argument of `compile_typst()`.
   [`compile_typst()`][stepup.reprep.api.compile_typst] is now
   sanitized to only contain strings as keys and values.
   Integer, float and path values are converted to strings automatically.
+- Add sanity check on the positional argument of
+  [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex]
+  to ensure that it is a `.bib` file.
 
 ## [3.1.2][] - 2025-08-25 {: v3.1.2 }
 

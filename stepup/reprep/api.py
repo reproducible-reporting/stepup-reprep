@@ -310,7 +310,9 @@ def compile_typst(
         known a priori and will be amended.
     sysinp
         A dictionary with the input arguments passed to `typst`with `--input key=val`.
-        Keys and values are converted to strings.
+        Items are ignored when keys are not strings or when values
+        are not of type `str`, `int`, `float` or `Path`.
+        If a key is not a valid Python identifier, an exception is raised.
         When values are `Path` instances, they are treated as input dependencies for the step.
         These parameters are available in the document as `#sys.inputs.key`.
         One may also provide an object, which is converted into a `dict` with the `vars()` built-in.
@@ -381,6 +383,12 @@ def compile_typst(
         if len(sysinp) > 0:
             args.append("--sysinp")
             for key, val in sysinp.items():
+                if not isinstance(key, str):
+                    continue
+                if not isinstance(val, str | int | float | Path):
+                    continue
+                if not key.isidentifier():
+                    raise ValueError(f"Invalid sysinp key: {key}")
                 args.append(shlex.quote(str(key)) + "=" + shlex.quote(str(val)))
                 if isinstance(val, Path):
                     path_inp.append(val)

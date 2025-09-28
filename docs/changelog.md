@@ -10,12 +10,20 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no summary yet)
+(no changes yet)
+
+## [3.1.3][] - 2025-09-28 {: v3.1.3 }
+
+Improved `sysinp` argument of `compile_typst()`.
 
 ### Changes
 
 - Add support for other objects than `dict` for the `sysinp` argument of
   [`compile_typst()`][stepup.reprep.api.compile_typst].
+- The dictionary passed to the `sysinp` argument of
+  [`compile_typst()`][stepup.reprep.api.compile_typst] is now
+  sanitized to only contain strings as keys and values.
+  Integer, float and path values are converted to strings automatically.
 
 ## [3.1.2][] - 2025-08-25 {: v3.1.2 }
 
@@ -483,6 +491,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.3
 [3.1.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.2
 [3.1.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.1
 [3.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.0

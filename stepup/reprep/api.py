@@ -1227,13 +1227,15 @@ def sanitize_bibtex(
     return step(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, block=block)
 
 
-def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
+def sync_zenodo(path_config: str, *, verbose: bool = False, block: bool = False) -> StepInfo:
     """Synchronize data with an draft dataset on Zenodo.
 
     Parameters
     ----------
     path_config
         The YAML configuration file for the Zenodo upload.
+    verbose
+        Set to True to print Zenodo API requests and responses to the standard output.
     block
         If `True`, the step will always remain pending.
 
@@ -1242,7 +1244,10 @@ def sync_zenodo(path_config: str, *, block: bool = False) -> StepInfo:
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step("sync-zenodo ${inp}", inp=path_config, block=block)
+    command = "sync-zenodo ${inp}"
+    if verbose:
+        command += " --verbose"
+    return step(command, inp=path_config, block=block)
 
 
 def unplot(

@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- Verbose option for [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]
 
 ## [3.1.3][] - 2025-09-28 {: v3.1.3 }
 

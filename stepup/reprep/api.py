@@ -1327,7 +1327,7 @@ def wrap_git(
     if not (out is None or isinstance(out, str)):
         raise TypeError("The output of the git command must be a string or None.")
 
-    action = "wrap_git"
+    action = "wrap-git"
     if out is not None:
         action += f" --out={shlex.quote(out)}"
     action += f" -- {command}"

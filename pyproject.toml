@@ -98,7 +98,7 @@ raster-pdf = "stepup.reprep.actions:raster_pdf"
 bibsane = "stepup.reprep.actions:bibsane"
 sync-zenodo = "stepup.reprep.actions:sync_zenodo"
 unplot = "stepup.reprep.actions:unplot"
-wrap_git = "stepup.reprep.actions:wrap_git"
+wrap-git = "stepup.reprep.actions:wrap_git"
 zip-inventory = "stepup.reprep.actions:zip_inventory"
 
 [tool.pytest.ini_options]

@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Changed
+
+- Rename `wrap_git` action to `wrap-git` for consistency with other StepUp actions.
 
 ## [3.1.4][] - 2025-10-18 {: v3.1.4 }
 

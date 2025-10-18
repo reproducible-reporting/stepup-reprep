@@ -10,7 +10,7 @@ file:./
             supplies   file:gitlog.txt
             supplies   file:plan.py
             supplies   step:runpy ./plan.py
-            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            supplies   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:plan.py
                state = STATIC
@@ -25,7 +25,7 @@ step:runpy ./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   dg:.git/**
-             creates   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creates   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 dg:.git/**
           created by   step:runpy ./plan.py
@@ -35,7 +35,7 @@ dg:.git/**
              creates   file:.git/refs/heads/
              creates   file:.git/refs/heads/main
 
-step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
                state = SUCCEEDED
           created by   step:runpy ./plan.py
             consumes   file:./
@@ -46,15 +46,15 @@ step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:gitlog.txt
                state = BUILT
-          created by   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+          created by   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
             consumes   file:./
-            consumes   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            consumes   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/HEAD
                state = STATIC
           created by   dg:.git/**
             consumes   file:.git/
-            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            supplies   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/
                state = STATIC
@@ -67,7 +67,7 @@ file:.git/refs/heads/main
                state = STATIC
           created by   dg:.git/**
             consumes   file:.git/refs/heads/
-            supplies   step:wrap_git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            supplies   step:wrap-git --out=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/refs/heads/
                state = STATIC

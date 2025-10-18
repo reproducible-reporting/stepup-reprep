@@ -37,7 +37,8 @@ metadata:
   keywords:
     - keyword1
     - keyword2
-  license: cc-by-nc-4.0
+  license:
+    - cc-by-nc-4.0
   resource_type: dataset
   publisher: 'Publisher name'
   creators:
@@ -151,9 +152,11 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
       (Optional)
 
     - `license`:
-      Lowercase license SPDX identifier.
+      A list of license SPDX identifier (will be converted to lowercase).
       The list of licenses supported by Zenodo (and their identifiers)
       can be found in [SPDX License list](https://spdx.org/licenses/).
+      When specifying multiple licenses, it is recommended to clarify in the Zenodo readme
+      how the different licenses apply to different parts of the dataset.
 
     - `resource_type`
       Select one of:

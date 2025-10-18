@@ -15,6 +15,13 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ### Added
 
 - Verbose option for [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]
+- Allow overriding `path_token` in [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]
+  with the `REPREP_PATH_ZENODO_TOKEN` environment variable.
+- Add support for multiple licenses in [`sync_zenodo()`][stepup.reprep.api.sync_zenodo].
+
+### Fixed
+
+- Fix Zenodo draft publication REST API.
 
 ## [3.1.3][] - 2025-09-28 {: v3.1.3 }
 

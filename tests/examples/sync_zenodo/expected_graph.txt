@@ -50,6 +50,7 @@ file:zenodo.yaml
 
 step:sync-zenodo zenodo.yaml
                state = SUCCEEDED
+             env_var = REPREP_PATH_ZENODO_TOKEN [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:README.txt [amended]

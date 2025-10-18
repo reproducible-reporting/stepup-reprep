@@ -67,7 +67,7 @@ from markdown_it import MarkdownIt
 from path import Path
 from rich import print  # noqa: A004
 
-from stepup.core.api import amend
+from stepup.core.api import amend, getenv
 
 
 class RESTError(Exception):
@@ -490,6 +490,12 @@ class Funding:
         }
 
 
+def _convert_license(arg):
+    if isinstance(arg, str):
+        arg = [arg]
+    return [lic.lower() for lic in arg]
+
+
 @attrs.define
 class Metadata:
     """A subset of Invenio RDM metadata.
@@ -499,7 +505,7 @@ class Metadata:
 
     title: str = attrs.field(validator=attrs.validators.min_len(1))
     version: str = attrs.field()
-    license: str = attrs.field(converter=lambda s: s.strip().lower())
+    license: str | list[str] = attrs.field(converter=_convert_license)
     resource_type: str = attrs.field(validator=attrs.validators.in_(RESOURCE_TYPES))
     copyright: str | None = attrs.field(default=None)
     publisher: str | None = attrs.field(default=None)
@@ -514,7 +520,7 @@ class Metadata:
         data = {
             "title": self.title,
             "version": self.version,
-            "rights": [{"id": self.license}],
+            "rights": [{"id": lic} for lic in self.license],
             "resource_type": {"id": self.resource_type},
             "creators": [creator.to_zenodo() for creator in self.creators],
             "description": self.description,
@@ -608,7 +614,7 @@ class ZenodoWrapper:
 
     def publish_record(self, rid: int):
         """Publish are draft record or a record in edit mode."""
-        self.rest.post(f"records/{rid}/actions/publish")
+        self.rest.post(f"records/{rid}/draft/actions/publish")
 
     def start_uploads(self, rid: int, paths: list[Path]):
         self.rest.post(f"records/{rid}/draft/files", json=[{"key": path.name} for path in paths])
@@ -676,6 +682,10 @@ def sync_zenodo_tool(args: argparse.Namespace) -> int:
         for line in cattrs.transform_error(exc, repr(args.config)):
             print(line)
         raise
+    # Override the token path from the config file if the environment variable is set.
+    path_token = getenv("REPREP_PATH_ZENODO_TOKEN")
+    if path_token is not None:
+        config.path_token = path_token
     if args.clean:
         clean_online(config, args.verbose)
     update_online(config, args.verbose)

@@ -4,21 +4,17 @@
         0/1 |      START │ runpy ./plan.py
         1/3 |    SUCCESS │ runpy ./plan.py
         1/3 |      START │ compile-typst --keep-deps document.typ
-        1/2 |       FAIL │ compile-typst --keep-deps document.typ
-────────────────────────────────── Step info ───────────────────────────────────
-Command               stepup act -- compile-typst --keep-deps document.typ
-Return code           1
-───────────────────────── Expected outputs not created ─────────────────────────
-document.dep
-document.pdf
-──────────────────────────────── Standard error ────────────────────────────────
-(stripped)
+        1/3 | RESCHEDULE │ compile-typst --keep-deps document.typ
+──────────────── Rescheduling due to unavailable amended inputs ────────────────
+Missing inputs and/or required directories:
+data.yaml
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |      START │ runsh echo 'fixed: new' > data.yaml
-        2/2 |    SUCCESS │ runsh echo 'fixed: new' > data.yaml
-        2/2 |    WARNING │ 1 step(s) failed.
-        2/2 |    WARNING │ Skipping file cleanup due to incomplete build
-        2/2 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
-        2/2 |      PHASE │ watch
-        2/2 |   DIRECTOR │ Stopping workers
-        2/2 |   DIRECTOR │ See you!
+        1/3 |      START │ runsh echo 'fixed: new' > data.yaml
+        2/3 |    SUCCESS │ runsh echo 'fixed: new' > data.yaml
+        2/3 |      START │ compile-typst --keep-deps document.typ
+        3/3 |    SUCCESS │ compile-typst --keep-deps document.typ
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
+        3/3 |    WARNING │ Check logs: .stepup/warning.log
+        3/3 |      PHASE │ watch
+        3/3 |   DIRECTOR │ Stopping workers
+        3/3 |   DIRECTOR │ See you!

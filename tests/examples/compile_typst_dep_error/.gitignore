@@ -1,4 +1,5 @@
 .stepup
 current*
 document.pdf
+document.dep.json
 data.yaml

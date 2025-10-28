@@ -6,10 +6,11 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:lorem.pdf
+            supplies   file:lorem.dep.json
+            supplies   file:lorem.html
             supplies   file:lorem.typ
             supplies   file:plan.py
-            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+            supplies   step:compile-typst --keep-deps lorem.typ --out=lorem.html
             supplies   step:runpy ./plan.py
 
 file:plan.py
@@ -20,33 +21,41 @@ file:plan.py
 
 step:runpy ./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
-                     = REPREP_TYPST_INVENTORY [amended]
+             env_var = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:lorem.typ
-             creates   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+             creates   step:compile-typst --keep-deps lorem.typ --out=lorem.html
 
 file:lorem.typ
                state = STATIC
           created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+            supplies   step:compile-typst --keep-deps lorem.typ --out=lorem.html
 
-step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+step:compile-typst --keep-deps lorem.typ --out=lorem.html
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:lorem.typ
-             creates   file:lorem.pdf
-            supplies   file:lorem.pdf
+             creates   file:lorem.dep.json
+             creates   file:lorem.html
+            supplies   file:lorem.dep.json
+            supplies   file:lorem.html
 
-file:lorem.pdf
+file:lorem.dep.json
                state = BUILT
-          created by   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+          created by   step:compile-typst --keep-deps lorem.typ --out=lorem.html
             consumes   file:./
-            consumes   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+            consumes   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+
+file:lorem.html
+               state = BUILT
+          created by   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+            consumes   file:./
+            consumes   step:compile-typst --keep-deps lorem.typ --out=lorem.html

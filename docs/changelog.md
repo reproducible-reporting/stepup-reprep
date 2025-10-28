@@ -15,6 +15,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ### Changed
 
 - Rename `wrap_git` action to `wrap-git` for consistency with other StepUp actions.
+- Update `compile_typst` to work with Typst 0.14.
 
 ## [3.1.4][] - 2025-10-18 {: v3.1.4 }
 

@@ -22,13 +22,14 @@
 This wrapper extracts relevant information from a typst build
 to inform StepUp of input files used or needed.
 
-This is tested with Typst 0.12.
-A current limitation of typst is that it will fail after the first missing file it requires,
+This is tested with Typst 0.14.
+A limitation of typst is that it will fail after the first missing file it requires,
 making it inefficient to plan ahead and build all missing required inputs early.
 """
 
 import argparse
 import contextlib
+import json
 import shlex
 import sys
 
@@ -49,8 +50,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
-    if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg")):
-        raise ValueError("The Typst output must be a PDF, PNG, or SVG file.")
+    if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg", ".html")):
+        raise ValueError("The Typst output must be a PDF, PNG, SVG, or HTML file.")
 
     # Get Typst executable and prepare some arguments that
     if args.typst is None:
@@ -67,6 +68,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         if resolution is None:
             resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
         typargs.append(f"--ppi={resolution}")
+    elif args.path_out.suffix == ".html":
+        typargs.append("--features=html")
     for keyval in args.sysinp:
         typargs.append("--input")
         typargs.append(keyval)
@@ -77,36 +80,29 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
-            path_dep = Path(args.path_typ[:-4] + ".dep")
+            path_dep = Path(args.path_typ[:-4] + ".dep.json")
             path_dep.remove_p()
         else:
             # Use a temporary file for the make-deps output.
-            path_dep = stack.enter_context(TempDir()) / "typst.dep"
-        typargs.extend(["--make-deps", path_dep])
+            path_dep = stack.enter_context(TempDir()) / "typst.dep.json"
+        typargs.extend(["--deps", path_dep, "--deps-format", "json"])
 
         # Run typst compile
         returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))
         print(stdout)
-        # Get existing input files from the dependency file and amend.
-        # Note that the deps file does not escape colons in paths,
-        # so the code below assumes one never uses colons in paths.
-        inp_paths = []
+        # Assume there is a single output file, which is the one specified.
+        # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
+        # Get required input files from the dependency file.
         if path_dep.is_file():
-            out_paths = []
             with open(path_dep) as fh:
-                dep_out, dep_inp = fh.read().split(":", 1)
-                out_paths.extend(shlex.split(dep_out))
-                inp_paths.extend(shlex.split(dep_inp))
+                depinfo = json.load(fh)
+            inp_paths = depinfo["inputs"]
+            out_paths = depinfo["outputs"]
         else:
             print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
-            out_paths = [args.path_out]
+            out_paths = []
+            inp_paths = []
 
-    # Look for missing input files in the standard error stream and amend them.
-    if returncode != 0:
-        lead = "error: file not found (searched at "
-        inp_paths.extend(
-            line[len(lead) : -1] for line in stderr.splitlines() if line.startswith(lead)
-        )
     sys.stderr.write(stderr)
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)

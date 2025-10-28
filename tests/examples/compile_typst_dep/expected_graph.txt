@@ -6,7 +6,7 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:document.dep
+            supplies   file:document.dep.json
             supplies   file:document.pdf
             supplies   file:document.typ
             supplies   file:image.jpg
@@ -55,12 +55,12 @@ step:compile-typst --keep-deps document.typ
             consumes   file:./
             consumes   file:document.typ
             consumes   file:image.jpg [amended]
-             creates   file:document.dep
+             creates   file:document.dep.json
              creates   file:document.pdf
-            supplies   file:document.dep
+            supplies   file:document.dep.json
             supplies   file:document.pdf
 
-file:document.dep
+file:document.dep.json
                state = BUILT
           created by   step:compile-typst --keep-deps document.typ
             consumes   file:./

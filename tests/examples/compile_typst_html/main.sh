@@ -19,7 +19,5 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f lorem.typ ]] || exit 1
-[[ -f out-1-2.svg ]] || exit 1
-[[ -f out-2-2.svg ]] || exit 1
-grep out-1-2.svg lorem.dep.json
-grep out-2-2.svg lorem.dep.json
+[[ -f lorem.html ]] || exit 1
+grep lorem.typ lorem.dep.json

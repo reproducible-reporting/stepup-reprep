@@ -19,7 +19,7 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f out.pdf ]] || exit 1
-[[ -f source/document.dep ]] || exit 1
+[[ -f source/document.dep.json ]] || exit 1
 [[ -f source/document-inventory.txt ]] || exit 1
 grep '../out.pdf' source/document-inventory.txt
 [[ $(wc -l source/document-inventory.txt | cut -d' ' -f1) = 4 ]] || exit 1

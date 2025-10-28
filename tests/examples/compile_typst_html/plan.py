@@ -3,4 +3,4 @@ from stepup.core.api import static
 from stepup.reprep.api import compile_typst
 
 static("lorem.typ")
-compile_typst("lorem.typ", typst_args=["--pages", "2", "--no-pdf-tags"])
+compile_typst("lorem.typ", "lorem.html", keep_deps=True)

@@ -37,7 +37,7 @@ file:source/
             consumes   file:./
             supplies   file:source/aux/
             supplies   file:source/document-inventory.txt
-            supplies   file:source/document.dep
+            supplies   file:source/document.dep.json
             supplies   file:source/document.typ
             supplies   file:source/tada.svg
             supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
@@ -79,10 +79,10 @@ step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/
             consumes   file:source/tada.svg [amended]
              creates   file:out.pdf
              creates   file:source/document-inventory.txt
-             creates   file:source/document.dep
+             creates   file:source/document.dep.json
             supplies   file:out.pdf
             supplies   file:source/document-inventory.txt
-            supplies   file:source/document.dep
+            supplies   file:source/document.dep.json
 
 file:out.pdf
                state = BUILT
@@ -96,7 +96,7 @@ file:source/document-inventory.txt
             consumes   file:source/
             consumes   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
-file:source/document.dep
+file:source/document.dep.json
                state = BUILT
           created by   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
             consumes   file:source/

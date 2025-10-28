@@ -281,22 +281,16 @@ def compile_typst(
 
     !!! warning
 
-        This feature will only work well with typst 0.13 or later.
+        This feature only works with typst 0.14.
 
         Support for typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
         Some limitations include:
 
-        - SVG figures with references to external bitmaps are not processed correctly.
-          These bitmaps are not rendered, neither are they included in the dep file.
-          For this problem, a workaround was suggested here:
-          https://github.com/typst/typst/issues/5335
-        - When the typst compiler detects an error in the input, it doesn't write the dep file.
-          This means that StepUp cannot reschedule it, even if that would fix the problem.
-          If it would know which files are used, it would see which ones are outdated,
-          rebuild them and then retry the typst command.
-          For more details, see:
-          https://github.com/typst/typst/issues/5886
+        - SVG figures with references to external SVG figures are not processed correctly.
+          (Referenced bitmaps are handled correctly.)
+          These referenced SVG figures are not rendered, neither are they included in the dep file.
+          See: https://github.com/typst/typst/issues/6858
 
     Parameters
     ----------
@@ -352,7 +346,7 @@ def compile_typst(
         dest = subs(dest)
     if not path_typ.endswith(".typ"):
         raise ValueError(f"The input of the typst command must end with .typ, got {path_typ}.")
-    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png"])
+    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])
 
     stem = path_typ[:-4]
     args = ["compile-typst"]
@@ -365,7 +359,7 @@ def compile_typst(
         paths_out.append(path_out)
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
         args.append("--keep-deps")
-        paths_out.append(f"{stem}.dep")
+        paths_out.append(f"{stem}.dep.json")
     if inventory is None:
         inventory = string_to_bool(getenv("REPREP_TYPST_INVENTORY", "0"))
     if inventory is True:

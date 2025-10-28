@@ -7,7 +7,7 @@ file:./
                state = STATIC
           created by   root:
             supplies   file:data.yaml
-            supplies   file:document.dep
+            supplies   file:document.dep.json
             supplies   file:document.pdf
             supplies   file:document.typ
             supplies   file:plan.py
@@ -40,26 +40,27 @@ file:document.typ
             supplies   step:compile-typst --keep-deps document.typ
 
 step:compile-typst --keep-deps document.typ
-               state = FAILED
+               state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
+            consumes   file:data.yaml [amended]
             consumes   file:document.typ
-             creates   file:document.dep
+             creates   file:document.dep.json
              creates   file:document.pdf
-            supplies   file:document.dep
+            supplies   file:document.dep.json
             supplies   file:document.pdf
 
-file:document.dep
-               state = AWAITED
+file:document.dep.json
+               state = BUILT
           created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
             consumes   step:compile-typst --keep-deps document.typ
 
 file:document.pdf
-               state = AWAITED
+               state = BUILT
           created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
             consumes   step:compile-typst --keep-deps document.typ
@@ -76,3 +77,4 @@ file:data.yaml
           created by   step:runsh echo 'fixed: new' > data.yaml
             consumes   file:./
             consumes   step:runsh echo 'fixed: new' > data.yaml
+            supplies   step:compile-typst --keep-deps document.typ

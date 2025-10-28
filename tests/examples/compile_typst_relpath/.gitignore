@@ -1,5 +1,5 @@
 .stepup
 current*
-source/document.dep
+source/document.dep.json
 source/document-inventory.txt
 out.pdf

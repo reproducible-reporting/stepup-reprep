@@ -19,3 +19,5 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f current_plot1.json ]] || exit 1
 [[ -f current_plot2.json ]] || exit 1
+./validate-unplot.py reference_plot1.json current_plot1.json
+./validate-unplot.py reference_plot2.json current_plot2.json

@@ -26,7 +26,7 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f document.pdf ]] || exit 1
-[[ -f document.dep.json ]] || exit 1
+[[ -f document.deps.json ]] || exit 1
 [[ -f image.jpg ]] || exit 1
 [[ -f document1.pdf ]] || exit 1
 [[ -f reproducibility_inventory.txt ]] || exit 1

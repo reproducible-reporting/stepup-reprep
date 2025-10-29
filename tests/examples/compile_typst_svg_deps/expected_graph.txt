@@ -6,7 +6,7 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:demo.dep.json
+            supplies   file:demo.deps.json
             supplies   file:demo.pdf
             supplies   file:demo.typ
             supplies   file:embedded.svg
@@ -73,12 +73,12 @@ step:compile-typst --keep-deps demo.typ
             consumes   file:embedded.svg [amended]
             consumes   file:linked.svg [amended]
             consumes   file:random.png [amended]
-             creates   file:demo.dep.json
+             creates   file:demo.deps.json
              creates   file:demo.pdf
-            supplies   file:demo.dep.json
+            supplies   file:demo.deps.json
             supplies   file:demo.pdf
 
-file:demo.dep.json
+file:demo.deps.json
                state = BUILT
           created by   step:compile-typst --keep-deps demo.typ
             consumes   file:./

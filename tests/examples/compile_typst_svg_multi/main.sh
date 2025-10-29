@@ -21,5 +21,5 @@ wait
 [[ -f lorem.typ ]] || exit 1
 [[ -f out-1-2.svg ]] || exit 1
 [[ -f out-2-2.svg ]] || exit 1
-grep out-1-2.svg lorem.dep.json
-grep out-2-2.svg lorem.dep.json
+grep out-1-2.svg lorem.deps.json
+grep out-2-2.svg lorem.deps.json

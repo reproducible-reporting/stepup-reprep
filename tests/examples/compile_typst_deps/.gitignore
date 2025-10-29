@@ -1,7 +1,7 @@
 .stepup
 current*
 document.pdf
-document.dep.json
+document.deps.json
 image.jpg
 document1.pdf
 reproducibility_inventory.txt

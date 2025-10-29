@@ -150,8 +150,8 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
     "name",
     [
         "compile_typst_args",
-        "compile_typst_dep",
-        "compile_typst_dep_error",
+        "compile_typst_deps",
+        "compile_typst_deps_error",
         "compile_typst_error",
         "compile_typst_external",
         "compile_typst_html",
@@ -164,6 +164,7 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
         "compile_typst_svg_multi",
         "compile_typst_sysinp",
         "compile_typst_sysinp_json",
+        "compile_typst_tile",
     ],
 )
 @pytest.mark.asyncio

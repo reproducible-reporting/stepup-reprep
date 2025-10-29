@@ -20,4 +20,4 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f lorem.typ ]] || exit 1
 [[ -f lorem.html ]] || exit 1
-grep lorem.typ lorem.dep.json
+grep lorem.typ lorem.deps.json

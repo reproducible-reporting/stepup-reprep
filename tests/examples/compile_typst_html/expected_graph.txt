@@ -6,7 +6,7 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:lorem.dep.json
+            supplies   file:lorem.deps.json
             supplies   file:lorem.html
             supplies   file:lorem.typ
             supplies   file:plan.py
@@ -43,12 +43,12 @@ step:compile-typst --keep-deps lorem.typ --out=lorem.html
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:lorem.typ
-             creates   file:lorem.dep.json
+             creates   file:lorem.deps.json
              creates   file:lorem.html
-            supplies   file:lorem.dep.json
+            supplies   file:lorem.deps.json
             supplies   file:lorem.html
 
-file:lorem.dep.json
+file:lorem.deps.json
                state = BUILT
           created by   step:compile-typst --keep-deps lorem.typ --out=lorem.html
             consumes   file:./

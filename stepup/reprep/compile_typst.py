@@ -80,12 +80,12 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
-            path_dep = Path(args.path_typ[:-4] + ".dep.json")
-            path_dep.remove_p()
+            path_deps = args.path_typ.with_suffix(".deps.json")
+            path_deps.remove_p()
         else:
             # Use a temporary file for the make-deps output.
-            path_dep = stack.enter_context(TempDir()) / "typst.dep.json"
-        typargs.extend(["--deps", path_dep, "--deps-format", "json"])
+            path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
+        typargs.extend(["--deps", path_deps, "--deps-format", "json"])
 
         # Run typst compile
         returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))
@@ -93,13 +93,13 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         # Assume there is a single output file, which is the one specified.
         # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
         # Get required input files from the dependency file.
-        if path_dep.is_file():
-            with open(path_dep) as fh:
+        if path_deps.is_file():
+            with open(path_deps) as fh:
                 depinfo = json.load(fh)
             inp_paths = depinfo["inputs"]
             out_paths = depinfo["outputs"]
         else:
-            print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
+            print(f"Dependency file not created: {path_deps}.", file=sys.stderr)
             out_paths = []
             inp_paths = []
 
@@ -109,7 +109,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
 
     # Write inventory
     if args.inventory is not None:
-        inventory_paths = sorted(inp_paths) + out_paths
+        inventory_paths = sorted(inp_paths) + sorted(out_paths)
         write_inventory(args.inventory, inventory_paths, do_amend=False)
 
     # If the output path contains placeholders `{p}`, `{0p}`, or `{t}`,

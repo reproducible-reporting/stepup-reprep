@@ -359,7 +359,7 @@ def compile_typst(
         paths_out.append(path_out)
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
         args.append("--keep-deps")
-        paths_out.append(f"{stem}.dep.json")
+        paths_out.append(f"{stem}.deps.json")
     if inventory is None:
         inventory = string_to_bool(getenv("REPREP_TYPST_INVENTORY", "0"))
     if inventory is True:

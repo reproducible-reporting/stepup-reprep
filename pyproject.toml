@@ -138,6 +138,9 @@ ignore = [
     "TRY301",  # https://docs.astral.sh/ruff/rules/raise-within-try/
 ]
 
+[tool.ruff.lint.isort]
+known-first-party = ["stepup"]
+
 [tool.setuptools]
 packages = ["stepup.reprep"]
 

@@ -6,20 +6,25 @@ rm -rvf $(cat .gitignore)
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
+export PUBLIC="public/"
 stepup boot -w -n 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
 stepup graph current_graph
+
+# Reproducibility test
+mv figure.pdf figure1.pdf
+stepup watch-delete figure.pdf
+stepup run
 stepup join
+stepup make-inventory -o reproducibility_inventory.txt figure.pdf figure1.pdf
 
 # Wait for background processes, if any.
 wait
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
-[[ -f out.pdf ]] || exit 1
-[[ -f source/document.deps.json ]] || exit 1
-[[ -f source/document-inventory.txt ]] || exit 1
-grep '../out.pdf' source/document-inventory.txt
-[[ $(wc -l source/document-inventory.txt | cut -d' ' -f1) = 4 ]] || exit 1
+[[ -f figure.pdf ]] || exit 1
+[[ -f figure1.pdf ]] || exit 1
+[[ -f reproducibility_inventory.txt ]] || exit 1

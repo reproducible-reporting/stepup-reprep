@@ -97,7 +97,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
             with open(path_deps) as fh:
                 depinfo = json.load(fh)
             inp_paths = depinfo["inputs"]
-            out_paths = depinfo["outputs"]
+            out_paths = depinfo.get("outputs") or []
         else:
             print(f"Dependency file not created: {path_deps}.", file=sys.stderr)
             out_paths = []

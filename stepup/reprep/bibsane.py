@@ -329,7 +329,7 @@ def collect_entries(fn_bib: str, config: BibsaneConfig) -> tuple[list[dict[str, 
             valid = False
         if "doi" in entry:
             if entry["doi"] in seen_dois and config.duplicate_doi == DuplicatePolicy.FAIL:
-                print(f"‼  ️ Duplicate DOI: {entry['doi']}")
+                print(f"  ‼️ Duplicate DOI: {entry['doi']}")
                 valid = False
             seen_dois.add(entry["doi"])
         entries.append(entry)

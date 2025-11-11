@@ -28,8 +28,8 @@ import tempfile
 from collections.abc import Collection
 
 import attrs
-import bibtexparser
 import cattrs
+import pybtex.database
 import yaml
 from path import Path
 from pyiso4.ltwa import Abbreviate
@@ -58,7 +58,7 @@ class FieldPolicy(enum.Enum):
 
 @attrs.define
 class BibsaneConfig:
-    """The configuration object controling BibSane behavior.
+    """The configuration object controlling BibSane behavior.
 
     Note that the settings default to the most permissive and least invasive ones.
     We recommend the opposite settings, but you have to switch knowingly in the config file.
@@ -67,34 +67,29 @@ class BibsaneConfig:
     root: Path = attrs.field()
     """The parent directory of the configuration file."""
 
-    drop_entry_types: list[str] = attrs.field(default=attrs.Factory(list))
-    """The entry types to drop from the BibTeX database."""
-
-    normalize_doi: bool = attrs.field(default=False)
-    """Set to `True` to normalize the DOIs in the entries."""
-
-    duplicate_id: DuplicatePolicy = attrs.field(default=DuplicatePolicy.IGNORE)
-    """The policy for duplicate BibTeX IDs: fail, merge or ignore."""
+    duplicate_key: DuplicatePolicy = attrs.field(default=DuplicatePolicy.IGNORE)
+    """The policy for duplicate BibTeX keys: fail, merge or ignore."""
 
     duplicate_doi: DuplicatePolicy = attrs.field(default=DuplicatePolicy.IGNORE)
     """The policy for duplicate DOIs: fail, merge or ignore."""
 
-    preambles_allowed: bool = attrs.field(default=True)
-    """Set to `False` to disallow @preamble entries in the BibTeX database."""
+    drop_entry_types: list[str] = attrs.field(default=attrs.Factory(list))
+    """The entry types to drop from the BibTeX database."""
+
+    strip_braces: bool = attrs.field(default=False)
+    """Set to `True` to remove unwarranted use of braces in field values."""
+
+    normalize_doi: bool = attrs.field(default=False)
+    """Set to `True` to normalize the DOIs in the entries."""
 
     normalize_whitespace: bool = attrs.field(default=False)
     """Set to `True` to normalize the whitespace in the field values."""
 
-    normalize_names: bool = attrs.field(default=False)
-    """Set to `True` to normalize the author and editor names.
-
-    (This currently broken.)
-    """
-
     fix_page_double_hyphen: bool = attrs.field(default=False)
     """Set to `True` to fix the page ranges for which no double hyphen is used."""
 
-    abbreviate_journals: bool = attrs.field(default=True)
+    abbreviate_journals: bool = attrs.field(default=False)
+    """Set to `True` to abbreviate journal names using ISO4."""
 
     custom_abbreviations: dict[str, str] = attrs.field(factory=dict)
     """Custom journal abbreviations.
@@ -120,6 +115,12 @@ class BibsaneConfig:
         else:
             with open(fn_yaml) as f:
                 data = yaml.safe_load(f)
+                if data is None:
+                    data = {}
+                elif not isinstance(data, dict):
+                    raise ValueError(
+                        f"Invalid BibSane config file: expected a mapping at top level.({fn_yaml})"
+                    )
                 data.setdefault("root", os.path.dirname(fn_yaml))
                 config = cattrs.structure(data, cls)
         return config
@@ -129,28 +130,137 @@ RETURN_CODE_SUCCESS = 0
 RETURN_CODE_CHANGED = 1
 RETURN_CODE_BROKEN = 2
 
-# List of citations to ignore, which are added by some LaTeX templates,
-# but which are not correctly parsed by python-bibtexparser.
-# Related issue: https://github.com/sciunto-org/python-bibtexparser/issues/384
-IGNORED_CITATIONS = {"REVTEX41Control", "achemso-control"}
-
 
 def main(argv: list[str] | None = None):
     """Main program."""
-    fn_bib, fn_aux, verbose, path_out, config = parse_args(argv)
-    return process_aux(fn_bib, fn_aux, verbose, path_out, config)
+    args = parse_args(argv)
+
+    # Load the bib file.
+    print("📂 Load", args.bib)
+    entries = collect_entries(args.bib)
+    print(f"    Found {len(entries)} BibTeX entries")
+
+    # Check for duplicate keys
+    # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
+    if args.config.duplicate_key == DuplicatePolicy.FAIL:
+        print("🔨 Checking for duplicate BibTeX entry keys")
+        if not check_duplicate_keys(entries):
+            print("    ❌ Stop early due to duplicate BibTeX entry keys")
+            return RETURN_CODE_BROKEN
+
+    # Check for duplicate DOIs
+    if args.config.duplicate_doi == DuplicatePolicy.FAIL:
+        print("🔨 Checking for duplicate DOIs")
+        if not check_duplicate_dois(entries):
+            print("    ❌ Stop early due to duplicate DOIs")
+            return RETURN_CODE_BROKEN
+
+    # Load the aux file.
+    if args.aux is not None:
+        if not args.aux.endswith(".aux"):
+            print("    ❌ Aux file has no extension .aux:", args.aux)
+            return RETURN_CODE_BROKEN
+        print("📂 Load", args.aux)
+        citations = parse_aux(args.aux)
+        print(f"    Found {len(citations)} citations")
+        citations = set(citations)
+        print(f"    Found {len(citations)} unique citations")
+        if len(citations) == 0:
+            print("    ❓ Ignored aux file because it lacks citations.")
+        else:
+            # Drop unused and check for missing
+            print("🔨 Checking unused and missing citations")
+            bibdata_complete = check_citations(entries, citations)
+            print(f"    Found {len(entries)} used BibTeX entries")
+            if not bibdata_complete:
+                print("    ❌ Stop early due to missing citations")
+                return RETURN_CODE_BROKEN
+
+    # Drop irrelevant entry types
+    if len(args.config.drop_entry_types) > 0:
+        print("🔨 Drop irrelevant entry types")
+        drop_entry_types(entries, args.config.drop_entry_types)
+        print(f"    {len(entries)} BibTeX entries left")
+
+    # The default return code, assuming some changes are made but no errors found.
+    retcode = RETURN_CODE_CHANGED
+
+    # Clean entries
+    if len(args.config.citation_policies) > 0:
+        print("🔨 Apply and check citation policies")
+        if not clean_entries(entries, args.config.citation_policies):
+            retcode = RETURN_CODE_BROKEN
+
+    # Clean up things that should never be there, not optional
+    if args.config.strip_braces:
+        print("🔨 Remove braces from fields")
+        strip_braces(entries)
+
+    # Check for potential problems that cannot be fixed automatically, not optional.
+    # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
+    print("🔨 Check for potential mistakes in BibTeX keys")
+    if not case_consistent_keys(entries):
+        retcode = RETURN_CODE_BROKEN
+
+    # Normalize the DOIs (lowercase and remove prefix)
+    if args.config.normalize_doi:
+        print("🔨 Normalize DOIs")
+        valid_dois = normalize_doi(entries)
+        if not valid_dois:
+            retcode = RETURN_CODE_BROKEN
+
+    # Remove redundant whitespace
+    # TODO: This is mostly redundant because pybtex already normalizes whitespace.
+    if args.config.normalize_whitespace:
+        print("🔨 Normalize whitespace")
+        normalize_whitespace(entries)
+
+    # Fix page double hyphen
+    if args.config.fix_page_double_hyphen:
+        print("🔨 Fix double hyphen in page ranges")
+        if not fix_page_double_hyphen(entries):
+            retcode = RETURN_CODE_BROKEN
+
+    # Abbreviate journal names
+    if args.config.abbreviate_journals:
+        print("🔨 Abbreviate journal names")
+        abbreviate_journal_iso(entries, args.config.custom_abbreviations)
+
+    # Merge entries
+    if args.config.duplicate_key == DuplicatePolicy.MERGE:
+        # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
+        print("🔨 Merge references by BibTeX key")
+        if merge_entries(entries, KEY):
+            retcode = RETURN_CODE_BROKEN
+        print(f"    {len(entries)} entries left")
+    if args.config.duplicate_doi == DuplicatePolicy.MERGE:
+        print("🔨 Merge references by DOI")
+        if merge_entries(entries, "doi"):
+            retcode = RETURN_CODE_BROKEN
+        print(f"    {len(entries)} entries left")
+
+    # Sort entries
+    if args.config.sort:
+        print("🔨 Sort by Year + Author + Title")
+        sort_entries(entries)
+
+    # Overwrite if needed.
+    fn_out = args.bib if args.out is None else args.out
+    retcode = write_output(entries, fn_out, retcode)
+    if args.out is not None and retcode == RETURN_CODE_CHANGED:
+        retcode = RETURN_CODE_SUCCESS
+    return retcode
 
 
-def parse_args(argv: list[str] | None = None) -> tuple[list[str], bool, BibsaneConfig]:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser("rr-bibsane")
+    parser = argparse.ArgumentParser("reprep-bibsane")
     parser.add_argument("bib", help="The BibTeX file to check and clean up.")
     parser.add_argument(
         "-a",
         "--aux",
         help="The LaTeX aux file of your document. If given, unused entries will be dropped.",
     )
-    parser.add_argument("-q", "--quiet", default=False, action="store_true")
     parser.add_argument("-c", "--config", help="An optional configuration file")
     parser.add_argument(
         "--out",
@@ -160,135 +270,73 @@ def parse_args(argv: list[str] | None = None) -> tuple[list[str], bool, BibsaneC
         "This will cause StepUp to drain the scheduler so you can inspect the changes and rebuild.",
     )
     args = parser.parse_args(argv)
-    config = BibsaneConfig.from_file(args.config)
-    return args.bib, args.aux, not args.quiet, args.out, config
+    args.config = BibsaneConfig.from_file(args.config)
+    return args
 
 
-def process_aux(
-    fn_bib: str, fn_aux: str | None, verbose: bool, path_out: Path | None, config: BibsaneConfig
-) -> int:
-    """Main program."""
-    # Load the bib file.
-    if verbose:
-        print("📂 Loading", fn_bib)
-    entries, valid_duplicates = collect_entries(fn_bib, config)
-    if verbose:
-        print(f"   Found {len(entries)} BibTeX entries")
-    retcode = RETURN_CODE_CHANGED if valid_duplicates else RETURN_CODE_BROKEN
+class BibsaneMagicConstants(enum.Enum):
+    """Magic constants for BibSane."""
 
-    # Load the aux file.
-    if fn_aux is not None:
-        if not fn_aux.endswith(".aux"):
-            if verbose:
-                print("Please, give an aux file as command-line argument, got:", fn_aux)
-            return RETURN_CODE_BROKEN
-        if verbose:
-            print("📂 Loading", fn_aux)
-        citations = parse_aux(fn_aux)
-        if verbose:
-            print(f"   Found {len(citations)} citations")
-        citations = set(citations)
-        if verbose:
-            print(f"   Found {len(citations)} unique citations")
-        if len(citations) == 0:
-            if verbose:
-                print("   ❓ Ignoring aux file because there are no citations.")
-        else:
-            # Drop unused and check for missing
-            if verbose:
-                print("🔨 Checking unused and missing citations")
-            entries, bibdata_complete = drop_check_citations(
-                entries, citations, config.drop_entry_types
-            )
-            if not bibdata_complete:
-                retcode = RETURN_CODE_BROKEN
-            if verbose:
-                print(f"   Found {len(entries)} used BibTeX entries")
-
-    # Clean entries
-    if len(config.citation_policies) > 0:
-        if verbose:
-            print("🔨 Validating citation policies")
-        entries, valid_fields = clean_entries(entries, config.citation_policies)
-        if not valid_fields:
-            retcode = RETURN_CODE_BROKEN
-
-    # Clean up things that should never be there, not optional
-    if verbose:
-        print("🔨 Fixing bad practices")
-    entries = fix_bad_practices(entries)
-
-    # Check for potential problems that cannot be fixed automatically, not optional.
-    if verbose:
-        print("🔨 Checking for potential mistakes in BibTeX keys")
-    if potential_mistakes(entries):
-        retcode = RETURN_CODE_BROKEN
-
-    # Normalize the DOIs (lowercase and remove prefix)
-    if config.normalize_doi:
-        if verbose:
-            print("🔨 Normalizing dois")
-        entries, valid_dois = normalize_doi(entries)
-        if not valid_dois:
-            retcode = RETURN_CODE_BROKEN
-
-    # Remove newlines
-    if config.normalize_whitespace:
-        if verbose:
-            print("🔨 Normalizing whitespace")
-        entries = normalize_whitespace(entries)
-
-    # Normalize author and editor names
-    if config.normalize_names:
-        if verbose:
-            print("🔨 Normalizing author and editor names")
-        entries = normalize_names(entries)
-
-    # Fix page double hyphen
-    if config.fix_page_double_hyphen:
-        if verbose:
-            print("🔨 Fixing double hyphen in page ranges")
-        entries = fix_page_double_hyphen(entries)
-
-    # Abbreviate journal names
-    if config.abbreviate_journals:
-        if verbose:
-            print("🔨 Abbreviating journal names")
-        entries = abbreviate_journal_iso(entries, config.custom_abbreviations)
-
-    # Merge entries
-    if config.duplicate_id == DuplicatePolicy.MERGE:
-        if verbose:
-            print("🔨 Merging references by BibTeX ID")
-        entries, merge_conflict = merge_entries(entries, "ID")
-        if merge_conflict:
-            retcode = RETURN_CODE_BROKEN
-        if verbose:
-            print(f"   Reduced to {len(entries)} BibTeX entries by merging duplicate BibTeX IDs")
-    if config.duplicate_doi == DuplicatePolicy.MERGE:
-        if verbose:
-            print("🔨 Merging references by DOI")
-        entries, merge_conflict = merge_entries(entries, "doi")
-        if merge_conflict:
-            retcode = RETURN_CODE_BROKEN
-        if verbose:
-            print(f"   Reduced to {len(entries)} BibTeX entries by merging duplicate DOIs")
-
-    # Sort entries
-    if config.sort:
-        if verbose:
-            print("🔨 Sorting by Year + First author")
-        entries = sort_entries(entries)
-
-    # Overwrite if needed.
-    fn_out = fn_bib if path_out is None else path_out
-    retcode = write_output(entries, fn_out, retcode, verbose)
-    if path_out is not None and retcode == RETURN_CODE_CHANGED:
-        retcode = RETURN_CODE_SUCCESS
-    return retcode
+    BIB_ENTRY_TYPE = enum.auto()
+    BIB_KEY = enum.auto()
 
 
-def parse_aux(fn_aux: str) -> tuple[list[str], list[str]]:
+# Short and convenient dictionary keys for special BibTeX entry fields.
+ETYPE = BibsaneMagicConstants.BIB_ENTRY_TYPE
+KEY = BibsaneMagicConstants.BIB_KEY
+
+
+def collect_entries(fn_bib: str) -> list[dict]:
+    """Collect entries from the BibTeX files into standard Python data structures."""
+    entries = []
+    lib = pybtex.database.parse_file(fn_bib)
+    for pyb_entry in lib.entries.values():
+        # Convert to a simple dictionary, to enforce modularity between bibsane and pybtex.
+        entry = {
+            ETYPE: pyb_entry.type.lower(),
+            KEY: pyb_entry.key,
+        }
+        for key, value in pyb_entry.fields.items():
+            entry[key.lower()] = value
+        for role, names in pyb_entry.persons.items():
+            entry[role.lower()] = " and ".join(str(name) for name in names)
+        entries.append(entry)
+    return entries
+
+
+def check_duplicate_keys(entries: list[dict]) -> bool:
+    """Check for duplicate BibTeX entry keys."""
+    seen_ids = set()
+    valid = True
+    for entry in entries:
+        if entry[KEY] in seen_ids:
+            print(f"    ‼️ Duplicate BibTeX entry: {entry[KEY]}")
+            valid = False
+        seen_ids.add(entry[KEY])
+    return valid
+
+
+def check_duplicate_dois(entries: list[dict]) -> bool:
+    """Check for duplicate DOIs."""
+    seen_dois = set()
+    valid = True
+    for entry in entries:
+        doi = entry.get("doi")
+        if doi is not None:
+            if doi in seen_dois:
+                print(f"    ‼️ Duplicate DOI: {doi}")
+                valid = False
+            seen_dois.add(doi)
+    return valid
+
+
+# List of citations to ignore, which are added by some LaTeX templates,
+# but which are not correctly parsed by python-bibtexparser.
+# Related issue: https://github.com/sciunto-org/python-bibtexparser/issues/384
+IGNORED_CITATIONS = {"REVTEX41Control", "achemso-control"}
+
+
+def parse_aux(fn_aux: str) -> list[str]:
     """Parse the relevant parts of a LaTeX aux file."""
     citations = []
     with open(fn_aux) as f:
@@ -301,91 +349,65 @@ def parse_aux(fn_aux: str) -> tuple[list[str], list[str]]:
 def parse_aux_line(prefix: str, line: str, words: list[str]):
     """Parse a (simple) line from a LaTeX aux file."""
     if line.startswith(rf"\{prefix}{{"):
-        assert line.endswith("}\n")
-        assert line.count("{") == 1
-        assert line.count("}") == 1
+        if not (line.endswith("}\n") and line.count("{") == 1 and line.count("}") == 1):
+            print("    🤕 Cannot parse aux line:", line.strip())
+            return
         words.extend(line[line.find("{") + 1 : -2].split(","))
 
 
-def collect_entries(fn_bib: str, config: BibsaneConfig) -> tuple[list[dict[str, str]], bool]:
-    """Collect entries from multiple BibTeX files."""
-    # Collect stuff
-    seen_ids = set()
-    seen_dois = set()
-    entries = []
-    valid = True
-    bibtex_parser = bibtexparser.bparser.BibTexParser(
-        homogenize_fields=True,
-        ignore_nonstandard_types=False,
-    )
-    with open(fn_bib) as f:
-        db_in = bibtexparser.load(f, bibtex_parser)
-    if len(db_in.preambles) > 0 and not config.preambles_allowed:
-        print("   🤖 @preamble is not allowed")
-        valid = False
-    for entry in db_in.entries:
-        if entry["ID"] in seen_ids and config.duplicate_id == DuplicatePolicy.FAIL:
-            print(f"  ‼️ Duplicate BibTeX entry: {entry['ID']}")
-            valid = False
-        if "doi" in entry:
-            if entry["doi"] in seen_dois and config.duplicate_doi == DuplicatePolicy.FAIL:
-                print(f"  ‼️ Duplicate DOI: {entry['doi']}")
-                valid = False
-            seen_dois.add(entry["doi"])
-        entries.append(entry)
-        seen_ids.add(entry["ID"])
-    return entries, valid
-
-
-def drop_check_citations(
-    entries: list[dict[str, str]], citations: Collection[str], drop
-) -> tuple[list[dict[str, str]], bool]:
+def check_citations(entries: list[dict], citations: Collection[str]) -> bool:
     """Drop unused citations and complain about missing ones."""
     # Check for undefined references
-    defined = {entry["ID"] for entry in entries}
+    defined = {entry[KEY] for entry in entries}
     valid = True
     for citation in citations:
         if citation not in defined:
-            print("   💀 Missing reference:", citation)
+            print("    💀 Missing reference:", citation)
             valid = False
 
-    # Drop unused and irrelevant entries
+    # Drop unused entries
     result = []
     for entry in entries:
-        if entry["ID"] not in citations:
-            print("     Dropping unused id:", entry["ID"])
-            continue
-        if entry["ENTRYTYPE"] in drop:
-            print("     Dropping irrelevant entry type:", entry["ENTRYTYPE"])
+        if entry[KEY] not in citations:
+            print("    🧹 Dropping unused key:", entry[KEY])
             continue
         result.append(entry)
+    entries[:] = result
+    return valid
 
-    return result, valid
+
+def drop_entry_types(entries: list[dict], drop: Collection[str]):
+    """Drop entries of the given types."""
+    result = []
+    for entry in entries:
+        if entry[ETYPE] in drop:
+            print("    🧹 Dropping irrelevant entry type:", entry[ETYPE])
+            continue
+        result.append(entry)
+    entries[:] = result
 
 
 def clean_entries(
-    entries: list[dict[str, str]], citation_policies: dict[str, dict[str, FieldPolicy]]
-) -> tuple[list[dict[str, str]], bool]:
+    entries: list[dict], citation_policies: dict[str, dict[str, FieldPolicy]]
+) -> bool:
     """Clean the irrelevant fields in each entry and complain about missing ones."""
-    cleaned = []
     valid = True
     for old_entry in entries:
-        eid = old_entry.pop("ID")
-        etype = old_entry.pop("ENTRYTYPE")
-        new_entry = {"ENTRYTYPE": etype, "ID": eid}
+        etype = old_entry[ETYPE]
+        key = old_entry[KEY]
+        new_entry = {ETYPE: etype, KEY: key}
         if "bibsane" in old_entry:
             etype = old_entry.pop("bibsane")
             new_entry["bibsane"] = etype
         entry_policy = citation_policies.get(etype)
         if entry_policy is None:
-            print(f"   🤔 {eid}: @{etype} is not configured")
+            print(f"    🤔 {key}: @{etype} is not configured")
             valid = False
             continue
-        cleaned.append(new_entry)
         for field, policy in entry_policy.items():
             if policy == FieldPolicy.MUST:
                 if field not in old_entry:
-                    print(f"   🫥 {eid}: @{etype} missing field {field}")
+                    print(f"    🫥 {key}: @{etype} missing field {field}")
                     valid = False
                 else:
                     new_entry[field] = old_entry.pop(field)
@@ -395,38 +417,35 @@ def clean_entries(
                     new_entry[field] = old_entry.pop(field)
         if len(old_entry) > 0:
             for field in old_entry:
-                print(f"   💨 {eid}: @{etype} discarding field {field}")
-    return cleaned, valid
+                if field not in (ETYPE, KEY):
+                    print(f"    💨 {key}: @{etype} discarding field {field}")
+        old_entry.clear()
+        old_entry.update(new_entry)
+    return valid
 
 
-def fix_bad_practices(entries: list[dict[str, str]]) -> list[dict[str, str]]:
-    """Fix unwarranted use of braces."""
-    result = []
-    for old_record in entries:
-        # Strip all braces
-        new_record = {
-            key: value.replace("{", "").replace("}", "") for (key, value) in old_record.items()
-        }
-        # Except from the author, editor, note or title
-        for field in "author", "editor", "note", "title":
-            if field in old_record:
-                new_record[field] = old_record[field]
-        result.append(new_record)
-    return result
+def strip_braces(entries: list[dict]):
+    """Remove braces from most fields."""
+    exceptions = {"author", "editor", "note", "title"}
+    for entry in entries:
+        # Strip all braces, except from author, editor, note or title
+        for key, value in list(entry.items()):
+            if key not in exceptions:
+                entry[key] = value.replace("{", "").replace("}", "")
 
 
-def potential_mistakes(entries: list[dict[str, str]]) -> bool:
+def case_consistent_keys(entries: list[dict]) -> bool:
     """Detect potential mistakes in the BibTeX entry keys."""
     id_case_map = {}
     for entry in entries:
-        id_case_map.setdefault(entry["ID"].lower(), []).append(entry["ID"])
+        id_case_map.setdefault(entry[KEY].lower(), []).append(entry[KEY])
 
-    mistakes = False
+    valid = True
     for groups in id_case_map.values():
         if len(groups) > 1:
-            print("   👻 BibTeX entry keys that only differ by case:", " ".join(groups))
-            mistakes = True
-    return mistakes
+            print("    👻 BibTeX entry keys that only differ by case:", " ".join(groups))
+            valid = False
+    return valid
 
 
 DOI_PROXIES = [
@@ -438,128 +457,127 @@ DOI_PROXIES = [
 ]
 
 
-def normalize_doi(entries: list[dict[str, str]]) -> tuple[list[dict[str, str]], bool]:
+def normalize_doi(entries: list[dict]) -> bool:
     """Normalize the DOIs in the entries."""
-    result = []
     valid = True
     for entry in entries:
         doi = entry.get("doi")
-        if doi is None:
-            new_entry = entry
-        else:
+        if doi is not None:
             doi = doi.lower()
             for proxy in DOI_PROXIES:
                 if doi.startswith(proxy):
                     doi = doi[len(proxy) :]
                     break
             if doi.count("/") == 0 or not doi.startswith("10."):
-                print("   🤕 invalid DOI:", doi)
+                print("    🤕 invalid DOI:", doi)
                 valid = False
-            new_entry = entry | {"doi": doi}
-        result.append(new_entry)
-    return result, valid
+            entry["doi"] = doi
+    return valid
 
 
-def normalize_whitespace(entries: list[dict[str, str]]) -> list[dict[str, str]]:
+def normalize_whitespace(entries: list[dict]):
     """Normalize the whitespace inside the field values."""
-    return [{key: re.sub(r"\s+", " ", value) for key, value in entry.items()} for entry in entries]
-
-
-def normalize_names(entries: list[dict[str, str]]) -> list[dict[str, str]]:
-    """Normalize the author and editor names."""
-    raise NotImplementedError("processing of names is not robust in BibtexParser 1.4.0")
-    result = []
     for entry in entries:
-        # Warning: bibtexparser modifies entries in place.
-        # It does not hurt in this case, but it can otherwise give unexpected results.
-        new_entry = entry
-        for field in "author", "editor":
-            if field in entry:
-                splitter = getattr(bibtexparser.customization, field)
-                new_entry = splitter(new_entry)
-                names = entry[field]
-                names = [bibtexparser.latexenc.latex_to_unicode(name) for name in names]
-                names = [bibtexparser.latexenc.string_to_latex(name) for name in names]
-                entry[field] = " and ".join(names)
-        result.append(new_entry)
-    return result
+        for key, value in list(entry.items()):
+            entry[key] = re.sub(r"\s+", " ", value)
 
 
-def fix_page_double_hyphen(entries: list[dict[str, str]]) -> list[dict[str, str]]:
+HYPFUN_REGEX = "[-֊־᠆‐‑‒––―⸺⸻﹘﹣－=᐀゠⸗⹀〜〰~⸚]"  # noqa: RUF001
+
+
+def fix_page_double_hyphen(entries: list[dict]) -> bool:
     """Fix page ranges for which no double hyphen is used."""
-    return [
-        # Warning: bibtexparser modifies entries in place.
-        # It does not hurt in this case, but it can otherwise give unexpected results.
-        bibtexparser.customization.page_double_hyphen(entry)
-        for entry in entries
-    ]
+    valid = True
+    for entry in entries:
+        pages = entry.get("pages")
+        if pages is not None:
+            parts = [part.strip() for part in re.split(HYPFUN_REGEX, pages)]
+            parts = [part for part in parts if part != ""]
+            print(parts)
+            if len(parts) == 1:
+                entry["pages"] = parts[0]
+            elif len(parts) == 2:
+                entry["pages"] = "--".join(parts)
+            else:
+                print("    🤕 invalid page range:", pages)
+                valid = False
+    return valid
 
 
-def abbreviate_journal_iso(
-    entries: list[dict[str, str]], custom: dict[str, str]
-) -> list[dict[str, str]]:
+def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
     """Replace journal names by their ISO abbreviation."""
     # Abbreviate journals
-    result = []
     abbreviator = Abbreviate.create()
     for entry in entries:
         journal = entry.get("journal")
-        new_entry = entry
         if journal is not None and "." not in journal:
             abbrev = custom.get(journal)
             if abbrev is None:
                 abbrev = abbreviator(journal, remove_part=True)
             abbrev = custom.get(abbrev, abbrev)
-            new_entry = new_entry | {"journal": abbrev}
-        result.append(new_entry)
-    return result
+            entry["journal"] = abbrev
 
 
-def merge_entries(entries: list[dict[str, str]], field: str) -> tuple[list[dict[str, str]], bool]:
-    """Merge entries who have the same value for the given field. (case-insensitive)"""
+def merge_entries(entries: list[dict], field) -> bool:
+    """Merge entries who have the same value for the given key."""
     lookup = {}
-    missing_key = []
+    missing_field = []
     merge_conflict = False
     for entry in entries:
         identifier = entry.get(field)
         if identifier is None:
-            print(f"   👽 Cannot merge entry without {field}:", entry["ID"])
-            missing_key.append(entry)
+            print(f"    👽 Cannot merge entry without {field}:", entry[KEY])
+            missing_field.append(entry)
         else:
             other = lookup.setdefault(identifier, {})
             for key, value in entry.items():
                 if key not in other:
                     other[key] = value
-                elif other[key] != value:
-                    print(f"   😭 Same {field}={identifier}, different {key}:", value, other[key])
+                elif key != KEY and other[key] != value:
+                    print(f"    😭 Same {field}={identifier}, different {key}:")
+                    print(f"        {value}")
+                    print(f"        {other[key]}")
                     merge_conflict = True
-    return list(lookup.values()) + missing_key, merge_conflict
+            print(f"    🔗 Merged entries with same {field} = {identifier}")
+    result = list(lookup.values()) + missing_field
+    entries[:] = result
+    return merge_conflict
 
 
-def sort_entries(entries: list[dict[str, str]]) -> list[dict[str, str]]:
+def sort_entries(entries: list[dict]):
     """Sort the entries in convenient way: by year, then by author."""
 
     def keyfn(entry):
-        # Make a fake entry to avoid in-place modification.
-        entry = {"author": entry.get("author", "Aaaa Aaaa"), "year": entry.get("year", "0000")}
-        first_author = bibtexparser.customization.author(entry)["author"][0].lower()
-        return entry["year"] + first_author
+        return (
+            entry.get("year", "0000")
+            + entry.get("author", "Aaaa, Aaaa")
+            + entry.get("title", "Title")
+        )
 
-    return sorted(entries, key=keyfn)
+    entries.sort(key=keyfn)
 
 
-def write_output(entries: list[dict[str, str]], fn_out: str, retcode: int, verbose: bool) -> int:
+def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
     """Write out the fixed bibtex file, in case it has changed."""
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
-        db_out = bibtexparser.bibdatabase.BibDatabase()
-        db_out.entries = entries
-        writer = bibtexparser.bwriter.BibTexWriter()
-        writer.order_entries_by = None
-        with tempfile.TemporaryDirectory("rr-bibsane") as dn_tmp:
+        with tempfile.TemporaryDirectory("reprep-bibsane") as dn_tmp:
             fn_tmp = os.path.join(dn_tmp, "tmp.bib")
-            with open(fn_tmp, "w") as f:
-                bibtexparser.dump(db_out, f, writer)
+
+            # Convert entry dictionaries back into pybtex entries.
+            lib = pybtex.database.BibliographyData()
+            for entry in entries:
+                pyb_entry = pybtex.database.Entry(entry[ETYPE])
+                fields = [
+                    (key.lower(), value) for key, value in entry.items() if key not in (ETYPE, KEY)
+                ]
+                fields.sort()
+                for key, value in fields:
+                    pyb_entry.fields[key] = value
+                lib.add_entry(entry[KEY], pyb_entry)
+            lib.to_file(fn_tmp)
+
+            # Check if the file has changed.
             if os.path.isfile(fn_out):
                 old_hash = compute_file_digest(fn_out)
                 new_hash = compute_file_digest(fn_tmp)
@@ -568,7 +586,7 @@ def write_output(entries: list[dict[str, str]], fn_out: str, retcode: int, verbo
             if retcode == RETURN_CODE_CHANGED:
                 print("💾 Please check the new or corrected file:", fn_out)
                 shutil.copy(fn_tmp, fn_out)
-            elif verbose:
+            else:
                 print("😀 No changes to", fn_out)
     else:
         print(f"💥 Broken bibliography. Not writing: {fn_out}")

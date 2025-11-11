@@ -1,0 +1,5 @@
+📂 Load input.bib
+    Found 2 BibTeX entries
+🔨 Checking for duplicate DOIs
+    ‼️ Duplicate DOI: 10.1000/xyz123
+    ❌ Stop early due to duplicate DOIs

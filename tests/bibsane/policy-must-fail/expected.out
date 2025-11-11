@@ -1,0 +1,9 @@
+📂 Load input.bib
+    Found 3 BibTeX entries
+🔨 Apply and check citation policies
+    💨 bluh: @article discarding field doi
+    🫥 brrr: @article missing field title
+    💨 brrr: @article discarding field doi
+    🤔 ts: @misc is not configured
+🔨 Check for potential mistakes in BibTeX keys
+💥 Broken bibliography. Not writing: current.bib

@@ -1,0 +1,11 @@
+📂 Load input.bib
+    Found 2 BibTeX entries
+📂 Load document.aux
+    Found 1 citations
+    Found 1 unique citations
+🔨 Checking unused and missing citations
+    💀 Missing reference: foo3
+    🧹 Dropping unused key: foo1
+    🧹 Dropping unused key: foo2
+    Found 0 used BibTeX entries
+    ❌ Stop early due to missing citations

@@ -33,7 +33,6 @@ classifiers = [
 dependencies = [
     # Ensure changes to these dependencies are reflected in .github/requirements-old.txt
     "attrs>=23.1.0",
-    "bibtexparser>=1.4.1",
     "cattrs>=23.2.3",
     "defusedxml>=0.7.0",
     "idutils>=1.4.5",
@@ -44,6 +43,7 @@ dependencies = [
     "numpy>=1.24.3",
     "papermill>=2.6.0",
     "path>=16.14.0",
+    "pybtex>=0.24.1",
     "pyiso4>=0.1.6",
     "pymupdf>=1.23.7",
     "pyyaml>=6.0",

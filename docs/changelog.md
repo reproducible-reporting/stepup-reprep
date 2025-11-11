@@ -14,6 +14,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ### Changed
 
+- Refactor bibsane to use [`pybtex`](https://pybtex.org/) instead of
+  [`bibtexparser`](https://bibtexparser.readthedocs.io/en/latest/)
+  for reading and writing BibTeX files.
+  Several minor issues have been fixed in the process, which result in a small change in behavior.
+  Most notably, the indentation style has changed because this is yet not configurable in `pybtex`.
 - Rename `wrap_git` action to `wrap-git` for consistency with other StepUp actions.
 
 ## [3.1.4][] - 2025-10-18 {: v3.1.4 }

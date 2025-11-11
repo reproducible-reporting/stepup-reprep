@@ -8,15 +8,17 @@
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Loading references.bib
    Found 1 BibTeX entries
+🔨 Checking for duplicate BibTeX entry keys
+🔨 Checking for duplicate DOIs
 📂 Loading paper.aux
    Found 1 citations
    Found 1 unique citations
 🔨 Checking unused and missing citations
    Found 1 used BibTeX entries
 🔨 Validating citation policies
-   💨 skilling2019: @article discarding field abstract
-   💨 skilling2019: @article discarding field issn
    💨 skilling2019: @article discarding field url
+   💨 skilling2019: @article discarding field issn
+   💨 skilling2019: @article discarding field abstract
 🔨 Fixing bad practices
 🔨 Checking for potential mistakes in BibTeX keys
 🔨 Normalizing dois

@@ -13,6 +13,8 @@ Input changed unexpectedly: references.bib (digest bfc27a8d ➜ f933ff21, size 1
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Loading references.bib
    Found 1 BibTeX entries
+🔨 Checking for duplicate BibTeX entry keys
+🔨 Checking for duplicate DOIs
 📂 Loading paper.aux
    Found 1 citations
    Found 1 unique citations

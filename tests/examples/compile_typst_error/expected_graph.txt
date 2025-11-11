@@ -6,10 +6,11 @@ root:
 file:./
                state = STATIC
           created by   root:
+            supplies   file:error.deps.json
             supplies   file:error.pdf
             supplies   file:error.typ
             supplies   file:plan.py
-            supplies   step:compile-typst error.typ
+            supplies   step:compile-typst --keep-deps error.typ
             supplies   step:runpy ./plan.py
 
 file:plan.py
@@ -20,22 +21,21 @@ file:plan.py
 
 step:runpy ./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
-                     = REPREP_TYPST_INVENTORY [amended]
+             env_var = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:./
             consumes   file:plan.py
              creates   file:error.typ
-             creates   step:compile-typst error.typ
+             creates   step:compile-typst --keep-deps error.typ
 
 file:error.typ
                state = STATIC
           created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:compile-typst error.typ
+            supplies   step:compile-typst --keep-deps error.typ
 
-step:compile-typst error.typ
+step:compile-typst --keep-deps error.typ
                state = FAILED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
@@ -43,11 +43,19 @@ step:compile-typst error.typ
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:error.typ
+             creates   file:error.deps.json
              creates   file:error.pdf
+            supplies   file:error.deps.json
             supplies   file:error.pdf
+
+file:error.deps.json
+               state = OUTDATED
+          created by   step:compile-typst --keep-deps error.typ
+            consumes   file:./
+            consumes   step:compile-typst --keep-deps error.typ
 
 file:error.pdf
                state = AWAITED
-          created by   step:compile-typst error.typ
+          created by   step:compile-typst --keep-deps error.typ
             consumes   file:./
-            consumes   step:compile-typst error.typ
+            consumes   step:compile-typst --keep-deps error.typ

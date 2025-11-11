@@ -281,7 +281,7 @@ def compile_typst(
 
     !!! warning
 
-        This feature will only work well with typst 0.14 or later.
+        This feature only works with typst 0.14.
 
         Support for typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
@@ -352,7 +352,7 @@ def compile_typst(
         dest = subs(dest)
     if not path_typ.endswith(".typ"):
         raise ValueError(f"The input of the typst command must end with .typ, got {path_typ}.")
-    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png"])
+    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])
 
     stem = path_typ[:-4]
     args = ["compile-typst"]
@@ -365,7 +365,7 @@ def compile_typst(
         paths_out.append(path_out)
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
         args.append("--keep-deps")
-        paths_out.append(f"{stem}.dep")
+        paths_out.append(f"{stem}.deps.json")
     if inventory is None:
         inventory = string_to_bool(getenv("REPREP_TYPST_INVENTORY", "0"))
     if inventory is True:

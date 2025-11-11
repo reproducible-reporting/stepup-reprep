@@ -1,0 +1,61 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:runpy ./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:lorem.deps.json
+            supplies   file:lorem.html
+            supplies   file:lorem.typ
+            supplies   file:plan.py
+            supplies   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+            supplies   step:runpy ./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:runpy ./plan.py
+
+step:runpy ./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_TYPST_INVENTORY [amended]
+                     = STEPUP_PATH_FILTER [amended]
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:lorem.typ
+             creates   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+
+file:lorem.typ
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+
+step:compile-typst --keep-deps lorem.typ --out=lorem.html
+               state = SUCCEEDED
+             env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:lorem.typ
+             creates   file:lorem.deps.json
+             creates   file:lorem.html
+            supplies   file:lorem.deps.json
+            supplies   file:lorem.html
+
+file:lorem.deps.json
+               state = BUILT
+          created by   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+            consumes   file:./
+            consumes   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+
+file:lorem.html
+               state = BUILT
+          created by   step:compile-typst --keep-deps lorem.typ --out=lorem.html
+            consumes   file:./
+            consumes   step:compile-typst --keep-deps lorem.typ --out=lorem.html

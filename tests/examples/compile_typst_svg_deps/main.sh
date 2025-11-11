@@ -26,7 +26,7 @@ wait
 [[ -f linked.svg ]] || exit 1
 [[ -f embedded.svg ]] || exit 1
 [[ -f demo.pdf ]] || exit 1
-[[ -f demo.dep ]] || exit 1
-grep linked.svg demo.dep
-grep embedded.svg demo.dep
-grep random.png demo.dep
+[[ -f demo.deps.json ]] || exit 1
+grep linked.svg demo.deps.json
+grep embedded.svg demo.deps.json
+grep random.png demo.deps.json

@@ -8,25 +8,25 @@
         2/3 |      START │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml
         3/3 |    SUCCESS │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ─────────────────────────────── Standard output ────────────────────────────────
-📂 Loading references.bib
-   Found 1 BibTeX entries
-📂 Loading paper.aux
-   Found 1 citations
-   Found 1 unique citations
+📂 Load references.bib
+    Found 1 BibTeX entries
+📂 Load paper.aux
+    Found 1 citations
+    Found 1 unique citations
 🔨 Checking unused and missing citations
-   Found 1 used BibTeX entries
-🔨 Validating citation policies
-🔨 Fixing bad practices
-🔨 Checking for potential mistakes in BibTeX keys
-🔨 Normalizing dois
-🔨 Normalizing whitespace
-🔨 Fixing double hyphen in page ranges
-🔨 Abbreviating journal names
-🔨 Merging references by BibTeX ID
-   Reduced to 1 BibTeX entries by merging duplicate BibTeX IDs
-🔨 Merging references by DOI
-   Reduced to 1 BibTeX entries by merging duplicate DOIs
-🔨 Sorting by Year + First author
+    Found 1 used BibTeX entries
+🔨 Drop irrelevant entry types
+    1 BibTeX entries left
+🔨 Apply and check citation policies
+🔨 Check for potential mistakes in BibTeX keys
+🔨 Normalize DOIs
+🔨 Normalize whitespace
+🔨 Fix double hyphen in page ranges
+['97', '111']
+🔨 Merge references by DOI
+    🔗 Merged entries with same doi = 10.1093/comjnl/27.2.97
+    1 entries left
+🔨 Sort by Year + Author + Title
 😀 No changes to references.bib
 ────────────────────────────────────────────────────────────────────────────────
         3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)

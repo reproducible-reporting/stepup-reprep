@@ -9,7 +9,7 @@ file:./
             supplies   file:lorem.pdf
             supplies   file:lorem.typ
             supplies   file:plan.py
-            supplies   step:compile-typst lorem.typ -- --pages 2
+            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
             supplies   step:runpy ./plan.py
 
 file:plan.py
@@ -27,15 +27,15 @@ step:runpy ./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:lorem.typ
-             creates   step:compile-typst lorem.typ -- --pages 2
+             creates   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
 
 file:lorem.typ
                state = STATIC
           created by   step:runpy ./plan.py
             consumes   file:./
-            supplies   step:compile-typst lorem.typ -- --pages 2
+            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
 
-step:compile-typst lorem.typ -- --pages 2
+step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = STEPUP_PATH_FILTER [amended]
@@ -47,6 +47,6 @@ step:compile-typst lorem.typ -- --pages 2
 
 file:lorem.pdf
                state = BUILT
-          created by   step:compile-typst lorem.typ -- --pages 2
+          created by   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
             consumes   file:./
-            consumes   step:compile-typst lorem.typ -- --pages 2
+            consumes   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags

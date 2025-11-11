@@ -281,22 +281,22 @@ def compile_typst(
 
     !!! warning
 
-        This feature will only work well with typst 0.13 or later.
+        This feature will only work well with typst 0.14 or later.
 
         Support for typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
         Some limitations include:
 
-        - SVG figures with references to external bitmaps are not processed correctly.
-          These bitmaps are not rendered, neither are they included in the dep file.
-          For this problem, a workaround was suggested here:
-          https://github.com/typst/typst/issues/5335
+        - SVG figures with references to external SVG images are not processed correctly.
+          These images are not rendered, neither are they included in the dep file.
+          This currently being addressed in the following issue:
+          https://github.com/typst/typst/issues/6858
         - When the typst compiler detects an error in the input, it doesn't write the dep file.
-          This means that StepUp cannot reschedule it, even if that would fix the problem.
-          If it would know which files are used, it would see which ones are outdated,
-          rebuild them and then retry the typst command.
-          For more details, see:
-          https://github.com/typst/typst/issues/5886
+          While this is the desirable behavior for Make-like tools, it does not work well in StepUp.
+          This issue is fixed in the main branch of typst, but not yet in a released version:
+          https://github.com/typst/typst/pull/7209
+          After the next release of Typst, StepUp RepRep will be updated to use of JSON dep files:
+          https://github.com/reproducible-reporting/stepup-reprep/pull/22
 
     Parameters
     ----------

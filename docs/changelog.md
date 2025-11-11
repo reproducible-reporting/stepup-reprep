@@ -20,6 +20,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
   Several minor issues have been fixed in the process, which result in a small change in behavior.
   Most notably, the indentation style has changed because this is yet not configurable in `pybtex`.
 - Rename `wrap_git` action to `wrap-git` for consistency with other StepUp actions.
+- Update `compile_typst` to work with Typst 0.14.
 
 ## [3.1.4][] - 2025-10-18 {: v3.1.4 }
 

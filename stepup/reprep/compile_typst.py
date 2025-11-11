@@ -17,14 +17,12 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>
 #
 # --
-"""RepRep wrapper for typst.
+"""RepRep wrapper for Typst.
 
-This wrapper extracts relevant information from a typst build
+This wrapper extracts relevant information from a Typst build
 to inform StepUp of input files used or needed.
 
-This is tested with Typst 0.12.
-A current limitation of typst is that it will fail after the first missing file it requires,
-making it inefficient to plan ahead and build all missing required inputs early.
+This is tested with Typst 0.14.
 """
 
 import argparse
@@ -82,7 +80,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         else:
             # Use a temporary file for the make-deps output.
             path_dep = stack.enter_context(TempDir()) / "typst.dep"
-        typargs.extend(["--make-deps", path_dep])
+        typargs.extend(["--deps", path_dep, "--deps-format", "make"])
 
         # Run typst compile
         returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))

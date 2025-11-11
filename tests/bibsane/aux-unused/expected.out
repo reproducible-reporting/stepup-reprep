@@ -1,0 +1,10 @@
+📂 Load input.bib
+    Found 2 BibTeX entries
+📂 Load document.aux
+    Found 1 citations
+    Found 1 unique citations
+🔨 Checking unused and missing citations
+    🧹 Dropping unused key: foo1
+    Found 1 used BibTeX entries
+🔨 Check for potential mistakes in BibTeX keys
+💾 Please check the new or corrected file: current.bib

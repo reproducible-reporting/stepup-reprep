@@ -9,7 +9,7 @@ that would otherwise be difficult to spot or require tedious manual edits.
 This feature was formerly implemented in an external tool called `bibsane`,
 but is now integrated into StepUp RepRep.
 The cleanup must always be performed after building the LaTeX document,
-to be able to identify unused records.
+to be able to identify unused entries.
 
 The following is a minimal example of the commands in a `plan.py` file that will clean up a BibTeX file:
 
@@ -19,16 +19,17 @@ from stepup.reprep.api import compile_latex, sanitize_bibtex
 
 static("paper.tex", "references.bib")
 compile_latex("paper.tex")
-sanitize_bibtex("paper.aux")
+sanitize_bibtex("references.bib", aux="paper.aux")
 ```
 
-The [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex] function will read the `.aux` file(s)
-to identify the `.bib` files used.
-By default, it assumes there is just one `.bib` file and rewrites it with the cleaned-up content.
-If there are multiple `.bib` files, you can specify an output file with `path_out="clean.bib"`.
+The [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex] function will read the `.bib` file,
+and when provided with the corresponding `.aux` file,
+it will identify which entries were actually cited in the LaTeX document.
+It will then clean up the `.bib` file by removing unused entries,
+fixing common formatting issues, and checking for missing or malformed fields.
 
 The `sanitize_bibtex()` function also accepts a `path_cfg` argument to specify
-a YAML configuration file for `rr-bibsane`, i.e. the script that actually implements the cleanup.
+a YAML configuration file for `reprep-bibsane`, i.e. the script that actually implements the cleanup.
 (Without configuration file, a minimal cleanup is performed.)
 For example, you can create a `bibsane.yml` file with the following content
 to enable more checks and cleanups:
@@ -45,7 +46,7 @@ fix_page_double_hyphen: true
 abbreviate_journal: true
 custom_abbreviations:
     CRAZY J0rnAL: Crazy J.
-sort: true  # sort key = {year}{first author lowercase normalized name}
+sort: true  # sort key = {year}{normalized author list}{title}
 citation_policies:
   article:
     author: must

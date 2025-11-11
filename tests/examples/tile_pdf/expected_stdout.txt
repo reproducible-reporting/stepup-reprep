@@ -5,18 +5,18 @@
         1/8 |    SUCCESS │ runpy ./plan.py
         1/8 |      START │ convert-inkscape hexagon.svg hexagon.pdf
         2/8 |    SUCCESS │ convert-inkscape hexagon.svg hexagon.pdf
-        2/8 |      START │ convert-inkscape horizontal.svg horizontal.pdf
-        3/8 |    SUCCESS │ convert-inkscape horizontal.svg horizontal.pdf
-        3/8 |      START │ convert-inkscape pentagon.svg pentagon.pdf
-        4/8 |    SUCCESS │ convert-inkscape pentagon.svg pentagon.pdf
-        4/8 |      START │ convert-inkscape square.svg square.pdf
-        5/8 |    SUCCESS │ convert-inkscape square.svg square.pdf
-        5/8 |      START │ convert-inkscape triangle.svg triangle.pdf
-        6/8 |    SUCCESS │ convert-inkscape triangle.svg triangle.pdf
-        6/8 |      START │ convert-inkscape vertical.svg vertical.pdf
-        7/8 |    SUCCESS │ convert-inkscape vertical.svg vertical.pdf
-        7/8 |      START │ runpy ./tile.py plan
-        8/9 |    SUCCESS │ runpy ./tile.py plan
+        2/8 |      START │ convert-inkscape pentagon.svg pentagon.pdf
+        3/8 |    SUCCESS │ convert-inkscape pentagon.svg pentagon.pdf
+        3/8 |      START │ convert-inkscape vertical.svg vertical.pdf
+        4/8 |    SUCCESS │ convert-inkscape vertical.svg vertical.pdf
+        4/8 |      START │ runpy ./tile.py plan
+        5/9 |    SUCCESS │ runpy ./tile.py plan
+        5/9 |      START │ convert-inkscape triangle.svg triangle.pdf
+        6/9 |    SUCCESS │ convert-inkscape triangle.svg triangle.pdf
+        6/9 |      START │ convert-inkscape horizontal.svg horizontal.pdf
+        7/9 |    SUCCESS │ convert-inkscape horizontal.svg horizontal.pdf
+        7/9 |      START │ convert-inkscape square.svg square.pdf
+        8/9 |    SUCCESS │ convert-inkscape square.svg square.pdf
         8/9 |      START │ runpy ./tile.py run
         9/9 |    SUCCESS │ runpy ./tile.py run
         9/9 |   DIRECTOR │ Trying to delete 0 outdated output(s)

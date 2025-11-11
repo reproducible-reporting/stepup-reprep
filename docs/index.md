@@ -8,6 +8,9 @@ It is a domain-specific extension of a powerful universal build tool called
 To get started, we recommend to follow the
 [Template Tutorial](from_template/introduction.md) in this documentation.
 StepUp RepRep will be installed in your instance of the template, as part of the setup.
+It is not mandatory to use the template tutorial to use StepUp RepRep,
+see for example the [ACID test dataset](https://github.com/molmod/acid),
+which was built using StepUp RepRep without the template.
 
 If you want to gain a more in-depth understanding of how StepUp works,
 the [StepUp Core tutorials](https://reproducible-reporting.github.io/stepup-core/getting_started/introduction/)

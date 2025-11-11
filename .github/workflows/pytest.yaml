@@ -31,7 +31,7 @@ jobs:
         include:
           - python-version: '3.11'
             ubuntu-version: '22.04'
-          - python-version: '3.13'
+          - python-version: '3.14'
             ubuntu-version: '24.04'
     runs-on: ubuntu-${{ matrix.ubuntu-version }}
     steps:
@@ -43,7 +43,7 @@ jobs:
       - name: Install typst
         uses: typst-community/setup-typst@v4
         with:
-          typst-version: 0.14-rc2
+          typst-version: 0.14
       - name: Install oldest versions of supported dependencies
         if: ${{ matrix.python-version == '3.11'}}
         run: pip install -r .github/requirements-old.txt

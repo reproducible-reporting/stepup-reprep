@@ -10,7 +10,7 @@ nbconvert==7.1.0
 numpy==1.24.3
 path==16.14.0
 papermill==2.6.0
-pybtex==0.24.1
+pybtex==0.25.1
 pyiso4==0.1.6
 pymupdf==1.23.7
 pyyaml==6.0

@@ -40,6 +40,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Tectonic
+        uses: wtfjoke/setup-tectonic@v4
+        with:
+          tectonic-version: 0.15.0
       - name: Install typst
         uses: typst-community/setup-typst@v4
         with:

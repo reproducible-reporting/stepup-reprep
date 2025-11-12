@@ -10,7 +10,15 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Added
+
+- Experimental support for the Tectonic LaTeX engine via the `compile_tectonic()` function.
+
+### Fixes
+
+- Minor cleanups.
 
 ## [3.1.5][] - 2025-11-11 {: v3.1.5 }
 

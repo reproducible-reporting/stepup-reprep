@@ -1,0 +1,41 @@
+        0/0 |    STARTUP │ (Re)initialized boot script
+        0/0 |   DIRECTOR │ Launched worker 0
+        0/1 |      PHASE │ run
+        0/1 |      START │ runpy ./plan.py
+        1/3 |    SUCCESS │ runpy ./plan.py
+        1/3 |      START │ compile-tectonic --inventory=paper-inventory.txt paper.tex
+        2/3 |    SUCCESS │ compile-tectonic --inventory=paper-inventory.txt paper.tex
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+        2/3 |      START │ bibsane references.bib --config=bibsane.yaml
+        3/3 |    SUCCESS │ bibsane references.bib --config=bibsane.yaml
+─────────────────────────────── Standard output ────────────────────────────────
+📂 Load references.bib
+    Found 1 BibTeX entries
+🔨 Drop irrelevant entry types
+    1 BibTeX entries left
+🔨 Apply and check citation policies
+🔨 Check for potential mistakes in BibTeX keys
+🔨 Normalize DOIs
+🔨 Normalize whitespace
+🔨 Fix double hyphen in page ranges
+🔨 Merge references by DOI
+    🔗 Merged entries with same doi = 10.1093/comjnl/27.2.97
+    1 entries left
+🔨 Sort by Year + Author + Title
+😀 No changes to references.bib
+────────────────────────────────────────────────────────────────────────────────
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
+        3/3 |      PHASE │ watch
+        3/3 |    DELETED │ paper.pdf
+        2/3 |      PHASE │ run
+        2/3 |      START │ compile-tectonic --inventory=paper-inventory.txt paper.tex
+        3/3 |    SUCCESS │ compile-tectonic --inventory=paper-inventory.txt paper.tex
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
+        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
+        3/3 |      PHASE │ watch
+        3/3 |   DIRECTOR │ Stopping workers
+        3/3 |   DIRECTOR │ See you!

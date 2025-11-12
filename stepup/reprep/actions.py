@@ -30,6 +30,7 @@ from .bibsane import main as bibsane_main
 from .cat_pdf import main as cat_pdf_main
 from .check_hrefs import main as check_hrefs_main
 from .compile_latex import main as compile_latex_main
+from .compile_tectonic import main as compile_tectonic_main
 from .compile_typst import main as compile_typst_main
 from .convert_inkscape import main as convert_inkscape_main
 from .convert_markdown import main as convert_markdown_main
@@ -50,6 +51,7 @@ __all__ = (
     "cat_pdf",
     "check_hrefs",
     "compile_latex",
+    "compile_tectonic",
     "compile_typst",
     "convert_inkscape",
     "convert_markdown",
@@ -102,6 +104,7 @@ class WorkThreadActionWrapper:
 
 
 compile_latex = WorkThreadActionWrapper(compile_latex_main)
+compile_tectonic = WorkThreadActionWrapper(compile_tectonic_main)
 compile_typst = WorkThreadActionWrapper(compile_typst_main)
 convert_inkscape = WorkThreadActionWrapper(convert_inkscape_main)
 convert_weasyprint = WorkThreadActionWrapper(convert_weasyprint_main)

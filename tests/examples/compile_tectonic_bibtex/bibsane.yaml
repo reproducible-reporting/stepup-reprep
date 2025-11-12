@@ -1,0 +1,18 @@
+drop_entry_types: ["control"]
+normalize_doi: true
+duplicate_id: merge
+duplicate_doi: merge
+preambles_allowed: false
+normalize_whitespace: true
+fix_page_double_hyphen: true
+sort: true
+citation_policies:
+  article:
+    author: must
+    journal: must
+    number: may
+    pages: must
+    title: must
+    volume: must
+    year: must
+    doi: must

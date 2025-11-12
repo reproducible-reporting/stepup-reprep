@@ -1,0 +1,70 @@
+root:
+             creates   file:./
+             creates   file:plan.py
+             creates   step:runpy ./plan.py
+
+file:./
+               state = STATIC
+          created by   root:
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.bbl
+            supplies   file:paper.pdf
+            supplies   file:paper.tex
+            supplies   file:plan.py
+            supplies   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+            supplies   step:runpy ./plan.py
+
+file:plan.py
+               state = STATIC
+          created by   root:
+            consumes   file:./
+            supplies   step:runpy ./plan.py
+
+step:runpy ./plan.py
+               state = SUCCEEDED
+             env_var = REPREP_KEEP_TECTONIC_DEPS [amended]
+                     = STEPUP_PATH_FILTER [amended]
+          created by   root:
+            consumes   file:./
+            consumes   file:plan.py
+             creates   file:paper.bbl
+             creates   file:paper.tex
+             creates   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+
+file:paper.tex
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+
+file:paper.bbl
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            supplies   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+
+step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+               state = SUCCEEDED
+             env_var = REPREP_TECTONIC [amended]
+                     = REPREP_TECTONIC_ARGS [amended]
+                     = STEPUP_PATH_FILTER [amended]
+          created by   step:runpy ./plan.py
+            consumes   file:./
+            consumes   file:paper.bbl [amended]
+            consumes   file:paper.tex
+             creates   file:paper-inventory.txt
+             creates   file:paper.pdf
+            supplies   file:paper-inventory.txt
+            supplies   file:paper.pdf
+
+file:paper-inventory.txt
+               state = BUILT
+          created by   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+            consumes   file:./
+            consumes   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+
+file:paper.pdf
+               state = BUILT
+          created by   step:compile-tectonic --inventory=paper-inventory.txt paper.tex
+            consumes   file:./
+            consumes   step:compile-tectonic --inventory=paper-inventory.txt paper.tex

@@ -254,7 +254,10 @@ def main(argv: list[str] | None = None):
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser("reprep-bibsane")
+    parser = argparse.ArgumentParser(
+        prog="rr-bibsane",
+        description="Sanitize and clean up a BibTeX file.",
+    )
     parser.add_argument("bib", help="The BibTeX file to check and clean up.")
     parser.add_argument(
         "-a",
@@ -493,7 +496,6 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
         if pages is not None:
             parts = [part.strip() for part in re.split(HYPFUN_REGEX, pages)]
             parts = [part for part in parts if part != ""]
-            print(parts)
             if len(parts) == 1:
                 entry["pages"] = parts[0]
             elif len(parts) == 2:
@@ -561,7 +563,7 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
     """Write out the fixed bibtex file, in case it has changed."""
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
-        with tempfile.TemporaryDirectory("reprep-bibsane") as dn_tmp:
+        with tempfile.TemporaryDirectory("rr-bibsane") as dn_tmp:
             fn_tmp = os.path.join(dn_tmp, "tmp.bib")
 
             # Convert entry dictionaries back into pybtex entries.

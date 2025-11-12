@@ -281,9 +281,9 @@ def compile_typst(
 
     !!! warning
 
-        This feature will only work well with typst 0.14 or later.
+        This feature will only work well with Typst 0.14 or later.
 
-        Support for typst in StepUp RepRep is experimental.
+        Support for Typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
         Some limitations include:
 
@@ -309,7 +309,7 @@ def compile_typst(
         If the output contains any of `{p}`, `{0p}` or `{t}`, the output paths are not
         known a priori and will be amended.
     sysinp
-        A dictionary with the input arguments passed to `typst`with `--input key=val`.
+        A dictionary with the input arguments passed to `typst` with `--input key=val`.
         Items are ignored when keys are not strings or when values
         are not of type `str`, `int`, `float` or `Path`.
         If a key is not a valid Python identifier, an exception is raised.

@@ -22,7 +22,6 @@
 🔨 Normalize DOIs
 🔨 Normalize whitespace
 🔨 Fix double hyphen in page ranges
-['97', '111']
 🔨 Merge references by DOI
     🔗 Merged entries with same doi = 10.1093/comjnl/27.2.97
     1 entries left

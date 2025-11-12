@@ -55,22 +55,22 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         args.typst = getenv("REPREP_TYPST", "typst")
 
     # Prepare the command to run Typst
-    typargs = [args.typst, "compile", args.path_typ]
+    typst_args = [args.typst, "compile", args.path_typ]
     if args.path_out is not None:
-        typargs.append(args.path_out)
+        typst_args.append(args.path_out)
     else:
         args.path_out = Path(args.path_typ[:-4] + ".pdf")
     if args.path_out.suffix == ".png":
         resolution = args.resolution
         if resolution is None:
             resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
-        typargs.append(f"--ppi={resolution}")
+        typst_args.append(f"--ppi={resolution}")
     for keyval in args.sysinp:
-        typargs.append("--input")
-        typargs.append(keyval)
+        typst_args.append("--input")
+        typst_args.append(keyval)
     if len(args.typst_args) == 0:
         args.typst_args = shlex.split(getenv("REPREP_TYPST_ARGS", ""))
-    typargs.extend(args.typst_args)
+    typst_args.extend(args.typst_args)
 
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
@@ -80,10 +80,10 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         else:
             # Use a temporary file for the make-deps output.
             path_dep = stack.enter_context(TempDir()) / "typst.dep"
-        typargs.extend(["--deps", path_dep, "--deps-format", "make"])
+        typst_args.extend(["--deps", path_dep, "--deps-format", "make"])
 
         # Run typst compile
-        returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))
+        returncode, stdout, stderr = work_thread.runsh(shlex.join(typst_args))
         print(stdout)
         # Get existing input files from the dependency file and amend.
         # Note that the deps file does not escape colons in paths,

@@ -531,16 +531,19 @@ def merge_entries(entries: list[dict], field) -> bool:
             print(f"    👽 Cannot merge entry without {field}:", entry[KEY])
             missing_field.append(entry)
         else:
-            other = lookup.setdefault(identifier, {})
-            for key, value in entry.items():
-                if key not in other:
-                    other[key] = value
-                elif key != KEY and other[key] != value:
-                    print(f"    😭 Same {field}={identifier}, different {key}:")
-                    print(f"        {value}")
-                    print(f"        {other[key]}")
-                    merge_conflict = True
-            print(f"    🔗 Merged entries with same {field} = {identifier}")
+            other = lookup.setdefault(identifier)
+            if other is None:
+                lookup[identifier] = entry
+            else:
+                for key, value in entry.items():
+                    if key not in other:
+                        other[key] = value
+                    elif key != KEY and other[key] != value:
+                        print(f"    😭 Same {field}={identifier}, different {key}:")
+                        print(f"        {value}")
+                        print(f"        {other[key]}")
+                        merge_conflict = True
+                print(f"    🔗 Merged entries with same {field} = {identifier}")
     result = list(lookup.values()) + missing_field
     entries[:] = result
     return merge_conflict

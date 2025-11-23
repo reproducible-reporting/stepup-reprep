@@ -23,7 +23,6 @@
 🔨 Normalize whitespace
 🔨 Fix double hyphen in page ranges
 🔨 Merge references by DOI
-    🔗 Merged entries with same doi = 10.1093/comjnl/27.2.97
     1 entries left
 🔨 Sort by Year + Author + Title
 😀 No changes to references.bib

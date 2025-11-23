@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+###
+
+- Correctly report merged records in bibsane's screen output.
 
 ## [3.1.6][] - 2025-11-21 {: v3.1.6 }
 

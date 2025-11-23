@@ -12,7 +12,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no summary yet)
 
-###
+### Changed
+
+- Distribute smaller source package.
+
+### Fixed
 
 - Correctly report merged records in bibsane's screen output.
 

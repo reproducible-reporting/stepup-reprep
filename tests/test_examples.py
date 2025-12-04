@@ -108,6 +108,34 @@ async def test_latex_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 
+def has_tectonic_0_15_0():
+    if not shutil.which("tectonic"):
+        return False
+    cp = subprocess.run(
+        ["tectonic", "--version"],
+        stdout=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+        text=True,
+    )
+    return cp.stdout.split()[-1] == "0.15.0"
+
+
+@pytest.mark.skipif(not has_tectonic_0_15_0(), reason="No Tectonic 0.15.0")
+@pytest.mark.parametrize(
+    "name",
+    [
+        "compile_tectonic_bbl",
+        "compile_tectonic_bibtex",
+        "compile_tectonic_input",
+    ],
+)
+@pytest.mark.asyncio
+async def test_tectonic_example(path_tmp: Path, name: str):
+    await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
+
+
 @pytest.mark.skipif(not shutil.which("inkscape"), reason="No Inkscape")
 @pytest.mark.parametrize(
     "name",

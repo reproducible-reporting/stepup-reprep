@@ -38,6 +38,7 @@ file:lorem.typ
 step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
                state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
+                     = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./

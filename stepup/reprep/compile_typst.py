@@ -22,7 +22,7 @@
 This wrapper extracts relevant information from a Typst build
 to inform StepUp of input files used or needed.
 
-This is tested with Typst 0.14.
+This is tested with Typst 0.15.
 """
 
 import argparse
@@ -34,7 +34,7 @@ import sys
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies
+from stepup.core.utils import filter_dependencies, string_to_bool
 from stepup.core.worker import WorkThread
 
 from .make_inventory import write_inventory
@@ -51,29 +51,26 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg", ".html")):
         raise ValueError("The Typst output must be a PDF, PNG, SVG, or HTML file.")
 
-    # Get Typst executable and prepare some arguments that
+    # Prepare the command to run Typst
     if args.typst is None:
         args.typst = getenv("REPREP_TYPST", "typst")
-
-    # Prepare the command to run Typst
-    typargs = [args.typst, "compile", args.path_typ]
+    typst_args = [args.typst, "compile", args.path_typ]
     if args.path_out is not None:
-        typargs.append(args.path_out)
+        typst_args.append(args.path_out)
     else:
         args.path_out = Path(args.path_typ[:-4] + ".pdf")
     if args.path_out.suffix == ".png":
-        resolution = args.resolution
-        if resolution is None:
-            resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
-        typargs.append(f"--ppi={resolution}")
+        if args.resolution is None:
+            args.resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
+        typst_args.append(f"--ppi={args.resolution}")
     elif args.path_out.suffix == ".html":
-        typargs.append("--features=html")
+        typst_args.append("--features=html")
     for keyval in args.sysinp:
-        typargs.append("--input")
-        typargs.append(keyval)
+        typst_args.append("--input")
+        typst_args.append(keyval)
     if len(args.typst_args) == 0:
         args.typst_args = shlex.split(getenv("REPREP_TYPST_ARGS", ""))
-    typargs.extend(args.typst_args)
+    typst_args.extend(args.typst_args)
 
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
@@ -83,10 +80,10 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         else:
             # Use a temporary file for the make-deps output.
             path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
-        typargs.extend(["--deps", path_deps, "--deps-format", "json"])
+        typst_args.extend(["--deps", path_deps, "--deps-format", "json"])
 
         # Run typst compile
-        returncode, stdout, stderr = work_thread.runsh(shlex.join(typargs))
+        returncode, stdout, stderr = work_thread.runsh(shlex.join(typst_args))
         print(stdout)
         # Assume there is a single output file, which is the one specified.
         # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
@@ -145,9 +142,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--keep-deps",
         help="Keep the dependency file after the compilation. "
-        "The default is to use a temporary file, which is removed after it is processed.",
-        action="store_true",
-        default=False,
+        "The default is to use a temporary file, which is removed after it is processed. "
+        "Defaults to the boolean value of ${REPREP_TYPST_KEEP_DEPS}, "
+        "or False if the variable is not defined.",
+        action=argparse.BooleanOptionalAction,
+        default=string_to_bool(getenv("REPREP_TYPST_KEEP_DEPS", "0")),
     )
     parser.add_argument(
         "--inventory",

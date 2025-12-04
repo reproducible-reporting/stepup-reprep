@@ -33,6 +33,7 @@ __all__ = (
     "cat_pdf",
     "check_hrefs",
     "compile_latex",
+    "compile_tectonic",
     "compile_typst",
     "convert_inkscape",
     "convert_inkscape_pdf",
@@ -263,6 +264,102 @@ def compile_latex(
     )
 
 
+def compile_tectonic(
+    path_tex: str,
+    dest: str | None = None,
+    *,
+    workdir: str = "./",
+    tectonic: str | None = None,
+    keep_deps: bool = False,
+    tectonic_args: Collection[str] = (),
+    inventory: str | bool | None = None,
+    optional: bool = False,
+    block: bool = False,
+) -> StepInfo:
+    """Create a step for the compilation of a LaTeX source with Tectonic.
+
+    !!! warning
+
+        This feature is only tested with Tectonic 0.15
+
+        Support for Tectonic in StepUp RepRep is experimental.
+        Expect breaking changes in future releases.
+
+    Parameters
+    ----------
+    path_tex
+        The main LaTeX source file.
+        This argument may contain environment variables.
+    dest
+        Output destination: `None`, a directory or a file.
+    workdir
+        The working directory where the LaTeX command must be executed.
+    tectonic
+        Path to the Tectonic executable.
+        Defaults to `${REPREP_TECTONIC}` variable or `tectonic` if the variable is unset.
+    keep_deps
+        If `True`, the dependency file is kept after the compilation.
+        The dependency file is also kept if the environment variable
+        `REPREP_KEEP_TECTONIC_DEPS` is set to `"1"`.
+    tectonic_args
+        Additional arguments for tectonic.
+        The defaults is `${REPREP_TECTONIC_ARGS}`, if the environment variable is defined.
+    inventory
+        If set to a `str`, it specifies the inventory file to write.
+        If set to  `True`, the inventory file is written to the default location,
+        which is the stem of the source file with `-inventory.txt` appended.
+        When the environment variable `REPREP_TECTONIC_INVENTORY` is set to `1`,
+        the inventory file is always written, unless this argument is set to `False`.
+    optional
+        If `True`, the step is only executed when needed by other steps.
+    block
+        If `True`, the step will always remain pending.
+
+    Returns
+    -------
+    step_info
+        Holds relevant information of the step, useful for defining follow-up steps.
+    """
+    with subs_env_vars() as subs:
+        path_tex = subs(path_tex)
+        dest = subs(dest)
+    if not path_tex.endswith(".tex"):
+        raise ValueError(f"The input of the tectonic command must end with .tex, got {path_tex}.")
+    path_out = make_path_out(path_tex, dest, ".pdf")
+
+    stem = path_tex[:-4]
+    args = ["compile-tectonic"]
+    if tectonic is not None:
+        args.append(f"--tectonic={shlex.quote(tectonic)}")
+    paths_out = [path_out]
+    if keep_deps or string_to_bool(getenv("REPREP_KEEP_TECTONIC_DEPS", "0")):
+        args.append("--keep-deps")
+        paths_out.append(f"{stem}.dep")
+    if inventory is None:
+        inventory = string_to_bool(getenv("REPREP_TECTONIC_INVENTORY", "0"))
+    if inventory is True:
+        inventory = f"{stem}-inventory.txt"
+    if isinstance(inventory, str):
+        args.append(f"--inventory={shlex.quote(inventory)}")
+        paths_out.append(inventory)
+    args.append(shlex.quote(path_tex))
+    if path_tex[:-4] != path_out[:-4]:
+        args.append("--out=" + shlex.quote(path_out))
+    path_inp = [path_tex]
+    if len(tectonic_args) > 0:
+        args.append("--")
+        args.extend(shlex.quote(tectonic_arg) for tectonic_arg in tectonic_args)
+
+    return step(
+        " ".join(args),
+        inp=path_inp,
+        out=paths_out,
+        workdir=workdir,
+        optional=optional,
+        block=block,
+    )
+
+
 def compile_typst(
     path_typ: str,
     dest: str | None = None,
@@ -281,9 +378,9 @@ def compile_typst(
 
     !!! warning
 
-        This feature only works with typst 0.14.
+        This feature only works with typst 0.15 or newer.
 
-        Support for typst in StepUp RepRep is experimental.
+        Support for Typst in StepUp RepRep is experimental.
         Expect breaking changes in future releases.
         Some limitations include:
 
@@ -291,12 +388,6 @@ def compile_typst(
           These images are not rendered, neither are they included in the dep file.
           This currently being addressed in the following issue:
           https://github.com/typst/typst/issues/6858
-        - When the typst compiler detects an error in the input, it doesn't write the dep file.
-          While this is the desirable behavior for Make-like tools, it does not work well in StepUp.
-          This issue is fixed in the main branch of typst, but not yet in a released version:
-          https://github.com/typst/typst/pull/7209
-          After the next release of Typst, StepUp RepRep will be updated to use of JSON dep files:
-          https://github.com/reproducible-reporting/stepup-reprep/pull/22
 
     Parameters
     ----------
@@ -309,7 +400,7 @@ def compile_typst(
         If the output contains any of `{p}`, `{0p}` or `{t}`, the output paths are not
         known a priori and will be amended.
     sysinp
-        A dictionary with the input arguments passed to `typst`with `--input key=val`.
+        A dictionary with the input arguments passed to `typst` with `--input key=val`.
         Items are ignored when keys are not strings or when values
         are not of type `str`, `int`, `float` or `Path`.
         If a key is not a valid Python identifier, an exception is raised.

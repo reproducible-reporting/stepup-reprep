@@ -14,6 +14,30 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ### Changed
 
+- Distribute smaller source package.
+
+### Fixed
+
+- Correctly report merged records in bibsane's screen output.
+
+## [3.1.6][] - 2025-11-21 {: v3.1.6 }
+
+Preliminary Tectonic support and minor fixes.
+
+### Added
+
+- Experimental support for the Tectonic LaTeX engine via the `compile_tectonic()` function.
+
+### Fixes
+
+- Minor cleanups.
+
+## [3.1.5][] - 2025-11-11 {: v3.1.5 }
+
+Update for Typst 0.14, refactored bibsane using pybtex.
+
+### Changed
+
 - Refactor bibsane to use [`pybtex`](https://pybtex.org/) instead of
   [`bibtexparser`](https://bibtexparser.readthedocs.io/en/latest/)
   for reading and writing BibTeX files.
@@ -519,6 +543,8 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.6
+[3.1.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.5
 [3.1.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.4
 [3.1.3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.3
 [3.1.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.2

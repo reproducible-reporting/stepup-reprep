@@ -22,7 +22,6 @@ Input changed unexpectedly: references.bib (digest bfc27a8d ➜ 990a074c, size 1
 🔨 Normalize DOIs
 🔨 Normalize whitespace
 🔨 Fix double hyphen in page ranges
-['074108']
 🔨 Abbreviate journal names
 💾 Please check the new or corrected file: references.bib
 ────────────────────────────────────────────────────────────────────────────────

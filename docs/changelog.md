@@ -16,6 +16,12 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 Bugfix release
 
+### Added
+
+- Bibsane can automatically add braces around words in titles that contain uppercase letters,
+  to avoid unwanted lowercasing by BibTeX styles.
+  This rule applies to titles and journal titles.
+
 ### Changed
 
 - Distribute smaller source package.

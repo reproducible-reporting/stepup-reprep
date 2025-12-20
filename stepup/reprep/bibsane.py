@@ -114,6 +114,13 @@ class BibsaneConfig:
     The custom abbreviations can override those provided by pyiso4.
     """
 
+    brace_title_words: bool = attrs.field(default=False)
+    """Recognize words in titles that should be wrapped in braces.
+
+    This is performed late, after encoding to LaTeX, to avoid that the braces
+    are represented as `\\{` and `\\}`.
+    """
+
     sort: bool = attrs.field(default=False)
     """Set to `True` to sort the entries by year and first author.
 
@@ -257,7 +264,7 @@ def main(argv: list[str] | None = None):
 
     # Overwrite if needed.
     fn_out = args.bib if args.out is None else args.out
-    retcode = write_output(entries, fn_out, retcode)
+    retcode = write_output(entries, fn_out, args.config.brace_title_words, retcode)
     if args.out is not None and retcode == RETURN_CODE_CHANGED:
         retcode = RETURN_CODE_SUCCESS
     return retcode
@@ -564,8 +571,25 @@ def sort_entries(entries: list[dict]):
     entries.sort(key=keyfn)
 
 
-def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
-    """Write out the fixed bibtex file, in case it has changed."""
+def write_output(entries: list[dict], fn_out: str, brace_title_words: bool, retcode: int) -> int:
+    """Write out the fixed bibtex file, in case it has changed.
+
+    Parameters
+    ----------
+    enties
+        The list of BibTeX entries as dictionaries.
+    fn_out
+        The output filename.
+    brace_title_words
+        Whether to wrap words in titles that should preserve capitalization in braces.
+    retcode
+        The provisional return code, based on previous checks.
+
+    Returns
+    -------
+    retcode
+        The final return code.
+    """
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
         with tempfile.TemporaryDirectory("rr-bibsane") as dn_tmp:
@@ -580,7 +604,10 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
                 ]
                 fields.sort()
                 for key, value in fields:
-                    pyb_entry.fields[key] = U2L(value)
+                    encoded = U2L(value)
+                    if brace_title_words and key in ("title", "journal"):
+                        encoded = brace_words(encoded)
+                    pyb_entry.fields[key] = encoded
                 lib.add_entry(entry[KEY], pyb_entry)
             lib.to_file(fn_tmp)
 
@@ -599,6 +626,20 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
         print(f"💥 Broken bibliography. Not writing: {fn_out}")
 
     return retcode
+
+
+NEEDS_BRACES = re.compile(r"^.+[A-Z].*$")
+
+
+def brace_words(title: str) -> str:
+    """Wrap words in braces if it seems useful."""
+    result = []
+    for word in title.split():
+        if NEEDS_BRACES.match(word):
+            result.append(f"{{{word}}}")
+        else:
+            result.append(word)
+    return " ".join(result)
 
 
 if __name__ == "__main__":

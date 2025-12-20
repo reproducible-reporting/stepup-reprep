@@ -25,6 +25,7 @@ import os
 import pytest
 from path import Path
 
+from stepup.reprep.bibsane import brace_words
 from stepup.reprep.bibsane import main as bibsane_main
 
 OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
@@ -37,6 +38,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "aux-empty",
         "aux-missing",
         "aux-unused",
+        "brace-title-words",
         "drop-entries",
         "duplicate-doi-ignore",
         "duplicate-doi-fail",
@@ -86,3 +88,9 @@ def test_bibsane_cases(name):
                 assert current == expected
             else:
                 assert not path_current.exists()
+
+
+def test_brace_word():
+    assert brace_words("word WORD") == "word {WORD}"
+    assert brace_words("This is CamelCase") == "This is {CamelCase}"
+    assert brace_words("Chemical formula CO2") == "Chemical formula {CO2}"

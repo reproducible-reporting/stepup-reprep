@@ -43,7 +43,7 @@ preambles_allowed: false
 normalize_whitespace: true
 fix_page_double_hyphen: true
 # PyISO4 can be used to abbreviate journal names.
-abbreviate_journal: true
+abbreviate_journals: true
 custom_abbreviations:
     CRAZY J0rnAL: Crazy J.
 sort: true  # sort key = {year}{normalized author list}{title}

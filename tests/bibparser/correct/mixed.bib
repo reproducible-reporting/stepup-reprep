@@ -1,0 +1,20 @@
+
+ % Mixed formatting of braces and quotes, special characters in key and title
+@article{some-some_some.some?2025,
+ author = {Last, First},
+ doi = {10.1234/abcde},
+ journal = "Journal of \"Quotes\"",
+ number = 6,
+ pages = {064111},
+ title = {Title with \{Brace and \"Quote and % ignored comment},
+ month = mar,
+ note = {
+    An example note with a URL containing underscores,
+    which pybtex+latexcodec would incorrectly try to decode:
+    \url{https://example.com/some_path_with_underscores}.
+    Not that pybtex and latexcodec are to blame.
+    LaTeX is just such a mess!
+ },
+ volume = A1,
+ year = 2025
+}

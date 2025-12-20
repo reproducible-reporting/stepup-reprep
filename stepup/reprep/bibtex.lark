@@ -1,0 +1,71 @@
+// Lark grammar for BibTeX files.
+//
+// Note that whitespace is not ignored to allow for parsing
+// nested braces without losing whitespace.
+// Known limitations:
+// - No @string entries
+// - No @preamble entries
+// - No @comment entries
+// The grammar is designed to be unambiguous for LALR parsing.
+
+// A bib file consists of multiple entries
+start: WS? (entry | _comment)*
+
+// Comments on separate lines, starting with %, only outside entries
+_comment: "%" /[^\n]*\n/ WS?
+
+// An entry starts with @, followed by entry type, key, and fields
+entry: AT WS? entry_type WS? ( LBRACE WS? key WS? COMMA WS? field_list WS? (COMMA WS?)? RBRACE | LPAREN WS? key WS? COMMA WS? field_list WS? (COMMA WS?)? RPAREN ) WS?
+// Entry type is a name
+entry_type: NAME
+// Keys cannot contain percentages, commas, spaces, braces, or parentheses.
+key: /[^%,\s{}()]+/
+
+// List of fields with optional trailing comma
+field_list: field_list WS? COMMA WS? field | field
+field: NAME WS? EQUAL WS? value
+value: braced_text | quoted_text | INT | NAME
+
+// Braced values with nesting
+braced_text: LBRACE ( braced_text | nobrace_char )* RBRACE
+?nobrace_char: TXT
+    | LPAREN
+    | RPAREN
+    | COMMA
+    | EQUAL
+    | AT
+    | QUOTE
+    | ESCAPED_CHAR
+    | WS
+
+// Quoted values
+quoted_text: QUOTE noquote_char* QUOTE
+?noquote_char: TXT
+    | LBRACE
+    | RBRACE
+    | LPAREN
+    | RPAREN
+    | COMMA
+    | EQUAL
+    | AT
+    | ESCAPED_CHAR
+    | WS
+
+// Simple terminals
+LBRACE: "{"
+RBRACE: "}"
+LPAREN: "("
+RPAREN: ")"
+COMMA: ","
+EQUAL: "="
+AT: "@"
+QUOTE: "\""
+ESCAPED_CHAR: /\\./
+
+// Longer sequences, not overlapping with the simple terminals and with each other
+WS: /[ \t\r\n]+/
+TXT: /[^ \t\r\n{}(),=@"\\]+/
+
+// For field names, entry types and unquoted values
+NAME: /[A-Za-z_][A-Za-z0-9_\-]*/
+INT: /[0-9]+/

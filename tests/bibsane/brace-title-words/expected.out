@@ -3,4 +3,5 @@
 🔨 Check for potential mistakes in BibTeX keys
 🔨 Abbreviate journal names
     📓 AIChE Journal -> AIChE J.
+🔨 Normalize braces in titles, booktitles and journal names
 💾 Please check the new or corrected file: current.bib

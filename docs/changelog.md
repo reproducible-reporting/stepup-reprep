@@ -12,6 +12,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Changed
+
+- Replace `pybtex` by simpler built-in BibTeX parser in `bibsane` written in Lark.
+  This eliminates a external dependencies, in particular `latexcodec`, which caused some issues.
+
 ### Fixed
 
 - Gracefully handle missing pagination in `bibsane` when reformatting page ranges.

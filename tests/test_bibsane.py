@@ -44,6 +44,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "duplicate-doi-fail",
         "duplicate-doi-merge-fail",
         "duplicate-doi-merge-pass",
+        "math",
         "minimal",
         "normalize-doi",
         "normalize-whitespace",
@@ -55,12 +56,13 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "policy-may",
         "policy-must-fail",
         "policy-must-pass",
+        "preserve-commands",
         "sort",
         "sort-missing-fields",
         "strip-braces",
     ],
 )
-def test_bibsane_cases(name):
+def test_example(name):
     args = ["input.bib", "--out", "current.bib"]
     with contextlib.chdir(f"tests/bibsane/{name}"):
         path_config = Path("bibsane.yaml")
@@ -74,7 +76,7 @@ def test_bibsane_cases(name):
         with open("current.out", "w") as f_out, contextlib.redirect_stdout(f_out):
             bibsane_main(args)
 
-        for suffix in ["bib", "out"]:
+        for suffix in ["out", "bib"]:
             path_expected = Path(f"expected.{suffix}")
             path_current = Path(f"current.{suffix}")
             if OVERWRITE_EXPECTED:

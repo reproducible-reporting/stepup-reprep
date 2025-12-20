@@ -1,5 +1,12 @@
 📂 Load input.bib
-    Found 4 BibTeX entries
+    Found 8 BibTeX entries
 🔨 Check for potential mistakes in BibTeX keys
 🔨 Abbreviate journal names
+    📓 Journal of Testing -> J. Test.
+    📓 International Journal of Examples -> Int. J. Ex.
+    📓 Proceedings of Sample Research -> Proc. Sample Res.
+    📓 Unknown Journal -> Unkn. J.
+    📓 Pünctuation & Symbols Journal -> Pünctuation Symb. J.
+    📓 The Naïve Journal of UTF-8 Characters -> Naïve J. UTF-8 Characters
+    📓 Résumé & Café -> Résumé Café
 💾 Please check the new or corrected file: current.bib

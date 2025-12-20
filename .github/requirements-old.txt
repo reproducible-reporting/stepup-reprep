@@ -12,6 +12,7 @@ path==16.14.0
 papermill==2.6.0
 pybtex==0.25.1
 pyiso4==0.1.6
+pylatexenc==2.10
 pymupdf==1.23.7
 pyyaml==6.0
 requests==2.32.4

@@ -22,6 +22,7 @@
 🔨 Normalize whitespace
 🔨 Fix double hyphen in page ranges
 🔨 Abbreviate journal names
+    📓 Proceedings -> Proc.
 💾 Please check the new or corrected file: cleaned.bib
 ────────────────────────────────────────────────────────────────────────────────
         2/3 |      START │ copy cleaned.bib copy.bib

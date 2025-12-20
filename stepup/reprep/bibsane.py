@@ -33,10 +33,29 @@ import pybtex.database
 import yaml
 from path import Path
 from pyiso4.ltwa import Abbreviate
+from pylatexenc.latex2text import LatexNodes2Text
+from pylatexenc.latexencode import RULE_REGEX, UnicodeToLatexConversionRule, UnicodeToLatexEncoder
 
 from stepup.core.hash import compute_file_digest
 
 __all__ = ("BibsaneConfig", "main")
+
+
+L2U = LatexNodes2Text().latex_to_text
+CONVERSION_RULES = [
+    # Custom LaTeX representation rules
+    UnicodeToLatexConversionRule(
+        RULE_REGEX,
+        [
+            # Use -- and --- for dashes when it is reasonable.
+            (re.compile("—(?![-–])"), "---"),  # noqa: RUF001
+            (re.compile("–(?![-—])"), "--"),  # noqa: RUF001
+        ],
+    ),
+    # Add the default rules
+    "defaults",
+]
+U2L = UnicodeToLatexEncoder(conversion_rules=CONVERSION_RULES).unicode_to_latex
 
 
 @enum.unique
@@ -75,9 +94,6 @@ class BibsaneConfig:
 
     drop_entry_types: list[str] = attrs.field(default=attrs.Factory(list))
     """The entry types to drop from the BibTeX database."""
-
-    strip_braces: bool = attrs.field(default=False)
-    """Set to `True` to remove unwarranted use of braces in field values."""
 
     normalize_doi: bool = attrs.field(default=False)
     """Set to `True` to normalize the DOIs in the entries."""
@@ -191,11 +207,6 @@ def main(argv: list[str] | None = None):
         if not clean_entries(entries, args.config.citation_policies):
             retcode = RETURN_CODE_BROKEN
 
-    # Clean up things that should never be there, not optional
-    if args.config.strip_braces:
-        print("🔨 Remove braces from fields")
-        strip_braces(entries)
-
     # Check for potential problems that cannot be fixed automatically, not optional.
     # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
     print("🔨 Check for potential mistakes in BibTeX keys")
@@ -295,14 +306,15 @@ def collect_entries(fn_bib: str) -> list[dict]:
     lib = pybtex.database.parse_file(fn_bib)
     for pyb_entry in lib.entries.values():
         # Convert to a simple dictionary, to enforce modularity between bibsane and pybtex.
+        # At this stage, all keys are lowercased and LaTeX is decoded with pylatexenc
         entry = {
             ETYPE: pyb_entry.type.lower(),
             KEY: pyb_entry.key,
         }
         for key, value in pyb_entry.fields.items():
-            entry[key.lower()] = value
+            entry[key.lower()] = L2U(value)
         for role, names in pyb_entry.persons.items():
-            entry[role.lower()] = " and ".join(str(name) for name in names)
+            entry[role.lower()] = " and ".join(L2U(str(name)) for name in names)
         entries.append(entry)
     return entries
 
@@ -427,16 +439,6 @@ def clean_entries(
     return valid
 
 
-def strip_braces(entries: list[dict]):
-    """Remove braces from most fields."""
-    exceptions = {"author", "editor", "note", "title"}
-    for entry in entries:
-        # Strip all braces, except from author, editor, note or title
-        for key, value in list(entry.items()):
-            if key not in exceptions:
-                entry[key] = value.replace("{", "").replace("}", "")
-
-
 def case_consistent_keys(entries: list[dict]) -> bool:
     """Detect potential mistakes in the BibTeX entry keys."""
     id_case_map = {}
@@ -508,14 +510,14 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
 
 def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
     """Replace journal names by their ISO abbreviation."""
-    # Abbreviate journals
     abbreviator = Abbreviate.create()
     for entry in entries:
         journal = entry.get("journal")
         if journal is not None and "." not in journal:
             abbrev = custom.get(journal)
             if abbrev is None:
-                abbrev = abbreviator(journal, remove_part=True)
+                abbrev = abbreviator(journal, remove_part=False)
+            print(f"    📓 {journal} -> {abbrev}")
             abbrev = custom.get(abbrev, abbrev)
             entry["journal"] = abbrev
 
@@ -578,7 +580,7 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
                 ]
                 fields.sort()
                 for key, value in fields:
-                    pyb_entry.fields[key] = value
+                    pyb_entry.fields[key] = U2L(value)
                 lib.add_entry(entry[KEY], pyb_entry)
             lib.to_file(fn_tmp)
 

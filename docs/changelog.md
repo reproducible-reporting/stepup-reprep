@@ -19,6 +19,8 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ### Fixed
 
 - Correctly report merged records in bibsane's screen output.
+- Fix handling of LaTeX encoding in bibsane and abbreviation
+  of journal names with non-ASCII characters.
 
 ## [3.1.6][] - 2025-11-21 {: v3.1.6 }
 

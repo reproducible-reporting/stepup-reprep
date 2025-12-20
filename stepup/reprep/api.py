@@ -635,8 +635,10 @@ def convert_jupyter(
 
     !!! warning
 
-        Support for `juptyer nbconvert` in StepUp RepRep is experimental.
-        Expect breaking changes in future releases.
+        - Support for `juptyer nbconvert` in StepUp RepRep is experimental.
+          Expect breaking changes in future releases.
+        - The conversion uses `nbconvert`, which has an unfixed security vulnerability.
+          See https://access.redhat.com/security/cve/cve-2025-53000
 
     Parameters
     ----------

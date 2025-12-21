@@ -505,7 +505,9 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
         if pages is not None:
             parts = [part.strip() for part in re.split(HYPFUN_REGEX, pages)]
             parts = [part for part in parts if part != ""]
-            if len(parts) == 1:
+            if len(parts) == 0:
+                entry["pages"] = ""
+            elif len(parts) == 1:
                 entry["pages"] = parts[0]
             elif len(parts) == 2:
                 entry["pages"] = "--".join(parts)

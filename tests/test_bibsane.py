@@ -47,6 +47,7 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "minimal",
         "normalize-doi",
         "normalize-whitespace",
+        "pages-empty",
         "pages-range-broken",
         "pages-range1",
         "pages-range2",

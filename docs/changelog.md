@@ -12,6 +12,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Fixed
+
+- Gracefully handle missing pagination in `bibsane` when reformatting page ranges.
+
 ## [3.1.7][] - 2025-12-20 {: v3.1.7 }
 
 Bugfix release

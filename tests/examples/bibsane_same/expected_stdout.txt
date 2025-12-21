@@ -17,7 +17,6 @@ Input changed unexpectedly: references.bib (digest bfc27a8d ➜ f933ff21, size 1
     Found 1 citations
     Found 1 unique citations
 🔨 Checking unused and missing citations
-    Found 1 used BibTeX entries
 🔨 Check for potential mistakes in BibTeX keys
 🔨 Normalize DOIs
 🔨 Normalize whitespace

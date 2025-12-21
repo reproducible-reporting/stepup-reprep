@@ -12,7 +12,6 @@
     Found 1 citations
     Found 1 unique citations
 🔨 Checking unused and missing citations
-    Found 1 used BibTeX entries
 🔨 Apply and check citation policies
     💨 skilling2019: @article discarding field url
     💨 skilling2019: @article discarding field issn

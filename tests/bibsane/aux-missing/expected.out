@@ -5,7 +5,6 @@
     Found 1 unique citations
 🔨 Checking unused and missing citations
     💀 Missing reference: foo3
-    🧹 Dropping unused key: foo1
-    🧹 Dropping unused key: foo2
-    Found 0 used BibTeX entries
+    🧹 Unused key: foo1
+    🧹 Unused key: foo2
     ❌ Stop early due to missing citations

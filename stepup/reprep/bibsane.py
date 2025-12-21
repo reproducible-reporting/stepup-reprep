@@ -172,10 +172,9 @@ def main(argv: list[str] | None = None):
         if len(citations) == 0:
             print("    ❓ Ignored aux file because it lacks citations.")
         else:
-            # Drop unused and check for missing
+            # Report unused and check for missing
             print("🔨 Checking unused and missing citations")
             bibdata_complete = check_citations(entries, citations)
-            print(f"    Found {len(entries)} used BibTeX entries")
             if not bibdata_complete:
                 print("    ❌ Stop early due to missing citations")
                 return RETURN_CODE_BROKEN
@@ -330,7 +329,7 @@ def parse_aux_line(prefix: str, line: str, words: list[str]):
 
 
 def check_citations(entries: list[dict], citations: Collection[str]) -> bool:
-    """Drop unused citations and complain about missing ones."""
+    """Report unused citations and complain about missing ones."""
     # Check for undefined references
     defined = {entry["__KEY__"] for entry in entries}
     valid = True
@@ -339,14 +338,11 @@ def check_citations(entries: list[dict], citations: Collection[str]) -> bool:
             print("    💀 Missing reference:", citation)
             valid = False
 
-    # Drop unused entries
-    result = []
+    # Report unused entries
     for entry in entries:
         if entry["__KEY__"] not in citations:
-            print("    🧹 Dropping unused key:", entry["__KEY__"])
+            print("    🧹 Unused key:", entry["__KEY__"])
             continue
-        result.append(entry)
-    entries[:] = result
     return valid
 
 

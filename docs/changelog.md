@@ -16,6 +16,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 - Replace `pybtex` by simpler built-in BibTeX parser in `bibsane` written in Lark.
   This eliminates a external dependencies, in particular `latexcodec`, which caused some issues.
+- Only report unused citations in `bibsane`, instead of dropping them.
 
 ### Fixed
 

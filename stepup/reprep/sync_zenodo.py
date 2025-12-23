@@ -667,7 +667,7 @@ def main(argv: list[str] | None = None):
     sync_zenodo_tool(args)
 
 
-def sync_zenodo_tool(args: argparse.Namespace) -> int:
+def sync_zenodo_tool(args: argparse.Namespace):
     """Main program."""
     with open(args.config) as fh:
         data = yaml.safe_load(fh)
@@ -689,7 +689,6 @@ def sync_zenodo_tool(args: argparse.Namespace) -> int:
     if args.clean:
         clean_online(config, args.verbose)
     update_online(config, args.verbose)
-    return 0
 
 
 def sync_zenodo_subcommand(subparser: argparse.ArgumentParser) -> callable:

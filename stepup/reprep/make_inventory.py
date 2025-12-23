@@ -77,10 +77,9 @@ def make_subcommand(subparser: argparse.ArgumentParser) -> callable:
     return make_tool
 
 
-def make_tool(args: argparse.Namespace) -> int:
+def make_tool(args: argparse.Namespace):
     """Create an inventory.txt file."""
     make_inventory(args)
-    return 0
 
 
 def make_inventory(args: argparse.Namespace):

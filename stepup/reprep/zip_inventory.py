@@ -66,10 +66,9 @@ def zip_subcommand(subparser: argparse.ArgumentParser) -> callable:
     return zip_tool
 
 
-def zip_tool(args: argparse.Namespace) -> int:
+def zip_tool(args: argparse.Namespace):
     """Create a reproducible ZIP file."""
     zip_inventory(args.inventory_txt, args.output_zip)
-    return 0
 
 
 def zip_inventory(path_inventory: str, path_zip: str | None = None):

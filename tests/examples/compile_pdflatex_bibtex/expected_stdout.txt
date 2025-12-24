@@ -14,7 +14,6 @@
     Found 1 citations
     Found 1 unique citations
 🔨 Checking unused and missing citations
-    Found 1 used BibTeX entries
 🔨 Drop irrelevant entry types
     1 BibTeX entries left
 🔨 Apply and check citation policies

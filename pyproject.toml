@@ -104,7 +104,7 @@ wrap-git = "stepup.reprep.actions:wrap_git"
 zip-inventory = "stepup.reprep.actions:zip_inventory"
 
 [tool.pytest.ini_options]
-addopts = "-n auto --strict-markers -m 'not heavy'"
+addopts = "-n auto --dist worksteal --strict-markers -m 'not heavy'"
 markers = ["heavy: requires CPU or memory resources not available in GitHub Actions"]
 asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [

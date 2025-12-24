@@ -9,10 +9,9 @@
 Missing inputs and/or required directories:
 sub/other.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ 1 step(s) remained pending due to incomplete requirements
-─────────────────────────────── Orphaned inputs ────────────────────────────────
+        1/2 |    WARNING │ 1 step(s) remained pending due to ...
+─────────────────────────── Incomplete requirements ────────────────────────────
              AWAITED  sub/other.tex
-             AWAITED  sub/
 ───────────────────────────────── PENDING Step ─────────────────────────────────
 Action                flatten-latex article_structured.tex article.tex
 Working directory     ./

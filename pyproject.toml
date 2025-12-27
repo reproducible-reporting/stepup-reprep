@@ -33,7 +33,7 @@ classifiers = [
 dependencies = [
     # Ensure changes to these dependencies are reflected in .github/requirements-old.txt
     "attrs>=23.1.0",
-    "cattrs>=23.2.3",
+    "cattrs>=23.1.2",
     "defusedxml>=0.7.0",
     "idutils>=1.4.5",
     "ipykernel>=6.20.1",

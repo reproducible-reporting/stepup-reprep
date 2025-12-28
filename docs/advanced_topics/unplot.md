@@ -51,7 +51,7 @@ Unplot converts plots back into data points.
         - `axis`: your name of the axis
         - `low`: numerical value corresponding to the start the path
         - `high`: numerical value corresponding to the end the path
-        - `scal`: `linear` or `log`
+        - `scale`: `linear` or `log`
         - `unit`: the unit of the axis
     - Select the y-axis in the figure and add the same attributes for the second axis.
     - The paths over the curves should be given a `data` attribute whose value is

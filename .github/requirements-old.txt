@@ -17,6 +17,6 @@ pyyaml==6.0
 requests==2.32.4
 scipy==1.11.1
 semver==3.0.0
-stepup==3.1.2
+stepup==3.2.0
 svg.path==6.0
 weasyprint==63.1

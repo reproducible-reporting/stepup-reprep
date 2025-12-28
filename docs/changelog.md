@@ -12,12 +12,17 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [3.1.8][] - 2025-12-28 {: v3.1.8 }
+
+Bugfix release
+
 ### Changed
 
 - Replace `pybtex` by simpler built-in BibTeX parser in `bibsane` written in Lark.
   This eliminates a external dependencies, in particular `latexcodec`, which caused some issues.
 - Only report unused citations in `bibsane`, instead of dropping them.
 - Downgrade `cattrs` dependency to facilitate installation.
+- Updated reference test outputs for StepUp Core 3.2.
 
 ### Fixed
 
@@ -566,6 +571,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.8]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.8
 [3.1.7]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.7
 [3.1.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.6
 [3.1.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.5

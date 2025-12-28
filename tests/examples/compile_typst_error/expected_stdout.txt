@@ -3,10 +3,10 @@
         0/1 |      PHASE │ run
         0/1 |      START │ runpy ./plan.py
         1/2 |    SUCCESS │ runpy ./plan.py
-        1/2 |      START │ compile-typst error.typ
-        1/1 |       FAIL │ compile-typst error.typ
+        1/2 |      START │ compile-typst --keep-deps error.typ
+        1/1 |       FAIL │ compile-typst --keep-deps error.typ
 ────────────────────────────────── Step info ───────────────────────────────────
-Command               stepup act compile-typst error.typ
+Command               stepup act -- compile-typst --keep-deps error.typ
 Return code           1
 ───────────────────────── Expected outputs not created ─────────────────────────
 error.pdf

@@ -6,14 +6,15 @@ root:
 file:./
                state = STATIC
           created by   root:
-            supplies   file:data.yaml
-            supplies   file:document.dep
+            supplies   file:document.deps.json
             supplies   file:document.pdf
             supplies   file:document.typ
+            supplies   file:image.jpg
+            supplies   file:image.py
             supplies   file:plan.py
             supplies   step:compile-typst --keep-deps document.typ
             supplies   step:runpy ./plan.py
-            supplies   step:runsh echo 'fixed: new' > data.yaml
+            supplies   step:runsh ./image.py
 
 file:plan.py
                state = STATIC
@@ -30,8 +31,9 @@ step:runpy ./plan.py
             consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
+             creates   file:image.py
              creates   step:compile-typst --keep-deps document.typ
-             creates   step:runsh echo 'fixed: new' > data.yaml
+             creates   step:runsh ./image.py
 
 file:document.typ
                state = STATIC
@@ -39,40 +41,50 @@ file:document.typ
             consumes   file:./
             supplies   step:compile-typst --keep-deps document.typ
 
+file:image.py
+               state = STATIC
+          created by   step:runpy ./plan.py
+            consumes   file:./
+
 step:compile-typst --keep-deps document.typ
-               state = FAILED
+               state = SUCCEEDED
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
+                     = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:document.typ
-             creates   file:document.dep
+            consumes   file:image.jpg [amended]
+             creates   file:document.deps.json
              creates   file:document.pdf
-            supplies   file:document.dep
+            supplies   file:document.deps.json
             supplies   file:document.pdf
 
-file:document.dep
-               state = AWAITED
+file:document.deps.json
+               state = BUILT
           created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
             consumes   step:compile-typst --keep-deps document.typ
 
 file:document.pdf
-               state = AWAITED
+               state = BUILT
           created by   step:compile-typst --keep-deps document.typ
             consumes   file:./
             consumes   step:compile-typst --keep-deps document.typ
 
-step:runsh echo 'fixed: new' > data.yaml
+step:runsh ./image.py
                state = SUCCEEDED
+             env_var = BG_COLOR [amended]
+                     = FG_COLOR [amended]
           created by   step:runpy ./plan.py
             consumes   file:./
-             creates   file:data.yaml
-            supplies   file:data.yaml
+             creates   file:image.jpg
+            supplies   file:image.jpg
 
-file:data.yaml
+file:image.jpg
                state = BUILT
-          created by   step:runsh echo 'fixed: new' > data.yaml
+          created by   step:runsh ./image.py
             consumes   file:./
-            consumes   step:runsh echo 'fixed: new' > data.yaml
+            consumes   step:runsh ./image.py
+            supplies   step:compile-typst --keep-deps document.typ

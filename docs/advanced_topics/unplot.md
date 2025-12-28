@@ -52,7 +52,7 @@ Unplot converts plots back into data points.
         - `low`: numerical value corresponding to the start the path
         - `high`: numerical value corresponding to the end the path
         - `scale`: `linear` or `log`
-        - `unit`: the unit of the axis
+        - `units`: the unit of the axis
     - Select the y-axis in the figure and add the same attributes for the second axis.
     - The paths over the curves should be given a `data` attribute whose value is
       is a label to identify the data series in the output.
@@ -73,7 +73,7 @@ You will find the following (among other attributes):
     d="M 51.564216,441.96145 51.70753,13.139368"
     id="path2"
     low="0"
-    unit="micron"
+    units="micron"
     high="450"
     scale="linear"
     axis="screw movement" />
@@ -81,7 +81,7 @@ You will find the following (among other attributes):
     d="m 51.564216,441.96145 415.207694,0.0146"
     id="path3"
     axis="mill speed"
-    unit="mpm"
+    units="mpm"
     low="0"
     high="1400"
     scale="linear" />

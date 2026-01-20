@@ -52,7 +52,7 @@ dependencies = [
     "semver>=3.0.0",
     "stepup>=3.2.0,<4.0.0",
     "svg.path>=6.0",
-    "weasyprint>=63.1",
+    "weasyprint>=68.0",
 ]
 dynamic = ["version"]
 

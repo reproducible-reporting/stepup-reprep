@@ -12,6 +12,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Fixed
+
+- Upgrade WeasyPrint to version 68.0 to address a security vulnerability in earlier versions.
+  See <https://github.com/advisories/GHSA-983w-rhvv-gwmv>.
+
 ## [3.1.8][] - 2025-12-28 {: v3.1.8 }
 
 Bugfix release

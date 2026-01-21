@@ -22,18 +22,19 @@
 This wrapper extracts relevant information from a Typst build
 to inform StepUp of input files used or needed.
 
-This is tested with Typst 0.14.
+This is tested with Typst 0.15.
 """
 
 import argparse
 import contextlib
+import json
 import shlex
 import sys
 
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies
+from stepup.core.utils import filter_dependencies, string_to_bool
 from stepup.core.worker import WorkThread
 
 from .make_inventory import write_inventory
@@ -47,24 +48,23 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
-    if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg")):
-        raise ValueError("The Typst output must be a PDF, PNG, or SVG file.")
-
-    # Get Typst executable and prepare some arguments that
-    if args.typst is None:
-        args.typst = getenv("REPREP_TYPST", "typst")
+    if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg", ".html")):
+        raise ValueError("The Typst output must be a PDF, PNG, SVG, or HTML file.")
 
     # Prepare the command to run Typst
+    if args.typst is None:
+        args.typst = getenv("REPREP_TYPST", "typst")
     typst_args = [args.typst, "compile", args.path_typ]
     if args.path_out is not None:
         typst_args.append(args.path_out)
     else:
         args.path_out = Path(args.path_typ[:-4] + ".pdf")
     if args.path_out.suffix == ".png":
-        resolution = args.resolution
-        if resolution is None:
-            resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
-        typst_args.append(f"--ppi={resolution}")
+        if args.resolution is None:
+            args.resolution = int(getenv("REPREP_TYPST_RESOLUTION", "144"))
+        typst_args.append(f"--ppi={args.resolution}")
+    elif args.path_out.suffix == ".html":
+        typst_args.append("--features=html")
     for keyval in args.sysinp:
         typst_args.append("--input")
         typst_args.append(keyval)
@@ -75,43 +75,36 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
-            path_dep = Path(args.path_typ[:-4] + ".dep")
-            path_dep.remove_p()
+            path_deps = args.path_typ.with_suffix(".deps.json")
+            path_deps.remove_p()
         else:
             # Use a temporary file for the make-deps output.
-            path_dep = stack.enter_context(TempDir()) / "typst.dep"
-        typst_args.extend(["--deps", path_dep, "--deps-format", "make"])
+            path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
+        typst_args.extend(["--deps", path_deps, "--deps-format", "json"])
 
         # Run typst compile
         returncode, stdout, stderr = work_thread.runsh(shlex.join(typst_args))
         print(stdout)
-        # Get existing input files from the dependency file and amend.
-        # Note that the deps file does not escape colons in paths,
-        # so the code below assumes one never uses colons in paths.
-        inp_paths = []
-        if path_dep.is_file():
-            out_paths = []
-            with open(path_dep) as fh:
-                dep_out, dep_inp = fh.read().split(":", 1)
-                out_paths.extend(shlex.split(dep_out))
-                inp_paths.extend(shlex.split(dep_inp))
+        # Assume there is a single output file, which is the one specified.
+        # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
+        # Get required input files from the dependency file.
+        if path_deps.is_file():
+            with open(path_deps) as fh:
+                depinfo = json.load(fh)
+            inp_paths = depinfo["inputs"]
+            out_paths = depinfo.get("outputs") or []
         else:
-            print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
-            out_paths = [args.path_out]
+            print(f"Dependency file not created: {path_deps}.", file=sys.stderr)
+            out_paths = []
+            inp_paths = []
 
-    # Look for missing input files in the standard error stream and amend them.
-    if returncode != 0:
-        lead = "error: file not found (searched at "
-        inp_paths.extend(
-            line[len(lead) : -1] for line in stderr.splitlines() if line.startswith(lead)
-        )
     sys.stderr.write(stderr)
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
     # Write inventory
     if args.inventory is not None:
-        inventory_paths = sorted(inp_paths) + out_paths
+        inventory_paths = sorted(inp_paths) + sorted(out_paths)
         write_inventory(args.inventory, inventory_paths, do_amend=False)
 
     # If the output path contains placeholders `{p}`, `{0p}`, or `{t}`,
@@ -149,9 +142,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--keep-deps",
         help="Keep the dependency file after the compilation. "
-        "The default is to use a temporary file, which is removed after it is processed.",
-        action="store_true",
-        default=False,
+        "The default is to use a temporary file, which is removed after it is processed. "
+        "Defaults to the boolean value of ${REPREP_TYPST_KEEP_DEPS}, "
+        "or False if the variable is not defined.",
+        action=argparse.BooleanOptionalAction,
+        default=string_to_bool(getenv("REPREP_TYPST_KEEP_DEPS", "0")),
     )
     parser.add_argument(
         "--inventory",

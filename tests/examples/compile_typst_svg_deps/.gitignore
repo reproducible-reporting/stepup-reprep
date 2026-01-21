@@ -1,5 +1,5 @@
 .stepup
 current*
 *.pdf
-*.dep
+*.deps.json
 other.png

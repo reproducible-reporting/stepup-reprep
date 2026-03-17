@@ -10,7 +10,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
 
 ### Added
 
@@ -27,8 +27,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ### Fixed
 
-- Upgrade WeasyPrint to version 68.0 to address a security vulnerability in earlier versions.
+- Update WeasyPrint dependency to version 68.0 to address a security vulnerability in earlier versions.
   See <https://github.com/advisories/GHSA-983w-rhvv-gwmv>.
+- Update nbconvert dependency to version 7.17.0 to address a security vulnerability in earlier versions.
+  See <https://cwe.mitre.org/data/definitions/427.html>.
 
 ## [3.1.8][] - 2025-12-28 {: v3.1.8 }
 

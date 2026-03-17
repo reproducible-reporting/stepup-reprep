@@ -37,6 +37,7 @@ file:error.typ
 
 step:compile-typst error.typ
                state = FAILED
+               dirty = yes
              env_var = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]

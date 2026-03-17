@@ -1379,7 +1379,11 @@ def unplot(
 def wrap_git(
     command: str,
     *,
-    out: str | None = None,
+    inp: Collection[str] | str = (),
+    env: Collection[str] | str = (),
+    out: Collection[str] | str = (),
+    vol: Collection[str] | str = (),
+    stdout: str | None = None,
     workdir: str = "./",
     optional: bool = False,
     block: bool = False,
@@ -1407,7 +1411,15 @@ def wrap_git(
     command
         The git command to run, e.g. `git describe --tags`
         or `git log -n1 --pretty='format:%cs (%h)`.
+    inp
+        Input files that the git command depends on, if any.
+    env
+        Environment variables that affect the output of the git command, if any.
     out
+        Output files produced by the git command, if any.
+    vol
+        Volatile files created by the git command, if any.
+    stdout
         An output file for the stdout of the git command.
     workdir
         The working directory where the git command must be executed.
@@ -1423,16 +1435,19 @@ def wrap_git(
     """
     if not isinstance(command, str):
         raise TypeError("The git command must be a string.")
-    if not (out is None or isinstance(out, str)):
-        raise TypeError("The output of the git command must be a string or None.")
+    if not (stdout is None or isinstance(stdout, str)):
+        raise TypeError("The stdout filename of the git command must be a string or None.")
 
     action = "wrap-git"
-    if out is not None:
-        action += f" --out={shlex.quote(out)}"
+    if stdout is not None:
+        action += f" --out={shlex.quote(stdout)}"
     action += f" -- {command}"
     return step(
         action,
-        out=out,
+        inp=inp,
+        env=env,
+        out=[stdout, *out] if stdout is not None else out,
+        vol=vol,
         workdir=workdir,
         optional=optional,
         block=block,

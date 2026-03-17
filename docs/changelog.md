@@ -12,6 +12,19 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+### Added
+
+- Support for extra `inp`, `env`, `out`, and `vol` arguments in the `wrap_git` API.
+  For example, this allows one to specify that the git command uses a file like `.gitattributes`.
+  Changes to this file will then trigger the git command to be re-executed in the next build.
+
+### Changed
+
+- The old `out` argument of `wrap_git` is renamed to `stdout`
+  to clarify that it only refers to the stdout of the git command,
+  and to allow for other output files to be specified with the new `out` argument.
+  Existing `plan.py` files must be updated accordingly.
+
 ### Fixed
 
 - Upgrade WeasyPrint to version 68.0 to address a security vulnerability in earlier versions.

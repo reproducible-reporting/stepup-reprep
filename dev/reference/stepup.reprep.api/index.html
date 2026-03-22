@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -6855,7 +6855,7 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
 </span><span id="__span-0-1440"><a id="__codelineno-0-1440" name="__codelineno-0-1440"></a>
 </span><span id="__span-0-1441"><a id="__codelineno-0-1441" name="__codelineno-0-1441"></a>    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;wrap-git&quot;</span>
 </span><span id="__span-0-1442"><a id="__codelineno-0-1442" name="__codelineno-0-1442"></a>    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-1443"><a id="__codelineno-0-1443" name="__codelineno-0-1443"></a>        <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --out=</span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-1443"><a id="__codelineno-0-1443" name="__codelineno-0-1443"></a>        <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --stdout=</span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-1444"><a id="__codelineno-0-1444" name="__codelineno-0-1444"></a>    <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -- </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-0-1445"><a id="__codelineno-0-1445" name="__codelineno-0-1445"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
 </span><span id="__span-0-1446"><a id="__codelineno-0-1446" name="__codelineno-0-1446"></a>        <span class="n">action</span><span class="p">,</span>

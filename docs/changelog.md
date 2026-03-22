@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no summary yet)
+(no changes yet)
+
+## [3.1.9][] - 2026-03-22 {: v3.1.9 }
+
+Refactor `wrap_git` to support more flexible specification of inputs and outputs.
 
 ### Added
 
@@ -591,6 +595,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9
 [3.1.8]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.8
 [3.1.7]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.7
 [3.1.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.6

@@ -1440,7 +1440,7 @@ def wrap_git(
 
     action = "wrap-git"
     if stdout is not None:
-        action += f" --out={shlex.quote(stdout)}"
+        action += f" --stdout={shlex.quote(stdout)}"
     action += f" -- {command}"
     return step(
         action,

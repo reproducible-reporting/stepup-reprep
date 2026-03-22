@@ -36,10 +36,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         prog="wrap_git", description="Run git commands that depend on the current commit id."
     )
     parser.add_argument(
-        "--out",
+        "--stdout",
         type=Path,
-        help="Output file to write the command to. "
-        "If not specified, the command is printed to stdout.",
+        help="File to redirect the standard output of the command to. "
+        "If not specified, the output will be printed to the console.",
     )
     parser.add_argument(
         "git_args",
@@ -76,8 +76,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 
     # Run the git command.
     command = "GIT_PAGER=cat " + shlex.join(args.git_args)
-    if args.out is not None:
-        command = f"{command} > {shlex.quote(args.out)}"
+    if args.stdout is not None:
+        command = f"{command} > {shlex.quote(args.stdout)}"
     work_thread.runsh_verbose(command)
 
 

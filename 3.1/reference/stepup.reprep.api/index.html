@@ -22,8 +22,8 @@
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <link rel="icon" href="../../logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -114,8 +114,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="StepUp RepRep" class="md-header__button md-logo" aria-label="StepUp RepRep" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -267,8 +266,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="StepUp RepRep" class="md-nav__button md-logo" aria-label="StepUp RepRep" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../logo.svg" alt="logo">
 
     </a>
     StepUp RepRep
@@ -6588,7 +6586,7 @@ in which case <code>path_out</code> is not treated as a new output file in the w
 
 
 <h2 id="stepup.reprep.api.wrap_git" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">wrap_git</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">wrap_git</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="p">(),</span> <span class="n">env</span><span class="o">=</span><span class="p">(),</span> <span class="n">out</span><span class="o">=</span><span class="p">(),</span> <span class="n">vol</span><span class="o">=</span><span class="p">(),</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#stepup.reprep.api.wrap_git" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -6622,7 +6620,47 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
+            <b><code>inp</code></b>
+              (<code><span title="collections.abc.Collection">Collection</span>[<span title="str">str</span>] | <span title="str">str</span></code>, default:
+                  <code>()</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Input files that the git command depends on, if any.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>env</code></b>
+              (<code><span title="collections.abc.Collection">Collection</span>[<span title="str">str</span>] | <span title="str">str</span></code>, default:
+                  <code>()</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Environment variables that affect the output of the git command, if any.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
             <b><code>out</code></b>
+              (<code><span title="collections.abc.Collection">Collection</span>[<span title="str">str</span>] | <span title="str">str</span></code>, default:
+                  <code>()</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Output files produced by the git command, if any.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>vol</code></b>
+              (<code><span title="collections.abc.Collection">Collection</span>[<span title="str">str</span>] | <span title="str">str</span></code>, default:
+                  <code>()</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Volatile files created by the git command, if any.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>stdout</code></b>
               (<code><span title="str">str</span> | None</code>, default:
                   <code>None</code>
 )
@@ -6738,67 +6776,97 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
 <span class="normal"><a href="#__codelineno-0-1436">1436</a></span>
 <span class="normal"><a href="#__codelineno-0-1437">1437</a></span>
 <span class="normal"><a href="#__codelineno-0-1438">1438</a></span>
-<span class="normal"><a href="#__codelineno-0-1439">1439</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1379"><a id="__codelineno-0-1379" name="__codelineno-0-1379"></a><span class="k">def</span><span class="w"> </span><span class="nf">wrap_git</span><span class="p">(</span>
+<span class="normal"><a href="#__codelineno-0-1439">1439</a></span>
+<span class="normal"><a href="#__codelineno-0-1440">1440</a></span>
+<span class="normal"><a href="#__codelineno-0-1441">1441</a></span>
+<span class="normal"><a href="#__codelineno-0-1442">1442</a></span>
+<span class="normal"><a href="#__codelineno-0-1443">1443</a></span>
+<span class="normal"><a href="#__codelineno-0-1444">1444</a></span>
+<span class="normal"><a href="#__codelineno-0-1445">1445</a></span>
+<span class="normal"><a href="#__codelineno-0-1446">1446</a></span>
+<span class="normal"><a href="#__codelineno-0-1447">1447</a></span>
+<span class="normal"><a href="#__codelineno-0-1448">1448</a></span>
+<span class="normal"><a href="#__codelineno-0-1449">1449</a></span>
+<span class="normal"><a href="#__codelineno-0-1450">1450</a></span>
+<span class="normal"><a href="#__codelineno-0-1451">1451</a></span>
+<span class="normal"><a href="#__codelineno-0-1452">1452</a></span>
+<span class="normal"><a href="#__codelineno-0-1453">1453</a></span>
+<span class="normal"><a href="#__codelineno-0-1454">1454</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1379"><a id="__codelineno-0-1379" name="__codelineno-0-1379"></a><span class="k">def</span><span class="w"> </span><span class="nf">wrap_git</span><span class="p">(</span>
 </span><span id="__span-0-1380"><a id="__codelineno-0-1380" name="__codelineno-0-1380"></a>    <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="__span-0-1381"><a id="__codelineno-0-1381" name="__codelineno-0-1381"></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="__span-0-1382"><a id="__codelineno-0-1382" name="__codelineno-0-1382"></a>    <span class="n">out</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-0-1383"><a id="__codelineno-0-1383" name="__codelineno-0-1383"></a>    <span class="n">workdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
-</span><span id="__span-0-1384"><a id="__codelineno-0-1384" name="__codelineno-0-1384"></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-1385"><a id="__codelineno-0-1385" name="__codelineno-0-1385"></a>    <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-1386"><a id="__codelineno-0-1386" name="__codelineno-0-1386"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1387"><a id="__codelineno-0-1387" name="__codelineno-0-1387"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a step to run a git command.</span>
-</span><span id="__span-0-1388"><a id="__codelineno-0-1388" name="__codelineno-0-1388"></a>
-</span><span id="__span-0-1389"><a id="__codelineno-0-1389" name="__codelineno-0-1389"></a><span class="sd">    The provide the necessary input for StepUp, git is called through a wrapper script.</span>
-</span><span id="__span-0-1390"><a id="__codelineno-0-1390" name="__codelineno-0-1390"></a><span class="sd">    This wrapper first infers the git root directory with `git rev-parse --show-toplevel`.</span>
-</span><span id="__span-0-1391"><a id="__codelineno-0-1391" name="__codelineno-0-1391"></a><span class="sd">    It then amends the input dependencies with the following two files:</span>
+</span><span id="__span-0-1382"><a id="__codelineno-0-1382" name="__codelineno-0-1382"></a>    <span class="n">inp</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="__span-0-1383"><a id="__codelineno-0-1383" name="__codelineno-0-1383"></a>    <span class="n">env</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="__span-0-1384"><a id="__codelineno-0-1384" name="__codelineno-0-1384"></a>    <span class="n">out</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="__span-0-1385"><a id="__codelineno-0-1385" name="__codelineno-0-1385"></a>    <span class="n">vol</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="__span-0-1386"><a id="__codelineno-0-1386" name="__codelineno-0-1386"></a>    <span class="n">stdout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-1387"><a id="__codelineno-0-1387" name="__codelineno-0-1387"></a>    <span class="n">workdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+</span><span id="__span-0-1388"><a id="__codelineno-0-1388" name="__codelineno-0-1388"></a>    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-1389"><a id="__codelineno-0-1389" name="__codelineno-0-1389"></a>    <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-1390"><a id="__codelineno-0-1390" name="__codelineno-0-1390"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1391"><a id="__codelineno-0-1391" name="__codelineno-0-1391"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a step to run a git command.</span>
 </span><span id="__span-0-1392"><a id="__codelineno-0-1392" name="__codelineno-0-1392"></a>
-</span><span id="__span-0-1393"><a id="__codelineno-0-1393" name="__codelineno-0-1393"></a><span class="sd">      - gitroot / &#39;.git/HEAD&#39;</span>
-</span><span id="__span-0-1394"><a id="__codelineno-0-1394" name="__codelineno-0-1394"></a><span class="sd">      - gitroot / &#39;.git/refs/branches/&lt;branch&gt;&#39;</span>
-</span><span id="__span-0-1395"><a id="__codelineno-0-1395" name="__codelineno-0-1395"></a>
-</span><span id="__span-0-1396"><a id="__codelineno-0-1396" name="__codelineno-0-1396"></a><span class="sd">    As a result, the step will be rescheduled when the current commit id or branch changes.</span>
-</span><span id="__span-0-1397"><a id="__codelineno-0-1397" name="__codelineno-0-1397"></a>
-</span><span id="__span-0-1398"><a id="__codelineno-0-1398" name="__codelineno-0-1398"></a><span class="sd">    It is recommended to make gitroot / &#39;.git/&#39; and all of its contents static</span>
-</span><span id="__span-0-1399"><a id="__codelineno-0-1399" name="__codelineno-0-1399"></a><span class="sd">    with recursive deferred glob as follows:</span>
-</span><span id="__span-0-1400"><a id="__codelineno-0-1400" name="__codelineno-0-1400"></a>
-</span><span id="__span-0-1401"><a id="__codelineno-0-1401" name="__codelineno-0-1401"></a><span class="sd">    ```python</span>
-</span><span id="__span-0-1402"><a id="__codelineno-0-1402" name="__codelineno-0-1402"></a><span class="sd">    glob(&quot;.git/**&quot;, _defer=True)</span>
-</span><span id="__span-0-1403"><a id="__codelineno-0-1403" name="__codelineno-0-1403"></a><span class="sd">    ```</span>
+</span><span id="__span-0-1393"><a id="__codelineno-0-1393" name="__codelineno-0-1393"></a><span class="sd">    The provide the necessary input for StepUp, git is called through a wrapper script.</span>
+</span><span id="__span-0-1394"><a id="__codelineno-0-1394" name="__codelineno-0-1394"></a><span class="sd">    This wrapper first infers the git root directory with `git rev-parse --show-toplevel`.</span>
+</span><span id="__span-0-1395"><a id="__codelineno-0-1395" name="__codelineno-0-1395"></a><span class="sd">    It then amends the input dependencies with the following two files:</span>
+</span><span id="__span-0-1396"><a id="__codelineno-0-1396" name="__codelineno-0-1396"></a>
+</span><span id="__span-0-1397"><a id="__codelineno-0-1397" name="__codelineno-0-1397"></a><span class="sd">      - gitroot / &#39;.git/HEAD&#39;</span>
+</span><span id="__span-0-1398"><a id="__codelineno-0-1398" name="__codelineno-0-1398"></a><span class="sd">      - gitroot / &#39;.git/refs/branches/&lt;branch&gt;&#39;</span>
+</span><span id="__span-0-1399"><a id="__codelineno-0-1399" name="__codelineno-0-1399"></a>
+</span><span id="__span-0-1400"><a id="__codelineno-0-1400" name="__codelineno-0-1400"></a><span class="sd">    As a result, the step will be rescheduled when the current commit id or branch changes.</span>
+</span><span id="__span-0-1401"><a id="__codelineno-0-1401" name="__codelineno-0-1401"></a>
+</span><span id="__span-0-1402"><a id="__codelineno-0-1402" name="__codelineno-0-1402"></a><span class="sd">    It is recommended to make gitroot / &#39;.git/&#39; and all of its contents static</span>
+</span><span id="__span-0-1403"><a id="__codelineno-0-1403" name="__codelineno-0-1403"></a><span class="sd">    with recursive deferred glob as follows:</span>
 </span><span id="__span-0-1404"><a id="__codelineno-0-1404" name="__codelineno-0-1404"></a>
-</span><span id="__span-0-1405"><a id="__codelineno-0-1405" name="__codelineno-0-1405"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1406"><a id="__codelineno-0-1406" name="__codelineno-0-1406"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1407"><a id="__codelineno-0-1407" name="__codelineno-0-1407"></a><span class="sd">    command</span>
-</span><span id="__span-0-1408"><a id="__codelineno-0-1408" name="__codelineno-0-1408"></a><span class="sd">        The git command to run, e.g. `git describe --tags`</span>
-</span><span id="__span-0-1409"><a id="__codelineno-0-1409" name="__codelineno-0-1409"></a><span class="sd">        or `git log -n1 --pretty=&#39;format:%cs (%h)`.</span>
-</span><span id="__span-0-1410"><a id="__codelineno-0-1410" name="__codelineno-0-1410"></a><span class="sd">    out</span>
-</span><span id="__span-0-1411"><a id="__codelineno-0-1411" name="__codelineno-0-1411"></a><span class="sd">        An output file for the stdout of the git command.</span>
-</span><span id="__span-0-1412"><a id="__codelineno-0-1412" name="__codelineno-0-1412"></a><span class="sd">    workdir</span>
-</span><span id="__span-0-1413"><a id="__codelineno-0-1413" name="__codelineno-0-1413"></a><span class="sd">        The working directory where the git command must be executed.</span>
-</span><span id="__span-0-1414"><a id="__codelineno-0-1414" name="__codelineno-0-1414"></a><span class="sd">    optional</span>
-</span><span id="__span-0-1415"><a id="__codelineno-0-1415" name="__codelineno-0-1415"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
-</span><span id="__span-0-1416"><a id="__codelineno-0-1416" name="__codelineno-0-1416"></a><span class="sd">    block</span>
-</span><span id="__span-0-1417"><a id="__codelineno-0-1417" name="__codelineno-0-1417"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1418"><a id="__codelineno-0-1418" name="__codelineno-0-1418"></a>
-</span><span id="__span-0-1419"><a id="__codelineno-0-1419" name="__codelineno-0-1419"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1420"><a id="__codelineno-0-1420" name="__codelineno-0-1420"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1421"><a id="__codelineno-0-1421" name="__codelineno-0-1421"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1422"><a id="__codelineno-0-1422" name="__codelineno-0-1422"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1423"><a id="__codelineno-0-1423" name="__codelineno-0-1423"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1424"><a id="__codelineno-0-1424" name="__codelineno-0-1424"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="__span-0-1425"><a id="__codelineno-0-1425" name="__codelineno-0-1425"></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The git command must be a string.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-1426"><a id="__codelineno-0-1426" name="__codelineno-0-1426"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-</span><span id="__span-0-1427"><a id="__codelineno-0-1427" name="__codelineno-0-1427"></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The output of the git command must be a string or None.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-1428"><a id="__codelineno-0-1428" name="__codelineno-0-1428"></a>
-</span><span id="__span-0-1429"><a id="__codelineno-0-1429" name="__codelineno-0-1429"></a>    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;wrap-git&quot;</span>
-</span><span id="__span-0-1430"><a id="__codelineno-0-1430" name="__codelineno-0-1430"></a>    <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-1431"><a id="__codelineno-0-1431" name="__codelineno-0-1431"></a>        <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --out=</span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="__span-0-1432"><a id="__codelineno-0-1432" name="__codelineno-0-1432"></a>    <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -- </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="__span-0-1433"><a id="__codelineno-0-1433" name="__codelineno-0-1433"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-1434"><a id="__codelineno-0-1434" name="__codelineno-0-1434"></a>        <span class="n">action</span><span class="p">,</span>
-</span><span id="__span-0-1435"><a id="__codelineno-0-1435" name="__codelineno-0-1435"></a>        <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-</span><span id="__span-0-1436"><a id="__codelineno-0-1436" name="__codelineno-0-1436"></a>        <span class="n">workdir</span><span class="o">=</span><span class="n">workdir</span><span class="p">,</span>
-</span><span id="__span-0-1437"><a id="__codelineno-0-1437" name="__codelineno-0-1437"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
-</span><span id="__span-0-1438"><a id="__codelineno-0-1438" name="__codelineno-0-1438"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
-</span><span id="__span-0-1439"><a id="__codelineno-0-1439" name="__codelineno-0-1439"></a>    <span class="p">)</span>
+</span><span id="__span-0-1405"><a id="__codelineno-0-1405" name="__codelineno-0-1405"></a><span class="sd">    ```python</span>
+</span><span id="__span-0-1406"><a id="__codelineno-0-1406" name="__codelineno-0-1406"></a><span class="sd">    glob(&quot;.git/**&quot;, _defer=True)</span>
+</span><span id="__span-0-1407"><a id="__codelineno-0-1407" name="__codelineno-0-1407"></a><span class="sd">    ```</span>
+</span><span id="__span-0-1408"><a id="__codelineno-0-1408" name="__codelineno-0-1408"></a>
+</span><span id="__span-0-1409"><a id="__codelineno-0-1409" name="__codelineno-0-1409"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1410"><a id="__codelineno-0-1410" name="__codelineno-0-1410"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1411"><a id="__codelineno-0-1411" name="__codelineno-0-1411"></a><span class="sd">    command</span>
+</span><span id="__span-0-1412"><a id="__codelineno-0-1412" name="__codelineno-0-1412"></a><span class="sd">        The git command to run, e.g. `git describe --tags`</span>
+</span><span id="__span-0-1413"><a id="__codelineno-0-1413" name="__codelineno-0-1413"></a><span class="sd">        or `git log -n1 --pretty=&#39;format:%cs (%h)`.</span>
+</span><span id="__span-0-1414"><a id="__codelineno-0-1414" name="__codelineno-0-1414"></a><span class="sd">    inp</span>
+</span><span id="__span-0-1415"><a id="__codelineno-0-1415" name="__codelineno-0-1415"></a><span class="sd">        Input files that the git command depends on, if any.</span>
+</span><span id="__span-0-1416"><a id="__codelineno-0-1416" name="__codelineno-0-1416"></a><span class="sd">    env</span>
+</span><span id="__span-0-1417"><a id="__codelineno-0-1417" name="__codelineno-0-1417"></a><span class="sd">        Environment variables that affect the output of the git command, if any.</span>
+</span><span id="__span-0-1418"><a id="__codelineno-0-1418" name="__codelineno-0-1418"></a><span class="sd">    out</span>
+</span><span id="__span-0-1419"><a id="__codelineno-0-1419" name="__codelineno-0-1419"></a><span class="sd">        Output files produced by the git command, if any.</span>
+</span><span id="__span-0-1420"><a id="__codelineno-0-1420" name="__codelineno-0-1420"></a><span class="sd">    vol</span>
+</span><span id="__span-0-1421"><a id="__codelineno-0-1421" name="__codelineno-0-1421"></a><span class="sd">        Volatile files created by the git command, if any.</span>
+</span><span id="__span-0-1422"><a id="__codelineno-0-1422" name="__codelineno-0-1422"></a><span class="sd">    stdout</span>
+</span><span id="__span-0-1423"><a id="__codelineno-0-1423" name="__codelineno-0-1423"></a><span class="sd">        An output file for the stdout of the git command.</span>
+</span><span id="__span-0-1424"><a id="__codelineno-0-1424" name="__codelineno-0-1424"></a><span class="sd">    workdir</span>
+</span><span id="__span-0-1425"><a id="__codelineno-0-1425" name="__codelineno-0-1425"></a><span class="sd">        The working directory where the git command must be executed.</span>
+</span><span id="__span-0-1426"><a id="__codelineno-0-1426" name="__codelineno-0-1426"></a><span class="sd">    optional</span>
+</span><span id="__span-0-1427"><a id="__codelineno-0-1427" name="__codelineno-0-1427"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-1428"><a id="__codelineno-0-1428" name="__codelineno-0-1428"></a><span class="sd">    block</span>
+</span><span id="__span-0-1429"><a id="__codelineno-0-1429" name="__codelineno-0-1429"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1430"><a id="__codelineno-0-1430" name="__codelineno-0-1430"></a>
+</span><span id="__span-0-1431"><a id="__codelineno-0-1431" name="__codelineno-0-1431"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1432"><a id="__codelineno-0-1432" name="__codelineno-0-1432"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1433"><a id="__codelineno-0-1433" name="__codelineno-0-1433"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1434"><a id="__codelineno-0-1434" name="__codelineno-0-1434"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1435"><a id="__codelineno-0-1435" name="__codelineno-0-1435"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1436"><a id="__codelineno-0-1436" name="__codelineno-0-1436"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-0-1437"><a id="__codelineno-0-1437" name="__codelineno-0-1437"></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The git command must be a string.&quot;</span><span class="p">)</span>
+</span><span id="__span-0-1438"><a id="__codelineno-0-1438" name="__codelineno-0-1438"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">stdout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+</span><span id="__span-0-1439"><a id="__codelineno-0-1439" name="__codelineno-0-1439"></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The stdout filename of the git command must be a string or None.&quot;</span><span class="p">)</span>
+</span><span id="__span-0-1440"><a id="__codelineno-0-1440" name="__codelineno-0-1440"></a>
+</span><span id="__span-0-1441"><a id="__codelineno-0-1441" name="__codelineno-0-1441"></a>    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;wrap-git&quot;</span>
+</span><span id="__span-0-1442"><a id="__codelineno-0-1442" name="__codelineno-0-1442"></a>    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-1443"><a id="__codelineno-0-1443" name="__codelineno-0-1443"></a>        <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --stdout=</span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-1444"><a id="__codelineno-0-1444" name="__codelineno-0-1444"></a>    <span class="n">action</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -- </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-1445"><a id="__codelineno-0-1445" name="__codelineno-0-1445"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
+</span><span id="__span-0-1446"><a id="__codelineno-0-1446" name="__codelineno-0-1446"></a>        <span class="n">action</span><span class="p">,</span>
+</span><span id="__span-0-1447"><a id="__codelineno-0-1447" name="__codelineno-0-1447"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span>
+</span><span id="__span-0-1448"><a id="__codelineno-0-1448" name="__codelineno-0-1448"></a>        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+</span><span id="__span-0-1449"><a id="__codelineno-0-1449" name="__codelineno-0-1449"></a>        <span class="n">out</span><span class="o">=</span><span class="p">[</span><span class="n">stdout</span><span class="p">,</span> <span class="o">*</span><span class="n">out</span><span class="p">]</span> <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">out</span><span class="p">,</span>
+</span><span id="__span-0-1450"><a id="__codelineno-0-1450" name="__codelineno-0-1450"></a>        <span class="n">vol</span><span class="o">=</span><span class="n">vol</span><span class="p">,</span>
+</span><span id="__span-0-1451"><a id="__codelineno-0-1451" name="__codelineno-0-1451"></a>        <span class="n">workdir</span><span class="o">=</span><span class="n">workdir</span><span class="p">,</span>
+</span><span id="__span-0-1452"><a id="__codelineno-0-1452" name="__codelineno-0-1452"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
+</span><span id="__span-0-1453"><a id="__codelineno-0-1453" name="__codelineno-0-1453"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
+</span><span id="__span-0-1454"><a id="__codelineno-0-1454" name="__codelineno-0-1454"></a>    <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6875,22 +6943,7 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>stepup/reprep/api.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1442">1442</a></span>
-<span class="normal"><a href="#__codelineno-0-1443">1443</a></span>
-<span class="normal"><a href="#__codelineno-0-1444">1444</a></span>
-<span class="normal"><a href="#__codelineno-0-1445">1445</a></span>
-<span class="normal"><a href="#__codelineno-0-1446">1446</a></span>
-<span class="normal"><a href="#__codelineno-0-1447">1447</a></span>
-<span class="normal"><a href="#__codelineno-0-1448">1448</a></span>
-<span class="normal"><a href="#__codelineno-0-1449">1449</a></span>
-<span class="normal"><a href="#__codelineno-0-1450">1450</a></span>
-<span class="normal"><a href="#__codelineno-0-1451">1451</a></span>
-<span class="normal"><a href="#__codelineno-0-1452">1452</a></span>
-<span class="normal"><a href="#__codelineno-0-1453">1453</a></span>
-<span class="normal"><a href="#__codelineno-0-1454">1454</a></span>
-<span class="normal"><a href="#__codelineno-0-1455">1455</a></span>
-<span class="normal"><a href="#__codelineno-0-1456">1456</a></span>
-<span class="normal"><a href="#__codelineno-0-1457">1457</a></span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1457">1457</a></span>
 <span class="normal"><a href="#__codelineno-0-1458">1458</a></span>
 <span class="normal"><a href="#__codelineno-0-1459">1459</a></span>
 <span class="normal"><a href="#__codelineno-0-1460">1460</a></span>
@@ -6903,35 +6956,50 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
 <span class="normal"><a href="#__codelineno-0-1467">1467</a></span>
 <span class="normal"><a href="#__codelineno-0-1468">1468</a></span>
 <span class="normal"><a href="#__codelineno-0-1469">1469</a></span>
-<span class="normal"><a href="#__codelineno-0-1470">1470</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1442"><a id="__codelineno-0-1442" name="__codelineno-0-1442"></a><span class="k">def</span><span class="w"> </span><span class="nf">zip_inventory</span><span class="p">(</span>
-</span><span id="__span-0-1443"><a id="__codelineno-0-1443" name="__codelineno-0-1443"></a>    <span class="n">path_inventory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="__span-0-1444"><a id="__codelineno-0-1444" name="__codelineno-0-1444"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
-</span><span id="__span-0-1445"><a id="__codelineno-0-1445" name="__codelineno-0-1445"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.</span>
-</span><span id="__span-0-1446"><a id="__codelineno-0-1446" name="__codelineno-0-1446"></a>
-</span><span id="__span-0-1447"><a id="__codelineno-0-1447" name="__codelineno-0-1447"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-1448"><a id="__codelineno-0-1448" name="__codelineno-0-1448"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-1449"><a id="__codelineno-0-1449" name="__codelineno-0-1449"></a><span class="sd">    path_inventory</span>
-</span><span id="__span-0-1450"><a id="__codelineno-0-1450" name="__codelineno-0-1450"></a><span class="sd">        A file created with the `make_inventory` API or with the command-line script</span>
-</span><span id="__span-0-1451"><a id="__codelineno-0-1451" name="__codelineno-0-1451"></a><span class="sd">        `rr-make-inventory`.</span>
-</span><span id="__span-0-1452"><a id="__codelineno-0-1452" name="__codelineno-0-1452"></a><span class="sd">    path_zip</span>
-</span><span id="__span-0-1453"><a id="__codelineno-0-1453" name="__codelineno-0-1453"></a><span class="sd">        The output ZIP file</span>
-</span><span id="__span-0-1454"><a id="__codelineno-0-1454" name="__codelineno-0-1454"></a><span class="sd">    optional</span>
-</span><span id="__span-0-1455"><a id="__codelineno-0-1455" name="__codelineno-0-1455"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
-</span><span id="__span-0-1456"><a id="__codelineno-0-1456" name="__codelineno-0-1456"></a><span class="sd">    block</span>
-</span><span id="__span-0-1457"><a id="__codelineno-0-1457" name="__codelineno-0-1457"></a><span class="sd">        If `True`, the step will always remain pending.</span>
-</span><span id="__span-0-1458"><a id="__codelineno-0-1458" name="__codelineno-0-1458"></a>
-</span><span id="__span-0-1459"><a id="__codelineno-0-1459" name="__codelineno-0-1459"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-1460"><a id="__codelineno-0-1460" name="__codelineno-0-1460"></a><span class="sd">    -------</span>
-</span><span id="__span-0-1461"><a id="__codelineno-0-1461" name="__codelineno-0-1461"></a><span class="sd">    step_info</span>
-</span><span id="__span-0-1462"><a id="__codelineno-0-1462" name="__codelineno-0-1462"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
-</span><span id="__span-0-1463"><a id="__codelineno-0-1463" name="__codelineno-0-1463"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-1464"><a id="__codelineno-0-1464" name="__codelineno-0-1464"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
-</span><span id="__span-0-1465"><a id="__codelineno-0-1465" name="__codelineno-0-1465"></a>        <span class="s2">&quot;zip-inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-0-1466"><a id="__codelineno-0-1466" name="__codelineno-0-1466"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_inventory</span><span class="p">,</span>
-</span><span id="__span-0-1467"><a id="__codelineno-0-1467" name="__codelineno-0-1467"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_zip</span><span class="p">,</span>
-</span><span id="__span-0-1468"><a id="__codelineno-0-1468" name="__codelineno-0-1468"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
-</span><span id="__span-0-1469"><a id="__codelineno-0-1469" name="__codelineno-0-1469"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
-</span><span id="__span-0-1470"><a id="__codelineno-0-1470" name="__codelineno-0-1470"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-1470">1470</a></span>
+<span class="normal"><a href="#__codelineno-0-1471">1471</a></span>
+<span class="normal"><a href="#__codelineno-0-1472">1472</a></span>
+<span class="normal"><a href="#__codelineno-0-1473">1473</a></span>
+<span class="normal"><a href="#__codelineno-0-1474">1474</a></span>
+<span class="normal"><a href="#__codelineno-0-1475">1475</a></span>
+<span class="normal"><a href="#__codelineno-0-1476">1476</a></span>
+<span class="normal"><a href="#__codelineno-0-1477">1477</a></span>
+<span class="normal"><a href="#__codelineno-0-1478">1478</a></span>
+<span class="normal"><a href="#__codelineno-0-1479">1479</a></span>
+<span class="normal"><a href="#__codelineno-0-1480">1480</a></span>
+<span class="normal"><a href="#__codelineno-0-1481">1481</a></span>
+<span class="normal"><a href="#__codelineno-0-1482">1482</a></span>
+<span class="normal"><a href="#__codelineno-0-1483">1483</a></span>
+<span class="normal"><a href="#__codelineno-0-1484">1484</a></span>
+<span class="normal"><a href="#__codelineno-0-1485">1485</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1457"><a id="__codelineno-0-1457" name="__codelineno-0-1457"></a><span class="k">def</span><span class="w"> </span><span class="nf">zip_inventory</span><span class="p">(</span>
+</span><span id="__span-0-1458"><a id="__codelineno-0-1458" name="__codelineno-0-1458"></a>    <span class="n">path_inventory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="__span-0-1459"><a id="__codelineno-0-1459" name="__codelineno-0-1459"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+</span><span id="__span-0-1460"><a id="__codelineno-0-1460" name="__codelineno-0-1460"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.</span>
+</span><span id="__span-0-1461"><a id="__codelineno-0-1461" name="__codelineno-0-1461"></a>
+</span><span id="__span-0-1462"><a id="__codelineno-0-1462" name="__codelineno-0-1462"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-1463"><a id="__codelineno-0-1463" name="__codelineno-0-1463"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-1464"><a id="__codelineno-0-1464" name="__codelineno-0-1464"></a><span class="sd">    path_inventory</span>
+</span><span id="__span-0-1465"><a id="__codelineno-0-1465" name="__codelineno-0-1465"></a><span class="sd">        A file created with the `make_inventory` API or with the command-line script</span>
+</span><span id="__span-0-1466"><a id="__codelineno-0-1466" name="__codelineno-0-1466"></a><span class="sd">        `rr-make-inventory`.</span>
+</span><span id="__span-0-1467"><a id="__codelineno-0-1467" name="__codelineno-0-1467"></a><span class="sd">    path_zip</span>
+</span><span id="__span-0-1468"><a id="__codelineno-0-1468" name="__codelineno-0-1468"></a><span class="sd">        The output ZIP file</span>
+</span><span id="__span-0-1469"><a id="__codelineno-0-1469" name="__codelineno-0-1469"></a><span class="sd">    optional</span>
+</span><span id="__span-0-1470"><a id="__codelineno-0-1470" name="__codelineno-0-1470"></a><span class="sd">        If `True`, the step is only executed when needed by other steps.</span>
+</span><span id="__span-0-1471"><a id="__codelineno-0-1471" name="__codelineno-0-1471"></a><span class="sd">    block</span>
+</span><span id="__span-0-1472"><a id="__codelineno-0-1472" name="__codelineno-0-1472"></a><span class="sd">        If `True`, the step will always remain pending.</span>
+</span><span id="__span-0-1473"><a id="__codelineno-0-1473" name="__codelineno-0-1473"></a>
+</span><span id="__span-0-1474"><a id="__codelineno-0-1474" name="__codelineno-0-1474"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-1475"><a id="__codelineno-0-1475" name="__codelineno-0-1475"></a><span class="sd">    -------</span>
+</span><span id="__span-0-1476"><a id="__codelineno-0-1476" name="__codelineno-0-1476"></a><span class="sd">    step_info</span>
+</span><span id="__span-0-1477"><a id="__codelineno-0-1477" name="__codelineno-0-1477"></a><span class="sd">        Holds relevant information of the step, useful for defining follow-up steps.</span>
+</span><span id="__span-0-1478"><a id="__codelineno-0-1478" name="__codelineno-0-1478"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-1479"><a id="__codelineno-0-1479" name="__codelineno-0-1479"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">(</span>
+</span><span id="__span-0-1480"><a id="__codelineno-0-1480" name="__codelineno-0-1480"></a>        <span class="s2">&quot;zip-inventory $</span><span class="si">{inp}</span><span class="s2"> $</span><span class="si">{out}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="__span-0-1481"><a id="__codelineno-0-1481" name="__codelineno-0-1481"></a>        <span class="n">inp</span><span class="o">=</span><span class="n">path_inventory</span><span class="p">,</span>
+</span><span id="__span-0-1482"><a id="__codelineno-0-1482" name="__codelineno-0-1482"></a>        <span class="n">out</span><span class="o">=</span><span class="n">path_zip</span><span class="p">,</span>
+</span><span id="__span-0-1483"><a id="__codelineno-0-1483" name="__codelineno-0-1483"></a>        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
+</span><span id="__span-0-1484"><a id="__codelineno-0-1484" name="__codelineno-0-1484"></a>        <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
+</span><span id="__span-0-1485"><a id="__codelineno-0-1485" name="__codelineno-0-1485"></a>    <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6974,7 +7042,7 @@ or <code>git log -n1 --pretty='format:%cs (%h)</code>.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      2024-2025, Toon Verstraelen
+      2024-2026, Toon Verstraelen
     </div>
   
   

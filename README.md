@@ -2,9 +2,9 @@
 
 # StepUp RepRep
 
-[![release](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/release.yaml/badge.svg)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/release.yaml)
-[![pytest](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/pytest.yaml/badge.svg)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/pytest.yaml)
-[![mkdocs](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/mkdocs.yaml/badge.svg)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/mkdocs.yaml)
+[![release](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/release.yaml)
+[![pytest](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/pytest.yaml/badge.svg?branch=main)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/pytest.yaml)
+[![mkdocs](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/mkdocs.yaml/badge.svg?branch=main)](https://github.com/reproducible-reporting/stepup-reprep/actions/workflows/mkdocs.yaml)
 [![PyPI Version](https://img.shields.io/pypi/v/stepup-reprep)](https://pypi.org/project/stepup-reprep/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stepup-reprep)
 ![GPL-3 License](https://img.shields.io/github/license/reproducible-reporting/stepup-reprep)

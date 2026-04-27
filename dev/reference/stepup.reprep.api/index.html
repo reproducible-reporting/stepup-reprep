@@ -2916,13 +2916,13 @@ Some limitations include:</p>
 <li>SVG figures with references to external SVG images are not processed correctly.
   These images are not rendered, neither are they included in the dep file.
   This currently being addressed in the following issue:
-  https://github.com/typst/typst/issues/6858</li>
+  <a href="https://github.com/typst/typst/issues/6858">https://github.com/typst/typst/issues/6858</a></li>
 <li>When the typst compiler detects an error in the input, it doesn&rsquo;t write the dep file.
   While this is the desirable behavior for Make-like tools, it does not work well in StepUp.
   This issue is fixed in the main branch of typst, but not yet in a released version:
-  https://github.com/typst/typst/pull/7209
+  <a href="https://github.com/typst/typst/pull/7209">https://github.com/typst/typst/pull/7209</a>
   After the next release of Typst, StepUp RepRep will be updated to use of JSON dep files:
-  https://github.com/reproducible-reporting/stepup-reprep/pull/22</li>
+  <a href="https://github.com/reproducible-reporting/stepup-reprep/pull/22">https://github.com/reproducible-reporting/stepup-reprep/pull/22</a></li>
 </ul>
 </div>
 
@@ -3240,13 +3240,13 @@ the inventory file is always written, unless this argument is set to <code>False
 </span><span id="__span-0-387"><a id="__codelineno-0-387" name="__codelineno-0-387"></a><span class="sd">        - SVG figures with references to external SVG images are not processed correctly.</span>
 </span><span id="__span-0-388"><a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="sd">          These images are not rendered, neither are they included in the dep file.</span>
 </span><span id="__span-0-389"><a id="__codelineno-0-389" name="__codelineno-0-389"></a><span class="sd">          This currently being addressed in the following issue:</span>
-</span><span id="__span-0-390"><a id="__codelineno-0-390" name="__codelineno-0-390"></a><span class="sd">          https://github.com/typst/typst/issues/6858</span>
+</span><span id="__span-0-390"><a id="__codelineno-0-390" name="__codelineno-0-390"></a><span class="sd">          &lt;https://github.com/typst/typst/issues/6858&gt;</span>
 </span><span id="__span-0-391"><a id="__codelineno-0-391" name="__codelineno-0-391"></a><span class="sd">        - When the typst compiler detects an error in the input, it doesn&#39;t write the dep file.</span>
 </span><span id="__span-0-392"><a id="__codelineno-0-392" name="__codelineno-0-392"></a><span class="sd">          While this is the desirable behavior for Make-like tools, it does not work well in StepUp.</span>
 </span><span id="__span-0-393"><a id="__codelineno-0-393" name="__codelineno-0-393"></a><span class="sd">          This issue is fixed in the main branch of typst, but not yet in a released version:</span>
-</span><span id="__span-0-394"><a id="__codelineno-0-394" name="__codelineno-0-394"></a><span class="sd">          https://github.com/typst/typst/pull/7209</span>
+</span><span id="__span-0-394"><a id="__codelineno-0-394" name="__codelineno-0-394"></a><span class="sd">          &lt;https://github.com/typst/typst/pull/7209&gt;</span>
 </span><span id="__span-0-395"><a id="__codelineno-0-395" name="__codelineno-0-395"></a><span class="sd">          After the next release of Typst, StepUp RepRep will be updated to use of JSON dep files:</span>
-</span><span id="__span-0-396"><a id="__codelineno-0-396" name="__codelineno-0-396"></a><span class="sd">          https://github.com/reproducible-reporting/stepup-reprep/pull/22</span>
+</span><span id="__span-0-396"><a id="__codelineno-0-396" name="__codelineno-0-396"></a><span class="sd">          &lt;https://github.com/reproducible-reporting/stepup-reprep/pull/22&gt;</span>
 </span><span id="__span-0-397"><a id="__codelineno-0-397" name="__codelineno-0-397"></a>
 </span><span id="__span-0-398"><a id="__codelineno-0-398" name="__codelineno-0-398"></a><span class="sd">    Parameters</span>
 </span><span id="__span-0-399"><a id="__codelineno-0-399" name="__codelineno-0-399"></a><span class="sd">    ----------</span>
@@ -3302,7 +3302,7 @@ the inventory file is always written, unless this argument is set to <code>False
 </span><span id="__span-0-449"><a id="__codelineno-0-449" name="__codelineno-0-449"></a>        <span class="n">dest</span> <span class="o">=</span> <span class="n">subs</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
 </span><span id="__span-0-450"><a id="__codelineno-0-450" name="__codelineno-0-450"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_typ</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.typ&quot;</span><span class="p">):</span>
 </span><span id="__span-0-451"><a id="__codelineno-0-451" name="__codelineno-0-451"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The input of the typst command must end with .typ, got </span><span class="si">{</span><span class="n">path_typ</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-452"><a id="__codelineno-0-452" name="__codelineno-0-452"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_typ</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;.svg&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">])</span>
+</span><span id="__span-0-452"><a id="__codelineno-0-452" name="__codelineno-0-452"></a>    <span class="n">path_out</span> <span class="o">=</span> <span class="n">make_path_out</span><span class="p">(</span><span class="n">path_typ</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;.svg&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.html&quot;</span><span class="p">])</span>
 </span><span id="__span-0-453"><a id="__codelineno-0-453" name="__codelineno-0-453"></a>
 </span><span id="__span-0-454"><a id="__codelineno-0-454" name="__codelineno-0-454"></a>    <span class="n">stem</span> <span class="o">=</span> <span class="n">path_typ</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
 </span><span id="__span-0-455"><a id="__codelineno-0-455" name="__codelineno-0-455"></a>    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;compile-typst&quot;</span><span class="p">]</span>

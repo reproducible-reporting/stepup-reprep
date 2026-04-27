@@ -387,13 +387,13 @@ def compile_typst(
         - SVG figures with references to external SVG images are not processed correctly.
           These images are not rendered, neither are they included in the dep file.
           This currently being addressed in the following issue:
-          https://github.com/typst/typst/issues/6858
+          <https://github.com/typst/typst/issues/6858>
         - When the typst compiler detects an error in the input, it doesn't write the dep file.
           While this is the desirable behavior for Make-like tools, it does not work well in StepUp.
           This issue is fixed in the main branch of typst, but not yet in a released version:
-          https://github.com/typst/typst/pull/7209
+          <https://github.com/typst/typst/pull/7209>
           After the next release of Typst, StepUp RepRep will be updated to use of JSON dep files:
-          https://github.com/reproducible-reporting/stepup-reprep/pull/22
+          <https://github.com/reproducible-reporting/stepup-reprep/pull/22>
 
     Parameters
     ----------
@@ -449,7 +449,7 @@ def compile_typst(
         dest = subs(dest)
     if not path_typ.endswith(".typ"):
         raise ValueError(f"The input of the typst command must end with .typ, got {path_typ}.")
-    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png"])
+    path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])
 
     stem = path_typ[:-4]
     args = ["compile-typst"]

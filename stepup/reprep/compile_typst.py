@@ -47,8 +47,6 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
-    if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg")):
-        raise ValueError("The Typst output must be a PDF, PNG, or SVG file.")
 
     # Get Typst executable and prepare some arguments that
     if args.typst is None:

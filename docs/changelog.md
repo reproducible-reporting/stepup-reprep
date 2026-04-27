@@ -10,7 +10,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+(no summary yet)
+
+### Fixed
+
+- Allow for HTML output files in `compile_typst`.
 
 ## [3.1.9][] - 2026-03-22 {: v3.1.9 }
 

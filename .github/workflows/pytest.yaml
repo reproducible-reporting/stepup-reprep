@@ -35,7 +35,7 @@ jobs:
             ubuntu-version: '24.04'
     runs-on: ubuntu-${{ matrix.ubuntu-version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -45,9 +45,9 @@ jobs:
         with:
           tectonic-version: 0.15.0
       - name: Install typst
-        uses: typst-community/setup-typst@v4
+        uses: typst-community/setup-typst@v5
         with:
-          typst-version: 0.14
+          typst-version: v0.14
       - name: Install oldest versions of supported dependencies
         if: ${{ matrix.python-version == '3.11'}}
         run: pip install -r .github/requirements-old.txt

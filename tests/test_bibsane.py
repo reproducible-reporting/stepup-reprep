@@ -1,5 +1,5 @@
 # StepUp RepRep is the StepUp extension for Reproducible Reporting.
-# © 2024–2025 Toon Verstraelen
+# Copyright 2024-2026 Toon Verstraelen
 #
 # This file is part of StepUp RepRep.
 #
@@ -25,6 +25,7 @@ import os
 import pytest
 from path import Path
 
+from stepup.reprep.bibsane import brace_words
 from stepup.reprep.bibsane import main as bibsane_main
 
 OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
@@ -37,14 +38,17 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "aux-empty",
         "aux-missing",
         "aux-unused",
+        "brace-title-words",
         "drop-entries",
         "duplicate-doi-ignore",
         "duplicate-doi-fail",
         "duplicate-doi-merge-fail",
         "duplicate-doi-merge-pass",
+        "math",
         "minimal",
         "normalize-doi",
         "normalize-whitespace",
+        "pages-empty",
         "pages-range-broken",
         "pages-range1",
         "pages-range2",
@@ -52,12 +56,13 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "policy-may",
         "policy-must-fail",
         "policy-must-pass",
+        "preserve-commands",
         "sort",
         "sort-missing-fields",
         "strip-braces",
     ],
 )
-def test_bibsane_cases(name):
+def test_example(name):
     args = ["input.bib", "--out", "current.bib"]
     with contextlib.chdir(f"tests/bibsane/{name}"):
         path_config = Path("bibsane.yaml")
@@ -71,7 +76,7 @@ def test_bibsane_cases(name):
         with open("current.out", "w") as f_out, contextlib.redirect_stdout(f_out):
             bibsane_main(args)
 
-        for suffix in ["bib", "out"]:
+        for suffix in ["out", "bib"]:
             path_expected = Path(f"expected.{suffix}")
             path_current = Path(f"current.{suffix}")
             if OVERWRITE_EXPECTED:
@@ -86,3 +91,9 @@ def test_bibsane_cases(name):
                 assert current == expected
             else:
                 assert not path_current.exists()
+
+
+def test_brace_word():
+    assert brace_words("word WORD") == "word {WORD}"
+    assert brace_words("This is CamelCase") == "This is {CamelCase}"
+    assert brace_words("Chemical formula CO2") == "Chemical formula {CO2}"

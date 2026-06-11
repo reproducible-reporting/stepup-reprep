@@ -4,7 +4,6 @@
     Found 1 citations
     Found 1 unique citations
 🔨 Checking unused and missing citations
-    🧹 Dropping unused key: foo1
-    Found 1 used BibTeX entries
+    🧹 Unused key: foo1
 🔨 Check for potential mistakes in BibTeX keys
 💾 Please check the new or corrected file: current.bib

@@ -1,5 +1,5 @@
 # StepUp RepRep is the StepUp extension for Reproducible Reporting.
-# © 2024–2025 Toon Verstraelen
+# Copyright 2024-2026 Toon Verstraelen
 #
 # This file is part of StepUp RepRep.
 #

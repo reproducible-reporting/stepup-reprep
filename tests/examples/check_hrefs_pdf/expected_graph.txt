@@ -101,6 +101,7 @@ file:main.pdf
 
 step:check_hrefs main.pdf
                state = FAILED
+               dirty = yes
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:main.pdf

@@ -1,0 +1,16 @@
+[
+  {
+    "author": "Last, First",
+    "doi": "10.1234/abcde",
+    "journal": "Journal of \\\"Quotes\\\"",
+    "number": "6",
+    "pages": "064111",
+    "title": "Title with \\{Brace and \\\"Quote and % ignored comment",
+    "month": "mar",
+    "note": "\n    An example note with a URL containing underscores,\n    which pybtex+latexcodec would incorrectly try to decode:\n    \\url{https://example.com/some_path_with_underscores}.\n    Not that pybtex and latexcodec are to blame.\n    LaTeX is just such a mess!\n ",
+    "volume": "A1",
+    "year": "2025",
+    "__ETYPE__": "article",
+    "__KEY__": "some-some_some.some?2025"
+  }
+]

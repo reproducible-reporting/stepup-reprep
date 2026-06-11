@@ -48,6 +48,7 @@ file:test.md
 
 step:check_hrefs test.md
                state = FAILED
+               dirty = yes
           created by   step:runpy ./plan.py
             consumes   file:./
             consumes   file:test.md

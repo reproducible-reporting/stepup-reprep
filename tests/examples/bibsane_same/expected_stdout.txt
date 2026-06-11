@@ -9,7 +9,7 @@
 Command               stepup act -- bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 Return code           0
 ──────────────────────────────── Invalid inputs ────────────────────────────────
-Input changed unexpectedly: references.bib (digest bfc27a8d ➜ 990a074c, size 1644 ➜ 1626)
+Input changed unexpectedly: references.bib (digest bfc27a8d ➜ f933ff21, size 1644 ➜ 1585)
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Load references.bib
     Found 1 BibTeX entries
@@ -17,12 +17,12 @@ Input changed unexpectedly: references.bib (digest bfc27a8d ➜ 990a074c, size 1
     Found 1 citations
     Found 1 unique citations
 🔨 Checking unused and missing citations
-    Found 1 used BibTeX entries
 🔨 Check for potential mistakes in BibTeX keys
 🔨 Normalize DOIs
 🔨 Normalize whitespace
 🔨 Fix double hyphen in page ranges
 🔨 Abbreviate journal names
+    📓 The Journal of Chemical Physics -> J. Chem. Phys.
 💾 Please check the new or corrected file: references.bib
 ────────────────────────────────────────────────────────────────────────────────
         1/2 |      ERROR │ The scheduler has been drained due to unexpected input changes.

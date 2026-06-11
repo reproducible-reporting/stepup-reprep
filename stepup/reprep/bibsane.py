@@ -1,5 +1,5 @@
 # StepUp RepRep is the StepUp extension for Reproducible Reporting.
-# © 2024–2025 Toon Verstraelen
+# Copyright 2024-2026 Toon Verstraelen
 #
 # This file is part of StepUp RepRep.
 #
@@ -29,12 +29,13 @@ from collections.abc import Collection
 
 import attrs
 import cattrs
-import pybtex.database
 import yaml
 from path import Path
 from pyiso4.ltwa import Abbreviate
 
 from stepup.core.hash import compute_file_digest
+
+from .bibparser import format_bib, parse_bib
 
 __all__ = ("BibsaneConfig", "main")
 
@@ -76,9 +77,6 @@ class BibsaneConfig:
     drop_entry_types: list[str] = attrs.field(default=attrs.Factory(list))
     """The entry types to drop from the BibTeX database."""
 
-    strip_braces: bool = attrs.field(default=False)
-    """Set to `True` to remove unwarranted use of braces in field values."""
-
     normalize_doi: bool = attrs.field(default=False)
     """Set to `True` to normalize the DOIs in the entries."""
 
@@ -96,6 +94,12 @@ class BibsaneConfig:
 
     By default, pyiso4 is used to abbreviate journal names.
     The custom abbreviations can override those provided by pyiso4.
+    """
+
+    normalize_braces: bool = attrs.field(default=False)
+    """Strip redundant braces and add them where needed.
+
+    This only affects the fields `title`, `booktitle` and `journal`.
     """
 
     sort: bool = attrs.field(default=False)
@@ -137,11 +141,11 @@ def main(argv: list[str] | None = None):
 
     # Load the bib file.
     print("📂 Load", args.bib)
-    entries = collect_entries(args.bib)
+    with open(args.bib) as f:
+        entries = parse_bib(f.read())
     print(f"    Found {len(entries)} BibTeX entries")
 
     # Check for duplicate keys
-    # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
     if args.config.duplicate_key == DuplicatePolicy.FAIL:
         print("🔨 Checking for duplicate BibTeX entry keys")
         if not check_duplicate_keys(entries):
@@ -168,10 +172,9 @@ def main(argv: list[str] | None = None):
         if len(citations) == 0:
             print("    ❓ Ignored aux file because it lacks citations.")
         else:
-            # Drop unused and check for missing
+            # Report unused and check for missing
             print("🔨 Checking unused and missing citations")
             bibdata_complete = check_citations(entries, citations)
-            print(f"    Found {len(entries)} used BibTeX entries")
             if not bibdata_complete:
                 print("    ❌ Stop early due to missing citations")
                 return RETURN_CODE_BROKEN
@@ -191,13 +194,7 @@ def main(argv: list[str] | None = None):
         if not clean_entries(entries, args.config.citation_policies):
             retcode = RETURN_CODE_BROKEN
 
-    # Clean up things that should never be there, not optional
-    if args.config.strip_braces:
-        print("🔨 Remove braces from fields")
-        strip_braces(entries)
-
     # Check for potential problems that cannot be fixed automatically, not optional.
-    # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
     print("🔨 Check for potential mistakes in BibTeX keys")
     if not case_consistent_keys(entries):
         retcode = RETURN_CODE_BROKEN
@@ -210,7 +207,6 @@ def main(argv: list[str] | None = None):
             retcode = RETURN_CODE_BROKEN
 
     # Remove redundant whitespace
-    # TODO: This is mostly redundant because pybtex already normalizes whitespace.
     if args.config.normalize_whitespace:
         print("🔨 Normalize whitespace")
         normalize_whitespace(entries)
@@ -226,11 +222,15 @@ def main(argv: list[str] | None = None):
         print("🔨 Abbreviate journal names")
         abbreviate_journal_iso(entries, args.config.custom_abbreviations)
 
+    # Normalize braces in titles, booktitles and journal names
+    if args.config.normalize_braces:
+        print("🔨 Normalize braces in titles, booktitles and journal names")
+        normalize_braces(entries)
+
     # Merge entries
     if args.config.duplicate_key == DuplicatePolicy.MERGE:
-        # TODO: This is currently pointless because pybtex already fails early on duplicate keys.
         print("🔨 Merge references by BibTeX key")
-        if merge_entries(entries, KEY):
+        if merge_entries(entries, "__KEY__"):
             retcode = RETURN_CODE_BROKEN
         print(f"    {len(entries)} entries left")
     if args.config.duplicate_doi == DuplicatePolicy.MERGE:
@@ -277,45 +277,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return args
 
 
-class BibsaneMagicConstants(enum.Enum):
-    """Magic constants for BibSane."""
-
-    BIB_ENTRY_TYPE = enum.auto()
-    BIB_KEY = enum.auto()
-
-
-# Short and convenient dictionary keys for special BibTeX entry fields.
-ETYPE = BibsaneMagicConstants.BIB_ENTRY_TYPE
-KEY = BibsaneMagicConstants.BIB_KEY
-
-
-def collect_entries(fn_bib: str) -> list[dict]:
-    """Collect entries from the BibTeX files into standard Python data structures."""
-    entries = []
-    lib = pybtex.database.parse_file(fn_bib)
-    for pyb_entry in lib.entries.values():
-        # Convert to a simple dictionary, to enforce modularity between bibsane and pybtex.
-        entry = {
-            ETYPE: pyb_entry.type.lower(),
-            KEY: pyb_entry.key,
-        }
-        for key, value in pyb_entry.fields.items():
-            entry[key.lower()] = value
-        for role, names in pyb_entry.persons.items():
-            entry[role.lower()] = " and ".join(str(name) for name in names)
-        entries.append(entry)
-    return entries
-
-
 def check_duplicate_keys(entries: list[dict]) -> bool:
     """Check for duplicate BibTeX entry keys."""
     seen_ids = set()
     valid = True
     for entry in entries:
-        if entry[KEY] in seen_ids:
-            print(f"    ‼️ Duplicate BibTeX entry: {entry[KEY]}")
+        if entry["__KEY__"] in seen_ids:
+            print(f"    ‼️ Duplicate BibTeX entry: {entry['__KEY__']}")
             valid = False
-        seen_ids.add(entry[KEY])
+        seen_ids.add(entry["__KEY__"])
     return valid
 
 
@@ -359,23 +329,20 @@ def parse_aux_line(prefix: str, line: str, words: list[str]):
 
 
 def check_citations(entries: list[dict], citations: Collection[str]) -> bool:
-    """Drop unused citations and complain about missing ones."""
+    """Report unused citations and complain about missing ones."""
     # Check for undefined references
-    defined = {entry[KEY] for entry in entries}
+    defined = {entry["__KEY__"] for entry in entries}
     valid = True
     for citation in citations:
         if citation not in defined:
             print("    💀 Missing reference:", citation)
             valid = False
 
-    # Drop unused entries
-    result = []
+    # Report unused entries
     for entry in entries:
-        if entry[KEY] not in citations:
-            print("    🧹 Dropping unused key:", entry[KEY])
+        if entry["__KEY__"] not in citations:
+            print("    🧹 Unused key:", entry["__KEY__"])
             continue
-        result.append(entry)
-    entries[:] = result
     return valid
 
 
@@ -383,8 +350,8 @@ def drop_entry_types(entries: list[dict], drop: Collection[str]):
     """Drop entries of the given types."""
     result = []
     for entry in entries:
-        if entry[ETYPE] in drop:
-            print("    🧹 Dropping irrelevant entry type:", entry[ETYPE])
+        if entry["__ETYPE__"] in drop:
+            print("    🧹 Dropping irrelevant entry type:", entry["__ETYPE__"])
             continue
         result.append(entry)
     entries[:] = result
@@ -396,9 +363,9 @@ def clean_entries(
     """Clean the irrelevant fields in each entry and complain about missing ones."""
     valid = True
     for old_entry in entries:
-        etype = old_entry[ETYPE]
-        key = old_entry[KEY]
-        new_entry = {ETYPE: etype, KEY: key}
+        etype = old_entry["__ETYPE__"]
+        key = old_entry["__KEY__"]
+        new_entry = {"__ETYPE__": etype, "__KEY__": key}
         if "bibsane" in old_entry:
             etype = old_entry.pop("bibsane")
             new_entry["bibsane"] = etype
@@ -420,28 +387,18 @@ def clean_entries(
                     new_entry[field] = old_entry.pop(field)
         if len(old_entry) > 0:
             for field in old_entry:
-                if field not in (ETYPE, KEY):
+                if field not in ("__ETYPE__", "__KEY__"):
                     print(f"    💨 {key}: @{etype} discarding field {field}")
         old_entry.clear()
         old_entry.update(new_entry)
     return valid
 
 
-def strip_braces(entries: list[dict]):
-    """Remove braces from most fields."""
-    exceptions = {"author", "editor", "note", "title"}
-    for entry in entries:
-        # Strip all braces, except from author, editor, note or title
-        for key, value in list(entry.items()):
-            if key not in exceptions:
-                entry[key] = value.replace("{", "").replace("}", "")
-
-
 def case_consistent_keys(entries: list[dict]) -> bool:
     """Detect potential mistakes in the BibTeX entry keys."""
     id_case_map = {}
     for entry in entries:
-        id_case_map.setdefault(entry[KEY].lower(), []).append(entry[KEY])
+        id_case_map.setdefault(entry["__KEY__"].lower(), []).append(entry["__KEY__"])
 
     valid = True
     for groups in id_case_map.values():
@@ -496,7 +453,9 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
         if pages is not None:
             parts = [part.strip() for part in re.split(HYPFUN_REGEX, pages)]
             parts = [part for part in parts if part != ""]
-            if len(parts) == 1:
+            if len(parts) == 0:
+                entry["pages"] = ""
+            elif len(parts) == 1:
                 entry["pages"] = parts[0]
             elif len(parts) == 2:
                 entry["pages"] = "--".join(parts)
@@ -508,16 +467,44 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
 
 def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
     """Replace journal names by their ISO abbreviation."""
-    # Abbreviate journals
     abbreviator = Abbreviate.create()
     for entry in entries:
         journal = entry.get("journal")
         if journal is not None and "." not in journal:
+            # Pyiso4 cannot handle LaTeX escapes, which is critical for ampersands.
+            journal = journal.replace(r"\&", "&")
             abbrev = custom.get(journal)
             if abbrev is None:
-                abbrev = abbreviator(journal, remove_part=True)
+                abbrev = abbreviator(journal, remove_part=False)
+            if abbrev != journal:
+                print(f"    📓 {journal} -> {abbrev}")
             abbrev = custom.get(abbrev, abbrev)
             entry["journal"] = abbrev
+
+
+def normalize_braces(entries: list[dict]):
+    """Wrap words in titles that should preserve capitalization in braces."""
+    for entry in entries:
+        for key in "title", "booktitle", "journal":
+            value = entry.get(key)
+            if value is not None:
+                entry[key] = brace_words(value)
+
+
+NEEDS_BRACES = re.compile(r"^.+[A-Z].*$")
+
+
+def brace_words(title: str) -> str:
+    """Wrap words in titles that should preserve capitalization in braces."""
+    # Remove all existing braces first.
+    title = re.sub(r"[{}]", "", title)
+    result = []
+    for word in title.split():
+        if NEEDS_BRACES.match(word):
+            result.append(f"{{{word}}}")
+        else:
+            result.append(word)
+    return " ".join(result)
 
 
 def merge_entries(entries: list[dict], field) -> bool:
@@ -528,7 +515,7 @@ def merge_entries(entries: list[dict], field) -> bool:
     for entry in entries:
         identifier = entry.get(field)
         if identifier is None:
-            print(f"    👽 Cannot merge entry without {field}:", entry[KEY])
+            print(f"    👽 Cannot merge entry without {field}:", entry["__KEY__"])
             missing_field.append(entry)
         else:
             other = lookup.setdefault(identifier)
@@ -538,7 +525,7 @@ def merge_entries(entries: list[dict], field) -> bool:
                 for key, value in entry.items():
                     if key not in other:
                         other[key] = value
-                    elif key != KEY and other[key] != value:
+                    elif key != "__KEY__" and other[key] != value:
                         print(f"    😭 Same {field}={identifier}, different {key}:")
                         print(f"        {value}")
                         print(f"        {other[key]}")
@@ -555,32 +542,36 @@ def sort_entries(entries: list[dict]):
     def keyfn(entry):
         return (
             entry.get("year", "0000")
-            + entry.get("author", "Aaaa, Aaaa")
-            + entry.get("title", "Title")
+            + entry.get("__KEY__", "aaaa0000").lower()
+            + entry.get("title", "Title").lower()
         )
 
     entries.sort(key=keyfn)
 
 
 def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
-    """Write out the fixed bibtex file, in case it has changed."""
+    """Write out the fixed bibtex file, in case it has changed.
+
+    Parameters
+    ----------
+    enties
+        The list of BibTeX entries as dictionaries.
+    fn_out
+        The output filename.
+    retcode
+        The provisional return code, based on previous checks.
+
+    Returns
+    -------
+    retcode
+        The final return code.
+    """
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
         with tempfile.TemporaryDirectory("rr-bibsane") as dn_tmp:
             fn_tmp = os.path.join(dn_tmp, "tmp.bib")
-
-            # Convert entry dictionaries back into pybtex entries.
-            lib = pybtex.database.BibliographyData()
-            for entry in entries:
-                pyb_entry = pybtex.database.Entry(entry[ETYPE])
-                fields = [
-                    (key.lower(), value) for key, value in entry.items() if key not in (ETYPE, KEY)
-                ]
-                fields.sort()
-                for key, value in fields:
-                    pyb_entry.fields[key] = value
-                lib.add_entry(entry[KEY], pyb_entry)
-            lib.to_file(fn_tmp)
+            with open(fn_tmp, "w") as f:
+                f.write(format_bib(entries))
 
             # Check if the file has changed.
             if os.path.isfile(fn_out):

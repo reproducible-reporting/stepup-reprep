@@ -1,5 +1,5 @@
 # StepUp RepRep is the StepUp extension for Reproducible Reporting.
-# © 2024–2025 Toon Verstraelen
+# Copyright 2024-2026 Toon Verstraelen
 #
 # This file is part of StepUp RepRep.
 #
@@ -77,10 +77,9 @@ def make_subcommand(subparser: argparse.ArgumentParser) -> callable:
     return make_tool
 
 
-def make_tool(args: argparse.Namespace) -> int:
+def make_tool(args: argparse.Namespace):
     """Create an inventory.txt file."""
     make_inventory(args)
-    return 0
 
 
 def make_inventory(args: argparse.Namespace):

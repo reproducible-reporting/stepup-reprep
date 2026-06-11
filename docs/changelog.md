@@ -10,7 +10,65 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no summary yet)
+(no changes yet)
+
+## [3.1.10][] - 2026-04-28 {: v3.1.10 }
+
+This is a minor bugfix release.
+
+### Fixed
+
+- Allow for HTML output files in `compile_typst`.
+
+## [3.1.9][] - 2026-03-22 {: v3.1.9 }
+
+Refactor `wrap_git` to support more flexible specification of inputs and outputs.
+
+### Added
+
+- Support for extra `inp`, `env`, `out`, and `vol` arguments in the `wrap_git` API.
+  For example, this allows one to specify that the git command uses a file like `.gitattributes`.
+  Changes to this file will then trigger the git command to be re-executed in the next build.
+
+### Changed
+
+- The old `out` argument of `wrap_git` is renamed to `stdout`
+  to clarify that it only refers to the stdout of the git command,
+  and to allow for other output files to be specified with the new `out` argument.
+  Existing `plan.py` files must be updated accordingly.
+
+### Fixed
+
+- Update WeasyPrint dependency to version 68.0 to address a security vulnerability in earlier versions.
+  See <https://github.com/advisories/GHSA-983w-rhvv-gwmv>.
+- Update nbconvert dependency to version 7.17.0 to address a security vulnerability in earlier versions.
+  See <https://cwe.mitre.org/data/definitions/427.html>.
+
+## [3.1.8][] - 2025-12-28 {: v3.1.8 }
+
+Bugfix release
+
+### Changed
+
+- Replace `pybtex` by simpler built-in BibTeX parser in `bibsane` written in Lark.
+  This eliminates a external dependencies, in particular `latexcodec`, which caused some issues.
+- Only report unused citations in `bibsane`, instead of dropping them.
+- Downgrade `cattrs` dependency to facilitate installation.
+- Updated reference test outputs for StepUp Core 3.2.
+
+### Fixed
+
+- Gracefully handle missing pagination in `bibsane` when reformatting page ranges.
+
+## [3.1.7][] - 2025-12-20 {: v3.1.7 }
+
+Bugfix release
+
+### Added
+
+- Bibsane can automatically add braces around words in titles that contain uppercase letters,
+  to avoid unwanted lowercasing by BibTeX styles.
+  This rule applies to titles and journal titles.
 
 ### Changed
 
@@ -19,6 +77,8 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ### Fixed
 
 - Correctly report merged records in bibsane's screen output.
+- Fix handling of LaTeX encoding in bibsane and abbreviation
+  of journal names with non-ASCII characters.
 
 ## [3.1.6][] - 2025-11-21 {: v3.1.6 }
 
@@ -543,6 +603,10 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10
+[3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9
+[3.1.8]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.8
+[3.1.7]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.7
 [3.1.6]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.6
 [3.1.5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.5
 [3.1.4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.4

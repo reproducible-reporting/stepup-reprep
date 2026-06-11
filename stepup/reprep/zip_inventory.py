@@ -1,5 +1,5 @@
 # StepUp RepRep is the StepUp extension for Reproducible Reporting.
-# © 2024–2025 Toon Verstraelen
+# Copyright 2024-2026 Toon Verstraelen
 #
 # This file is part of StepUp RepRep.
 #
@@ -66,10 +66,9 @@ def zip_subcommand(subparser: argparse.ArgumentParser) -> callable:
     return zip_tool
 
 
-def zip_tool(args: argparse.Namespace) -> int:
+def zip_tool(args: argparse.Namespace):
     """Create a reproducible ZIP file."""
     zip_inventory(args.inventory_txt, args.output_zip)
-    return 0
 
 
 def zip_inventory(path_inventory: str, path_zip: str | None = None):

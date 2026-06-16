@@ -26,6 +26,8 @@ on:
 
 jobs:
   tests:
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:
@@ -44,6 +46,9 @@ jobs:
         uses: wtfjoke/setup-tectonic@v4
         with:
           tectonic-version: 0.16.9
+      - run:
+          which tectonic
+          tectonic --version
       - name: Install typst
         uses: typst-community/setup-typst@v5
         with:

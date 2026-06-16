@@ -2,5 +2,5 @@
 from stepup.core.api import static
 from stepup.reprep.api import compile_typst
 
-static("error.typ")
-compile_typst("error.typ", keep_deps=True)
+static("lorem.typ")
+compile_typst("lorem.typ", "lorem.html", keep_deps=True)

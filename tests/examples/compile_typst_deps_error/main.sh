@@ -22,4 +22,6 @@ set +e; wait -fn $PID; RETURNCODE=$?; set -e
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f document.pdf ]] || exit 1
+[[ -f document.deps.json ]] || exit 1
+grep data.yaml document.deps.json
 [[ -f data.yaml ]] || exit 1

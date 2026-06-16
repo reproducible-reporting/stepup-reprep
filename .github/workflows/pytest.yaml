@@ -43,7 +43,7 @@ jobs:
       - name: Install Tectonic
         uses: wtfjoke/setup-tectonic@v4
         with:
-          tectonic-version: 0.15.0
+          tectonic-version: 0.16.9
       - name: Install typst
         uses: typst-community/setup-typst@v5
         with:

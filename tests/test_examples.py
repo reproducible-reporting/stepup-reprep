@@ -108,7 +108,7 @@ async def test_latex_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 
-def has_tectonic_0_15_0():
+def has_tectonic_0_16_x():
     if not shutil.which("tectonic"):
         return False
     cp = subprocess.run(
@@ -119,10 +119,10 @@ def has_tectonic_0_15_0():
         check=True,
         text=True,
     )
-    return cp.stdout.split()[-1] == "0.15.0"
+    return cp.stdout.split()[-1].startswith("0.16.")
 
 
-@pytest.mark.skipif(not has_tectonic_0_15_0(), reason="No Tectonic 0.15.0")
+@pytest.mark.skipif(not has_tectonic_0_16_x(), reason="No Tectonic 0.16.x")
 @pytest.mark.parametrize(
     "name",
     [

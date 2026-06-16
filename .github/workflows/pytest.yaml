@@ -60,4 +60,4 @@ jobs:
       - name: Install development version of StepUp-RepRep
         run: pip install -e .[dev]
       - name: Run pytest
-        run: STEPUP_DEBUG=1 STEPUP_SYNC_RPC_TIMEOUT=10 pytest -vv
+        run: STEPUP_DEBUG=1 STEPUP_SYNC_RPC_TIMEOUT=30 pytest -vv

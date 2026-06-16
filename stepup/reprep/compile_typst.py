@@ -22,7 +22,7 @@
 This wrapper extracts relevant information from a Typst build
 to inform StepUp of input files used or needed.
 
-This is tested with Typst 0.15.
+This code has been tested with Typst 0.15.
 """
 
 import argparse

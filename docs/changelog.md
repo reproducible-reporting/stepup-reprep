@@ -12,6 +12,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
+## [3.1.11][] - 2026-06-16 {: v3.1.11 }
+
+Switch to typst 0.15 and use its improved dependency tracking in `compile_typst`.
+
+### Changed
+
+- The `compile_typst()` function has improved dependency tracking,
+  based on the new JSON deps format of typst 0.15.
+  Older versions of typst are no longer supported.
+
 ## [3.1.10][] - 2026-04-28 {: v3.1.10 }
 
 This is a minor bugfix release.
@@ -603,6 +613,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11
 [3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10
 [3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9
 [3.1.8]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.8

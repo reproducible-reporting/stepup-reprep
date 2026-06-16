@@ -46,7 +46,7 @@ jobs:
         uses: wtfjoke/setup-tectonic@v4
         with:
           tectonic-version: 0.16.9
-      - run:
+      - run: |
           which tectonic
           tectonic --version
       - name: Install typst

@@ -43,7 +43,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Tectonic
-        uses: wtfjoke/setup-tectonic@v4
+        uses: wtfjoke/setup-tectonic@v4.0.4
         with:
           tectonic-version: 0.16.9
       - run: |

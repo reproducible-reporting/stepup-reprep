@@ -35,7 +35,7 @@ jobs:
             ubuntu-version: '24.04'
             dependency-path: .github/requirements-old.txt
           - python-version: '3.14'
-            ubuntu-version: '24.04'
+            ubuntu-version: '26.04'
             dependency-path: pyproject.toml
     runs-on: ubuntu-${{ matrix.ubuntu-version }}
     steps:

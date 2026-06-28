@@ -44,6 +44,7 @@ def main():
         output_path=args.path_out,
         parameters=json.loads(args.parameters) if args.parameters else {},
         progress_bar=False,
+        extra_arguments=["--IPKernelApp.log_level=40"],
     )
 
 

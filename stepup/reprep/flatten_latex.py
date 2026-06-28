@@ -49,10 +49,10 @@ from path import Path
 from stepup.core.api import amend
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
-    with tempfile.TemporaryDirectory("rr-latex-flat") as tmpdir:
+    args = parse_args()
+    with tempfile.TemporaryDirectory("srr-latex-flat") as tmpdir:
         tmpdir = Path(tmpdir)
         path_flat_tmp = tmpdir / "flat.tex"
         with open(path_flat_tmp, "w") as fh_out:
@@ -65,15 +65,15 @@ def main(argv: list[str] | None = None):
             raise RuntimeError(f"Flattening failed with status {status.name}. ")
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-flatten-latex",
+        prog="srr-flatten-latex",
         description="Flatten input and import commands in a LaTeX file.",
     )
     parser.add_argument("path_tex", help="The top-level tex file.")
     parser.add_argument("path_flat", help="The flattened output tex file.")
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 class FlattenStatus(enum.Enum):
@@ -205,4 +205,4 @@ def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

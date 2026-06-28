@@ -32,17 +32,14 @@ import sys
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies
-from stepup.core.worker import WorkThread
+from stepup.core.extapi import filter_dependencies, run_subprocess
 
 from .make_inventory import write_inventory
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
 
     workdir, fn_tex = args.path_tex.splitpath()
     workdir = workdir.normpath()
@@ -71,8 +68,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 
         # Run Tectonic in the directory of the tex file
         with contextlib.chdir(workdir):
-            returncode, stdout, stderr = work_thread.runsh(shlex.join(tectonic_args))
-        print(stdout)
+            cp = run_subprocess(shlex.join(tectonic_args), check=False)
+        print(cp.stdout)
         # Get existing input files from the dependency file and amend.
         # Note that the deps file does not escape colons in paths,
         # so the code below assumes one never uses colons in paths.
@@ -87,12 +84,12 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
             print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
 
     # Look for missing input files in the standard error stream and amend them.
-    if returncode != 0:
+    if cp.returncode != 0:
         inp_paths.extend(
             workdir / m.group(1)
-            for m in re.finditer(r"`([^`]+)' not found", stderr, flags=re.MULTILINE)
+            for m in re.finditer(r"`([^`]+)' not found", cp.stderr, flags=re.MULTILINE)
         )
-    sys.stderr.write(stderr)
+    sys.stderr.write(cp.stderr)
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
@@ -101,16 +98,16 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
         inventory_paths = sorted(inp_paths) + out_paths
         write_inventory(args.inventory, inventory_paths, do_amend=False)
 
-    if returncode != 0:
+    if cp.returncode != 0:
         # Only use sys.exit in cases of an error,
         # so other programs may call this function without exiting.
-        sys.exit(returncode)
+        sys.exit(cp.returncode)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-compile-tectonic",
+        prog="srr-compile-tectonic",
         description="Compile a LaTeX document with Tectonic and deduce input and output info.",
     )
     parser.add_argument("path_tex", type=Path, help="The main LaTeX source file.")

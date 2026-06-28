@@ -1,13 +1,11 @@
         0/0 |    STARTUP │ (Re)initialized boot script
-        0/0 |   DIRECTOR │ Launched worker 0
-        0/1 |      PHASE │ run
-        0/1 |      START │ runpy ./plan.py
-        1/2 |    SUCCESS │ runpy ./plan.py
-        1/2 |      START │ compile-typst --keep-deps error.typ
-        1/1 |       FAIL │ compile-typst --keep-deps error.typ
-────────────────────────────────── Step info ───────────────────────────────────
-Command               stepup act -- compile-typst --keep-deps error.typ
-Return code           1
+        0/1 |      PHASE │ build
+        0/1 |      START │ ./plan.py
+        1/2 |    SUCCESS │ ./plan.py
+        1/2 |      START │ srr-compile-typst --keep-deps error.typ
+        1/1 |       FAIL │ srr-compile-typst --keep-deps error.typ
+──────────────────────────────── Failed command ────────────────────────────────
+srr-compile-typst --keep-deps error.typ  # exit=1
 ───────────────────────── Expected outputs not created ─────────────────────────
 error.pdf
 ──────────────────────────────── Standard error ────────────────────────────────
@@ -17,5 +15,4 @@ error.pdf
         1/1 |    WARNING │ Skipping file cleanup due to incomplete build
         1/1 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
         1/1 |      PHASE │ watch
-        1/1 |   DIRECTOR │ Stopping workers
         1/1 |   DIRECTOR │ See you!

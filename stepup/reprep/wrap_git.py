@@ -26,14 +26,13 @@ import sys
 from path import Path
 
 from stepup.core.api import amend
-from stepup.core.utils import myrelpath
-from stepup.core.worker import WorkThread
+from stepup.core.extapi import run_subprocess
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        prog="wrap_git", description="Run git commands that depend on the current commit id."
+        prog="srr-wrap-git", description="Run git commands that depend on the current commit id."
     )
     parser.add_argument(
         "--stdout",
@@ -47,20 +46,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=str,
         help="The git command to run.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -> None:
+def main() -> None:
     """Main program."""
-    args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
+    args = parse_args()
 
     # Determine the git root directory.
-    return_code, git_root, _ = work_thread.runsh("git rev-parse --show-toplevel")
-    if return_code != 0:
+    cp = run_subprocess(
+        "git rev-parse --show-toplevel",
+        check=False,
+    )
+    if cp.returncode != 0:
         raise RuntimeError("Failed to determine git root directory.")
-    git_root = myrelpath(git_root.strip())
+    git_root = Path(cp.stdout.strip()).relpath()
 
     # Mark the HEAD file as an input dependency.
     head_path = git_root / ".git" / "HEAD"
@@ -76,10 +76,16 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 
     # Run the git command.
     command = "GIT_PAGER=cat " + shlex.join(args.git_args)
-    if args.stdout is not None:
-        command = f"{command} > {shlex.quote(args.stdout)}"
-    work_thread.runsh_verbose(command)
+    cp = run_subprocess(command, check=False)
+    if args.stdout is None:
+        sys.stdout.write(cp.stdout)
+    else:
+        with open(args.stdout, "w") as fh:
+            fh.write(cp.stdout)
+    sys.stderr.write(cp.stderr)
+    if cp.returncode != 0:
+        sys.exit(cp.returncode)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

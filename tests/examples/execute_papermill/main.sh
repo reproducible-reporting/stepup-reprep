@@ -1,13 +1,10 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
 export PYDEVD_DISABLE_FILE_VALIDATION=1
-stepup boot -w -n 1 & # > current_stdout.txt &
+sb -w -j 1 & # > current_stdout.txt &
 PID=$!
 
 # Get the graph after completion of the pending steps.

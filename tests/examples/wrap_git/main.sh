@@ -14,7 +14,7 @@ git add -f foo.txt
 git commit -m "Initial commit with foo.txt"
 
 # Run the example
-stepup boot -w -n 1 & # > current_stdout_1.txt &
+sb -w -j 1 & # > current_stdout_1.txt &
 PID=$!
 
 # Get the graph after completion of the pending steps.
@@ -38,7 +38,7 @@ git add foo.txt
 git commit -m "Update foo.txt with some content"
 
 # Run the example again
-stepup boot -w -n 1 & # > current_stdout_2.txt &
+sb -w -j 1 & # > current_stdout_2.txt &
 PID=$!
 
 # Get the graph after completion of the pending steps.

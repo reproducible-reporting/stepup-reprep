@@ -1,59 +1,43 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:block.png
-            supplies   file:doc.html
-            supplies   file:doc.pdf
-            supplies   file:plan.py
-            supplies   file:style.css
-            supplies   step:convert-weasyprint doc.html doc.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:block.png
              creates   file:doc.html
              creates   file:style.css
-             creates   step:convert-weasyprint doc.html doc.pdf
+             creates   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:block.png
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-weasyprint doc.html doc.pdf
+          created by   step:./plan.py
+            supplies   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:doc.html
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-weasyprint doc.html doc.pdf
+          created by   step:./plan.py
+            supplies   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:style.css
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-weasyprint doc.html doc.pdf
+          created by   step:./plan.py
+            supplies   step:srr-convert-weasyprint doc.html doc.pdf
 
-step:convert-weasyprint doc.html doc.pdf
+step:srr-convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
-             env_var = REPREP_WEASYPRINT [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+           using_env = REPREP_WEASYPRINT [amended]
+          created by   step:./plan.py
             consumes   file:block.png [amended]
             consumes   file:doc.html
             consumes   file:style.css [amended]
@@ -62,6 +46,5 @@ step:convert-weasyprint doc.html doc.pdf
 
 file:doc.pdf
                state = BUILT
-          created by   step:convert-weasyprint doc.html doc.pdf
-            consumes   file:./
-            consumes   step:convert-weasyprint doc.html doc.pdf
+          created by   step:srr-convert-weasyprint doc.html doc.pdf
+            consumes   step:srr-convert-weasyprint doc.html doc.pdf

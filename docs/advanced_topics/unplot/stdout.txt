@@ -3,8 +3,8 @@
      PHASE │ run
      START │ ./plan.py
    SUCCESS │ ./plan.py
-     START │ python -m stepup.reprep.unplot plot.svg plot.json
-   SUCCESS │ python -m stepup.reprep.unplot plot.svg plot.json
+     START │ srr-unplot plot.svg plot.json
+   SUCCESS │ srr-unplot plot.svg plot.json
   WORKFLOW │ Dumped to .stepup/workflow.mpk.xz
   DIRECTOR │ Stopping workers.
   DIRECTOR │ See you!

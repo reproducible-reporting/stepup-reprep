@@ -1,48 +1,35 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:document-inventory.txt
-            supplies   file:document.typ
-            supplies   file:out.pdf
-            supplies   file:plan.py
-            supplies   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
-             creates   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creates   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
-step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:document.typ
              creates   file:document-inventory.txt
              creates   file:out.pdf
@@ -51,12 +38,10 @@ step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document-inventory.txt
                state = BUILT
-          created by   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-            consumes   file:./
-            consumes   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+          created by   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            consumes   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:out.pdf
                state = BUILT
-          created by   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-            consumes   file:./
-            consumes   step:compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+          created by   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+            consumes   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf

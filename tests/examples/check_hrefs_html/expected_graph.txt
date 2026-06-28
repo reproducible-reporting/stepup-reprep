@@ -1,54 +1,48 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:README.txt
-            supplies   file:check_hrefs.yaml
-            supplies   file:plan.py
-            supplies   file:test.html
-            supplies   step:check_hrefs test.html
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:README.txt
              creates   file:check_hrefs.yaml
              creates   file:test.html
-             creates   step:check_hrefs test.html
+             creates   step:srr-check-hrefs test.html
 
 file:README.txt
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
+            supplies   step:srr-check-hrefs test.html
 
 file:check_hrefs.yaml
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
+            supplies   step:srr-check-hrefs test.html
 
 file:test.html
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:check_hrefs test.html
+          created by   step:./plan.py
+            supplies   step:srr-check-hrefs test.html
 
-step:check_hrefs test.html
-               state = FAILED
-               dirty = yes
-          created by   step:runpy ./plan.py
-            consumes   file:./
+step:srr-check-hrefs test.html
+               state = PENDING
+                need = DEFAULT
+           using_env = REPREP_CHECK_HREFS_CONFIG [amended]
+          created by   step:./plan.py
+            consumes   (file:BROKEN.md) [amended]
+            consumes   file:README.txt [amended]
+            consumes   file:check_hrefs.yaml [amended]
             consumes   file:test.html
+
+(file:BROKEN.md)
+               state = AWAITED
+            supplies   step:srr-check-hrefs test.html

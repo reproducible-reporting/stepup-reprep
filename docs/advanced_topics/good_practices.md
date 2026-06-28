@@ -89,7 +89,7 @@ there are two classes of recommendations:
 - Use single-column and double-line spacing to make the PDF easier to review.
 - Use [BibSane](https://github.com/reproducible-reporting/bibsane) to clean up your BibTeX files.
   Hint: [Quick DOI to BIB conversion](https://www.doi2bib.org)
-- Avoid `\subfigure`. Instead, merge panels into one PDF. (See [Tile PDFs](tile_pdfs.md).)
+- Avoid `\subfigure`. Instead, merge panels into one PDF.
 
 #### Should
 

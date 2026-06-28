@@ -1,50 +1,36 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:dst.pdf
-            supplies   file:notes.pdf
-            supplies   file:plan.py
-            supplies   file:src.pdf
-            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:notes.pdf
              creates   file:src.pdf
-             creates   step:add-notes-pdf src.pdf notes.pdf dst.pdf
+             creates   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:notes.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
+          created by   step:./plan.py
+            supplies   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:src.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:add-notes-pdf src.pdf notes.pdf dst.pdf
+          created by   step:./plan.py
+            supplies   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
-step:add-notes-pdf src.pdf notes.pdf dst.pdf
+step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:notes.pdf
             consumes   file:src.pdf
              creates   file:dst.pdf
@@ -52,6 +38,5 @@ step:add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:dst.pdf
                state = BUILT
-          created by   step:add-notes-pdf src.pdf notes.pdf dst.pdf
-            consumes   file:./
-            consumes   step:add-notes-pdf src.pdf notes.pdf dst.pdf
+          created by   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+            consumes   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf

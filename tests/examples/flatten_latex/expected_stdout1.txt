@@ -1,22 +1,19 @@
         0/0 |    STARTUP │ (Re)initialized boot script
-        0/0 |   DIRECTOR │ Launched worker 0
-        0/1 |      PHASE │ run
-        0/1 |      START │ runpy ./plan.py
-        1/2 |    SUCCESS │ runpy ./plan.py
-        1/2 |      START │ flatten-latex article_structured.tex article.tex
-        1/2 | RESCHEDULE │ flatten-latex article_structured.tex article.tex
+        0/1 |      PHASE │ build
+        0/1 |      START │ ./plan.py
+        1/2 |    SUCCESS │ ./plan.py
+        1/2 |      START │ srr-flatten-latex article_structured.tex article.tex
+        1/2 | RESCHEDULE │ srr-flatten-latex article_structured.tex article.tex
 ──────────────── Rescheduling due to unavailable amended inputs ────────────────
-Missing inputs and/or required directories:
 sub/other.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ 1 step(s) remained pending due to ...
-─────────────────────────── Incomplete requirements ────────────────────────────
+        1/2 |    WARNING │ 1 step(s) remained pending ...
+─────────────────────────────── Detached inputs ────────────────────────────────
              AWAITED  sub/other.tex
 ───────────────────────────────── PENDING Step ─────────────────────────────────
-Action                flatten-latex article_structured.tex article.tex
-Working directory     ./
-Inputs        STATIC  ./
-              STATIC  article_structured.tex
+Reason                required inputs are unavailable
+Command               srr-flatten-latex article_structured.tex article.tex
+Inputs        STATIC  article_structured.tex
               STATIC  part1.tex [amended]
               STATIC  part2.tex [amended]
               STATIC  part3.txt [amended]
@@ -26,5 +23,4 @@ Outputs      AWAITED  article.tex
         1/2 |    WARNING │ Skipping file cleanup due to incomplete build
         1/2 |    WARNING │ Check logs: .stepup/warning.log
         1/2 |      PHASE │ watch
-        1/2 |   DIRECTOR │ Stopping workers
         1/2 |   DIRECTOR │ See you!

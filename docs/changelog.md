@@ -10,7 +10,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+### Changed
+
+- Compatibility with StepUp Core 4
+- Remove all actions and tools and converted them into standard console scripts,
+  all with the `srr-` prefix.
+
+### Removed
+
+- The `tile_pdf` action has been removed, as it is no longer needed.
+  This is easily replaced with a simple typst input.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

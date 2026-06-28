@@ -1,11 +1,8 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
-stepup boot -w -n 1 & # > current_stdout.txt &
+sb -w -j 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -16,7 +13,7 @@ mv rastered/smile.pdf rastered/smile1.pdf
 stepup watch-delete rastered/smile.pdf
 stepup run
 stepup join
-stepup make-inventory -o reproducibility_inventory.txt rastered/smile.pdf rastered/smile1.pdf
+srr-make-inventory -o reproducibility_inventory.txt rastered/smile.pdf rastered/smile1.pdf
 
 # Wait for background processes, if any.
 wait

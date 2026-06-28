@@ -21,22 +21,18 @@
 
 import argparse
 import shlex
-import sys
 from collections.abc import Iterator
 
 from defusedxml import ElementTree
 from path import Path
 
 from stepup.core.api import amend, getenv
-from stepup.core.worker import WorkThread
+from stepup.core.extapi import run_subprocess
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
-
+    args = parse_args()
     if not args.path_pdf.endswith(".pdf"):
         raise ValueError("The output must have a pdf extensions.")
     if args.weasyprint is None:
@@ -44,15 +40,13 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     inp_paths = search_html_deps(args.path_html)
     amend(inp=inp_paths)
     popenargs = [args.weasyprint, args.path_html, args.path_pdf]
-    returncode = work_thread.runsh_verbose(shlex.join(popenargs))
-    if returncode != 0:
-        sys.exit(returncode)
+    run_subprocess(shlex.join(popenargs))
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-convert-weasyprint",
+        prog="srr-convert-weasyprint",
         description="Convert a HTML to PDF, with dependency tracking.",
     )
     parser.add_argument("path_html", help="The input HTML file.")
@@ -62,7 +56,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="The weasyprint executable to use. "
         "Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def search_html_deps(src: str) -> list[str]:
@@ -106,4 +100,4 @@ def iter_html_hrefs(path_html: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

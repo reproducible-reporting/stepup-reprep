@@ -1,12 +1,9 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
 cp plan1.py plan.py
-stepup boot -w -n 1 & # > current_stdout1.txt &
+sb -w -j 1 & # > current_stdout1.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -25,7 +22,7 @@ wait
 cp plan2.py plan.py
 cp sub/original.tex sub/other.tex
 rm .stepup/*.log
-stepup boot -w -n 1 & # > current_stdout2.txt &
+sb -w -j 1 & # > current_stdout2.txt &
 
 # Wait for the director and get its socket.
 stepup wait

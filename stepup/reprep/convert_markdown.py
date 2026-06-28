@@ -20,7 +20,6 @@
 """Markdown to HTML conversion."""
 
 import argparse
-import sys
 from collections.abc import Collection
 
 import yaml
@@ -35,9 +34,9 @@ from stepup.core.render_jinja import render_jinja
 __all__ = ("convert_markdown",)
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     if not args.markdown.endswith(".md"):
         raise ValueError("The markdown file must end with the .md extension.")
     if len(args.css) == 0:
@@ -46,10 +45,10 @@ def main(argv: list[str] | None = None):
         fh.write(convert_markdown(fm.read(), args.css, args.html.parent))
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-convert-markdown", description="Convert Markdown to HTML"
+        prog="srr-convert-markdown", description="Convert Markdown to HTML"
     )
     parser.add_argument("markdown", type=Path, help="A Markdown file with extension `.md`")
     parser.add_argument("html", type=Path, help="A HTML output filename")
@@ -62,7 +61,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "The default value is ${REPREP_MARKDOWN_CSS} (if defined) "
         "and it is interpreted as a colon-separated list.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 HTML_TEMPLATE = """\
@@ -139,4 +138,4 @@ def convert_markdown(
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

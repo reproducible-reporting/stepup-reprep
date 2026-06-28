@@ -1,50 +1,36 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:cat.pdf
-            supplies   file:doc1.pdf
-            supplies   file:doc2.pdf
-            supplies   file:plan.py
-            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:doc1.pdf
              creates   file:doc2.pdf
-             creates   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creates   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc1.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+          created by   step:./plan.py
+            supplies   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc2.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+          created by   step:./plan.py
+            supplies   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
-step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:doc1.pdf
             consumes   file:doc2.pdf
              creates   file:cat.pdf
@@ -52,6 +38,5 @@ step:cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:cat.pdf
                state = BUILT
-          created by   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
-            consumes   file:./
-            consumes   step:cat-pdf doc1.pdf doc2.pdf cat.pdf
+          created by   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+            consumes   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf

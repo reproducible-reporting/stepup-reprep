@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from stepup.core.api import mkdir, runsh, static
+from stepup.core.api import run, static
 from stepup.reprep.api import compile_latex
 
 static("paper.tex")
-mkdir("subdir/")
 compile_latex("paper.tex", inventory=True)
-runsh(
+run(
     "echo 'Verbatim input:\\verbatiminput{code.txt}' > subdir/generated.tex",
     out=["subdir/generated.tex"],
+    shell=True,
 )
-runsh("echo '2 + 2' > subdir/code.txt", out=["subdir/code.txt"])
+run("echo '2 + 2' > subdir/code.txt", out=["subdir/code.txt"], shell=True)

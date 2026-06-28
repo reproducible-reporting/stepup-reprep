@@ -1,54 +1,41 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:out.svg
-            supplies   file:plan.py
-            supplies   file:weather.typ
-            supplies   step:compile-typst weather.typ --out=out.svg
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:weather.typ
-             creates   step:compile-typst weather.typ --out=out.svg
+             creates   step:srr-compile-typst weather.typ --out=out.svg
 
 file:weather.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst weather.typ --out=out.svg
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst weather.typ --out=out.svg
 
-step:compile-typst weather.typ --out=out.svg
+step:srr-compile-typst weather.typ --out=out.svg
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:weather.typ
              creates   file:out.svg
             supplies   file:out.svg
 
 file:out.svg
                state = BUILT
-          created by   step:compile-typst weather.typ --out=out.svg
-            consumes   file:./
-            consumes   step:compile-typst weather.typ --out=out.svg
+          created by   step:srr-compile-typst weather.typ --out=out.svg
+            consumes   step:srr-compile-typst weather.typ --out=out.svg

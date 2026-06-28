@@ -75,7 +75,6 @@ nav:
   - Advanced Topics:
     - advanced_topics/inventory_files.md
     - advanced_topics/bibsane.md
-    - advanced_topics/tile_pdfs.md
     - advanced_topics/good_practices.md
     - advanced_topics/archive_git.md
     - advanced_topics/unplot.md
@@ -83,7 +82,6 @@ nav:
   - Reference:
     - reference/stepup.reprep.api.md
     - reference/stepup.reprep.bibsane.md
-    - reference/stepup.reprep.tile_pdf.md
   - changelog.md
   - development.md
   - license.md

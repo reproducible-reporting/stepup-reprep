@@ -54,7 +54,6 @@ import argparse
 import datetime
 import hashlib
 import json
-import sys
 from typing import Any
 
 import attrs
@@ -656,19 +655,28 @@ class ZenodoWrapper:
         return self.rest.post(f"records/{rid}/versions")
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
     parser = argparse.ArgumentParser(
-        prog="sync-zenodo",
+        prog="srr-sync-zenodo",
         description="Synchronize a draft dataset on Zenodo with your local files.",
     )
-    add_parser_args(parser)
-    args = parser.parse_args(argv)
-    sync_zenodo_tool(args)
-
-
-def sync_zenodo_tool(args: argparse.Namespace):
-    """Main program."""
+    parser.add_argument("config", help="Configuration YAML file.")
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        default=False,
+        action="store_true",
+        help="Show details of communication with Zenodo endpoint.",
+    )
+    parser.add_argument(
+        "--clean",
+        default=False,
+        action="store_true",
+        help="Remove all draft data sets before proceeding. "
+        "This also deletes the record ID json file.",
+    )
+    args = parser.parse_args()
     with open(args.config) as fh:
         data = yaml.safe_load(fh)
     if not isinstance(data.get("metadata").get("version"), str):
@@ -689,35 +697,6 @@ def sync_zenodo_tool(args: argparse.Namespace):
     if args.clean:
         clean_online(config, args.verbose)
     update_online(config, args.verbose)
-
-
-def sync_zenodo_subcommand(subparser: argparse.ArgumentParser) -> callable:
-    """Create parser for command-line options."""
-    parser = subparser.add_parser(
-        "sync-zenodo",
-        help="Synchronize a draft dataset on Zenodo with your local files.",
-    )
-    add_parser_args(parser)
-    return sync_zenodo_tool
-
-
-def add_parser_args(parser: argparse.ArgumentParser):
-    """Define command-line arguments."""
-    parser.add_argument("config", help="Configuration YAML file.")
-    parser.add_argument(
-        "--verbose",
-        "-v",
-        default=False,
-        action="store_true",
-        help="Show details of communication with Zenodo endpoint.",
-    )
-    parser.add_argument(
-        "--clean",
-        default=False,
-        action="store_true",
-        help="Remove all draft data sets before proceeding. "
-        "This also deletes the record ID json file.",
-    )
 
 
 def clean_online(config: Config, verbose: bool):
@@ -915,4 +894,4 @@ def _refresh_files(
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

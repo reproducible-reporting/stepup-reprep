@@ -1,68 +1,43 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:page.css
-            supplies   file:plan.py
-            supplies   file:sub/
-            supplies   step:convert-markdown sub/demo.md sub/demo.html --css page.css
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:page.css
-             creates   file:sub/
              creates   file:sub/demo.css
              creates   file:sub/demo.md
-             creates   step:convert-markdown sub/demo.md sub/demo.html --css page.css
+             creates   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
 
 file:page.css
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-markdown sub/demo.md sub/demo.html --css page.css
-
-file:sub/
-               state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   file:sub/demo.css
-            supplies   file:sub/demo.html
-            supplies   file:sub/demo.md
-            supplies   step:convert-markdown sub/demo.md sub/demo.html --css page.css
+          created by   step:./plan.py
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
 
 file:sub/demo.css
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:sub/
-            supplies   step:convert-markdown sub/demo.md sub/demo.html --css page.css
+          created by   step:./plan.py
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
 
 file:sub/demo.md
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:sub/
-            supplies   step:convert-markdown sub/demo.md sub/demo.html --css page.css
+          created by   step:./plan.py
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
 
-step:convert-markdown sub/demo.md sub/demo.html --css page.css
+step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:page.css
-            consumes   file:sub/
             consumes   file:sub/demo.css [amended]
             consumes   file:sub/demo.md
              creates   file:sub/demo.html
@@ -70,6 +45,5 @@ step:convert-markdown sub/demo.md sub/demo.html --css page.css
 
 file:sub/demo.html
                state = BUILT
-          created by   step:convert-markdown sub/demo.md sub/demo.html --css page.css
-            consumes   file:sub/
-            consumes   step:convert-markdown sub/demo.md sub/demo.html --css page.css
+          created by   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+            consumes   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css

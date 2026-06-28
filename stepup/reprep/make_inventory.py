@@ -30,13 +30,12 @@ import argparse
 import contextlib
 import shlex
 import sqlite3
-import subprocess
-import sys
 from collections.abc import Collection
 
 from path import Path
 
 from stepup.core.api import amend
+from stepup.core.extapi import run_subprocess
 from stepup.core.file import FileState
 from stepup.core.nglob import NGlobMulti
 
@@ -48,15 +47,8 @@ __all__ = ("main", "write_inventory")
 def main(argv: list[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
-        prog="rr-make-inventory", description="Make an inventory.txt file."
+        prog="srr-make-inventory", description="Make an inventory.txt file."
     )
-    add_parser_args(parser)
-    args = parser.parse_args(argv)
-    make_inventory(args)
-
-
-def add_parser_args(parser: argparse.ArgumentParser):
-    """Define command-line arguments."""
     parser.add_argument(
         "paths",
         nargs="*",
@@ -65,20 +57,7 @@ def add_parser_args(parser: argparse.ArgumentParser):
     )
     parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
     parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
-
-
-def make_subcommand(subparser: argparse.ArgumentParser) -> callable:
-    """Create a subcommand for the command line interface."""
-    parser = subparser.add_parser(
-        "make-inventory",
-        help="Create an inventory.txt file.",
-    )
-    add_parser_args(parser)
-    return make_tool
-
-
-def make_tool(args: argparse.Namespace):
-    """Create an inventory.txt file."""
+    args = parser.parse_args(argv)
     make_inventory(args)
 
 
@@ -126,13 +105,7 @@ def get_file_list_nglob(i: int, args: list[str]) -> Collection[Path]:
 
 
 def get_file_list_git(i: int, args: list[str]) -> Collection[Path]:
-    cp = subprocess.run(
-        ["git", "ls-files", *args],
-        stdin=subprocess.DEVNULL,
-        capture_output=True,
-        check=True,
-        encoding="utf-8",
-    )
+    cp = run_subprocess(shlex.join(["git", "ls-files", *args]))
     return [Path(line.strip()) for line in cp.stdout.splitlines()]
 
 
@@ -237,8 +210,8 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
         inp_paths = []
         for path in paths:
             path = Path(path)
-            if path.is_dir() and not path.endswith("/"):
-                path = path / ""
+            if path.endswith("/") or path.is_dir():
+                raise ValueError(f"Directories are not allowed in the inventory: {path}")
             inp_paths.append(path)
         amend(inp=inp_paths)
 
@@ -251,4 +224,4 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

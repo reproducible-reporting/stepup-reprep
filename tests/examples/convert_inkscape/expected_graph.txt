@@ -1,75 +1,57 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:final.pdf
-            supplies   file:glasses.png
-            supplies   file:glasses.svg
-            supplies   file:plan.py
-            supplies   file:smile.svg
-            supplies   step:convert-inkscape glasses.svg glasses.png
-            supplies   step:convert-inkscape smile.svg final.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:glasses.svg
              creates   file:smile.svg
-             creates   step:convert-inkscape glasses.svg glasses.png
-             creates   step:convert-inkscape smile.svg final.pdf
+             creates   step:srr-convert-inkscape glasses.svg glasses.png
+             creates   step:srr-convert-inkscape smile.svg final.pdf
 
 file:glasses.svg
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-inkscape glasses.svg glasses.png
+          created by   step:./plan.py
+            supplies   step:srr-convert-inkscape glasses.svg glasses.png
 
 file:smile.svg
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:convert-inkscape smile.svg final.pdf
+          created by   step:./plan.py
+            supplies   step:srr-convert-inkscape smile.svg final.pdf
 
-step:convert-inkscape glasses.svg glasses.png
+step:srr-convert-inkscape glasses.svg glasses.png
                state = SUCCEEDED
-           mandatory = REQUIRED
-             env_var = REPREP_INKSCAPE [amended]
+                need = DEFAULT (implied by consumers > OPTIONAL)
+           using_env = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PNG_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:glasses.svg
              creates   file:glasses.png
             supplies   file:glasses.png
 
 file:glasses.png
                state = BUILT
-          created by   step:convert-inkscape glasses.svg glasses.png
-            consumes   file:./
-            consumes   step:convert-inkscape glasses.svg glasses.png
-            supplies   step:convert-inkscape smile.svg final.pdf
+          created by   step:srr-convert-inkscape glasses.svg glasses.png
+            consumes   step:srr-convert-inkscape glasses.svg glasses.png
+            supplies   step:srr-convert-inkscape smile.svg final.pdf
 
-step:convert-inkscape smile.svg final.pdf
+step:srr-convert-inkscape smile.svg final.pdf
                state = SUCCEEDED
-             env_var = REPREP_INKSCAPE [amended]
+                need = DEFAULT
+           using_env = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:glasses.png [amended]
             consumes   file:smile.svg
              creates   file:final.pdf
@@ -77,6 +59,5 @@ step:convert-inkscape smile.svg final.pdf
 
 file:final.pdf
                state = BUILT
-          created by   step:convert-inkscape smile.svg final.pdf
-            consumes   file:./
-            consumes   step:convert-inkscape smile.svg final.pdf
+          created by   step:srr-convert-inkscape smile.svg final.pdf
+            consumes   step:srr-convert-inkscape smile.svg final.pdf

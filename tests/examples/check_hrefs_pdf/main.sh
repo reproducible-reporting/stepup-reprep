@@ -1,12 +1,9 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
-stepup boot -w -n 1 & # > current_stdout.txt &
+sb -w -j 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -22,4 +19,4 @@ wait
 [[ -f main.log ]] || exit 1
 [[ -f main.aux ]] || exit 1
 [[ -f README.txt ]] || exit 1
-stepup check-inventory main-inventory.txt
+srr-check-inventory main-inventory.txt

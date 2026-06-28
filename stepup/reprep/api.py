@@ -25,8 +25,11 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import StepInfo, getenv, runsh, step, subs_env_vars
-from stepup.core.utils import make_path_out, string_to_bool
+from stepup.core.api import getenv, run
+from stepup.core.extapi import subs_env_vars
+from stepup.core.path import StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
+from stepup.core.stepinfo import StepInfo
+from stepup.core.utils import string_to_bool
 
 __all__ = (
     "add_notes_pdf",
@@ -59,7 +62,11 @@ __all__ = (
 
 
 def add_notes_pdf(
-    path_src: str, path_notes: str, path_dst: str, optional: bool = False, block: bool = False
+    path_src: StrPath,
+    path_notes: StrPath,
+    path_dst: StrPath,
+    optional: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Add a notes page at every even page of a PDF file.
 
@@ -73,30 +80,31 @@ def add_notes_pdf(
         The output PDF with notes pages inserted.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step(
-        "add-notes-pdf ${inp} ${out}",
+    return run(
+        "srr-add-notes-pdf ${inp} ${out}",
         inp=[path_src, path_notes],
         out=path_dst,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def cat_pdf(
-    paths_inp: Collection[str],
-    path_out: str,
+    paths_inp: Collection[StrPath],
+    path_out: StrPath,
     *,
     insert_blank: bool = False,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Concatenate the pages of multiple PDFs into one document
 
@@ -111,27 +119,32 @@ def cat_pdf(
         The last page of each PDF is used to determine the size of the added blank page.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["cat-pdf", "${inp}", "${out}"]
+    args = ["srr-cat-pdf", "${inp}", "${out}"]
     if insert_blank:
         args.append("--insert-blank")
-    return step(
+    return run(
         " ".join(args),
         inp=paths_inp,
         out=path_out,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
-def check_hrefs(path_src: str, path_config: str | None = None, block: bool = False) -> StepInfo:
+def check_hrefs(
+    path_src: StrPath,
+    path_config: StrPath | None = None,
+    resources: dict[str, int] | str | None = None,
+) -> StepInfo:
     """Check hyper references in a Markdown, HTML or PDF file.
 
     Parameters
@@ -141,8 +154,9 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     path_config
         The configuration file.
         Defaults to `${REPREP_CHECK_HREFS_CONFIG}` variable or `check_hrefs.yaml` if it is not set.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -152,25 +166,37 @@ def check_hrefs(path_src: str, path_config: str | None = None, block: bool = Fal
     with subs_env_vars() as subs:
         path_src = subs(path_src)
         path_config = subs(path_config)
-    args = ["check_hrefs", shlex.quote(path_src)]
-    inp_paths = [path_src]
+    args = ["srr-check-hrefs", shlex.quote(path_src)]
+    paths_inp = [path_src]
     if path_config is not None:
-        inp_paths.append(path_config)
+        paths_inp.append(path_config)
         args.extend(["-c", path_config])
-    return step(" ".join(args), inp=inp_paths, block=block)
+    return run(" ".join(args), inp=paths_inp, resources=resources)
+
+
+def _process_inventory(
+    inventory: StrPath | bool | None, prog: str, stem: str, args: list, paths_out: list
+):
+    if inventory is None:
+        inventory = string_to_bool(getenv(f"REPREP_{prog}_INVENTORY", "0"))
+    if inventory is True:
+        inventory = f"{stem}-inventory.txt"
+    if inventory is not False:
+        args.append("--inventory=" + shlex.quote(coerce_str(inventory)))
+        paths_out.append(inventory)
 
 
 def compile_latex(
-    path_tex: str,
+    path_tex: StrPath,
     *,
     run_bibtex=True,
     maxrep: int = 5,
-    workdir: str = "./",
-    latex: str | None = None,
-    bibtex: str | None = None,
-    inventory: str | bool | None = None,
+    workdir: StrPath = "./",
+    latex: StrPath | None = None,
+    bibtex: StrPath | None = None,
+    inventory: StrPath | bool | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a LaTeX source.
 
@@ -203,8 +229,9 @@ def compile_latex(
         the inventory file is always written, unless this argument is set to `False`.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -213,7 +240,7 @@ def compile_latex(
 
     Notes
     -----
-    The LaTeX source is compiled with the `rr-compile-latex` command,
+    The LaTeX source is compiled with the `srr-compile-latex` command,
     which can detect dependencies on other files by scanning for
     `\\input`, `\\include`, `\\includegraphics`, etc.
     Due to the complexity of LaTeX, the dependency scanning is not perfect.
@@ -233,48 +260,42 @@ def compile_latex(
     if not path_tex.endswith(".tex"):
         raise ValueError(f"The input of the latex command must end with .tex, got {path_tex}.")
 
-    prefix = path_tex[:-4]
-    path_pdf = f"{prefix}.pdf"
+    stem = path_tex[:-4]
+    path_pdf = f"{stem}.pdf"
 
-    args = ["compile-latex", shlex.quote(path_tex)]
-    inp_paths = [path_tex]
-    out_paths = [path_pdf, f"{prefix}.aux", f"{prefix}.fls"]
+    args = ["srr-compile-latex", shlex.quote(path_tex)]
+    paths_inp = [path_tex]
+    paths_out = [path_pdf, f"{stem}.aux", f"{stem}.fls"]
     if maxrep != 5:
         args.append("--maxrep=" + shlex.quote(str(maxrep)))
     if latex is not None:
-        args.append("--latex=" + shlex.quote(latex))
+        args.append("--latex=" + shlex.quote(coerce_str(latex)))
     if run_bibtex:
         args.append("--run-bibtex")
         if bibtex is not None:
-            args.append("--bibtex=" + shlex.quote(bibtex))
-    if inventory is None:
-        inventory = string_to_bool(getenv("REPREP_LATEX_INVENTORY", "0"))
-    if inventory is True:
-        inventory = f"{prefix}-inventory.txt"
-    if isinstance(inventory, str):
-        args.append("--inventory=" + shlex.quote(inventory))
-        out_paths.append(inventory)
-    return step(
+            args.append("--bibtex=" + shlex.quote(coerce_str(bibtex)))
+    _process_inventory(inventory, "LATEX", stem, args, paths_out)
+    return run(
         " ".join(args),
-        inp=inp_paths,
-        out=out_paths,
+        inp=paths_inp,
+        out=paths_out,
         workdir=workdir,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def compile_tectonic(
-    path_tex: str,
-    dest: str | None = None,
+    path_tex: StrPath,
+    dest: StrPath | None = None,
     *,
-    workdir: str = "./",
-    tectonic: str | None = None,
+    workdir: StrPath = "./",
+    tectonic: StrPath | None = None,
     keep_deps: bool = False,
     tectonic_args: Collection[str] = (),
-    inventory: str | bool | None = None,
+    inventory: StrPath | bool | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a LaTeX source with Tectonic.
 
@@ -312,8 +333,9 @@ def compile_tectonic(
         the inventory file is always written, unless this argument is set to `False`.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -328,51 +350,45 @@ def compile_tectonic(
     path_out = make_path_out(path_tex, dest, ".pdf")
 
     stem = path_tex[:-4]
-    args = ["compile-tectonic"]
+    args = ["srr-compile-tectonic"]
     if tectonic is not None:
-        args.append(f"--tectonic={shlex.quote(tectonic)}")
+        args.append(f"--tectonic={shlex.quote(coerce_str(tectonic))}")
     paths_out = [path_out]
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TECTONIC_DEPS", "0")):
         args.append("--keep-deps")
         paths_out.append(f"{stem}.dep")
-    if inventory is None:
-        inventory = string_to_bool(getenv("REPREP_TECTONIC_INVENTORY", "0"))
-    if inventory is True:
-        inventory = f"{stem}-inventory.txt"
-    if isinstance(inventory, str):
-        args.append(f"--inventory={shlex.quote(inventory)}")
-        paths_out.append(inventory)
+    _process_inventory(inventory, "TECTONIC", stem, args, paths_out)
     args.append(shlex.quote(path_tex))
     if path_tex[:-4] != path_out[:-4]:
-        args.append("--out=" + shlex.quote(path_out))
+        args.append("--out=" + shlex.quote(coerce_str(path_out)))
     path_inp = [path_tex]
     if len(tectonic_args) > 0:
         args.append("--")
         args.extend(shlex.quote(tectonic_arg) for tectonic_arg in tectonic_args)
 
-    return step(
+    return run(
         " ".join(args),
         inp=path_inp,
         out=paths_out,
         workdir=workdir,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def compile_typst(
-    path_typ: str,
-    dest: str | None = None,
+    path_typ: StrPath,
+    dest: StrPath | None = None,
     *,
     sysinp: dict[str, str | Path] | None = None,
     resolution: int | None = None,
-    workdir: str = "./",
-    typst: str | None = None,
+    workdir: StrPath = "./",
+    typst: StrPath | None = None,
     keep_deps: bool = False,
     typst_args: Collection[str] = (),
-    inventory: str | bool | None = None,
+    inventory: StrPath | bool | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a Typst source.
 
@@ -430,8 +446,9 @@ def compile_typst(
         the inventory file is always written, unless this argument is set to `False`.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -446,27 +463,21 @@ def compile_typst(
     path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])
 
     stem = path_typ[:-4]
-    args = ["compile-typst"]
+    args = ["srr-compile-typst"]
     if resolution is not None:
         args.append(f"--resolution={shlex.quote(str(resolution))}")
     if typst is not None:
-        args.append(f"--typst={shlex.quote(typst)}")
+        args.append(f"--typst={shlex.quote(coerce_str(typst))}")
     paths_out = []
     if not any(x in path_out for x in ("{p}", "{0p}", "{t}")):
         paths_out.append(path_out)
     if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
         args.append("--keep-deps")
         paths_out.append(f"{stem}.deps.json")
-    if inventory is None:
-        inventory = string_to_bool(getenv("REPREP_TYPST_INVENTORY", "0"))
-    if inventory is True:
-        inventory = f"{stem}-inventory.txt"
-    if isinstance(inventory, str):
-        args.append(f"--inventory={shlex.quote(inventory)}")
-        paths_out.append(inventory)
-    args.append(shlex.quote(path_typ))
+    _process_inventory(inventory, "TYPST", stem, args, paths_out)
+    args.append(shlex.quote(coerce_str(path_typ)))
     if path_typ[:-4] != path_out[:-4]:
-        args.append("--out=" + shlex.quote(path_out))
+        args.append("--out=" + shlex.quote(coerce_str(path_out)))
     path_inp = [path_typ]
     if sysinp is not None:
         if not isinstance(sysinp, dict):
@@ -487,24 +498,24 @@ def compile_typst(
         args.append("--")
         args.extend(shlex.quote(typst_arg) for typst_arg in typst_args)
 
-    return step(
+    return run(
         " ".join(args),
         inp=path_inp,
         out=paths_out,
         workdir=workdir,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def convert_inkscape(
-    path_svg: str,
-    path_out: str,
+    path_svg: StrPath,
+    path_out: StrPath,
     *,
-    inkscape: str | None = None,
+    inkscape: StrPath | None = None,
     inkscape_args: Collection[str] = (),
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert an SVG figure to a PDF file, detecting dependencies of the SVG on other files.
 
@@ -524,8 +535,9 @@ def convert_inkscape(
         `${REPREP_INKSCAPE_PNG_ARGS}`, if the environment variable is defined.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -544,23 +556,27 @@ def convert_inkscape(
         raise ValueError("The SVG file must have extension .svg")
     if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
-    args = ["convert-inkscape", shlex.quote(path_svg), shlex.quote(path_out)]
+    args = [
+        "srr-convert-inkscape",
+        shlex.quote(coerce_str(path_svg)),
+        shlex.quote(coerce_str(path_out)),
+    ]
     if inkscape is not None:
-        args.append("--inkscape=" + shlex.quote(inkscape))
+        args.append("--inkscape=" + shlex.quote(coerce_str(inkscape)))
     if len(inkscape_args) > 0:
         args.append("--")
-        args.extend(shlex.quote(inkscape_arg) for inkscape_arg in inkscape_args)
-    return step(" ".join(args), inp=path_svg, out=path_out, block=block, optional=optional)
+        args.extend(shlex.quote(coerce_str(inkscape_arg)) for inkscape_arg in inkscape_args)
+    return run(" ".join(args), inp=path_svg, out=path_out, optional=optional, resources=resources)
 
 
 def convert_inkscape_pdf(
-    path_svg: str,
-    dest: str | None = None,
+    path_svg: StrPath,
+    dest: StrPath | None = None,
     *,
-    inkscape: str | None = None,
-    inkscape_args: Collection[str] = (),
+    inkscape: StrPath | None = None,
+    inkscape_args: Collection[StrPath] = (),
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
 
@@ -578,18 +594,18 @@ def convert_inkscape_pdf(
         inkscape=inkscape,
         inkscape_args=inkscape_args,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def convert_inkscape_png(
-    path_svg: str,
-    dest: str | None = None,
+    path_svg: StrPath,
+    dest: StrPath | None = None,
     *,
-    inkscape: str | None = None,
-    inkscape_args: Collection[str] = (),
+    inkscape: StrPath | None = None,
+    inkscape_args: Collection[StrPath] = (),
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
 
@@ -607,23 +623,22 @@ def convert_inkscape_png(
         inkscape=inkscape,
         inkscape_args=inkscape_args,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def convert_jupyter(
-    path_nb: str,
-    dest: str | None = None,
+    path_nb: StrPath,
+    dest: StrPath | None = None,
     *,
-    inp: str | Collection[str] = (),
-    out: str | Collection[str] = (),
+    inp: StrPath | Collection[StrPath] = (),
+    out: StrPath | Collection[StrPath] = (),
     execute: bool = True,
     to: str | None = None,
     nbargs: str | dict | list | None = None,
-    jupyter: str | None = None,
+    jupyter: StrPath | None = None,
     optional: bool = False,
-    pool: str | None = None,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a Jupyter notebook, by default to HTML with execution of cells.
 
@@ -668,12 +683,9 @@ def convert_jupyter(
         Defaults to `${REPREP_JUPYTER}` variable or `jupyter` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
-    pool
-        The pool in which the step is executed,
-        which may be convenient to limit the number of parallel notebooks being executed,
-        e.g. when the already run calculations in parallel.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -712,7 +724,7 @@ def convert_jupyter(
         to = default_formats[path_out.suffix]
     if jupyter is None:
         jupyter = getenv("REPREP_JUPYTER", "jupyter")
-    args = [jupyter, "nbconvert", shlex.quote(path_nb), "--stdout", "--to", to]
+    args = [jupyter, "nbconvert", shlex.quote(coerce_str(path_nb)), "--stdout", "--to", to]
     if execute:
         args.append("--execute")
     if nbargs is not None:
@@ -721,24 +733,24 @@ def convert_jupyter(
         elif not isinstance(nbargs, str):
             nbargs = str(nbargs)
         args.insert(0, "REPREP_NBARGS=" + shlex.quote(nbargs))
-    args.extend([">", shlex.quote(path_out)])
-    runsh(
+    args.extend([">", shlex.quote(coerce_str(path_out))])
+    run(
         " ".join(args),
         inp=[path_nb, *inp],
         out=[path_out, *out],
+        shell=True,
         optional=optional,
-        pool=pool,
-        block=block,
+        resources=resources,
     )
 
 
 def convert_markdown(
-    path_md: str,
-    dest: str | None = None,
+    path_md: StrPath,
+    dest: StrPath | None = None,
     *,
-    paths_css: str | Collection[str] = (),
+    paths_css: StrPath | Collection[StrPath] = (),
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a markdown to HTML.
 
@@ -756,8 +768,9 @@ def convert_markdown(
         which is interpreted as a colon-separated list of files.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -771,24 +784,28 @@ def convert_markdown(
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, dest, ".html")
     inp = [path_md]
-    args = ["convert-markdown", shlex.quote(path_md), shlex.quote(path_html)]
+    args = [
+        "srr-convert-markdown",
+        shlex.quote(coerce_str(path_md)),
+        shlex.quote(coerce_str(path_html)),
+    ]
     if len(paths_css) > 0:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
         args.append("--css")
-        args.extend(shlex.quote(path_css) for path_css in paths_css)
+        args.extend(shlex.quote(coerce_str(path_css)) for path_css in paths_css)
         inp.extend(paths_css)
-    return step(" ".join(args), inp=inp, out=path_html, optional=optional, block=block)
+    return run(" ".join(args), inp=inp, out=path_html, optional=optional, resources=resources)
 
 
 def convert_mutool(
-    path_pdf: str,
-    path_out: str,
+    path_pdf: StrPath,
+    path_out: StrPath,
     *,
     resolution: int | None = None,
-    mutool: str | None = None,
+    mutool: StrPath | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a PDF to a bitmap with mutool (from MuPDF).
 
@@ -805,8 +822,9 @@ def convert_mutool(
         Defaults to `${REPREP_MUTOOL}` variable or `mutool` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -817,24 +835,29 @@ def convert_mutool(
         resolution = int(getenv("REPREP_CONVERT_PDF_RESOLUTION", "100"))
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
-    args = [shlex.quote(mutool), "draw -q -o ${out} -r", shlex.quote(str(resolution)), "${inp}"]
-    return runsh(
+    args = [
+        shlex.quote(coerce_str(mutool)),
+        "draw -q -o ${out} -r",
+        shlex.quote(str(resolution)),
+        "${inp}",
+    ]
+    return run(
         " ".join(args),
         inp=path_pdf,
         out=path_out,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def convert_mutool_png(
-    path_pdf: str,
-    dest: str | None = None,
+    path_pdf: StrPath,
+    dest: StrPath | None = None,
     *,
     resolution: int | None = None,
-    mutool: str | None = None,
+    mutool: StrPath | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_mutool` with the output file derived from the PDF file.
 
@@ -847,17 +870,22 @@ def convert_mutool_png(
         raise ValueError("The PDF file must have extension .pdf")
     path_png = make_path_out(path_pdf, dest, ".png")
     return convert_mutool(
-        path_pdf, path_png, resolution=resolution, mutool=mutool, optional=optional, block=block
+        path_pdf,
+        path_png,
+        resolution=resolution,
+        mutool=mutool,
+        optional=optional,
+        resources=resources,
     )
 
 
 def convert_weasyprint(
-    path_html: str,
-    dest: str | None = None,
+    path_html: StrPath,
+    dest: StrPath | None = None,
     *,
-    weasyprint: str | None = None,
+    weasyprint: StrPath | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a HTML document to PDF.
 
@@ -872,8 +900,9 @@ def convert_weasyprint(
         Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -887,22 +916,22 @@ def convert_weasyprint(
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, dest, ".pdf")
     args = [
-        "convert-weasyprint",
-        shlex.quote(path_html),
+        "srr-convert-weasyprint",
+        shlex.quote(coerce_str(path_html)),
         shlex.quote(path_pdf),
     ]
     if weasyprint is not None:
-        args.append("--weasyprint=" + shlex.quote(weasyprint))
-    return step(" ".join(args), inp=path_html, out=path_pdf, block=block, optional=optional)
+        args.append("--weasyprint=" + shlex.quote(coerce_str(weasyprint)))
+    return run(" ".join(args), inp=path_html, out=path_pdf, optional=optional, resources=resources)
 
 
 def convert_odf_pdf(
-    path_odf: str,
-    dest: str | None = None,
+    path_odf: StrPath,
+    dest: StrPath | None = None,
     *,
-    libreoffice: str | None = None,
+    libreoffice: StrPath | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a file in OpenDocument format to PDF.
 
@@ -917,8 +946,9 @@ def convert_odf_pdf(
         Defaults to `${REPREP_LIBREOFFICE}` variable or `libreoffice` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -942,12 +972,14 @@ def convert_odf_pdf(
         # Not solved yet:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
         "WORK=`mktemp -d --suffix=reprep` && "
-        + shlex.quote(libreoffice)
+        + shlex.quote(coerce_str(libreoffice))
         + " -env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
         "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
     )
     path_pdf = make_path_out(path_odf, dest, ".pdf")
-    return runsh(command, inp=path_odf, out=path_pdf, optional=optional, block=block)
+    return run(
+        command, inp=path_odf, out=path_pdf, shell=True, optional=optional, resources=resources
+    )
 
 
 DEFAULT_LATEXDIFF_ARGS = (
@@ -957,14 +989,14 @@ DEFAULT_LATEXDIFF_ARGS = (
 
 
 def diff_latex(
-    path_old: str,
-    path_new: str,
-    path_diff: str,
+    path_old: StrPath,
+    path_new: StrPath,
+    path_diff: StrPath,
     *,
-    latexdiff: str | None = None,
+    latexdiff: StrPath | None = None,
     latexdiff_args: Collection[str] = DEFAULT_LATEXDIFF_ARGS,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     r"""Create a step to run latexdiff.
 
@@ -992,8 +1024,9 @@ def diff_latex(
         The option `--no-label` is always added because it is needed to make the file reproducible.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1006,28 +1039,28 @@ def diff_latex(
     if latexdiff_args is None:
         latexdiff_args = shlex.split(getenv("REPREP_LATEXDIFF_ARGS", ""))
 
-    args = [shlex.quote(latexdiff)]
+    args = [shlex.quote(coerce_str(latexdiff))]
     args.extend(shlex.quote(latexdiff_arg) for latexdiff_arg in latexdiff_args)
     args.extend(["${inp}", "--no-label", ">", "${out}"])
-    return runsh(
+    return run(
         " ".join(args),
         inp=[path_old, path_new],
         out=path_diff,
+        shell=True,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def execute_papermill(
-    path_nb: str,
-    dest: str,
+    path_nb: StrPath,
+    dest: StrPath,
     *,
-    inp: str | Collection[str] = (),
-    out: str | Collection[str] = (),
+    inp: StrPath | Collection[StrPath] = (),
+    out: StrPath | Collection[StrPath] = (),
     parameters: dict[str] | None = None,
     optional: bool = False,
-    pool: str | None = None,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Execute a Jupyter Notebook with papermill and save the notebook with outputs as a new file.
 
@@ -1052,12 +1085,9 @@ def execute_papermill(
         It will be passed to the parameters argument of `papermill.execute_notebook()`.
     optional
         If `True`, the step is only executed when needed by other steps.
-    pool
-        The pool in which the step is executed,
-        which may be convenient to limit the number of parallel notebooks being executed,
-        e.g. when the already run calculations in parallel.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1069,28 +1099,31 @@ def execute_papermill(
         dest = subs(dest)
     if not path_nb.endswith(".ipynb"):
         raise ValueError("The notebook file must have extension .ipynb")
-    if isinstance(inp, str):
-        inp = [inp]
-    if isinstance(out, str):
-        out = [out]
+    inp = coerce_paths(inp)
+    out = coerce_paths(out)
     path_out = make_path_out(path_nb, dest, ".ipynb")
     if parameters is None:
         parameters = {}
-    args = ["execute-papermill", shlex.quote(path_nb)]
+    args = ["srr-execute-papermill", shlex.quote(coerce_str(path_nb))]
     if len(parameters) > 0:
         args.append(shlex.quote(json.dumps(parameters)))
-    args.append(shlex.quote(path_out))
-    step(
+    args.append(shlex.quote(coerce_str(path_out)))
+    return run(
         " ".join(args),
         inp=[path_nb, *inp],
         out=[path_out, *out],
         optional=optional,
-        pool=pool,
-        block=block,
+        resources=resources,
     )
 
 
-def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, block: bool = False):
+def flatten_latex(
+    path_tex: StrPath,
+    path_flat: StrPath,
+    *,
+    optional: bool = False,
+    resources: dict[str, int] | str | None = None,
+) -> StepInfo:
     r"""Flatten structured LaTeX source files (substitute `\input` and friends by their content).
 
     Parameters
@@ -1101,28 +1134,29 @@ def flatten_latex(path_tex: str, path_flat: str, *, optional: bool = False, bloc
         The flattened output file.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step(
-        "flatten-latex ${inp} ${out}",
+    return run(
+        "srr-flatten-latex ${inp} ${out}",
         inp=path_tex,
         out=path_flat,
         optional=optional,
-        block=block,
+        resources=resources,
     )
 
 
 def make_inventory(
-    *paths: Collection[str],
-    path_def: str | None = None,
+    *paths: Collection[StrPath],
+    path_def: StrPath | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Create an `inventory.txt` file.
 
@@ -1135,8 +1169,9 @@ def make_inventory(
         An inventory definitions file, used to constructe the list of files.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1146,30 +1181,26 @@ def make_inventory(
     if len(paths) < 1:
         raise ValueError("At least one path must be given.")
     paths_inp = list(paths[:-1])
-    args = ["make-inventory", *paths_inp]
+    args = ["srr-make-inventory", *(coerce_str(p) for p in paths_inp)]
     if path_def is not None:
-        args.extend(["-i", path_def])
+        args.extend(["-i", coerce_str(path_def)])
         paths_inp.append(path_def)
-    args.extend(["-o", paths[-1]])
-    return step(
-        shlex.join(args),
-        inp=paths_inp,
-        out=[paths[-1]],
-        optional=optional,
-        block=block,
+    args.extend(["-o", coerce_str(paths[-1])])
+    return run(
+        shlex.join(args), inp=paths_inp, out=[paths[-1]], optional=optional, resources=resources
     )
 
 
 def nup_pdf(
-    path_src: str,
-    path_dst: str,
+    path_src: StrPath,
+    path_dst: StrPath,
     *,
     nrow: int | None = None,
     ncol: int | None = None,
     margin: float | None = None,
     page_format: str | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Put multiple pages per sheet using a fixed layout.
 
@@ -1193,15 +1224,16 @@ def nup_pdf(
         The default is `${REPREP_NUP_PAGE_FORMAT}` or A4-L if the variable is not set.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["nup-pdf", "${inp}", "${out}"]
+    args = ["srr-nup-pdf", "${inp}", "${out}"]
     if nrow is not None:
         args.extend(["-r", str(nrow)])
     if ncol is not None:
@@ -1210,17 +1242,17 @@ def nup_pdf(
         args.extend(["-m", str(margin)])
     if page_format is not None:
         args.extend(["-p", shlex.quote(page_format)])
-    return step(" ".join(args), inp=path_src, out=path_dst, optional=optional, block=block)
+    return run(" ".join(args), inp=path_src, out=path_dst, optional=optional, resources=resources)
 
 
 def raster_pdf(
-    path_inp: str,
-    dest: str,
+    path_inp: StrPath,
+    dest: StrPath,
     *,
     resolution: int | None = None,
     quality: int | None = None,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Turn each page of a PDF into a rendered JPEG bitmap contained in a new PDF.
 
@@ -1239,32 +1271,33 @@ def raster_pdf(
         The default value is taken from `${REPREP_RASTER_QUALITY}` or 50 if the variable is not set.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["raster-pdf", "${inp}", "${out}"]
+    args = ["srr-raster-pdf", "${inp}", "${out}"]
     if resolution is not None:
         args.extend(["-r", str(resolution)])
     if quality is not None:
-        args.extend(["-q", shlex.quote(str(quality))])
+        args.extend(["-q", str(quality)])
     path_out = make_path_out(path_inp, dest, ".pdf")
-    return step(" ".join(args), inp=path_inp, out=path_out, optional=optional, block=block)
+    return run(" ".join(args), inp=path_inp, out=path_out, optional=optional, resources=resources)
 
 
 def sanitize_bibtex(
-    path_bib: str,
+    path_bib: StrPath,
     *,
-    path_aux: str | None = None,
-    path_cfg: str | None = None,
-    path_out: str | None = None,
+    path_aux: StrPath | None = None,
+    path_cfg: StrPath | None = None,
+    path_out: StrPath | None = None,
     overwrite: bool = False,
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Sanitize a BibTeX file.
 
@@ -1276,7 +1309,7 @@ def sanitize_bibtex(
         Paths to LaTeX aux file if any.
         This is used to detect unused or missing citations.
     path_cfg
-        The YAML configuration file for the `rr-sanitize-bibtex` script.
+        The YAML configuration file for the `srr-bibsane` script.
     path_out
         If given, a single cleaned-up bibtex file is written as output,
         which you can manually copy back to the original if you approve of the cleanup.
@@ -1288,8 +1321,9 @@ def sanitize_bibtex(
         in which case `path_out` is not treated as a new output file in the workflow.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1304,7 +1338,7 @@ def sanitize_bibtex(
     if not path_bib.endswith(".bib"):
         raise ValueError("The BibTeX file must have extension .bib")
 
-    args = ["bibsane", shlex.quote(path_bib)]
+    args = ["srr-bibsane", shlex.quote(path_bib)]
     paths_inp = [path_bib]
     if path_aux is not None:
         args.append("--aux=" + shlex.quote(path_aux))
@@ -1317,10 +1351,15 @@ def sanitize_bibtex(
         args.append("--out=" + shlex.quote(path_out))
         if not overwrite:
             paths_out.append(path_out)
-    return step(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, block=block)
+    return run(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, resources=resources)
 
 
-def sync_zenodo(path_config: str, *, verbose: bool = False, block: bool = False) -> StepInfo:
+def sync_zenodo(
+    path_config: StrPath,
+    *,
+    verbose: bool = False,
+    resources: dict[str, int] | str | None = None,
+) -> StepInfo:
     """Synchronize data with an draft dataset on Zenodo.
 
     Parameters
@@ -1329,22 +1368,27 @@ def sync_zenodo(path_config: str, *, verbose: bool = False, block: bool = False)
         The YAML configuration file for the Zenodo upload.
     verbose
         Set to True to print Zenodo API requests and responses to the standard output.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "sync-zenodo ${inp}"
+    command = "srr-sync-zenodo ${inp}"
     if verbose:
         command += " --verbose"
-    return step(command, inp=path_config, block=block)
+    return run(command, inp=path_config, resources=resources)
 
 
 def unplot(
-    path_svg: str, dest: str | None = None, *, optional: bool = False, block: bool = False
+    path_svg: StrPath,
+    dest: StrPath | None = None,
+    *,
+    optional: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Convert a plot back to data.
 
@@ -1354,11 +1398,11 @@ def unplot(
         The SVG file with paths to be converted back.
     dest
         An output directory or file.
-
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1366,21 +1410,22 @@ def unplot(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     path_out = make_path_out(path_svg, dest, ".json")
-    command = "unplot ${inp} ${out}"
-    return step(command, inp=path_svg, out=path_out, optional=optional, block=block)
+    command = "srr-unplot ${inp} ${out}"
+    return run(command, inp=path_svg, out=path_out, optional=optional, resources=resources)
 
 
 def wrap_git(
     command: str,
     *,
-    inp: Collection[str] | str = (),
-    env: Collection[str] | str = (),
-    out: Collection[str] | str = (),
-    vol: Collection[str] | str = (),
-    stdout: str | None = None,
-    workdir: str = "./",
+    inp: Collection[StrPath] | StrPath = (),
+    env: Collection[StrPath] | StrPath = (),
+    out: Collection[StrPath] | StrPath = (),
+    vol: Collection[StrPath] | StrPath = (),
+    stdout: StrPath | None = None,
+    workdir: StrPath = "./",
     optional: bool = False,
-    block: bool = False,
+    resources: dict[str, int] | str | None = None,
+    shell: bool = False,
 ) -> StepInfo:
     """Create a step to run a git command.
 
@@ -1394,10 +1439,10 @@ def wrap_git(
     As a result, the step will be rescheduled when the current commit id or branch changes.
 
     It is recommended to make gitroot / '.git/' and all of its contents static
-    with recursive deferred glob as follows:
+    as follows:
 
     ```python
-    glob(".git/**", _defer=True)
+    static(".git/")
     ```
 
     Parameters
@@ -1419,8 +1464,11 @@ def wrap_git(
         The working directory where the git command must be executed.
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    shell
+        If `True`, the command is executed through the shell.
 
     Returns
     -------
@@ -1429,14 +1477,14 @@ def wrap_git(
     """
     if not isinstance(command, str):
         raise TypeError("The git command must be a string.")
-    if not (stdout is None or isinstance(stdout, str)):
-        raise TypeError("The stdout filename of the git command must be a string or None.")
+    if stdout is not None:
+        stdout = coerce_path(stdout)
 
-    action = "wrap-git"
+    action = "srr-wrap-git"
     if stdout is not None:
         action += f" --stdout={shlex.quote(stdout)}"
     action += f" -- {command}"
-    return step(
+    return run(
         action,
         inp=inp,
         env=env,
@@ -1444,12 +1492,17 @@ def wrap_git(
         vol=vol,
         workdir=workdir,
         optional=optional,
-        block=block,
+        resources=resources,
+        shell=shell,
     )
 
 
 def zip_inventory(
-    path_inventory: str, path_zip: str, *, optional: bool = False, block: bool = False
+    path_inventory: StrPath,
+    path_zip: StrPath,
+    *,
+    optional: bool = False,
+    resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
     """Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.
 
@@ -1457,23 +1510,24 @@ def zip_inventory(
     ----------
     path_inventory
         A file created with the `make_inventory` API or with the command-line script
-        `rr-make-inventory`.
+        `srr-make-inventory`.
     path_zip
         The output ZIP file
     optional
         If `True`, the step is only executed when needed by other steps.
-    block
-        If `True`, the step will always remain pending.
+    resources
+        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    return step(
-        "zip-inventory ${inp} ${out}",
+    return run(
+        "srr-zip-inventory ${inp} ${out}",
         inp=path_inventory,
         out=path_zip,
         optional=optional,
-        block=block,
+        resources=resources,
     )

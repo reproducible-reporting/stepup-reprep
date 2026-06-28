@@ -20,24 +20,19 @@
 """Wrapper for SVG to PDF conversion."""
 
 import argparse
-import os
 import shlex
-import sys
 from collections.abc import Iterator
 
 from defusedxml import ElementTree
 from path import Path
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies
-from stepup.core.worker import WorkThread
+from stepup.core.extapi import filter_dependencies, run_subprocess
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
+    args = parse_args()
 
     path_out = Path(args.path_out)
     allowed_extensions = [".pdf", ".png"]
@@ -53,23 +48,24 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         )
     inp_paths = filter_dependencies(search_svg_deps(args.path_svg))
     amend(inp=inp_paths)
+    # SELF_CALL=x is a workaround for a known Inkscape bug
+    # when multiple Inkscape processes are running in parallel.
+    # See https://gitlab.com/inkscape/inkscape/-/work_items/4716
     args = [
+        "SELF_CALL=x",
         args.inkscape,
         args.path_svg,
         *args.inkscape_args,
         f"--export-filename={path_out}",
         f"--export-type={path_out.suffix[1:]}",
     ]
-    os.environ["SELF_CALL"] = "x"
-    returncode = work_thread.runsh_verbose(shlex.join(args))
-    if returncode != 0:
-        sys.exit(returncode)
+    run_subprocess(shlex.join(args))
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-convert-inkscape",
+        prog="srr-convert-inkscape",
         description="Convert an SVG to PDF or PNG, with dependency tracking.",
     )
     parser.add_argument("path_svg", help="The input SVG file.")
@@ -87,7 +83,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="The inkscape executable to use. "
         "Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def search_svg_deps(src: str) -> list[str]:
@@ -125,4 +121,4 @@ def iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

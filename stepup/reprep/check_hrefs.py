@@ -32,12 +32,11 @@ from markdown_it import MarkdownIt
 from path import Path
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import mynormpath
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     if args.path_config is None:
         args.path_config = getenv("REPREP_CHECK_HREFS_CONFIG", "check_hrefs.yaml", back=True)
         amend(inp=args.path_config)
@@ -47,10 +46,10 @@ def main(argv: list[str] | None = None):
     check_hrefs(hrefs, Path(args.path_src).parent.normpath(), config.accept)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
+        prog="srr-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
     )
     parser.add_argument("path_src", help="Markdown, HTML or PDF file.")
     parser.add_argument(
@@ -60,7 +59,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Configuration yaml file. "
         "The default is ${REPREP_CHECK_HREFS_CONFIG} or check_hrefs.yaml if it is not set.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 @attrs.define
@@ -160,10 +159,10 @@ def check_href(href: HRef, root: Path, accept: set[str]) -> bool:
             return False
         print(f"FAILED LINK: {href.url}", file=sys.stderr)
         return True
-    path = mynormpath(root / Path(href.translated))
+    path = (root / Path(href.translated)).normpath()
     amend(inp=path)
     return False
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

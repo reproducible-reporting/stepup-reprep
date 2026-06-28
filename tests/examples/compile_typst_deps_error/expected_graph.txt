@@ -1,52 +1,37 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:data.yaml
-            supplies   file:document.deps.json
-            supplies   file:document.pdf
-            supplies   file:document.typ
-            supplies   file:plan.py
-            supplies   step:compile-typst --keep-deps document.typ
-            supplies   step:runpy ./plan.py
-            supplies   step:runsh echo 'fixed: new' > data.yaml
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:document.typ
-             creates   step:compile-typst --keep-deps document.typ
-             creates   step:runsh echo 'fixed: new' > data.yaml
+             creates   step:echo 'fixed: new' > data.yaml
+             creates   step:srr-compile-typst --keep-deps document.typ
 
 file:document.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst --keep-deps document.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --keep-deps document.typ
 
-step:compile-typst --keep-deps document.typ
+step:srr-compile-typst --keep-deps document.typ
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:data.yaml [amended]
             consumes   file:document.typ
              creates   file:document.deps.json
@@ -56,26 +41,23 @@ step:compile-typst --keep-deps document.typ
 
 file:document.deps.json
                state = BUILT
-          created by   step:compile-typst --keep-deps document.typ
-            consumes   file:./
-            consumes   step:compile-typst --keep-deps document.typ
+          created by   step:srr-compile-typst --keep-deps document.typ
+            consumes   step:srr-compile-typst --keep-deps document.typ
 
 file:document.pdf
                state = BUILT
-          created by   step:compile-typst --keep-deps document.typ
-            consumes   file:./
-            consumes   step:compile-typst --keep-deps document.typ
+          created by   step:srr-compile-typst --keep-deps document.typ
+            consumes   step:srr-compile-typst --keep-deps document.typ
 
-step:runsh echo 'fixed: new' > data.yaml
+step:echo 'fixed: new' > data.yaml
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
              creates   file:data.yaml
             supplies   file:data.yaml
 
 file:data.yaml
                state = BUILT
-          created by   step:runsh echo 'fixed: new' > data.yaml
-            consumes   file:./
-            consumes   step:runsh echo 'fixed: new' > data.yaml
-            supplies   step:compile-typst --keep-deps document.typ
+          created by   step:echo 'fixed: new' > data.yaml
+            consumes   step:echo 'fixed: new' > data.yaml
+            supplies   step:srr-compile-typst --keep-deps document.typ

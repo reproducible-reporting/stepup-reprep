@@ -1,11 +1,8 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
-stepup boot -w -n 1 & # > current_stdout.txt &
+sb -w -j 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -21,7 +18,7 @@ stepup join
 cp sub/article.tex current_article.tex
 
 # Create an inventory file
-stepup make-inventory -i inventory.def -o current_inventory.txt
+srr-make-inventory -i inventory.def -o current_inventory.txt
 
 # Wait for background processes, if any.
 wait

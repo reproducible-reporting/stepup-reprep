@@ -1,53 +1,40 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:lorem.pdf
-            supplies   file:lorem.typ
-            supplies   file:plan.py
-            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:lorem.typ
-             creates   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+             creates   step:srr-compile-typst lorem.typ -- --pages 2 --no-pdf-tags
 
 file:lorem.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst lorem.typ -- --pages 2 --no-pdf-tags
 
-step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+step:srr-compile-typst lorem.typ -- --pages 2 --no-pdf-tags
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:lorem.typ
              creates   file:lorem.pdf
             supplies   file:lorem.pdf
 
 file:lorem.pdf
                state = BUILT
-          created by   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
-            consumes   file:./
-            consumes   step:compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+          created by   step:srr-compile-typst lorem.typ -- --pages 2 --no-pdf-tags
+            consumes   step:srr-compile-typst lorem.typ -- --pages 2 --no-pdf-tags

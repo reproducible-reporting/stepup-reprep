@@ -1,5 +1,5 @@
-            245 -rwxr-xr-x 60caf3e74f558a4240233f2d64a163f0ef4c27a11211975be41d76726ac88b2380bd924db10b00ee91718ca72bb9282a77c14e36e97462ffe689961b6ccf83dd plan.py
-            165 -rw-r--r-- 09de27aa0be78fea929042692a0dfb74cd2bee2198e3ae19891353151a578b992c62225bfeb609b56fd745609ee6e001002c972b00a4c13e5e277d606937a4cc sub/article.tex
-            168 -rw-r--r-- df3f03306873721c7c5fddf335f88768ee400c7133fb14f77e052751e7b568352e1de1af4a1a81986318be13b495940c3d72e8c2c003b148cbafa6568d32c992 sub/article_structured.tex
-             16 -rw-r--r-- 141e50dc336f442e4b30621ce9cf12e18af220b3f4f3ddb48b1505319e6e4c8ba6e0f1a11971174b7b51a50b4d31446066e21a06a344e22fe5353acf8b7f8fc3 sub/part1.tex
-             17 -rw-r--r-- 193c3bfc20e999e591e7ab721db23ff89e7b68f7b2f798cdefb9fdd5e74196ec2bf31cba10d2a8dce385e06f783d6a2026a2a957d9c5a80c2ada86e2b9f3ddd1 sub/part2.tex
+            237 -rwxr-xr-x b6faad25d0b5e90c840df3a31921a294bb8b8ff550832cc7a4aac423b52610f5 plan.py
+            165 -rw-r--r-- 42771b0ee8b3ba5b71cc9af9e34c91ed55fd9adfe713a17d29a874dd73965a91 sub/article.tex
+            168 -rw-r--r-- b44d222fd92c61a4a7bf131c2c641193e9e1ad47f247e5759e42528bedafa8e0 sub/article_structured.tex
+             16 -rw-r--r-- a9c7b7f73215167740cc6d9e90284ae5081cb5b9ddd1de894a27655e9a170ae9 sub/part1.tex
+             17 -rw-r--r-- 3e3408677d41c6452e7b8d1ab6ef87d55eaa6feee6351142f66b0aba30e62acc sub/part2.tex

@@ -24,7 +24,7 @@ import re
 from path import Path
 
 from stepup.core.api import amend
-from stepup.core.utils import filter_dependencies
+from stepup.core.extapi import filter_dependencies
 
 RE_OPTIONS = re.MULTILINE | re.DOTALL
 RE_INPUT = re.compile(r"\\input\s*\{([^}]*)}", RE_OPTIONS)

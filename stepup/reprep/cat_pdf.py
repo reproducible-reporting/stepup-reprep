@@ -27,16 +27,16 @@ import fitz
 __all__ = ("cat_pdf",)
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     cat_pdf(args.paths_src, args.path_dst, args.insert_blank)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
+        prog="srr-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
     )
     parser.add_argument(
         "paths_src", help="The source PDFs to which notes should be added.", nargs="+"
@@ -50,7 +50,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=False,
         action="store_true",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def cat_pdf(
@@ -98,4 +98,4 @@ def cat_pdf(
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

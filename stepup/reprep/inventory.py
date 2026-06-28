@@ -81,13 +81,13 @@ def format_summary(fs: FileSummary) -> str:
 
 def parse_summary(line: str) -> FileSummary:
     """Convert a single-line string back into a summary."""
-    if len(line) < 157:
+    if len(line) < 92:
         raise ValueError(f"Line too short to be converted to a FileSummary: {line}.")
     size_str = line[:15]
     size = None if size_str == "               " else int(size_str)
     mode = line[16:26]
-    digest = bytes.fromhex(line[27:155])
-    path = line[156:].strip()
+    digest = bytes.fromhex(line[27:92])
+    path = line[91:].strip()
     return FileSummary(size, mode, digest, path)
 
 

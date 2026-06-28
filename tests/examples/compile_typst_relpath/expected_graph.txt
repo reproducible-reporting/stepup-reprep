@@ -1,80 +1,46 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:out.pdf
-            supplies   file:plan.py
-            supplies   file:source/
-            supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
-             creates   file:source/
-             creates   file:source/aux/
              creates   file:source/aux/productivity.csv
              creates   file:source/document.typ
              creates   file:source/tada.svg
-             creates   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-
-file:source/
-               state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   file:source/aux/
-            supplies   file:source/document-inventory.txt
-            supplies   file:source/document.deps.json
-            supplies   file:source/document.typ
-            supplies   file:source/tada.svg
-            supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-
-file:source/aux/
-               state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:source/
-            supplies   file:source/aux/productivity.csv
+             creates   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
 file:source/aux/productivity.csv
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:source/aux/
-            supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
 file:source/document.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:source/
-            supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
 file:source/tada.svg
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:source/
-            supplies   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
-step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            consumes   file:source/
+          created by   step:./plan.py
             consumes   file:source/aux/productivity.csv [amended]
             consumes   file:source/document.typ
             consumes   file:source/tada.svg [amended]
@@ -87,18 +53,15 @@ step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/
 
 file:out.pdf
                state = BUILT
-          created by   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-            consumes   file:./
-            consumes   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
 file:source/document-inventory.txt
                state = BUILT
-          created by   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-            consumes   file:source/
-            consumes   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
 file:source/document.deps.json
                state = BUILT
-          created by   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-            consumes   file:source/
-            consumes   step:compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+          created by   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+            consumes   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf

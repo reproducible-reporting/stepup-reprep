@@ -23,7 +23,6 @@ import enum
 import os
 import re
 import shutil
-import sys
 import tempfile
 from collections.abc import Collection
 
@@ -135,7 +134,7 @@ RETURN_CODE_CHANGED = 1
 RETURN_CODE_BROKEN = 2
 
 
-def main(argv: list[str] | None = None):
+def main(argv: list[str] | None = None) -> int:
     """Main program."""
     args = parse_args(argv)
 
@@ -255,7 +254,7 @@ def main(argv: list[str] | None = None):
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-bibsane",
+        prog="srr-bibsane",
         description="Sanitize and clean up a BibTeX file.",
     )
     parser.add_argument("bib", help="The BibTeX file to check and clean up.")
@@ -268,7 +267,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--out",
         help="Output path for the cleaned up BibTeX file. "
-        "If not given, rr-bibsane will be overwrite the given file with the cleaned up version "
+        "If not given, srr-bibsane will be overwrite the given file with the cleaned up version "
         "(if any changes were needed). "
         "This will cause StepUp to drain the scheduler so you can inspect the changes and rebuild.",
     )
@@ -568,7 +567,7 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
     """
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
-        with tempfile.TemporaryDirectory("rr-bibsane") as dn_tmp:
+        with tempfile.TemporaryDirectory("srr-bibsane") as dn_tmp:
             fn_tmp = os.path.join(dn_tmp, "tmp.bib")
             with open(fn_tmp, "w") as f:
                 f.write(format_bib(entries))
@@ -591,4 +590,4 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

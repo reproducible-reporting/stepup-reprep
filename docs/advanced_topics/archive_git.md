@@ -166,7 +166,7 @@ There are two options, the latter of which is preferable:
       using the following command in the terminal:
 
         ```bash
-        rr-make-inventory -i inventory-main-latest.def
+        srr-make-inventory -i inventory-main-latest.def
         ```
 
         This will write a complete listing to `inventory-main.txt`
@@ -175,7 +175,7 @@ There are two options, the latter of which is preferable:
       by running the following command:
 
         ```bash
-        rr-zip-inventory inventory-main-latest.txt main-latest.zip
+        srr-zip-inventory inventory-main-latest.txt main-latest.zip
         ```
 
 ### Archiving Source and Output Files from the Last Commit

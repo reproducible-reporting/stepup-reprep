@@ -27,15 +27,14 @@ especially when executing many notebooks that all require the same imports.
 
 import argparse
 import json
-import sys
 
 from papermill import execute_notebook
 from path import Path
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     if not args.path_inp.endswith(".ipynb"):
         raise ValueError("The input must have a .ipynb extension.")
     if not args.path_out.endswith(".ipynb"):
@@ -48,9 +47,11 @@ def main(argv: list[str] | None = None):
     )
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Define command-line arguments."""
-    parser = argparse.ArgumentParser(description="Convert a Jupyter notebook to HTML.")
+    parser = argparse.ArgumentParser(
+        prog="srr-execute-papermill", description="Execute a Jupyter notebook with papermill."
+    )
     parser.add_argument(
         "path_inp", help="Path of the Jupyter notebook to execute and convert.", type=Path
     )
@@ -58,8 +59,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "parameters", nargs="?", help="JSON serialized parameters for the notebook.", type=str
     )
     parser.add_argument("path_out", help="Path to the output notebook.", type=Path)
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

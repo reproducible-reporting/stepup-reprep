@@ -1,13 +1,10 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example
 export SOURCE_DATE_EPOCH="315532800"
 export LATEX_MAIN="paper"
-stepup boot -w -n 1 & # > current_stdout.txt &
+sb -w -j 1 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -21,8 +18,8 @@ stepup watch-delete paper.pdf
 stepup watch-delete paper.bbl
 stepup run
 stepup join
-stepup make-inventory -o reproducibility_pdf_inventory.txt paper.pdf paper1.pdf
-stepup make-inventory -o reproducibility_bbl_inventory.txt paper.bbl paper1.bbl
+srr-make-inventory -o reproducibility_pdf_inventory.txt paper.pdf paper1.pdf
+srr-make-inventory -o reproducibility_bbl_inventory.txt paper.bbl paper1.bbl
 
 # Wait for background processes, if any.
 wait
@@ -37,4 +34,4 @@ wait
 [[ -f paper1.bbl ]] || exit 1
 [[ -f reproducibility_pdf_inventory.txt ]] || exit 1
 [[ -f reproducibility_bbl_inventory.txt ]] || exit 1
-stepup check-inventory paper-inventory.txt
+srr-check-inventory paper-inventory.txt

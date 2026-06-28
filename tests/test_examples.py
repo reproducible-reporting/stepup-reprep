@@ -65,7 +65,7 @@ async def test_example(path_tmp, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 
-def has_texlive_2023():
+def has_texlive_2026():
     if not shutil.which("lualatex"):
         return False
     if not shutil.which("pdflatex"):
@@ -87,10 +87,10 @@ def has_texlive_2023():
     match = re.search(r"TeX Live (?P<year>\d\d\d\d)", cp.stdout)
     if match is None:
         return False
-    return match.group("year") == "2023"
+    return match.group("year") == "2026"
 
 
-@pytest.mark.skipif(not has_texlive_2023(), reason="No TeX Live 2023")
+@pytest.mark.skipif(not has_texlive_2026(), reason="No TeX Live 2026")
 @pytest.mark.parametrize(
     "name",
     [
@@ -142,7 +142,6 @@ async def test_tectonic_example(path_tmp: Path, name: str):
     [
         "convert_inkscape",
         pytest.param("convert_inkscape_concurrency", marks=pytest.mark.heavy),
-        "tile_pdf",
     ],
 )
 @pytest.mark.asyncio
@@ -173,7 +172,21 @@ async def test_libreoffice_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 
-@pytest.mark.skipif(not shutil.which("typst"), reason="No Typst")
+def has_typst_0_15():
+    if not shutil.which("typst"):
+        return False
+    cp = subprocess.run(
+        ["typst", "--version"],
+        stdout=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+        text=True,
+    )
+    return cp.stdout.split()[1].startswith("0.15.")
+
+
+@pytest.mark.skipif(not has_typst_0_15(), reason="No Typst 0.15.x")
 @pytest.mark.parametrize(
     "name",
     [

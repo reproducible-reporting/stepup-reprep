@@ -1,36 +1,19 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:figure.pdf
-            supplies   file:figure.typ
-            supplies   file:hexagon.png
-            supplies   file:horizontal.pdf
-            supplies   file:pentagon.jpg
-            supplies   file:plan.py
-            supplies   file:square.webp
-            supplies   file:triangle.gif
-            supplies   file:vertical.svg
-            supplies   step:compile-typst figure.typ
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:figure.typ
              creates   file:hexagon.png
@@ -39,58 +22,51 @@ step:runpy ./plan.py
              creates   file:square.webp
              creates   file:triangle.gif
              creates   file:vertical.svg
-             creates   step:compile-typst figure.typ
+             creates   step:srr-compile-typst figure.typ
 
 file:figure.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:hexagon.png
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:horizontal.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:pentagon.jpg
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:square.webp
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:triangle.gif
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
 file:vertical.svg
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst figure.typ
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst figure.typ
 
-step:compile-typst figure.typ
+step:srr-compile-typst figure.typ
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:figure.typ
             consumes   file:hexagon.png [amended]
             consumes   file:horizontal.pdf [amended]
@@ -103,6 +79,5 @@ step:compile-typst figure.typ
 
 file:figure.pdf
                state = BUILT
-          created by   step:compile-typst figure.typ
-            consumes   file:./
-            consumes   step:compile-typst figure.typ
+          created by   step:srr-compile-typst figure.typ
+            consumes   step:srr-compile-typst figure.typ

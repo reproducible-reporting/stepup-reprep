@@ -1,16 +1,14 @@
         0/0 |    STARTUP │ Making failed steps pending
-        0/0 |    STARTUP │ Watching 2 director(y|ies) from initial database
+        0/0 |    STARTUP │ Watching directories for 7 files from initial database
         0/0 |    STARTUP │ Making steps pending that use changed environment variables
         0/0 |    STARTUP │ Scanning initial database for changed files
-        0/0 |    UPDATED │ plan.py (digest 2619dd39 ➜ 7c30ad99, size 230 ➜ 269)
+        0/0 |    UPDATED │ plan.py (digest c86ad98d ➜ 119b9c54, size 230 ➜ 254)
         0/0 |    STARTUP │ Scanning initial database for new nglob matches
-        0/0 |   DIRECTOR │ Launched worker 0
-        0/2 |      PHASE │ run
-        0/1 |      START │ runpy ./plan.py
-        1/2 |    SUCCESS │ runpy ./plan.py
-        1/2 |      START │ flatten-latex article_structured.tex article.tex
-        2/2 |    SUCCESS │ flatten-latex article_structured.tex article.tex
+        0/2 |      PHASE │ build
+        0/1 |      START │ ./plan.py
+        1/2 |    SUCCESS │ ./plan.py
+        1/2 |      START │ srr-flatten-latex article_structured.tex article.tex
+        2/2 |    SUCCESS │ srr-flatten-latex article_structured.tex article.tex
         2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         2/2 |      PHASE │ watch
-        2/2 |   DIRECTOR │ Stopping workers
         2/2 |   DIRECTOR │ See you!

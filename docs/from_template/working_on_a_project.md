@@ -16,7 +16,6 @@ StepUp RepRep provides more functionality geared towards scientific publishing.
 Reference documentation for these functions can be found here:
 
 - [`stepup.reprep.api`][]
-- [`stepup.reprep.tile_pdf`][]
 
 ## Git
 

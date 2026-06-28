@@ -1,58 +1,40 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:data/
-            supplies   file:inventory.def
-            supplies   file:inventory.txt
-            supplies   file:plan.py
-            supplies   file:upload.zip
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
-            supplies   step:runpy ./plan.py
-            supplies   step:zip-inventory inventory.txt upload.zip
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
-             creates   dg:data/**
              creates   file:inventory.def
-             creates   step:make-inventory -i inventory.def -o inventory.txt
-             creates   step:zip-inventory inventory.txt upload.zip
+             creates   st:data/
+             creates   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creates   step:srr-zip-inventory inventory.txt upload.zip
 
 file:inventory.def
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
+          created by   step:./plan.py
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
 
-dg:data/**
-          created by   step:runpy ./plan.py
-             creates   file:data/
+st:data/
+          created by   step:./plan.py
              creates   file:data/bla.inp
              creates   file:data/fine.out
-             creates   file:data/sub/
-             creates   file:data/sub/deeper/
              creates   file:data/sub/deeper/brrr.inp
              creates   file:data/sub/deeper/nested.out
              creates   file:data/sub/works.out
 
-step:make-inventory -i inventory.def -o inventory.txt
+step:srr-make-inventory -i inventory.def -o inventory.txt
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:data/bla.inp [amended]
             consumes   file:data/fine.out [amended]
             consumes   file:data/sub/deeper/brrr.inp [amended]
@@ -64,73 +46,44 @@ step:make-inventory -i inventory.def -o inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:make-inventory -i inventory.def -o inventory.txt
-            consumes   file:./
-            consumes   step:make-inventory -i inventory.def -o inventory.txt
-            supplies   step:zip-inventory inventory.txt upload.zip
+          created by   step:srr-make-inventory -i inventory.def -o inventory.txt
+            consumes   step:srr-make-inventory -i inventory.def -o inventory.txt
+            supplies   step:srr-zip-inventory inventory.txt upload.zip
 
-step:zip-inventory inventory.txt upload.zip
+step:srr-zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:inventory.txt
              creates   file:upload.zip
             supplies   file:upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:zip-inventory inventory.txt upload.zip
-            consumes   file:./
-            consumes   step:zip-inventory inventory.txt upload.zip
+          created by   step:srr-zip-inventory inventory.txt upload.zip
+            consumes   step:srr-zip-inventory inventory.txt upload.zip
 
 file:data/bla.inp
                state = STATIC
-          created by   dg:data/**
-            consumes   file:data/
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
-
-file:data/
-               state = STATIC
-          created by   dg:data/**
-            consumes   file:./
-            supplies   file:data/bla.inp
-            supplies   file:data/fine.out
-            supplies   file:data/sub/
+          created by   st:data/
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/fine.out
                state = STATIC
-          created by   dg:data/**
-            consumes   file:data/
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
+          created by   st:data/
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/brrr.inp
                state = STATIC
-          created by   dg:data/**
-            consumes   file:data/sub/deeper/
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
-
-file:data/sub/deeper/
-               state = STATIC
-          created by   dg:data/**
-            consumes   file:data/sub/
-            supplies   file:data/sub/deeper/brrr.inp
-            supplies   file:data/sub/deeper/nested.out
-
-file:data/sub/
-               state = STATIC
-          created by   dg:data/**
-            consumes   file:data/
-            supplies   file:data/sub/deeper/
-            supplies   file:data/sub/works.out
+          created by   st:data/
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/nested.out
                state = STATIC
-          created by   dg:data/**
-            consumes   file:data/sub/deeper/
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
+          created by   st:data/
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/works.out
                state = STATIC
-          created by   dg:data/**
-            consumes   file:data/sub/
-            supplies   step:make-inventory -i inventory.def -o inventory.txt
+          created by   st:data/
+            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt

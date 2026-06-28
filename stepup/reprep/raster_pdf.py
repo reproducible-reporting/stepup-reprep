@@ -23,7 +23,6 @@ This is mainly intended to impede (the quality of) unauthorized copies.
 """
 
 import argparse
-import sys
 
 import fitz
 
@@ -32,9 +31,9 @@ from stepup.core.api import getenv
 __all__ = ("raster_pdf",)
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     if args.resolution is None:
         args.resolution = int(getenv("REPREP_RASTER_RESOLUTION", "100"))
     if args.quality is None:
@@ -44,14 +43,14 @@ def main(argv: list[str] | None = None):
     return 0
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(prog="rr-raster-pdf", description="Raster a PDF file.")
+    parser = argparse.ArgumentParser(prog="srr-raster-pdf", description="Raster a PDF file.")
     parser.add_argument("path_inp", help="The input PDF file.")
     parser.add_argument("path_out", help="The output PDF file.")
     parser.add_argument("-r", "--resolution", type=int, help="Bitmap resolution")
     parser.add_argument("-q", "--quality", type=int, help="JPEG quality")
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
@@ -78,4 +77,4 @@ def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

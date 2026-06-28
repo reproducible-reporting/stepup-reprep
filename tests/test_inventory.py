@@ -40,17 +40,14 @@ def test_get_summary(path_tmp):
     assert summary.size == 4
     assert summary.mode == "-rw-r--r--"
     assert summary.digest.hex() == (
-        "b25ac67550816e84f2a5689115534c8b1d72081f14f6bc4395e4af41c1dfa831"
-        "63d5433ae05e4cba54e04364d38f9084ec9c3e41d0fbe45da3b738939b1aec11"
+        "17e682f060b5f8e47ea04c5c4855908b0a5ad612022260fe50e11ecb0cc0ab76"
     )
     assert summary.path == "../sub/a.txt"
 
 
 BASIC_INVENTORY = """\
-              4 -rw-r--r-- b25ac67550816e84f2a5689115534c8b1d72081f14f6bc4395e4af41c1dfa83163d5433a\
-e05e4cba54e04364d38f9084ec9c3e41d0fbe45da3b738939b1aec11 a.txt
-              4 -rw-r--r-- 10901f8827ee64f82d48afd9fc4a9bf9befaea8cf0b00a4bf16b1533cae88c04f7b467b4\
-c59a690462e898e75a0def6c0168b3aef7d01600944f811b4b75da35 b.txt
+              4 -rw-r--r-- 17e682f060b5f8e47ea04c5c4855908b0a5ad612022260fe50e11ecb0cc0ab76 a.txt
+              4 -rw-r--r-- 3cf9a1a81f6bdeaf08a343c1e1c73e89cf44c06ac2427a892382cae825e7c9c1 b.txt
 """
 
 
@@ -72,10 +69,8 @@ def test_basic(path_tmp):
 
 
 SYMLINK_INVENTORY = """\
-              5 -rw-r--r-- ef15eaf92d5e335345a3e1d977bc7d8797c3d275717cc1b10af79c93cda01aeb2a0c59bc\
-02e2bdf9380fd1b54eb9e1669026930ccc24bd49748e65f9a6b2ee68 dest.txt
-                lrwxrwxrwx 35d3c7e91999a8d52f496686b07466d03b7e4d85f2c9a85e2b391df1047cb57a6d1c39b8\
-4ace64e72267ec116e3376d47fb4512327688eeecb88cf9883e0738a link.txt
+              5 -rw-r--r-- 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969 dest.txt
+                lrwxrwxrwx ead30c9e7e28b7aa64ae7bbfe4c4d8fc873387b77b86da5f09e06cbdc3166d22 link.txt
 """
 
 
@@ -91,14 +86,8 @@ def test_symbolic_link(path_tmp):
 
 
 def test_directory(path_tmp):
-    with pytest.raises(OSError):
+    with pytest.raises(ValueError):
         make_main(["-o", path_tmp / "inventory.txt", path_tmp])
-
-
-SYMLINK_DIR_INVENTORY = """\
-                lrwxrwxrwx a645e8e6808560219f3710f0d46e4ad2cef0b0745a9ee2605ff8446e3edb7bfe600de66d\
-d018a886303fceb7be6c614021b7bc706ca03052b39d43899129e20b link
-"""
 
 
 def test_symbolic_link_directory(path_tmp):
@@ -106,10 +95,8 @@ def test_symbolic_link_directory(path_tmp):
     path_sub.mkdir()
     with contextlib.chdir(path_tmp):
         Path("link").symlink_to("sub")
-        make_main(["-o", "inventory.txt", "link"])
-        with open("inventory.txt") as fh:
-            assert fh.read() == SYMLINK_DIR_INVENTORY
-        check_main(["inventory.txt"])
+        with pytest.raises(ValueError):
+            make_main(["-o", "inventory.txt", "link"])
 
 
 def test_git1():
@@ -150,14 +137,12 @@ def test_zip_inventory(path_tmp):
         with open("sub/dest.txt", "w") as fh:
             fh.write("Hello")
         Path("link.txt").symlink_to("sub/dest.txt")
-        Path("link").symlink_to("sub")
-        make_main(["-o", "inventory2.txt", "sub/dest.txt", "link.txt", "link"])
+        make_main(["-o", "inventory2.txt", "sub/dest.txt", "link.txt"])
         check_main(["inventory2.txt"])
         zip_main(["inventory2.txt", "archive.zip"])
         Path("sub/dest.txt").remove()
         Path("sub/").rmdir()
         Path("link.txt").remove()
-        Path("link").remove()
         Path("inventory2.txt").move("inventory1.txt")
         os.system("unzip archive.zip")
         check_main(["inventory1.txt"])

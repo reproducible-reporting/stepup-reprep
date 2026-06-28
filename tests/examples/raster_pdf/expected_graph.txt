@@ -1,68 +1,37 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:plan.py
-            supplies   file:rastered/
-            supplies   file:smile.pdf
-            supplies   step:mkdir rastered/
-            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:smile.pdf
-             creates   step:mkdir rastered/
-             creates   step:raster-pdf smile.pdf rastered/smile.pdf
+             creates   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
 file:smile.pdf
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
+          created by   step:./plan.py
+            supplies   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
-step:mkdir rastered/
+step:srr-raster-pdf smile.pdf rastered/smile.pdf
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
-             creates   file:rastered/
-            supplies   file:rastered/
-
-file:rastered/
-               state = BUILT
-          created by   step:mkdir rastered/
-            consumes   file:./
-            consumes   step:mkdir rastered/
-            supplies   file:rastered/smile.pdf
-            supplies   step:raster-pdf smile.pdf rastered/smile.pdf
-
-step:raster-pdf smile.pdf rastered/smile.pdf
-               state = SUCCEEDED
-             env_var = REPREP_RASTER_QUALITY [amended]
+                need = DEFAULT
+           using_env = REPREP_RASTER_QUALITY [amended]
                      = REPREP_RASTER_RESOLUTION [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            consumes   file:rastered/
+          created by   step:./plan.py
             consumes   file:smile.pdf
              creates   file:rastered/smile.pdf
             supplies   file:rastered/smile.pdf
 
 file:rastered/smile.pdf
                state = BUILT
-          created by   step:raster-pdf smile.pdf rastered/smile.pdf
-            consumes   file:rastered/
-            consumes   step:raster-pdf smile.pdf rastered/smile.pdf
+          created by   step:srr-raster-pdf smile.pdf rastered/smile.pdf
+            consumes   step:srr-raster-pdf smile.pdf rastered/smile.pdf

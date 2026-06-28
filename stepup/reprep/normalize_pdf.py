@@ -21,7 +21,6 @@
 
 import argparse
 import shutil
-import sys
 import tempfile
 
 import fitz
@@ -30,16 +29,16 @@ from path import Path
 __all__ = ("pdf_normalize",)
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    pdf_normalize(parse_args(argv).path_pdf)
+    pdf_normalize(parse_args().path_pdf)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(prog="rr-normalize-pdf", description="Normalize a PDF file.")
+    parser = argparse.ArgumentParser(prog="srr-normalize-pdf", description="Normalize a PDF file.")
     parser.add_argument("path_pdf", help="The pdf to be normalized (in place).")
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def pdf_normalize(path_pdf: str):
@@ -51,7 +50,7 @@ def pdf_normalize(path_pdf: str):
     pdf.del_xml_metadata()
     pdf.xref_set_key(-1, "ID", "null")
     pdf.scrub()
-    with tempfile.TemporaryDirectory(suffix="rr-normalize-pdf", prefix="rr") as dn:
+    with tempfile.TemporaryDirectory(suffix="srr-normalize-pdf", prefix="rr") as dn:
         path_out = Path(dn) / "out.pdf"
         pdf.save(path_out, garbage=4, deflate=True, no_new_id=True)
         pdf.close()
@@ -59,4 +58,4 @@ def pdf_normalize(path_pdf: str):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

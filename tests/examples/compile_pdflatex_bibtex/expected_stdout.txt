@@ -1,12 +1,11 @@
         0/0 |    STARTUP │ (Re)initialized boot script
-        0/0 |   DIRECTOR │ Launched worker 0
-        0/1 |      PHASE │ run
-        0/1 |      START │ runpy ./plan.py
-        1/3 |    SUCCESS │ runpy ./plan.py
-        1/3 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |      START │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml
-        3/3 |    SUCCESS │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+        0/1 |      PHASE │ build
+        0/1 |      START │ ./plan.py
+        1/3 |    SUCCESS │ ./plan.py
+        1/3 |      START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        2/3 |    SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        2/3 |      START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+        3/3 |    SUCCESS │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Load references.bib
     Found 1 BibTeX entries
@@ -31,11 +30,10 @@
         3/3 |    DELETED │ paper.aux
         3/3 |    DELETED │ paper.pdf
         3/3 |    DELETED │ paper.bbl
-        1/3 |      PHASE │ run
-        1/3 |      START │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |    SUCCESS │ compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-        2/3 |       SKIP │ bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+        1/3 |      PHASE │ build
+        1/3 |      START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        2/3 |    SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+        2/3 |       SKIP │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
         3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ Stopping workers
         3/3 |   DIRECTOR │ See you!

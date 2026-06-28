@@ -1,58 +1,43 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:README.txt
-            supplies   file:plan.py
-            supplies   file:zenodo.md
-            supplies   file:zenodo.yaml
-            supplies   step:runpy ./plan.py
-            supplies   step:sync-zenodo zenodo.yaml
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:README.txt
              creates   file:zenodo.md
              creates   file:zenodo.yaml
-             creates   step:sync-zenodo zenodo.yaml
+             creates   step:srr-sync-zenodo zenodo.yaml
 
 file:README.txt
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:sync-zenodo zenodo.yaml
+          created by   step:./plan.py
+            supplies   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.md
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:sync-zenodo zenodo.yaml
+          created by   step:./plan.py
+            supplies   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.yaml
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:sync-zenodo zenodo.yaml
+          created by   step:./plan.py
+            supplies   step:srr-sync-zenodo zenodo.yaml
 
-step:sync-zenodo zenodo.yaml
+step:srr-sync-zenodo zenodo.yaml
                state = SUCCEEDED
-             env_var = REPREP_PATH_ZENODO_TOKEN [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+           using_env = REPREP_PATH_ZENODO_TOKEN [amended]
+          created by   step:./plan.py
             consumes   file:README.txt [amended]
             consumes   file:zenodo.md [amended]
             consumes   file:zenodo.yaml

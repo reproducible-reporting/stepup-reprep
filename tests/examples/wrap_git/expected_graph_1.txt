@@ -1,44 +1,30 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:.git/
-            supplies   file:gitlog.txt
-            supplies   file:plan.py
-            supplies   step:runpy ./plan.py
-            supplies   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = STEPUP_PATH_FILTER [amended]
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
-             creates   dg:.git/**
-             creates   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creates   st:.git/
+             creates   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
-dg:.git/**
-          created by   step:runpy ./plan.py
-             creates   file:.git/
+st:.git/
+          created by   step:./plan.py
              creates   file:.git/HEAD
-             creates   file:.git/refs/
-             creates   file:.git/refs/heads/
              creates   file:.git/refs/heads/main
 
-step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
                state = SUCCEEDED
-          created by   step:runpy ./plan.py
-            consumes   file:./
+                need = DEFAULT
+          created by   step:./plan.py
             consumes   file:.git/HEAD [amended]
             consumes   file:.git/refs/heads/main [amended]
              creates   file:gitlog.txt
@@ -46,37 +32,15 @@ step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:gitlog.txt
                state = BUILT
-          created by   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-            consumes   file:./
-            consumes   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+          created by   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+            consumes   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/HEAD
                state = STATIC
-          created by   dg:.git/**
-            consumes   file:.git/
-            supplies   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-
-file:.git/
-               state = STATIC
-          created by   dg:.git/**
-            consumes   file:./
-            supplies   file:.git/HEAD
-            supplies   file:.git/refs/
+          created by   st:.git/
+            supplies   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/refs/heads/main
                state = STATIC
-          created by   dg:.git/**
-            consumes   file:.git/refs/heads/
-            supplies   step:wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-
-file:.git/refs/heads/
-               state = STATIC
-          created by   dg:.git/**
-            consumes   file:.git/refs/
-            supplies   file:.git/refs/heads/main
-
-file:.git/refs/
-               state = STATIC
-          created by   dg:.git/**
-            consumes   file:.git/
-            supplies   file:.git/refs/heads/
+          created by   st:.git/
+            supplies   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'

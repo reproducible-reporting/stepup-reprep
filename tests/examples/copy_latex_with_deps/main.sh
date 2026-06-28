@@ -1,12 +1,9 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Run the example with first snippet: snippet1.tex
 cp snippet1.tex snippet.tex
-stepup boot -w -n 1 & # > current_stdout1.txt &
+sb -w -j 1 & # > current_stdout1.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait
@@ -24,7 +21,7 @@ wait
 
 # Run the example with second snippet: snippet2.tex
 cp snippet2.tex snippet.tex
-stepup boot -w -n 1 & # > current_stdout2.txt &
+sb -w -j 1 & # > current_stdout2.txt &
 
 # Get the graph after completion of the pending steps.
 stepup wait

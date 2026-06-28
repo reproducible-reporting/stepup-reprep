@@ -27,9 +27,8 @@ import sys
 from path import Path
 
 from stepup.core.api import amend, getenv
+from stepup.core.extapi import filter_dependencies, run_subprocess
 from stepup.core.hash import compute_file_digest
-from stepup.core.utils import filter_dependencies, mynormpath
-from stepup.core.worker import WorkThread
 
 from .bibtex_log import parse_bibtex_log
 from .latex_deps import scan_latex_deps
@@ -37,11 +36,9 @@ from .latex_log import parse_latex_log
 from .make_inventory import write_inventory
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
 
     workdir, fn_tex = args.path_tex.splitpath()
     workdir = workdir.normpath()
@@ -80,10 +77,11 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 
         # Run LaTeX once to generate the .aux file
         with contextlib.chdir(workdir):
-            returncode, _, _ = work_thread.runsh(
-                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode -draftmode {stem}"
+            cp = run_subprocess(
+                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode -draftmode {stem}",
+                check=False,
             )
-        if returncode != 0:
+        if cp.returncode != 0:
             path_log = workdir / f"{stem}.log"
             error_info = parse_latex_log(path_log)
             error_info.print(path_log)
@@ -93,8 +91,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 
         # BibTeX
         with contextlib.chdir(workdir):
-            returncode, _, _ = work_thread.runsh(f"{shlex.quote(args.bibtex)} {stem}")
-        if returncode != 0:
+            cp = run_subprocess(f"{shlex.quote(args.bibtex)} {stem}", check=False)
+        if cp.returncode != 0:
             path_blg = workdir / f"{stem}.blg"
             error_info = parse_bibtex_log(path_blg)
             error_info.print(path_blg)
@@ -106,12 +104,13 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
     # Keep running LaTeX until the .aux file converges.
     for _ in range(args.maxrep):
         with contextlib.chdir(workdir):
-            returncode, _, _ = work_thread.runsh(
-                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode {stem}"
+            cp = run_subprocess(
+                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode {stem}",
+                check=False,
             )
         path_log = workdir / f"{stem}.log"
         error_info = parse_latex_log(path_log)
-        if returncode != 0:
+        if cp.returncode != 0:
             error_info.print(path_log)
             sys.exit(1)
         aux_digest_hist.append(compute_file_digest(path_aux))
@@ -139,11 +138,11 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
     with open(f"{stem}.fls") as fh:
         for line in fh:
             if line.startswith("INPUT "):
-                path = mynormpath(Path(line[6:].strip()))
+                path = Path(line[6:].strip()).normpath()
                 if not (path in inventory_files or path == args.inventory):
                     fls_inp.add(path)
             elif line.startswith("OUTPUT "):
-                path = mynormpath(Path(line[7:].strip()))
+                path = Path(line[7:].strip()).normpath()
                 if not (path in inventory_files or path == args.inventory):
                     fls_vol.add(path)
     fls_inp.difference_update(fls_vol)
@@ -155,7 +154,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None) -
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-compile-latex",
+        prog="srr-compile-latex",
         description="Compile a LaTeX document and extract input and output info.",
     )
     parser.add_argument("path_tex", type=Path, help="The main LaTeX source file.")

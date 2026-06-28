@@ -20,7 +20,6 @@
 """Put multiple pages per sheet using a fixed layout."""
 
 import argparse
-import sys
 
 import fitz
 
@@ -29,9 +28,9 @@ from stepup.core.api import getenv
 __all__ = ("nup_pdf",)
 
 
-def main(argv: list[str] | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
+    args = parse_args()
     if args.nrow is None:
         args.nrow = int(getenv("REPREP_NUP_NROW", "2"))
     if args.ncol is None:
@@ -43,10 +42,10 @@ def main(argv: list[str] | None = None):
     nup_pdf(args.path_src, args.path_dst, args.nrow, args.ncol, args.margin, args.page_format)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
+        prog="srr-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
     )
     parser.add_argument("path_src", help="The source pdf to which notes should be added.")
     parser.add_argument("path_dst", help="The output pdf.")
@@ -77,7 +76,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="The output page format. "
         "The default is ${REPREP_NUP_PAGE_FORMAT} or A4-L if the variable is not set.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 def nup_pdf(
@@ -107,9 +106,7 @@ def nup_pdf(
     """
     for path_pdf in path_src, path_dst:
         if not path_pdf.endswith(".pdf"):
-            raise ValueError(
-                f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr
-            )
+            raise ValueError(f"All arguments must have a `.pdf` extension, got: {path_pdf}")
     src = fitz.open(path_src)
     # See https://github.com/pymupdf/PyMuPDF/issues/3635
     src.scrub()
@@ -155,4 +152,4 @@ def nup_pdf(
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

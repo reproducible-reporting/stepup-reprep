@@ -5,27 +5,28 @@ If you would like to contribute, please read [CONTRIBUTING.md](https://github.co
 ## Development environment
 
 If you break your development environment, you can discard it
-by running `git clean -dfX` and repeating the instructions below.
+by running `git clean -dfX` in the project root and repeating the instructions below.
 
-First, create a [StepUp Core development installation](https://reproducible-reporting.github.io/stepup-core/development/).
-The following commands assume you create `stepup-core` and `step-reprep` source trees
-as subdirectories of the same parent.
+We use [uv](https://docs.astral.sh/uv/) to manage the development environment.
+Install it by following the [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/).
 
-Clone the StepUp RepRep repository and create a virtual environment using the following commands
+A local installation for testing and development can be set up
+using the following commands:
 
 ```bash
 git clone git@github.com:reproducible-reporting/stepup-reprep.git
 cd stepup-reprep
+uv sync --extra dev
 pre-commit install
-python -m venv venv
 ```
 
 Put the following two lines in `.envrc`:
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 export XDG_CACHE_HOME="${VIRTUAL_ENV}/cache"
 export STEPUP_DEBUG="1"
+export STEPUP_BUILD_DURATION="0"
 export STEPUP_SYNC_RPC_TIMEOUT="30"
 ```
 
@@ -33,10 +34,13 @@ Finally, run the following commands:
 
 ```bash
 direnv allow
-pip install -U pip
-pip install -e .[dev]
-pip install -e ../stepup-core --config-settings editable_mode=strict  # optional
 ```
+
+Alternatively, you can prefix commands with `uv run` (e.g. `uv run pytest`)
+instead of activating the virtual environment.
+
+Note that `uv.lock` is not committed to the repo.
+For development and CI, the latest versions of dependencies are used instead of some locked versions.
 
 ## Tests
 

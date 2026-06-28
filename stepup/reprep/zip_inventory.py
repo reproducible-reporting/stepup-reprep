@@ -21,7 +21,6 @@
 
 import argparse
 import datetime
-import sys
 import tempfile
 import zipfile
 
@@ -39,15 +38,8 @@ TIMESTAMP = datetime.datetime(1980, 1, 1).timestamp()
 def main(argv: list[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
-        prog="rr-zip-inventory", description="Create a reproducible ZIP file."
+        prog="srr-zip-inventory", description="Create a reproducible ZIP file."
     )
-    add_parser_args(parser)
-    args = parser.parse_args(argv)
-    zip_inventory(args.inventory_txt, args.output_zip)
-
-
-def add_parser_args(parser: argparse.ArgumentParser):
-    """Define command-line arguments."""
     parser.add_argument(
         "inventory_txt",
         help="The inventory file with all files to be zipped. "
@@ -55,19 +47,7 @@ def add_parser_args(parser: argparse.ArgumentParser):
         "The inventory file will be included in the ZIP.",
     )
     parser.add_argument("output_zip", nargs="?", help="Destination zip file.")
-
-
-def zip_subcommand(subparser: argparse.ArgumentParser) -> callable:
-    parser = subparser.add_parser(
-        "zip-inventory",
-        help="Create a reproducible ZIP file.",
-    )
-    add_parser_args(parser)
-    return zip_tool
-
-
-def zip_tool(args: argparse.Namespace):
-    """Create a reproducible ZIP file."""
+    args = parser.parse_args(argv)
     zip_inventory(args.inventory_txt, args.output_zip)
 
 
@@ -97,7 +77,7 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
     # Create a new ZIP archive.
     root = path_inventory.parent
     nskip = 0 if root == "" else len(root) + 1
-    with tempfile.TemporaryDirectory("rr-zip-inventory") as path_tmp:
+    with tempfile.TemporaryDirectory("srr-zip-inventory") as path_tmp:
         path_tmp = Path(path_tmp)
         path_zip_tmp = path_tmp / "out.zip"
         with zipfile.ZipFile(path_zip_tmp, "w") as fz:
@@ -131,4 +111,4 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

@@ -1,54 +1,41 @@
 root:
-             creates   file:./
              creates   file:plan.py
-             creates   step:runpy ./plan.py
-
-file:./
-               state = STATIC
-          created by   root:
-            supplies   file:belgium.typ
-            supplies   file:flag.png
-            supplies   file:plan.py
-            supplies   step:compile-typst --resolution=30 belgium.typ --out=flag.png
-            supplies   step:runpy ./plan.py
+             creates   step:./plan.py
 
 file:plan.py
                state = STATIC
           created by   root:
-            consumes   file:./
-            supplies   step:runpy ./plan.py
+            supplies   step:./plan.py
 
-step:runpy ./plan.py
+step:./plan.py
                state = SUCCEEDED
-             env_var = REPREP_KEEP_TYPST_DEPS [amended]
+                need = PLAN
+           using_env = REPREP_KEEP_TYPST_DEPS [amended]
                      = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
-            consumes   file:./
             consumes   file:plan.py
              creates   file:belgium.typ
-             creates   step:compile-typst --resolution=30 belgium.typ --out=flag.png
+             creates   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
 
 file:belgium.typ
                state = STATIC
-          created by   step:runpy ./plan.py
-            consumes   file:./
-            supplies   step:compile-typst --resolution=30 belgium.typ --out=flag.png
+          created by   step:./plan.py
+            supplies   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
 
-step:compile-typst --resolution=30 belgium.typ --out=flag.png
+step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
                state = SUCCEEDED
-             env_var = REPREP_TYPST [amended]
+                need = DEFAULT
+           using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:runpy ./plan.py
-            consumes   file:./
+          created by   step:./plan.py
             consumes   file:belgium.typ
              creates   file:flag.png
             supplies   file:flag.png
 
 file:flag.png
                state = BUILT
-          created by   step:compile-typst --resolution=30 belgium.typ --out=flag.png
-            consumes   file:./
-            consumes   step:compile-typst --resolution=30 belgium.typ --out=flag.png
+          created by   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
+            consumes   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png

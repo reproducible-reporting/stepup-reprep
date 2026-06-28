@@ -34,17 +34,15 @@ import sys
 from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
-from stepup.core.utils import filter_dependencies, string_to_bool
-from stepup.core.worker import WorkThread
+from stepup.core.extapi import filter_dependencies, run_subprocess
+from stepup.core.utils import string_to_bool
 
 from .make_inventory import write_inventory
 
 
-def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
+def main():
     """Main program."""
-    args = parse_args(argv)
-    if work_thread is None:
-        work_thread = WorkThread("stub")
+    args = parse_args()
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
@@ -87,8 +85,8 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
         typst_args.extend(["--deps", path_deps, "--deps-format", "json"])
 
         # Run typst compile
-        returncode, stdout, stderr = work_thread.runsh(shlex.join(typst_args))
-        print(stdout)
+        cp = run_subprocess(shlex.join(typst_args), check=False)
+        print(cp.stdout)
         # Assume there is a single output file, which is the one specified.
         # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
         # Get required input files from the dependency file.
@@ -102,7 +100,7 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
             out_paths = []
             inp_paths = []
 
-    sys.stderr.write(stderr)
+    sys.stderr.write(cp.stderr)
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
@@ -116,16 +114,16 @@ def main(argv: list[str] | None = None, work_thread: WorkThread | None = None):
     if any(p in args.path_out for p in ("{p}", "{0p}", "{t}")):
         amend(out=out_paths)
 
-    if returncode != 0:
+    if cp.returncode != 0:
         # Only use sys.exit in cases of an error,
         # so other programs may call this function without exiting.
-        sys.exit(returncode)
+        sys.exit(cp.returncode)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="rr-compile-typst",
+        prog="srr-compile-typst",
         description="Compile a Typst document and extract input and output info.",
     )
     parser.add_argument("path_typ", type=Path, help="The main typst source file.")
@@ -170,8 +168,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Additional arguments to be passed to typst. "
         "The defaults is `${REPREP_TYPST_ARGS}`, if the environment variable is defined.",
     )
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

@@ -16,7 +16,7 @@
         <link rel="prev" href="../inventory_files/">
       
       
-        <link rel="next" href="../tile_pdfs/">
+        <link rel="next" href="../good_practices/">
       
       
         
@@ -710,34 +710,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../tile_pdfs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Tile PDFs
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../good_practices/" class="md-nav__link">
         
   
@@ -953,34 +925,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/stepup.reprep.tile_pdf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    stepup.reprep.tile_pdf
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1131,7 +1075,7 @@ to be able to identify unused entries.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">compile_latex</span><span class="p">(</span><span class="s2">&quot;paper.tex&quot;</span><span class="p">)</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">sanitize_bibtex</span><span class="p">(</span><span class="s2">&quot;references.bib&quot;</span><span class="p">,</span> <span class="n">aux</span><span class="o">=</span><span class="s2">&quot;paper.aux&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> function will read the <code>.bib</code> file,
+<p>The <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, resources=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a> function will read the <code>.bib</code> file,
 and when provided with the corresponding <code>.aux</code> file,
 it will identify which entries were actually cited in the LaTeX document.
 It will then clean up the <code>.bib</code> file by removing unused entries,

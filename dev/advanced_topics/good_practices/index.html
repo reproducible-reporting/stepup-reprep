@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../tile_pdfs/">
+        <link rel="prev" href="../bibsane/">
       
       
         <link rel="next" href="../archive_git/">
@@ -697,34 +697,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../tile_pdfs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Tile PDFs
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1236,34 +1208,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/stepup.reprep.tile_pdf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    stepup.reprep.tile_pdf
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1721,7 +1665,7 @@ there are two classes of recommendations:</p>
 <li>Use single-column and double-line spacing to make the PDF easier to review.</li>
 <li>Use <a href="https://github.com/reproducible-reporting/bibsane">BibSane</a> to clean up your BibTeX files.
   Hint: <a href="https://www.doi2bib.org">Quick DOI to BIB conversion</a></li>
-<li>Avoid <code>\subfigure</code>. Instead, merge panels into one PDF. (See <a href="../tile_pdfs/">Tile PDFs</a>.)</li>
+<li>Avoid <code>\subfigure</code>. Instead, merge panels into one PDF.</li>
 </ul>
 <h4 id="should">Should<a class="headerlink" href="#should" title="Permanent link">&para;</a></h4>
 <ul>
@@ -1939,8 +1883,8 @@ combine scripts and analysis tools implemented in Python modules (or packages) a
   as opposed to manually re-executing cells in notebooks (which is error-prone).</li>
 <li>If you want to create simple reports that integrate your comments, results and figures,
   you can write Markdown files with figures and convert them to PDF using
-  <a class="autorefs autorefs-internal" title="convert_markdown(path_md, dest=None, *, paths_css=(), optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_markdown"><code>convert_markdown()</code></a>
-  and <a class="autorefs autorefs-internal" title="convert_weasyprint(path_html, dest=None, *, weasyprint=None, optional=False, block=False)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_weasyprint"><code>convert_weasyprint()</code></a>.</li>
+  <a class="autorefs autorefs-internal" title="convert_markdown(path_md, dest=None, *, paths_css=(), optional=False, resources=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_markdown"><code>convert_markdown()</code></a>
+  and <a class="autorefs autorefs-internal" title="convert_weasyprint(path_html, dest=None, *, weasyprint=None, optional=False, resources=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_weasyprint"><code>convert_weasyprint()</code></a>.</li>
 </ul>
 <h3 id="hdf5">HDF5<a class="headerlink" href="#hdf5" title="Permanent link">&para;</a></h3>
 <p>If a process is killed while writing to an HDF5 file,

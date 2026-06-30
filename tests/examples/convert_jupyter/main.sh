@@ -2,6 +2,7 @@
 source ../example.rc
 
 # Run the example
+export PYDEVD_DISABLE_FILE_VALIDATION=1
 sb -w -j 1 & # > current_stdout.txt &
 PID=$!
 

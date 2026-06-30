@@ -998,15 +998,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v4.0.0rc1" class="md-nav__link">
+  <a href="#v4.0.0rc2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.0.0rc1 - 2026-04-28
+        4.0.0rc2 - 2026-04-30
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.0.0rc1 - 2026-04-28">
+    <nav class="md-nav" aria-label="4.0.0rc2 - 2026-04-30">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2502,15 +2502,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v4.0.0rc1" class="md-nav__link">
+  <a href="#v4.0.0rc2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.0.0rc1 - 2026-04-28
+        4.0.0rc2 - 2026-04-30
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.0.0rc1 - 2026-04-28">
+    <nav class="md-nav" aria-label="4.0.0rc2 - 2026-04-30">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3940,13 +3940,19 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 (Changes to features documented as &ldquo;experimental&rdquo; will not increment macro and meso version numbers.)</p>
 <h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <p>(no changes yet)</p>
-<h2 id="v4.0.0rc1"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc1">4.0.0rc1</a> - 2026-04-28<a class="headerlink" href="#v4.0.0rc1" title="Permanent link">&para;</a></h2>
-<p>This is release candidate 1 for the upcoming StepUp 4.0 release.</p>
+<h2 id="v4.0.0rc2"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc2">4.0.0rc2</a> - 2026-04-30<a class="headerlink" href="#v4.0.0rc2" title="Permanent link">&para;</a></h2>
+<p>This is release candidate 2 for the upcoming StepUp 4.0 release.</p>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Compatibility with StepUp Core 4</li>
 <li>Remove all actions and tools and converted them into standard console scripts,
   all with the <code>srr-</code> prefix.</li>
+<li>Refactored <code>convert_jupyter</code> to process parameters in the same way as papermill.</li>
+<li>Rename environment variables for consistency:<ul>
+<li><code>REPREP_KEEP_TECTONIC_DEPS</code> -&gt; <code>REPREP_TECTONIC_KEEP_DEPS</code></li>
+<li><code>REPREP_KEEP_TYPST_DEPS</code> -&gt; <code>REPREP_TYPST_KEEP_DEPS</code></li>
+</ul>
+</li>
 </ul>
 <h3 id="removed">Removed<a class="headerlink" href="#removed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4061,9 +4067,9 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Add support for other objects than <code>dict</code> for the <code>sysinp</code> argument of
-  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.</li>
+  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.</li>
 <li>The dictionary passed to the <code>sysinp</code> argument of
-  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> is now
+  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> is now
   sanitized to only contain strings as keys and values.
   Integer, float and path values are converted to strings automatically.</li>
 <li>Add sanity check on the positional argument of
@@ -4223,7 +4229,7 @@ This requires an update the <code>bibsane.yaml</code> configuration file.</p>
 <li>New manual overrides are supported for (volatile) outputs: <code>%REPREP out</code> and <code>%REPREP vol</code>.</li>
 </ul>
 </li>
-<li>Add <code>nbargs</code> option to <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, nbargs=None, jupyter=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>,
+<li>Add <code>nbargs</code> option to <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, parameters=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>,
   to call a notebook with arguments.
   If a <code>list</code> or a <code>dict</code> is given, the data is convert to JSON.</li>
 </ul>
@@ -4259,7 +4265,7 @@ Other noteworthy changes include new options to the <code>compile_typst()</code>
 more ways to specify variables in <code>render_jinja()</code>.</p>
 <h3 id="added_11">Added<a class="headerlink" href="#added_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Execute and convert Jupyter notebooks with <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, nbargs=None, jupyter=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>.</li>
+<li>Execute and convert Jupyter notebooks with <a class="autorefs autorefs-internal" title="convert_jupyter(path_nb, dest=None, *, inp=(), out=(), execute=True, to=None, parameters=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_jupyter"><code>convert_jupyter()</code></a>.</li>
 <li><code>rr-bibsane</code> is now part of StepUp RepRep, instead of using the (retired) <code>bibsane</code> package.
   The main difference, other than the improved integration with StepUp RepRep,
   is that journal abbreviations are now generated with <a href="https://github.com/pierre-24/pyiso4">pyiso4</a>
@@ -4269,7 +4275,7 @@ more ways to specify variables in <code>render_jinja()</code>.</p>
 </ul>
 <h3 id="changed_14">Changed<a class="headerlink" href="#changed_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Extend <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> with additional options:<ul>
+<li>Extend <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> with additional options:<ul>
 <li>Specification of the output file.</li>
 <li>Key-value pairs for the <code>--input</code> argument.</li>
 <li>PNG and SVG output formats (multipage is not working yet).</li>
@@ -4342,8 +4348,8 @@ introduced in StepUp Core 2.0.6.</p>
 <li>Fix returncode of the <code>rr-compile-typst</code> command (now passes through returncode of <code>typst build</code>).</li>
 <li>By default, depfiles created by <code>typst build</code> are now stored in a temporary directory,
   to avoid littering the working directory.
-  You can keep depfiles by setting the environment variable <code>REPREP_KEEP_TYPST_DEPS="1"</code>,
-  or with the argument <code>keep_deps=True</code> in <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=False, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.
+  You can keep depfiles by setting the environment variable <code>REPREP_TYPST_KEEP_DEPS="1"</code>,
+  or with the argument <code>keep_deps=True</code> in <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.
   (Either one will .)</li>
 </ul>
 <h2 id="v2.2.0"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v2.2.0">2.2.0</a> - 2025-01-29<a class="headerlink" href="#v2.2.0" title="Permanent link">&para;</a></h2>

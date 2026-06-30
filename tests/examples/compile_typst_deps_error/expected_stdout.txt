@@ -4,8 +4,8 @@
         1/3 |    SUCCESS │ ./plan.py
         1/3 |      START │ echo 'fixed: new' > data.yaml
         2/3 |    SUCCESS │ echo 'fixed: new' > data.yaml
-        2/3 |      START │ srr-compile-typst --keep-deps document.typ
-        3/3 |    SUCCESS │ srr-compile-typst --keep-deps document.typ
+        2/3 |      START │ srr-compile-typst document.typ
+        3/3 |    SUCCESS │ srr-compile-typst document.typ
         3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         3/3 |      PHASE │ watch
         3/3 |   DIRECTOR │ See you!

@@ -291,7 +291,7 @@ def compile_tectonic(
     *,
     workdir: StrPath = "./",
     tectonic: StrPath | None = None,
-    keep_deps: bool = False,
+    keep_deps: bool | None = None,
     tectonic_args: Collection[str] = (),
     inventory: StrPath | bool | None = None,
     optional: bool = False,
@@ -320,8 +320,9 @@ def compile_tectonic(
         Defaults to `${REPREP_TECTONIC}` variable or `tectonic` if the variable is unset.
     keep_deps
         If `True`, the dependency file is kept after the compilation.
-        The dependency file is also kept if the environment variable
-        `REPREP_KEEP_TECTONIC_DEPS` is set to `"1"`.
+        When not set, the `srr-compile-tectonic` command will use the value
+        of the environment variable `REPREP_TECTONIC_KEEP_DEPS` or default to `False`
+        if the variable is not defined.
     tectonic_args
         Additional arguments for tectonic.
         The defaults is `${REPREP_TECTONIC_ARGS}`, if the environment variable is defined.
@@ -354,9 +355,12 @@ def compile_tectonic(
     if tectonic is not None:
         args.append(f"--tectonic={shlex.quote(coerce_str(tectonic))}")
     paths_out = [path_out]
-    if keep_deps or string_to_bool(getenv("REPREP_KEEP_TECTONIC_DEPS", "0")):
-        args.append("--keep-deps")
-        paths_out.append(f"{stem}.dep")
+    if keep_deps is not None:
+        if keep_deps:
+            args.append("--keep-deps")
+            paths_out.append(f"{stem}.dep")
+        else:
+            args.append("--no-keep-deps")
     _process_inventory(inventory, "TECTONIC", stem, args, paths_out)
     args.append(shlex.quote(path_tex))
     if path_tex[:-4] != path_out[:-4]:
@@ -384,7 +388,7 @@ def compile_typst(
     resolution: int | None = None,
     workdir: StrPath = "./",
     typst: StrPath | None = None,
-    keep_deps: bool = False,
+    keep_deps: bool | None = None,
     typst_args: Collection[str] = (),
     inventory: StrPath | bool | None = None,
     optional: bool = False,
@@ -433,8 +437,9 @@ def compile_typst(
         Defaults to `${REPREP_TYPST}` variable or `typst` if the variable is unset.
     keep_deps
         If `True`, the dependency file is kept after the compilation.
-        The dependency file is also kept if the environment variable
-        `REPREP_KEEP_TYPST_DEPS` is set to `"1"`.
+        When not set, the `srr-compile-typst` command will use the value
+        of the environment variable `REPREP_TYPST_KEEP_DEPS` or default to `False`
+        if the variable is not defined.
     typst_args
         Additional arguments for typst.
         The defaults is `${REPREP_TYPST_ARGS}`, if the environment variable is defined.
@@ -471,9 +476,12 @@ def compile_typst(
     paths_out = []
     if not any(x in path_out for x in ("{p}", "{0p}", "{t}")):
         paths_out.append(path_out)
-    if keep_deps or string_to_bool(getenv("REPREP_KEEP_TYPST_DEPS", "0")):
-        args.append("--keep-deps")
-        paths_out.append(f"{stem}.deps.json")
+    if keep_deps is not None:
+        if keep_deps:
+            args.append("--keep-deps")
+            paths_out.append(f"{stem}.deps.json")
+        else:
+            args.append("--no-keep-deps")
     _process_inventory(inventory, "TYPST", stem, args, paths_out)
     args.append(shlex.quote(coerce_str(path_typ)))
     if path_typ[:-4] != path_out[:-4]:

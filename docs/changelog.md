@@ -22,6 +22,9 @@ This is release candidate 1 for the upcoming StepUp 4.0 release.
 - Remove all actions and tools and converted them into standard console scripts,
   all with the `srr-` prefix.
 - Refactored `convert_jupyter` to process parameters in the same way as papermill.
+- Rename environment variables for consistency:
+    - `REPREP_KEEP_TECTONIC_DEPS` -> `REPREP_TECTONIC_KEEP_DEPS`
+    - `REPREP_KEEP_TYPST_DEPS` -> `REPREP_TYPST_KEEP_DEPS`
 
 ### Removed
 
@@ -457,7 +460,7 @@ This is a bugfix release addressing minor issues in the Typst support.
 - Fix returncode of the `rr-compile-typst` command (now passes through returncode of `typst build`).
 - By default, depfiles created by `typst build` are now stored in a temporary directory,
   to avoid littering the working directory.
-  You can keep depfiles by setting the environment variable `REPREP_KEEP_TYPST_DEPS="1"`,
+  You can keep depfiles by setting the environment variable `REPREP_TYPST_KEEP_DEPS="1"`,
   or with the argument `keep_deps=True` in [`compile_typst()`][stepup.reprep.api.compile_typst].
   (Either one will .)
 

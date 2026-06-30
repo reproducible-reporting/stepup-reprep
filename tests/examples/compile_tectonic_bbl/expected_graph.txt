@@ -10,8 +10,7 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_KEEP_TECTONIC_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:plan.py
              creates   file:paper.bbl
@@ -33,6 +32,7 @@ step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
                 need = DEFAULT
            using_env = REPREP_TECTONIC [amended]
                      = REPREP_TECTONIC_ARGS [amended]
+                     = REPREP_TECTONIC_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:./plan.py
             consumes   file:paper.bbl [amended]

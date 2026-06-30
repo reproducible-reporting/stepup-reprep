@@ -38,7 +38,6 @@ step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt sou
                 need = DEFAULT
            using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
-                     = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   step:./plan.py
             consumes   file:source/aux/productivity.csv [amended]

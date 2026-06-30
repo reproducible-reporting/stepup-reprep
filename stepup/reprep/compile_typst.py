@@ -74,11 +74,20 @@ def main():
         args.typst_args = shlex.split(getenv("REPREP_TYPST_ARGS", ""))
     typst_args.extend(args.typst_args)
 
+    # Prepare the keep_deps argument.
+    do_amend_deps = False
+    if args.keep_deps is None:
+        args.keep_deps = string_to_bool(getenv("REPREP_TYPST_KEEP_DEPS", "0"))
+        if args.keep_deps:
+            do_amend_deps = True
+
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
             path_deps = args.path_typ.with_suffix(".deps.json")
             path_deps.remove_p()
+            if do_amend_deps:
+                amend(out=path_deps)
         else:
             # Use a temporary file for the make-deps output.
             path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
@@ -86,7 +95,7 @@ def main():
 
         # Run typst compile
         cp = run_subprocess(shlex.join(typst_args), check=False)
-        print(cp.stdout)
+        sys.stdout.write(cp.stdout)
         # Assume there is a single output file, which is the one specified.
         # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
         # Get required input files from the dependency file.
@@ -148,7 +157,7 @@ def parse_args() -> argparse.Namespace:
         "Defaults to the boolean value of ${REPREP_TYPST_KEEP_DEPS}, "
         "or False if the variable is not defined.",
         action=argparse.BooleanOptionalAction,
-        default=string_to_bool(getenv("REPREP_TYPST_KEEP_DEPS", "0")),
+        default=None,
     )
     parser.add_argument(
         "--inventory",

@@ -10,27 +10,26 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_KEEP_TYPST_DEPS [amended]
-                     = REPREP_TYPST_INVENTORY [amended]
+           using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:plan.py
              creates   file:document.typ
              creates   file:image.py
              creates   step:./image.py
-             creates   step:srr-compile-typst --keep-deps document.typ
+             creates   step:srr-compile-typst document.typ
 
 file:document.typ
                state = STATIC
           created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps document.typ
+            supplies   step:srr-compile-typst document.typ
 
 file:image.py
                state = STATIC
           created by   step:./plan.py
             supplies   step:./image.py
 
-step:srr-compile-typst --keep-deps document.typ
+step:srr-compile-typst document.typ
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TYPST [amended]
@@ -42,18 +41,13 @@ step:srr-compile-typst --keep-deps document.typ
             consumes   file:image.jpg [amended]
              creates   file:document.deps.json
              creates   file:document.pdf
-            supplies   file:document.deps.json
+            supplies   file:document.deps.json [amended]
             supplies   file:document.pdf
-
-file:document.deps.json
-               state = BUILT
-          created by   step:srr-compile-typst --keep-deps document.typ
-            consumes   step:srr-compile-typst --keep-deps document.typ
 
 file:document.pdf
                state = BUILT
-          created by   step:srr-compile-typst --keep-deps document.typ
-            consumes   step:srr-compile-typst --keep-deps document.typ
+          created by   step:srr-compile-typst document.typ
+            consumes   step:srr-compile-typst document.typ
 
 step:./image.py
                state = SUCCEEDED
@@ -70,4 +64,9 @@ file:image.jpg
                state = BUILT
           created by   step:./image.py
             consumes   step:./image.py
-            supplies   step:srr-compile-typst --keep-deps document.typ
+            supplies   step:srr-compile-typst document.typ
+
+file:document.deps.json
+               state = BUILT
+          created by   step:srr-compile-typst document.typ
+            consumes   step:srr-compile-typst document.typ

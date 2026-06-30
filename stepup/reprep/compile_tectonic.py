@@ -33,6 +33,7 @@ from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
+from stepup.core.utils import string_to_bool
 
 from .make_inventory import write_inventory
 
@@ -56,11 +57,20 @@ def main(argv: list[str] | None = None) -> None:
         args.tectonic_args = shlex.split(getenv("REPREP_TECTONIC_ARGS", ""))
     tectonic_args.extend(args.tectonic_args)
 
+    # Prepare keep_deps argument
+    do_amend_deps = False
+    if args.keep_deps is None:
+        args.keep_deps = string_to_bool(getenv("REPREP_TECTONIC_KEEP_DEPS", "0"))
+        if args.keep_deps:
+            do_amend_deps = True
+
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
             path_dep = Path(args.path_tex.with_suffix(".dep"))
             path_dep.remove_p()
+            if do_amend_deps:
+                amend(out=path_dep)
         else:
             # Use a temporary file for the make-deps output.
             path_dep = stack.enter_context(TempDir()) / "tectonic.dep"
@@ -69,7 +79,7 @@ def main(argv: list[str] | None = None) -> None:
         # Run Tectonic in the directory of the tex file
         with contextlib.chdir(workdir):
             cp = run_subprocess(shlex.join(tectonic_args), check=False)
-        print(cp.stdout)
+        sys.stdout.write(cp.stdout)
         # Get existing input files from the dependency file and amend.
         # Note that the deps file does not escape colons in paths,
         # so the code below assumes one never uses colons in paths.
@@ -127,8 +137,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--keep-deps",
         help="Keep the dependency file after the compilation. "
         "The default is to use a temporary file, which is removed after it is processed.",
-        action="store_true",
-        default=False,
+        action=argparse.BooleanOptionalAction,
+        default=None,
     )
     parser.add_argument(
         "--inventory",

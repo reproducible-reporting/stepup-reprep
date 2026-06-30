@@ -3,7 +3,7 @@ source ../example.rc
 
 # Run the example
 echo "broken: old" > data.yaml
-export REPREP_KEEP_TYPST_DEPS="1"
+export REPREP_TYPST_KEEP_DEPS="1"
 sb -w -j 1 & # > current_stdout.txt &
 PID=$!
 

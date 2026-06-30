@@ -21,6 +21,7 @@ This is release candidate 1 for the upcoming StepUp 4.0 release.
 - Compatibility with StepUp Core 4
 - Remove all actions and tools and converted them into standard console scripts,
   all with the `srr-` prefix.
+- Refactored `convert_jupyter` to process parameters in the same way as papermill.
 
 ### Removed
 

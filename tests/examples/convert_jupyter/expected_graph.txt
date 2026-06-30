@@ -10,31 +10,30 @@ file:plan.py
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_JUPYTER [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [amended]
           created by   root:
             consumes   file:plan.py
              creates   file:data.json
              creates   file:demo.ipynb
              creates   file:points.txt
-             creates   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+             creates   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:data.json
                state = STATIC
           created by   step:./plan.py
-            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:demo.ipynb
                state = STATIC
           created by   step:./plan.py
-            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:points.txt
                state = STATIC
           created by   step:./plan.py
-            supplies   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
-step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
                state = SUCCEEDED
                 need = DEFAULT
           created by   step:./plan.py
@@ -50,15 +49,15 @@ step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html
 
 file:demo.html
                state = BUILT
-          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:plot.png
                state = BUILT
-          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:result.txt
                state = BUILT
-          created by   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-            consumes   step:REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
+          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'

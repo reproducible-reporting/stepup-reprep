@@ -2,20 +2,14 @@
         0/1 |      PHASE │ build
         0/1 |      START │ ./plan.py
         1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-        2/2 |    SUCCESS │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-──────────────────────────────── Standard error ────────────────────────────────
-(stripped)
-────────────────────────────────────────────────────────────────────────────────
+        1/2 |      START │ srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+        2/2 |    SUCCESS │ srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
         2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         2/2 |      PHASE │ watch
         2/2 |    DELETED │ demo.html
         1/2 |      PHASE │ build
-        1/2 |      START │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-        2/2 |    SUCCESS │ REPREP_NBARGS='{"dpi": 50}' jupyter nbconvert demo.ipynb --stdout --to html --execute > demo.html
-──────────────────────────────── Standard error ────────────────────────────────
-(stripped)
-────────────────────────────────────────────────────────────────────────────────
+        1/2 |      START │ srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+        2/2 |    SUCCESS │ srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
         2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         2/2 |      PHASE │ watch
         2/2 |   DIRECTOR │ See you!

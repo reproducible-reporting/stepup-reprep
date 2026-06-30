@@ -635,8 +635,7 @@ def convert_jupyter(
     out: StrPath | Collection[StrPath] = (),
     execute: bool = True,
     to: str | None = None,
-    nbargs: str | dict | list | None = None,
-    jupyter: StrPath | None = None,
+    parameters: dict | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
 ) -> StepInfo:
@@ -644,10 +643,8 @@ def convert_jupyter(
 
     !!! warning
 
-        - Support for `juptyer nbconvert` in StepUp RepRep is experimental.
-          Expect breaking changes in future releases.
-        - The conversion uses `nbconvert`, which has an unfixed security vulnerability.
-          See https://access.redhat.com/security/cve/cve-2025-53000
+        - Use sufficiently recent versions of `jupyter` and `nbconvert`
+          as older versions have known security issues.
 
     Parameters
     ----------
@@ -670,17 +667,12 @@ def convert_jupyter(
         The output format. The default depends on the extension of the output file.
         if `to` is given and `dest` is `None` or a directory,
         the `to` argument is used to determine the output file extension.
-    nbargs
-        If `str`, it is passed literally as additional argument to the notebook
-        through the environment variable `REPREP_NBARGS`.
-        If `dict` or `list`, it is converted to a JSON string first.
-        The notebook should read this variable with `os.getenv("REPREP_NBARGS")`
-        and not `stepup.core.api.getenv()` because the variable is local to the process.
-        It is impossible (and pointless) for the StepUp director to detect changes in this variable.
-        Even if it is globally defined, it will be overridden in this step.
-    jupyter
-        The path to the jupyter executable.
-        Defaults to `${REPREP_JUPYTER}` variable or `jupyter` if the variable is unset.
+    parameters
+        Arguments to pass to the notebook as a JSON-serializable dictionary.
+        Just like papermill, the items in the parameters dictionary are inserted
+        in a new cell after then one tagged with `parameters`.
+        The `parameters` cell should contain the defaults,
+        which may then be overriden by the values in `parameters`.
     optional
         If `True`, the step is only executed when needed by other steps.
     resources
@@ -722,23 +714,27 @@ def convert_jupyter(
     if to is None:
         default_formats = {val: key for key, val in default_exts.items()}
         to = default_formats[path_out.suffix]
-    if jupyter is None:
-        jupyter = getenv("REPREP_JUPYTER", "jupyter")
-    args = [jupyter, "nbconvert", shlex.quote(coerce_str(path_nb)), "--stdout", "--to", to]
+    args = [
+        "srr-convert-jupyter",
+        shlex.quote(coerce_str(path_nb)),
+        shlex.quote(coerce_str(path_out)),
+        "--to",
+        to,
+    ]
     if execute:
         args.append("--execute")
-    if nbargs is not None:
-        if isinstance(nbargs, dict | list):
-            nbargs = json.dumps(nbargs)
-        elif not isinstance(nbargs, str):
-            nbargs = str(nbargs)
-        args.insert(0, "REPREP_NBARGS=" + shlex.quote(nbargs))
-    args.extend([">", shlex.quote(coerce_str(path_out))])
+    if parameters is not None:
+        if isinstance(parameters, dict):
+            if not all(isinstance(key, str) and key.isidentifier() for key in parameters):
+                raise TypeError("All keys in parameters must be valid Python identifiers")
+            parameters_str = json.dumps(parameters)
+        else:
+            raise TypeError(f"parameters must be a dict, got {type(parameters)}")
+        args.append(f"--parameters={shlex.quote(parameters_str)}")
     run(
         " ".join(args),
         inp=[path_nb, *inp],
         out=[path_out, *out],
-        shell=True,
         optional=optional,
         resources=resources,
     )

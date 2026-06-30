@@ -2,7 +2,6 @@
 source ../example.rc
 
 # Run the example
-export SOURCE_DATE_EPOCH="315532800"
 export REPREP_KATEX_MACROS="common/macros.tex"
 export REPREP_MARKDOWN_CSS="common/demo.css:common/page.css"
 sb -w -j 1 & # > current_stdout.txt &

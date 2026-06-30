@@ -2,7 +2,6 @@
 source ../example.rc
 
 # Run the example
-export SOURCE_DATE_EPOCH="315532800"
 sb -w -j 8 & # > current_stdout.txt &
 
 # Get the graph after completion of the pending steps.

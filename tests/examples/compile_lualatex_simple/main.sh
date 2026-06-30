@@ -2,7 +2,6 @@
 source ../example.rc
 
 # Run the example
-export SOURCE_DATE_EPOCH="315532800"
 export REPREP_LATEX="lualatex"
 sb -w -j 1 & # > current_stdout.txt &
 

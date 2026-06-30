@@ -2,7 +2,6 @@
 source ../example.rc
 
 # Run the example
-export SOURCE_DATE_EPOCH="315532800"
 export REPREP_TYPST_INVENTORY="1"
 cd stepup
 export STEPUP_PATH_FILTER="+../doc:"

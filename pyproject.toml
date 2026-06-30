@@ -50,7 +50,7 @@ dependencies = [
     "requests>=2.33.0",
     "scipy>=1.11.1",
     "semver>=3.0.0",
-    "stepup>=4.0.0rc4,<5.0.0a1",
+    "stepup>=4.0.0rc5,<5.0.0a1",
     "svg.path>=6.0",
     "weasyprint>=68.0",
 ]

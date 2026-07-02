@@ -16,24 +16,24 @@ step:./plan.py
              creates   file:page.css
              creates   file:sub/demo.css
              creates   file:sub/demo.md
-             creates   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+             creates   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:page.css
                state = STATIC
           created by   step:./plan.py
-            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:sub/demo.css
                state = STATIC
           created by   step:./plan.py
-            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:sub/demo.md
                state = STATIC
           created by   step:./plan.py
-            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+            supplies   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
-step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
                state = SUCCEEDED
                 need = DEFAULT
           created by   step:./plan.py
@@ -45,5 +45,5 @@ step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
 
 file:sub/demo.html
                state = BUILT
-          created by   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
-            consumes   step:srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+          created by   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
+            consumes   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css

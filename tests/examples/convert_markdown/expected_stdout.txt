@@ -2,14 +2,14 @@
         0/1 |      PHASE │ build
         0/1 |      START │ ./plan.py
         1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-convert-markdown sub/demo.md sub/demo.html --css page.css
-        2/2 |    SUCCESS │ srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+        1/2 |      START │ srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
+        2/2 |    SUCCESS │ srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
         2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         2/2 |      PHASE │ watch
         2/2 |    DELETED │ sub/demo.html
         1/2 |      PHASE │ build
-        1/2 |      START │ srr-convert-markdown sub/demo.md sub/demo.html --css page.css
-        2/2 |    SUCCESS │ srr-convert-markdown sub/demo.md sub/demo.html --css page.css
+        1/2 |      START │ srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
+        2/2 |    SUCCESS │ srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
         2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
         2/2 |      PHASE │ watch
         2/2 |   DIRECTOR │ See you!

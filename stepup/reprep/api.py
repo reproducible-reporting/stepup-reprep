@@ -25,7 +25,7 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import getenv, run
+from stepup.core.api import getenv, run, shq
 from stepup.core.extapi import subs_env_vars
 from stepup.core.path import StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
 from stepup.core.stepinfo import StepInfo
@@ -90,7 +90,7 @@ def add_notes_pdf(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return run(
-        "srr-add-notes-pdf ${inp} ${out}",
+        f"srr-add-notes-pdf {shq(path_src)} {shq(path_notes)} {shq(path_dst)}",
         inp=[path_src, path_notes],
         out=path_dst,
         optional=optional,
@@ -128,11 +128,11 @@ def cat_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["srr-cat-pdf", "${inp}", "${out}"]
+    parts = [f"srr-cat-pdf {shq(paths_inp)} {shq(path_out)}"]
     if insert_blank:
-        args.append("--insert-blank")
+        parts.append("--insert-blank")
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=paths_inp,
         out=path_out,
         optional=optional,
@@ -163,26 +163,23 @@ def check_hrefs(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    with subs_env_vars() as subs:
-        path_src = subs(path_src)
-        path_config = subs(path_config)
-    args = ["srr-check-hrefs", shlex.quote(path_src)]
+    parts = [f"srr-check-hrefs {shq(path_src)}"]
     paths_inp = [path_src]
     if path_config is not None:
+        parts.append(f"-c {shq(path_config)}")
         paths_inp.append(path_config)
-        args.extend(["-c", path_config])
-    return run(" ".join(args), inp=paths_inp, resources=resources)
+    return run(" ".join(parts), inp=paths_inp, resources=resources)
 
 
 def _process_inventory(
-    inventory: StrPath | bool | None, prog: str, stem: str, args: list, paths_out: list
+    inventory: StrPath | bool | None, prog: str, stem: str, parts: list, paths_out: list
 ):
     if inventory is None:
         inventory = string_to_bool(getenv(f"REPREP_{prog}_INVENTORY", "0"))
     if inventory is True:
         inventory = f"{stem}-inventory.txt"
     if inventory is not False:
-        args.append("--inventory=" + shlex.quote(coerce_str(inventory)))
+        parts.append(f"--inventory={shq(inventory)}")
         paths_out.append(inventory)
 
 
@@ -263,20 +260,20 @@ def compile_latex(
     stem = path_tex[:-4]
     path_pdf = f"{stem}.pdf"
 
-    args = ["srr-compile-latex", shlex.quote(path_tex)]
+    parts = ["srr-compile-latex", shq(path_tex)]
     paths_inp = [path_tex]
     paths_out = [path_pdf, f"{stem}.aux", f"{stem}.fls"]
     if maxrep != 5:
-        args.append("--maxrep=" + shlex.quote(str(maxrep)))
+        parts.append(f"--maxrep={maxrep}")
     if latex is not None:
-        args.append("--latex=" + shlex.quote(coerce_str(latex)))
+        parts.append(f"--latex={shq(latex)}")
     if run_bibtex:
-        args.append("--run-bibtex")
+        parts.append("--run-bibtex")
         if bibtex is not None:
-            args.append("--bibtex=" + shlex.quote(coerce_str(bibtex)))
-    _process_inventory(inventory, "LATEX", stem, args, paths_out)
+            parts.append(f"--bibtex={shq(bibtex)}")
+    _process_inventory(inventory, "LATEX", stem, parts, paths_out)
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=paths_inp,
         out=paths_out,
         workdir=workdir,
@@ -351,27 +348,27 @@ def compile_tectonic(
     path_out = make_path_out(path_tex, dest, ".pdf")
 
     stem = path_tex[:-4]
-    args = ["srr-compile-tectonic"]
+    parts = ["srr-compile-tectonic"]
     if tectonic is not None:
-        args.append(f"--tectonic={shlex.quote(coerce_str(tectonic))}")
+        parts.append(f"--tectonic={shq(tectonic)}")
     paths_out = [path_out]
     if keep_deps is not None:
         if keep_deps:
-            args.append("--keep-deps")
+            parts.append("--keep-deps")
             paths_out.append(f"{stem}.dep")
         else:
-            args.append("--no-keep-deps")
-    _process_inventory(inventory, "TECTONIC", stem, args, paths_out)
-    args.append(shlex.quote(path_tex))
+            parts.append("--no-keep-deps")
+    _process_inventory(inventory, "TECTONIC", stem, parts, paths_out)
+    parts.append(shq(path_tex))
     if path_tex[:-4] != path_out[:-4]:
-        args.append("--out=" + shlex.quote(coerce_str(path_out)))
+        parts.append(f"--out={shq(path_out)}")
     path_inp = [path_tex]
     if len(tectonic_args) > 0:
-        args.append("--")
-        args.extend(shlex.quote(tectonic_arg) for tectonic_arg in tectonic_args)
+        parts.append("--")
+        parts.extend(shlex.quote(tectonic_arg) for tectonic_arg in tectonic_args)
 
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=path_inp,
         out=paths_out,
         workdir=workdir,
@@ -468,30 +465,30 @@ def compile_typst(
     path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])
 
     stem = path_typ[:-4]
-    args = ["srr-compile-typst"]
+    parts = ["srr-compile-typst"]
     if resolution is not None:
-        args.append(f"--resolution={shlex.quote(str(resolution))}")
+        parts.append(f"--resolution={resolution}")
     if typst is not None:
-        args.append(f"--typst={shlex.quote(coerce_str(typst))}")
+        parts.append(f"--typst={shq(typst)}")
     paths_out = []
     if not any(x in path_out for x in ("{p}", "{0p}", "{t}")):
         paths_out.append(path_out)
     if keep_deps is not None:
         if keep_deps:
-            args.append("--keep-deps")
+            parts.append("--keep-deps")
             paths_out.append(f"{stem}.deps.json")
         else:
-            args.append("--no-keep-deps")
-    _process_inventory(inventory, "TYPST", stem, args, paths_out)
-    args.append(shlex.quote(coerce_str(path_typ)))
+            parts.append("--no-keep-deps")
+    _process_inventory(inventory, "TYPST", stem, parts, paths_out)
+    parts.append(shq(path_typ))
     if path_typ[:-4] != path_out[:-4]:
-        args.append("--out=" + shlex.quote(coerce_str(path_out)))
+        parts.append(f"--out={shq(path_out)}")
     path_inp = [path_typ]
     if sysinp is not None:
         if not isinstance(sysinp, dict):
             sysinp = vars(sysinp)
         if len(sysinp) > 0:
-            args.append("--sysinp")
+            parts.append("--sysinp")
             for key, val in sysinp.items():
                 if not isinstance(key, str):
                     continue
@@ -499,15 +496,17 @@ def compile_typst(
                     continue
                 if not key.isidentifier():
                     raise ValueError(f"Invalid sysinp key: {key}")
-                args.append(shlex.quote(str(key)) + "=" + shlex.quote(str(val)))
                 if isinstance(val, Path):
+                    parts.append(f"{key}={shq(val)}")
                     path_inp.append(val)
+                else:
+                    parts.append(f"{key}={shlex.quote(str(val))}")
     if len(typst_args) > 0:
-        args.append("--")
-        args.extend(shlex.quote(typst_arg) for typst_arg in typst_args)
+        parts.append("--")
+        parts.extend(shlex.quote(typst_arg) for typst_arg in typst_args)
 
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=path_inp,
         out=paths_out,
         workdir=workdir,
@@ -564,17 +563,13 @@ def convert_inkscape(
         raise ValueError("The SVG file must have extension .svg")
     if not path_out.endswith((".pdf", ".png")):
         raise ValueError("The output file must have extension .pdf or .png")
-    args = [
-        "srr-convert-inkscape",
-        shlex.quote(coerce_str(path_svg)),
-        shlex.quote(coerce_str(path_out)),
-    ]
+    parts = ["srr-convert-inkscape", shq(path_svg), shq(path_out)]
     if inkscape is not None:
-        args.append("--inkscape=" + shlex.quote(coerce_str(inkscape)))
+        parts.append(f"--inkscape={shq(inkscape)}")
     if len(inkscape_args) > 0:
-        args.append("--")
-        args.extend(shlex.quote(coerce_str(inkscape_arg)) for inkscape_arg in inkscape_args)
-    return run(" ".join(args), inp=path_svg, out=path_out, optional=optional, resources=resources)
+        parts.append("--")
+        parts.extend(shlex.quote(coerce_str(inkscape_arg)) for inkscape_arg in inkscape_args)
+    return run(" ".join(parts), inp=path_svg, out=path_out, optional=optional, resources=resources)
 
 
 def convert_inkscape_pdf(
@@ -722,15 +717,9 @@ def convert_jupyter(
     if to is None:
         default_formats = {val: key for key, val in default_exts.items()}
         to = default_formats[path_out.suffix]
-    args = [
-        "srr-convert-jupyter",
-        shlex.quote(coerce_str(path_nb)),
-        shlex.quote(coerce_str(path_out)),
-        "--to",
-        to,
-    ]
+    parts = ["srr-convert-jupyter", shq(path_nb), shq(path_out), "--to", to]
     if execute:
-        args.append("--execute")
+        parts.append("--execute")
     if parameters is not None:
         if isinstance(parameters, dict):
             if not all(isinstance(key, str) and key.isidentifier() for key in parameters):
@@ -738,9 +727,9 @@ def convert_jupyter(
             parameters_str = json.dumps(parameters)
         else:
             raise TypeError(f"parameters must be a dict, got {type(parameters)}")
-        args.append(f"--parameters={shlex.quote(parameters_str)}")
+        parts.append(f"--parameters={shlex.quote(parameters_str)}")
     run(
-        " ".join(args),
+        " ".join(parts),
         inp=[path_nb, *inp],
         out=[path_out, *out],
         optional=optional,
@@ -788,18 +777,13 @@ def convert_markdown(
         raise ValueError("The Markdown file must have extension .md")
     path_html = make_path_out(path_md, dest, ".html")
     inp = [path_md]
-    args = [
-        "srr-convert-markdown",
-        shlex.quote(coerce_str(path_md)),
-        shlex.quote(coerce_str(path_html)),
-    ]
+    parts = ["srr-convert-markdown", shq(path_md), shq(path_html)]
     if len(paths_css) > 0:
         if isinstance(paths_css, str):
             paths_css = [paths_css]
-        args.append("--css")
-        args.extend(shlex.quote(coerce_str(path_css)) for path_css in paths_css)
+        parts.append(f"--css={shq(paths_css)}")
         inp.extend(paths_css)
-    return run(" ".join(args), inp=inp, out=path_html, optional=optional, resources=resources)
+    return run(" ".join(parts), inp=inp, out=path_html, optional=optional, resources=resources)
 
 
 def convert_mutool(
@@ -839,14 +823,8 @@ def convert_mutool(
         resolution = int(getenv("REPREP_CONVERT_PDF_RESOLUTION", "100"))
     if mutool is None:
         mutool = getenv("REPREP_MUTOOL", "mutool")
-    args = [
-        shlex.quote(coerce_str(mutool)),
-        "draw -q -o ${out} -r",
-        shlex.quote(str(resolution)),
-        "${inp}",
-    ]
     return run(
-        " ".join(args),
+        f"{shq(mutool)} draw -q -o {shq(path_out)} -r {resolution} {shq(path_pdf)}",
         inp=path_pdf,
         out=path_out,
         optional=optional,
@@ -919,14 +897,10 @@ def convert_weasyprint(
     if not path_html.endswith(".html"):
         raise ValueError("The HTML file must have extension .html")
     path_pdf = make_path_out(path_html, dest, ".pdf")
-    args = [
-        "srr-convert-weasyprint",
-        shlex.quote(coerce_str(path_html)),
-        shlex.quote(path_pdf),
-    ]
+    parts = ["srr-convert-weasyprint", shq(path_html), shq(path_pdf)]
     if weasyprint is not None:
-        args.append("--weasyprint=" + shlex.quote(coerce_str(weasyprint)))
-    return run(" ".join(args), inp=path_html, out=path_pdf, optional=optional, resources=resources)
+        parts.append(f"--weasyprint={shq(weasyprint)}")
+    return run(" ".join(parts), inp=path_html, out=path_pdf, optional=optional, resources=resources)
 
 
 def convert_odf_pdf(
@@ -969,6 +943,7 @@ def convert_odf_pdf(
         dest = subs(dest)
     if libreoffice is None:
         libreoffice = getenv("REPREP_LIBREOFFICE", "libreoffice")
+    path_pdf = make_path_out(path_odf, dest, ".pdf")
     command = (
         # Simple things should be simple! ;) See:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
@@ -976,11 +951,10 @@ def convert_odf_pdf(
         # Not solved yet:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
         "WORK=`mktemp -d --suffix=reprep` && "
-        + shlex.quote(coerce_str(libreoffice))
-        + " -env:UserInstallation=file://${WORK} --convert-to pdf ${inp} --outdir ${WORK} "
-        "> /dev/null && cp ${WORK}/*.pdf ${out} && rm -r ${WORK}"
+        f"{shq(libreoffice)} -env:UserInstallation=file://${{WORK}} --convert-to pdf "
+        f"{shq(path_odf)} --outdir ${{WORK}} > /dev/null && "
+        f"cp ${{WORK}}/*.pdf {shq(path_pdf)} && rm -r ${{WORK}}"
     )
-    path_pdf = make_path_out(path_odf, dest, ".pdf")
     return run(
         command, inp=path_odf, out=path_pdf, shell=True, optional=optional, resources=resources
     )
@@ -1043,11 +1017,11 @@ def diff_latex(
     if latexdiff_args is None:
         latexdiff_args = shlex.split(getenv("REPREP_LATEXDIFF_ARGS", ""))
 
-    args = [shlex.quote(coerce_str(latexdiff))]
-    args.extend(shlex.quote(latexdiff_arg) for latexdiff_arg in latexdiff_args)
-    args.extend(["${inp}", "--no-label", ">", "${out}"])
+    parts = [shq(latexdiff)]
+    parts.extend(shlex.quote(latexdiff_arg) for latexdiff_arg in latexdiff_args)
+    parts.extend([shq([path_old, path_new]), "--no-label", ">", shq(path_diff)])
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=[path_old, path_new],
         out=path_diff,
         shell=True,
@@ -1108,12 +1082,12 @@ def execute_papermill(
     path_out = make_path_out(path_nb, dest, ".ipynb")
     if parameters is None:
         parameters = {}
-    args = ["srr-execute-papermill", shlex.quote(coerce_str(path_nb))]
+    parts = ["srr-execute-papermill", shq(path_nb)]
     if len(parameters) > 0:
-        args.append(shlex.quote(json.dumps(parameters)))
-    args.append(shlex.quote(coerce_str(path_out)))
+        parts.append(shlex.quote(json.dumps(parameters)))
+    parts.append(shq(path_out))
     return run(
-        " ".join(args),
+        " ".join(parts),
         inp=[path_nb, *inp],
         out=[path_out, *out],
         optional=optional,
@@ -1148,7 +1122,7 @@ def flatten_latex(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return run(
-        "srr-flatten-latex ${inp} ${out}",
+        f"srr-flatten-latex {shq(path_tex)} {shq(path_flat)}",
         inp=path_tex,
         out=path_flat,
         optional=optional,
@@ -1185,13 +1159,16 @@ def make_inventory(
     if len(paths) < 1:
         raise ValueError("At least one path must be given.")
     paths_inp = list(paths[:-1])
-    args = ["srr-make-inventory", *(coerce_str(p) for p in paths_inp)]
+    path_out = paths[-1]
+    parts = ["srr-make-inventory"]
+    if len(paths_inp) > 0:
+        parts.append(f"{shq(paths_inp)}")
     if path_def is not None:
-        args.extend(["-i", coerce_str(path_def)])
+        parts.append(f"-i {shq(path_def)}")
         paths_inp.append(path_def)
-    args.extend(["-o", coerce_str(paths[-1])])
+    parts.append(f"-o {shq(path_out)}")
     return run(
-        shlex.join(args), inp=paths_inp, out=[paths[-1]], optional=optional, resources=resources
+        " ".join(parts), inp=paths_inp, out=[path_out], optional=optional, resources=resources
     )
 
 
@@ -1237,16 +1214,16 @@ def nup_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["srr-nup-pdf", "${inp}", "${out}"]
+    parts = ["srr-nup-pdf", shq(path_src), shq(path_dst)]
     if nrow is not None:
-        args.extend(["-r", str(nrow)])
+        parts.append(f"-r {nrow!s}")
     if ncol is not None:
-        args.extend(["-c", str(ncol)])
+        parts.append(f"-c {ncol!s}")
     if margin is not None:
-        args.extend(["-m", str(margin)])
+        parts.append(f"-m {margin!s}")
     if page_format is not None:
-        args.extend(["-p", shlex.quote(page_format)])
-    return run(" ".join(args), inp=path_src, out=path_dst, optional=optional, resources=resources)
+        parts.append(f"-p {shlex.quote(page_format)}")
+    return run(" ".join(parts), inp=path_src, out=path_dst, optional=optional, resources=resources)
 
 
 def raster_pdf(
@@ -1284,13 +1261,13 @@ def raster_pdf(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    args = ["srr-raster-pdf", "${inp}", "${out}"]
-    if resolution is not None:
-        args.extend(["-r", str(resolution)])
-    if quality is not None:
-        args.extend(["-q", str(quality)])
     path_out = make_path_out(path_inp, dest, ".pdf")
-    return run(" ".join(args), inp=path_inp, out=path_out, optional=optional, resources=resources)
+    parts = ["srr-raster-pdf", shq(path_inp), shq(path_out)]
+    if resolution is not None:
+        parts.append(f"-r {resolution!s}")
+    if quality is not None:
+        parts.append(f"-q {quality!s}")
+    return run(" ".join(parts), inp=path_inp, out=path_out, optional=optional, resources=resources)
 
 
 def sanitize_bibtex(
@@ -1342,20 +1319,22 @@ def sanitize_bibtex(
     if not path_bib.endswith(".bib"):
         raise ValueError("The BibTeX file must have extension .bib")
 
-    args = ["srr-bibsane", shlex.quote(path_bib)]
+    parts = ["srr-bibsane", shq(path_bib)]
     paths_inp = [path_bib]
     if path_aux is not None:
-        args.append("--aux=" + shlex.quote(path_aux))
+        parts.append(f"--aux={shq(path_aux)}")
         paths_inp.append(path_aux)
     if path_cfg is not None:
-        args.append("--config=" + shlex.quote(path_cfg))
+        parts.append(f"--config={shq(path_cfg)}")
         paths_inp.append(path_cfg)
     paths_out = []
     if path_out is not None:
-        args.append("--out=" + shlex.quote(path_out))
+        parts.append(f"--out={shq(path_out)}")
         if not overwrite:
             paths_out.append(path_out)
-    return run(" ".join(args), inp=paths_inp, out=paths_out, optional=optional, resources=resources)
+    return run(
+        " ".join(parts), inp=paths_inp, out=paths_out, optional=optional, resources=resources
+    )
 
 
 def sync_zenodo(
@@ -1381,10 +1360,10 @@ def sync_zenodo(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    command = "srr-sync-zenodo ${inp}"
+    parts = [f"srr-sync-zenodo {shq(path_config)}"]
     if verbose:
-        command += " --verbose"
-    return run(command, inp=path_config, resources=resources)
+        parts.append("--verbose")
+    return run(" ".join(parts), inp=path_config, resources=resources)
 
 
 def unplot(
@@ -1414,7 +1393,7 @@ def unplot(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     path_out = make_path_out(path_svg, dest, ".json")
-    command = "srr-unplot ${inp} ${out}"
+    command = f"srr-unplot {shq(path_svg)} {shq(path_out)}"
     return run(command, inp=path_svg, out=path_out, optional=optional, resources=resources)
 
 
@@ -1484,12 +1463,12 @@ def wrap_git(
     if stdout is not None:
         stdout = coerce_path(stdout)
 
-    action = "srr-wrap-git"
+    parts = ["srr-wrap-git"]
     if stdout is not None:
-        action += f" --stdout={shlex.quote(stdout)}"
-    action += f" -- {command}"
+        parts.append(f"--stdout={shq(stdout)}")
+    parts.append(f"-- {command}")
     return run(
-        action,
+        " ".join(parts),
         inp=inp,
         env=env,
         out=[stdout, *out] if stdout is not None else out,
@@ -1529,7 +1508,7 @@ def zip_inventory(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     return run(
-        "srr-zip-inventory ${inp} ${out}",
+        f"srr-zip-inventory {shq(path_inventory)} {shq(path_zip)}",
         inp=path_inventory,
         out=path_zip,
         optional=optional,

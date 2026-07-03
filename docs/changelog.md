@@ -12,9 +12,13 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
-## [4.0.0rc2][] - 2026-04-30 {: #v4.0.0rc2 }
+## [4.0.0rc3][] - 2026-07-03 {: #v4.0.0rc3 }
 
-This is release candidate 2 for the upcoming StepUp 4.0 release.
+This is release candidate 3 for the upcoming StepUp 4.0 release.
+
+### Added
+
+- Support for `os.PathLike` objects in `stepup.reprep.api` functions.
 
 ### Changed
 
@@ -632,7 +636,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
-[4.0.0rc2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc2
+[4.0.0rc3]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc3
 [3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11
 [3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10
 [3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9

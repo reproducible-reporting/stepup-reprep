@@ -20,6 +20,7 @@
 """Application programming interface for StepUp RepRep."""
 
 import json
+import os
 import shlex
 from collections.abc import Collection
 
@@ -381,7 +382,7 @@ def compile_typst(
     path_typ: StrPath,
     dest: StrPath | None = None,
     *,
-    sysinp: dict[str, str | Path] | None = None,
+    sysinp: dict[str, str | int | float | StrPath] | None = None,
     resolution: int | None = None,
     workdir: StrPath = "./",
     typst: StrPath | None = None,
@@ -419,9 +420,11 @@ def compile_typst(
     sysinp
         A dictionary with the input arguments passed to `typst` with `--input key=val`.
         Items are ignored when keys are not strings or when values
-        are not of type `str`, `int`, `float` or `Path`.
+        are not of type `str`, `int`, `float`, `path.Path` or `os.PathLike`
+        (e.g. `pathlib.Path`).
         If a key is not a valid Python identifier, an exception is raised.
-        When values are `Path` instances, they are treated as input dependencies for the step.
+        When values are `path.Path` or `os.PathLike` instances,
+        they are treated as input dependencies for the step.
         These parameters are available in the document as `#sys.inputs.key`.
         One may also provide an object, which is converted into a `dict` with the `vars()` built-in.
     resolution
@@ -492,11 +495,12 @@ def compile_typst(
             for key, val in sysinp.items():
                 if not isinstance(key, str):
                     continue
-                if not isinstance(val, str | int | float | Path):
+                if not isinstance(val, str | int | float | os.PathLike):
                     continue
                 if not key.isidentifier():
                     raise ValueError(f"Invalid sysinp key: {key}")
-                if isinstance(val, Path):
+                if isinstance(val, Path | os.PathLike):
+                    val = coerce_path(val)
                     parts.append(f"{key}={shq(val)}")
                     path_inp.append(val)
                 else:

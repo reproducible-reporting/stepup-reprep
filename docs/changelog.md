@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
 <!-- markdownlint-disable no-duplicate-heading -->
 
 # Changelog
@@ -22,6 +26,10 @@ This is release candidate 3 for the upcoming StepUp 4.0 release.
 
 ### Changed
 
+- Relicense the StepUp Core source code under `LGPL-3.0-or-later`.
+  This clarifies that users of StepUp can assign any license of their choice
+  to the workflows they create with StepUp (e.g., `plan.py` and related files).
+  This has always been the intention, but with this change, it becomes legally explicit.
 - Compatibility with StepUp Core 4
 - Remove all actions and tools and converted them into standard console scripts,
   all with the `srr-` prefix.

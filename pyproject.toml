@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+# SPDX-License-Identifier: LGPL-3.0-or-later
 [build-system]
 requires = ["setuptools>=65.0", "setuptools_scm[toml]>=8.1.0"]
 build-backend = "setuptools.build_meta"
@@ -9,7 +11,7 @@ authors = [
 ]
 description = "StepUp RepRep is the StepUp extension for Reproducible Reporting"
 readme = "README.md"
-license = "GPL-3.0-or-later"
+license = "LGPL-3.0-or-later"
 requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -50,7 +52,7 @@ dependencies = [
     "requests>=2.33.0",
     "scipy>=1.11.1",
     "semver>=3.0.0",
-    "stepup>=4.0.0rc6,<5.0.0a1",
+    "stepup>=4.0.0rc8,<5.0.0a1",
     "svg.path>=6.0",
     "weasyprint>=68.0",
 ]
@@ -58,16 +60,17 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
-    "psutil",
-    "pytest",
-    "pytest-asyncio>=0.24",
-    "pytest-xdist",
     "matplotlib",
     "mike",
     "mkdocs",
     "mkdocstrings[python]",
     "mkdocs-macros-plugin",
     "mkdocs-material",
+    "psutil",
+    "pytest",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist",
+    "reuse",
 ]
 
 [project.urls]

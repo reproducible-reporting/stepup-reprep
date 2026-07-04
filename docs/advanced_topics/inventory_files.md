@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
 # Inventory Files
 
 StepUp RepRep uses `inventory.txt` to collect metadata to prepare a ZIP archive.

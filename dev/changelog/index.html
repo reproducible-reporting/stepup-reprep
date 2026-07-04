@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 
 <!doctype html>
 <html lang="en" class="no-js">
@@ -429,7 +433,7 @@
   <span class="md-ellipsis">
     
   
-    Before You Begin
+    Before you begin
   
 
     
@@ -457,7 +461,7 @@
   <span class="md-ellipsis">
     
   
-    Create or Clone a Project
+    Create or clone a project
   
 
     
@@ -485,7 +489,7 @@
   <span class="md-ellipsis">
     
   
-    Working on a Project
+    Working on a project
   
 
     
@@ -649,7 +653,7 @@
   <span class="md-ellipsis">
     
   
-    Inventory Files
+    Inventory files
   
 
     
@@ -677,7 +681,7 @@
   <span class="md-ellipsis">
     
   
-    Sanitizing BibTeX files
+    Bibsane
   
 
     
@@ -733,7 +737,7 @@
   <span class="md-ellipsis">
     
   
-    Archive a Git Repository (of a StepUp project)
+    Archive git
   
 
     
@@ -789,7 +793,7 @@
   <span class="md-ellipsis">
     
   
-    Synchronize a Zenodo Dataset With Your Local Files
+    Sync zenodo
   
 
     
@@ -871,7 +875,7 @@
   <span class="md-ellipsis">
     
   
-    stepup.reprep.api
+    Stepup.reprep.api
   
 
     
@@ -899,7 +903,7 @@
   <span class="md-ellipsis">
     
   
-    stepup.reprep.bibsane
+    Stepup.reprep.bibsane
   
 
     
@@ -998,15 +1002,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v4.0.0rc3" class="md-nav__link">
+  <a href="#v4.0.0rc4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.0.0rc3 - 2026-07-03
+        4.0.0rc4 - 2026-07-04
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.0.0rc3 - 2026-07-03">
+    <nav class="md-nav" aria-label="4.0.0rc4 - 2026-07-04">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2435,7 +2439,7 @@
   <span class="md-ellipsis">
     
   
-    Developer Notes
+    Development
   
 
     
@@ -2513,15 +2517,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v4.0.0rc3" class="md-nav__link">
+  <a href="#v4.0.0rc4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.0.0rc3 - 2026-07-03
+        4.0.0rc4 - 2026-07-04
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.0.0rc3 - 2026-07-03">
+    <nav class="md-nav" aria-label="4.0.0rc4 - 2026-07-04">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3953,6 +3957,10 @@
   
 
 
+<!--
+SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
 <!-- markdownlint-disable no-duplicate-heading -->
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
@@ -3962,14 +3970,18 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 (Changes to features documented as &ldquo;experimental&rdquo; will not increment macro and meso version numbers.)</p>
 <h2 id="unreleased"><a href="https://github.com/reproducible-reporting/stepup-reprep">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <p>(no changes yet)</p>
-<h2 id="v4.0.0rc3"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc3">4.0.0rc3</a> - 2026-07-03<a class="headerlink" href="#v4.0.0rc3" title="Permanent link">&para;</a></h2>
-<p>This is release candidate 3 for the upcoming StepUp 4.0 release.</p>
+<h2 id="v4.0.0rc4"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc4">4.0.0rc4</a> - 2026-07-04<a class="headerlink" href="#v4.0.0rc4" title="Permanent link">&para;</a></h2>
+<p>This is release candidate 4 of the upcoming StepUp RepRep 4.0 release.</p>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Support for <code>os.PathLike</code> objects in <code>stepup.reprep.api</code> functions.</li>
 </ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>Relicense the StepUp Core source code under <code>LGPL-3.0-or-later</code>.
+  This clarifies that users of StepUp can assign any license of their choice
+  to the workflows they create with StepUp (e.g., <code>plan.py</code> and related files).
+  This has always been the intention, but with this change, it becomes legally explicit.</li>
 <li>Compatibility with StepUp Core 4</li>
 <li>Remove all actions and tools and converted them into standard console scripts,
   all with the <code>srr-</code> prefix.</li>

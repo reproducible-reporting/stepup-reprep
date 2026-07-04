@@ -1,88 +1,88 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_LATEX_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:paper.tex
-             creates   file:smile.pdf
-             creates   step:echo 'Hi there!' > generated.tex
-             creates   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   root:
+              source   file:plan.py
+             product   file:paper.tex
+             product   file:smile.pdf
+             product   step:echo 'Hi there!' > generated.tex
+             product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:smile.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_LATEX [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:generated.tex [amended]
-            consumes   file:paper.tex
-            consumes   file:smile.pdf [amended]
-             creates   file:paper-inventory.txt
-             creates   file:paper.aux
-             creates   file:paper.fls
-             creates   file:paper.log
-             creates   file:paper.pdf
-            supplies   file:paper-inventory.txt
-            supplies   file:paper.aux
-            supplies   file:paper.fls
-            supplies   file:paper.log [amended]
-            supplies   file:paper.pdf
+             creator   step:./plan.py
+              source   file:generated.tex [amended]
+              source   file:paper.tex
+              source   file:smile.pdf [amended]
+             product   file:paper-inventory.txt
+             product   file:paper.aux
+             product   file:paper.fls
+             product   file:paper.log
+             product   file:paper.pdf
+                sink   file:paper-inventory.txt
+                sink   file:paper.aux
+                sink   file:paper.fls
+                sink   file:paper.log [amended]
+                sink   file:paper.pdf
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.fls
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.pdf
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:echo 'Hi there!' > generated.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-             creates   file:generated.tex
-            supplies   file:generated.tex
+             creator   step:./plan.py
+             product   file:generated.tex
+                sink   file:generated.tex
 
 file:generated.tex
                state = BUILT
-          created by   step:echo 'Hi there!' > generated.tex
-            consumes   step:echo 'Hi there!' > generated.tex
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:echo 'Hi there!' > generated.tex
+              source   step:echo 'Hi there!' > generated.tex
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
                state = VOLATILE
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

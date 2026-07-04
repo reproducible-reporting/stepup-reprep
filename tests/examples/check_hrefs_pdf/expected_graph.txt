@@ -1,100 +1,100 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:README.txt
-             creates   file:check_hrefs.yaml
-             creates   file:main.tex
-             creates   step:srr-check-hrefs main.pdf
-             creates   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   root:
+              source   file:plan.py
+             product   file:README.txt
+             product   file:check_hrefs.yaml
+             product   file:main.tex
+             product   step:srr-check-hrefs main.pdf
+             product   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:README.txt
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-check-hrefs main.pdf
+             creator   step:./plan.py
+                sink   step:srr-check-hrefs main.pdf
 
 file:check_hrefs.yaml
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-check-hrefs main.pdf
+             creator   step:./plan.py
+                sink   step:srr-check-hrefs main.pdf
 
 file:main.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_LATEX [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:main.tex
-             creates   file:main-inventory.txt
-             creates   file:main.aux
-             creates   file:main.fls
-             creates   file:main.log
-             creates   file:main.out
-             creates   file:main.pdf
-            supplies   file:main-inventory.txt
-            supplies   file:main.aux
-            supplies   file:main.fls
-            supplies   file:main.log [amended]
-            supplies   file:main.out [amended]
-            supplies   file:main.pdf
+             creator   step:./plan.py
+              source   file:main.tex
+             product   file:main-inventory.txt
+             product   file:main.aux
+             product   file:main.fls
+             product   file:main.log
+             product   file:main.out
+             product   file:main.pdf
+                sink   file:main-inventory.txt
+                sink   file:main.aux
+                sink   file:main.fls
+                sink   file:main.log [amended]
+                sink   file:main.out [amended]
+                sink   file:main.pdf
 
 file:main-inventory.txt
                state = BUILT
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.aux
                state = BUILT
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.fls
                state = BUILT
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.pdf
                state = BUILT
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            supplies   step:srr-check-hrefs main.pdf
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+                sink   step:srr-check-hrefs main.pdf
 
 step:srr-check-hrefs main.pdf
                state = PENDING
                 need = DEFAULT
            using_env = REPREP_CHECK_HREFS_CONFIG [amended]
-          created by   step:./plan.py
-            consumes   (file:BROKEN.md) [amended]
-            consumes   file:README.txt [amended]
-            consumes   file:check_hrefs.yaml [amended]
-            consumes   file:main.pdf
+             creator   step:./plan.py
+              source   (file:BROKEN.md) [amended]
+              source   file:README.txt [amended]
+              source   file:check_hrefs.yaml [amended]
+              source   file:main.pdf
 
 file:main.log
                state = VOLATILE
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:main.out
                state = VOLATILE
-          created by   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-            consumes   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 (file:BROKEN.md)
                state = AWAITED
-            supplies   step:srr-check-hrefs main.pdf
+                sink   step:srr-check-hrefs main.pdf

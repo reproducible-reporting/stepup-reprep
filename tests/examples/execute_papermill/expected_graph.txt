@@ -1,63 +1,63 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:data.json
-             creates   file:demo.ipynb
-             creates   file:points.txt
-             creates   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   root:
+              source   file:plan.py
+             product   file:data.json
+             product   file:demo.ipynb
+             product   file:points.txt
+             product   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:data.json
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:./plan.py
+                sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:demo.ipynb
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:./plan.py
+                sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:points.txt
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:./plan.py
+                sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:data.json [amended]
-            consumes   file:demo.ipynb
-            consumes   file:points.txt
-             creates   file:demo_out.ipynb
-             creates   file:plot.png
-             creates   file:result.txt
-            supplies   file:demo_out.ipynb
-            supplies   file:plot.png
-            supplies   file:result.txt [amended]
+             creator   step:./plan.py
+              source   file:data.json [amended]
+              source   file:demo.ipynb
+              source   file:points.txt
+             product   file:demo_out.ipynb
+             product   file:plot.png
+             product   file:result.txt
+                sink   file:demo_out.ipynb
+                sink   file:plot.png
+                sink   file:result.txt [amended]
 
 file:demo_out.ipynb
                state = BUILT
-          created by   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
-            consumes   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+              source   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:plot.png
                state = BUILT
-          created by   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
-            consumes   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+              source   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:result.txt
                state = BUILT
-          created by   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
-            consumes   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+             creator   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
+              source   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb

@@ -1,37 +1,37 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:smile.pdf
-             creates   step:srr-raster-pdf smile.pdf rastered/smile.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:smile.pdf
+             product   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
 file:smile.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-raster-pdf smile.pdf rastered/smile.pdf
+             creator   step:./plan.py
+                sink   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
 step:srr-raster-pdf smile.pdf rastered/smile.pdf
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_RASTER_QUALITY [amended]
                      = REPREP_RASTER_RESOLUTION [amended]
-          created by   step:./plan.py
-            consumes   file:smile.pdf
-             creates   file:rastered/smile.pdf
-            supplies   file:rastered/smile.pdf
+             creator   step:./plan.py
+              source   file:smile.pdf
+             product   file:rastered/smile.pdf
+                sink   file:rastered/smile.pdf
 
 file:rastered/smile.pdf
                state = BUILT
-          created by   step:srr-raster-pdf smile.pdf rastered/smile.pdf
-            consumes   step:srr-raster-pdf smile.pdf rastered/smile.pdf
+             creator   step:srr-raster-pdf smile.pdf rastered/smile.pdf
+              source   step:srr-raster-pdf smile.pdf rastered/smile.pdf

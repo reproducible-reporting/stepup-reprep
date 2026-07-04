@@ -1,42 +1,42 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:notes.pdf
-             creates   file:src.pdf
-             creates   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:notes.pdf
+             product   file:src.pdf
+             product   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:notes.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+             creator   step:./plan.py
+                sink   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:src.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+             creator   step:./plan.py
+                sink   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:notes.pdf
-            consumes   file:src.pdf
-             creates   file:dst.pdf
-            supplies   file:dst.pdf
+             creator   step:./plan.py
+              source   file:notes.pdf
+              source   file:src.pdf
+             product   file:dst.pdf
+                sink   file:dst.pdf
 
 file:dst.pdf
                state = BUILT
-          created by   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
-            consumes   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+             creator   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
+              source   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf

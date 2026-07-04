@@ -1,89 +1,89 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:inventory.def
-             creates   st:data/
-             creates   step:srr-make-inventory -i inventory.def -o inventory.txt
-             creates   step:srr-zip-inventory inventory.txt upload.zip
+             creator   root:
+              source   file:plan.py
+             product   file:inventory.def
+             product   st:data/
+             product   step:srr-make-inventory -i inventory.def -o inventory.txt
+             product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:inventory.def
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 st:data/
-          created by   step:./plan.py
-             creates   file:data/bla.inp
-             creates   file:data/fine.out
-             creates   file:data/sub/deeper/brrr.inp
-             creates   file:data/sub/deeper/nested.out
-             creates   file:data/sub/works.out
+             creator   step:./plan.py
+             product   file:data/bla.inp
+             product   file:data/fine.out
+             product   file:data/sub/deeper/brrr.inp
+             product   file:data/sub/deeper/nested.out
+             product   file:data/sub/works.out
 
 step:srr-make-inventory -i inventory.def -o inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:data/bla.inp [amended]
-            consumes   file:data/fine.out [amended]
-            consumes   file:data/sub/deeper/brrr.inp [amended]
-            consumes   file:data/sub/deeper/nested.out [amended]
-            consumes   file:data/sub/works.out [amended]
-            consumes   file:inventory.def
-             creates   file:inventory.txt
-            supplies   file:inventory.txt
+             creator   step:./plan.py
+              source   file:data/bla.inp [amended]
+              source   file:data/fine.out [amended]
+              source   file:data/sub/deeper/brrr.inp [amended]
+              source   file:data/sub/deeper/nested.out [amended]
+              source   file:data/sub/works.out [amended]
+              source   file:inventory.def
+             product   file:inventory.txt
+                sink   file:inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:srr-make-inventory -i inventory.def -o inventory.txt
-            consumes   step:srr-make-inventory -i inventory.def -o inventory.txt
-            supplies   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-make-inventory -i inventory.def -o inventory.txt
+              source   step:srr-make-inventory -i inventory.def -o inventory.txt
+                sink   step:srr-zip-inventory inventory.txt upload.zip
 
 step:srr-zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:inventory.txt
-             creates   file:upload.zip
-            supplies   file:upload.zip
+             creator   step:./plan.py
+              source   file:inventory.txt
+             product   file:upload.zip
+                sink   file:upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:srr-zip-inventory inventory.txt upload.zip
-            consumes   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-zip-inventory inventory.txt upload.zip
+              source   step:srr-zip-inventory inventory.txt upload.zip
 
 file:data/bla.inp
                state = STATIC
-          created by   st:data/
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   st:data/
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/fine.out
                state = STATIC
-          created by   st:data/
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   st:data/
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/brrr.inp
                state = STATIC
-          created by   st:data/
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   st:data/
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/nested.out
                state = STATIC
-          created by   st:data/
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   st:data/
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/works.out
                state = STATIC
-          created by   st:data/
-            supplies   step:srr-make-inventory -i inventory.def -o inventory.txt
+             creator   st:data/
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt

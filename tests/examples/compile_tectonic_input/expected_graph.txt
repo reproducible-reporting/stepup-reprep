@@ -1,33 +1,33 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TECTONIC_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:paper.tex
-             creates   file:smile.pdf
-             creates   step:echo 'Hi there!' > generated.tex
-             creates   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   root:
+              source   file:plan.py
+             product   file:paper.tex
+             product   file:smile.pdf
+             product   step:echo 'Hi there!' > generated.tex
+             product   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 file:paper.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 file:smile.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
                state = SUCCEEDED
@@ -35,41 +35,41 @@ step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
            using_env = REPREP_TECTONIC [amended]
                      = REPREP_TECTONIC_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:generated.tex [amended]
-            consumes   file:paper.tex
-            consumes   file:smile.pdf [amended]
-             creates   file:paper-inventory.txt
-             creates   file:paper.dep
-             creates   file:paper.pdf
-            supplies   file:paper-inventory.txt
-            supplies   file:paper.dep
-            supplies   file:paper.pdf
+             creator   step:./plan.py
+              source   file:generated.tex [amended]
+              source   file:paper.tex
+              source   file:smile.pdf [amended]
+             product   file:paper-inventory.txt
+             product   file:paper.dep
+             product   file:paper.pdf
+                sink   file:paper-inventory.txt
+                sink   file:paper.dep
+                sink   file:paper.pdf
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-            consumes   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 file:paper.dep
                state = BUILT
-          created by   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-            consumes   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 file:paper.pdf
                state = BUILT
-          created by   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-            consumes   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
 
 step:echo 'Hi there!' > generated.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-             creates   file:generated.tex
-            supplies   file:generated.tex
+             creator   step:./plan.py
+             product   file:generated.tex
+                sink   file:generated.tex
 
 file:generated.tex
                state = BUILT
-          created by   step:echo 'Hi there!' > generated.tex
-            consumes   step:echo 'Hi there!' > generated.tex
-            supplies   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:echo 'Hi there!' > generated.tex
+              source   step:echo 'Hi there!' > generated.tex
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex

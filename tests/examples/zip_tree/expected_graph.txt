@@ -1,65 +1,65 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
                  ngm = ['data/**/*.out'] {}
-          created by   root:
-            consumes   file:plan.py
-             creates   file:data/fine.out
-             creates   file:data/sub/deeper/nested.out
-             creates   file:data/sub/works.out
-             creates   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-             creates   step:srr-zip-inventory inventory.txt upload.zip
+             creator   root:
+              source   file:plan.py
+             product   file:data/fine.out
+             product   file:data/sub/deeper/nested.out
+             product   file:data/sub/works.out
+             product   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+             product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:data/fine.out
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/deeper/nested.out
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/works.out
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:data/fine.out
-            consumes   file:data/sub/deeper/nested.out
-            consumes   file:data/sub/works.out
-             creates   file:inventory.txt
-            supplies   file:inventory.txt
+             creator   step:./plan.py
+              source   file:data/fine.out
+              source   file:data/sub/deeper/nested.out
+              source   file:data/sub/works.out
+             product   file:inventory.txt
+                sink   file:inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-            consumes   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-            supplies   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+              source   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+                sink   step:srr-zip-inventory inventory.txt upload.zip
 
 step:srr-zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:inventory.txt
-             creates   file:upload.zip
-            supplies   file:upload.zip
+             creator   step:./plan.py
+              source   file:inventory.txt
+             product   file:upload.zip
+                sink   file:upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:srr-zip-inventory inventory.txt upload.zip
-            consumes   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-zip-inventory inventory.txt upload.zip
+              source   step:srr-zip-inventory inventory.txt upload.zip

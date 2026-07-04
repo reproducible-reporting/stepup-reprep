@@ -1,40 +1,40 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = LATEX_MAIN [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:bibsane.yaml
-             creates   file:paper.tex
-             creates   file:references.bib
-             creates   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
-             creates   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   root:
+              source   file:plan.py
+             product   file:bibsane.yaml
+             product   file:paper.tex
+             product   file:references.bib
+             product   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+             product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:bibsane.yaml
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+             creator   step:./plan.py
+                sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:references.bib
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
@@ -42,57 +42,57 @@ step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
            using_env = REPREP_BIBTEX [amended]
                      = REPREP_LATEX [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:paper.tex
-            consumes   file:references.bib [amended]
-             creates   file:paper-inventory.txt
-             creates   file:paper.aux
-             creates   file:paper.bbl
-             creates   file:paper.fls
-             creates   file:paper.log
-             creates   file:paper.pdf
-            supplies   file:paper-inventory.txt
-            supplies   file:paper.aux
-            supplies   file:paper.bbl [amended]
-            supplies   file:paper.fls
-            supplies   file:paper.log [amended]
-            supplies   file:paper.pdf
+             creator   step:./plan.py
+              source   file:paper.tex
+              source   file:references.bib [amended]
+             product   file:paper-inventory.txt
+             product   file:paper.aux
+             product   file:paper.bbl
+             product   file:paper.fls
+             product   file:paper.log
+             product   file:paper.pdf
+                sink   file:paper-inventory.txt
+                sink   file:paper.aux
+                sink   file:paper.bbl [amended]
+                sink   file:paper.fls
+                sink   file:paper.log [amended]
+                sink   file:paper.pdf
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            supplies   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+                sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:paper.fls
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.pdf
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:bibsane.yaml
-            consumes   file:paper.aux
-            consumes   file:references.bib
+             creator   step:./plan.py
+              source   file:bibsane.yaml
+              source   file:paper.aux
+              source   file:references.bib
 
 file:paper.bbl
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
                state = VOLATILE
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

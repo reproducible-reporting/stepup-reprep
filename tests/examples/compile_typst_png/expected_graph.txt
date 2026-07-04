@@ -1,26 +1,26 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:belgium.typ
-             creates   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
+             creator   root:
+              source   file:plan.py
+             product   file:belgium.typ
+             product   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
 
 file:belgium.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
 
 step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
                state = SUCCEEDED
@@ -29,12 +29,12 @@ step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:belgium.typ
-             creates   file:flag.png
-            supplies   file:flag.png
+             creator   step:./plan.py
+              source   file:belgium.typ
+             product   file:flag.png
+                sink   file:flag.png
 
 file:flag.png
                state = BUILT
-          created by   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
-            consumes   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
+             creator   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png
+              source   step:srr-compile-typst --resolution=30 belgium.typ --out=flag.png

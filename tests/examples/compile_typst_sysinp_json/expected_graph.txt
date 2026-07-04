@@ -1,32 +1,32 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:persons.json
-             creates   file:template.typ
-             creates   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+             creator   root:
+              source   file:plan.py
+             product   file:persons.json
+             product   file:template.typ
+             product   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:persons.json
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+             creator   step:./plan.py
+                sink   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:template.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+             creator   step:./plan.py
+                sink   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
                state = SUCCEEDED
@@ -35,13 +35,13 @@ step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:persons.json
-            consumes   file:template.typ
-             creates   file:persons.pdf
-            supplies   file:persons.pdf
+             creator   step:./plan.py
+              source   file:persons.json
+              source   file:template.typ
+             product   file:persons.pdf
+                sink   file:persons.pdf
 
 file:persons.pdf
                state = BUILT
-          created by   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
-            consumes   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+             creator   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
+              source   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json

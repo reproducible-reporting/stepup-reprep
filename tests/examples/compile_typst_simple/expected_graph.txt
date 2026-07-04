@@ -1,25 +1,25 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:document.typ
-             creates   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:document.typ
+             product   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
@@ -28,19 +28,19 @@ step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:document.typ
-             creates   file:document-inventory.txt
-             creates   file:out.pdf
-            supplies   file:document-inventory.txt
-            supplies   file:out.pdf
+             creator   step:./plan.py
+              source   file:document.typ
+             product   file:document-inventory.txt
+             product   file:out.pdf
+                sink   file:document-inventory.txt
+                sink   file:out.pdf
 
 file:document-inventory.txt
                state = BUILT
-          created by   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-            consumes   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+              source   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:out.pdf
                state = BUILT
-          created by   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-            consumes   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+              source   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf

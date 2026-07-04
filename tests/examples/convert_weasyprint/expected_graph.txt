@@ -1,50 +1,50 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:block.png
-             creates   file:doc.html
-             creates   file:style.css
-             creates   step:srr-convert-weasyprint doc.html doc.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:block.png
+             product   file:doc.html
+             product   file:style.css
+             product   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:block.png
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-weasyprint doc.html doc.pdf
+             creator   step:./plan.py
+                sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:doc.html
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-weasyprint doc.html doc.pdf
+             creator   step:./plan.py
+                sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:style.css
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-weasyprint doc.html doc.pdf
+             creator   step:./plan.py
+                sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 step:srr-convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_WEASYPRINT [amended]
-          created by   step:./plan.py
-            consumes   file:block.png [amended]
-            consumes   file:doc.html
-            consumes   file:style.css [amended]
-             creates   file:doc.pdf
-            supplies   file:doc.pdf
+             creator   step:./plan.py
+              source   file:block.png [amended]
+              source   file:doc.html
+              source   file:style.css [amended]
+             product   file:doc.pdf
+                sink   file:doc.pdf
 
 file:doc.pdf
                state = BUILT
-          created by   step:srr-convert-weasyprint doc.html doc.pdf
-            consumes   step:srr-convert-weasyprint doc.html doc.pdf
+             creator   step:srr-convert-weasyprint doc.html doc.pdf
+              source   step:srr-convert-weasyprint doc.html doc.pdf

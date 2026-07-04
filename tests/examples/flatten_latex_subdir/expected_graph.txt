@@ -1,49 +1,49 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:sub/article_structured.tex
-             creates   file:sub/part1.tex
-             creates   file:sub/part2.tex
-             creates   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+             creator   root:
+              source   file:plan.py
+             product   file:sub/article_structured.tex
+             product   file:sub/part1.tex
+             product   file:sub/part2.tex
+             product   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/article_structured.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+             creator   step:./plan.py
+                sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/part1.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+             creator   step:./plan.py
+                sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/part2.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+             creator   step:./plan.py
+                sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 step:srr-flatten-latex sub/article_structured.tex sub/article.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:sub/article_structured.tex
-            consumes   file:sub/part1.tex [amended]
-            consumes   file:sub/part2.tex [amended]
-             creates   file:sub/article.tex
-            supplies   file:sub/article.tex
+             creator   step:./plan.py
+              source   file:sub/article_structured.tex
+              source   file:sub/part1.tex [amended]
+              source   file:sub/part2.tex [amended]
+             product   file:sub/article.tex
+                sink   file:sub/article.tex
 
 file:sub/article.tex
                state = BUILT
-          created by   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
-            consumes   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+             creator   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
+              source   step:srr-flatten-latex sub/article_structured.tex sub/article.tex

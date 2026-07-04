@@ -1,26 +1,26 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:weather.typ
-             creates   step:srr-compile-typst weather.typ --out=out.svg
+             creator   root:
+              source   file:plan.py
+             product   file:weather.typ
+             product   step:srr-compile-typst weather.typ --out=out.svg
 
 file:weather.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst weather.typ --out=out.svg
+             creator   step:./plan.py
+                sink   step:srr-compile-typst weather.typ --out=out.svg
 
 step:srr-compile-typst weather.typ --out=out.svg
                state = SUCCEEDED
@@ -29,12 +29,12 @@ step:srr-compile-typst weather.typ --out=out.svg
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:weather.typ
-             creates   file:out.svg
-            supplies   file:out.svg
+             creator   step:./plan.py
+              source   file:weather.typ
+             product   file:out.svg
+                sink   file:out.svg
 
 file:out.svg
                state = BUILT
-          created by   step:srr-compile-typst weather.typ --out=out.svg
-            consumes   step:srr-compile-typst weather.typ --out=out.svg
+             creator   step:srr-compile-typst weather.typ --out=out.svg
+              source   step:srr-compile-typst weather.typ --out=out.svg

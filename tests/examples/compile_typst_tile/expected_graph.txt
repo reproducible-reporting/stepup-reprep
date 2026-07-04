@@ -1,62 +1,62 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:figure.typ
-             creates   file:hexagon.png
-             creates   file:horizontal.pdf
-             creates   file:pentagon.jpg
-             creates   file:square.webp
-             creates   file:triangle.gif
-             creates   file:vertical.svg
-             creates   step:srr-compile-typst figure.typ
+             creator   root:
+              source   file:plan.py
+             product   file:figure.typ
+             product   file:hexagon.png
+             product   file:horizontal.pdf
+             product   file:pentagon.jpg
+             product   file:square.webp
+             product   file:triangle.gif
+             product   file:vertical.svg
+             product   step:srr-compile-typst figure.typ
 
 file:figure.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:hexagon.png
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:horizontal.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:pentagon.jpg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:square.webp
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:triangle.gif
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 file:vertical.svg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst figure.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst figure.typ
 
 step:srr-compile-typst figure.typ
                state = SUCCEEDED
@@ -65,18 +65,18 @@ step:srr-compile-typst figure.typ
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:figure.typ
-            consumes   file:hexagon.png [amended]
-            consumes   file:horizontal.pdf [amended]
-            consumes   file:pentagon.jpg [amended]
-            consumes   file:square.webp [amended]
-            consumes   file:triangle.gif [amended]
-            consumes   file:vertical.svg [amended]
-             creates   file:figure.pdf
-            supplies   file:figure.pdf
+             creator   step:./plan.py
+              source   file:figure.typ
+              source   file:hexagon.png [amended]
+              source   file:horizontal.pdf [amended]
+              source   file:pentagon.jpg [amended]
+              source   file:square.webp [amended]
+              source   file:triangle.gif [amended]
+              source   file:vertical.svg [amended]
+             product   file:figure.pdf
+                sink   file:figure.pdf
 
 file:figure.pdf
                state = BUILT
-          created by   step:srr-compile-typst figure.typ
-            consumes   step:srr-compile-typst figure.typ
+             creator   step:srr-compile-typst figure.typ
+              source   step:srr-compile-typst figure.typ

@@ -1,11 +1,11 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
@@ -15,33 +15,33 @@ step:./plan.py
                  ngm = ['*.typ'] {}
                  ngm = ['*.svg'] {}
                  ngm = ['*.png'] {}
-          created by   root:
-            consumes   file:plan.py
-             creates   file:demo.typ
-             creates   file:embedded.svg
-             creates   file:linked.svg
-             creates   file:random.png
-             creates   step:srr-compile-typst --keep-deps demo.typ
+             creator   root:
+              source   file:plan.py
+             product   file:demo.typ
+             product   file:embedded.svg
+             product   file:linked.svg
+             product   file:random.png
+             product   step:srr-compile-typst --keep-deps demo.typ
 
 file:demo.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:embedded.svg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:linked.svg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:random.png
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --keep-deps demo.typ
 
 step:srr-compile-typst --keep-deps demo.typ
                state = SUCCEEDED
@@ -49,22 +49,22 @@ step:srr-compile-typst --keep-deps demo.typ
            using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:demo.typ
-            consumes   file:embedded.svg [amended]
-            consumes   file:linked.svg [amended]
-            consumes   file:random.png [amended]
-             creates   file:demo.deps.json
-             creates   file:demo.pdf
-            supplies   file:demo.deps.json
-            supplies   file:demo.pdf
+             creator   step:./plan.py
+              source   file:demo.typ
+              source   file:embedded.svg [amended]
+              source   file:linked.svg [amended]
+              source   file:random.png [amended]
+             product   file:demo.deps.json
+             product   file:demo.pdf
+                sink   file:demo.deps.json
+                sink   file:demo.pdf
 
 file:demo.deps.json
                state = BUILT
-          created by   step:srr-compile-typst --keep-deps demo.typ
-            consumes   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:srr-compile-typst --keep-deps demo.typ
+              source   step:srr-compile-typst --keep-deps demo.typ
 
 file:demo.pdf
                state = BUILT
-          created by   step:srr-compile-typst --keep-deps demo.typ
-            consumes   step:srr-compile-typst --keep-deps demo.typ
+             creator   step:srr-compile-typst --keep-deps demo.typ
+              source   step:srr-compile-typst --keep-deps demo.typ

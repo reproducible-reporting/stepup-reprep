@@ -16,4 +16,4 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f template.typ ]] || exit 1
 [[ -f persons.pdf ]] || exit 1
-grep 'consumes   file:persons.json$' current_graph.txt
+grep 'source   file:persons.json$' current_graph.txt

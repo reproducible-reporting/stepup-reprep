@@ -1,26 +1,26 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:lorem.typ
-             creates   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+             creator   root:
+              source   file:plan.py
+             product   file:lorem.typ
+             product   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
 
 file:lorem.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+             creator   step:./plan.py
+                sink   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
 
 step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
                state = SUCCEEDED
@@ -28,19 +28,19 @@ step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
            using_env = REPREP_TYPST [amended]
                      = REPREP_TYPST_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:lorem.typ
-             creates   file:lorem.deps.json
-             creates   file:lorem.html
-            supplies   file:lorem.deps.json
-            supplies   file:lorem.html
+             creator   step:./plan.py
+              source   file:lorem.typ
+             product   file:lorem.deps.json
+             product   file:lorem.html
+                sink   file:lorem.deps.json
+                sink   file:lorem.html
 
 file:lorem.deps.json
                state = BUILT
-          created by   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
-            consumes   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+             creator   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+              source   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
 
 file:lorem.html
                state = BUILT
-          created by   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
-            consumes   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+             creator   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html
+              source   step:srr-compile-typst --keep-deps lorem.typ --out=lorem.html

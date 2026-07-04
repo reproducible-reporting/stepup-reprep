@@ -1,40 +1,40 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:source/demo.md
-             creates   st:common/
-             creates   step:srr-convert-markdown source/demo.md source/demo.html
+             creator   root:
+              source   file:plan.py
+             product   file:source/demo.md
+             product   st:common/
+             product   step:srr-convert-markdown source/demo.md source/demo.html
 
 file:source/demo.md
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-markdown source/demo.md source/demo.html
+             creator   step:./plan.py
+                sink   step:srr-convert-markdown source/demo.md source/demo.html
 
 st:common/
-          created by   step:./plan.py
+             creator   step:./plan.py
 
 step:srr-convert-markdown source/demo.md source/demo.html
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_MARKDOWN_CSS [amended]
-          created by   step:./plan.py
-            consumes   file:source/demo.md
-             creates   file:source/demo.html
-            supplies   file:source/demo.html
+             creator   step:./plan.py
+              source   file:source/demo.md
+             product   file:source/demo.html
+                sink   file:source/demo.html
 
 file:source/demo.html
                state = BUILT
-          created by   step:srr-convert-markdown source/demo.md source/demo.html
-            consumes   step:srr-convert-markdown source/demo.md source/demo.html
+             creator   step:srr-convert-markdown source/demo.md source/demo.html
+              source   step:srr-convert-markdown source/demo.md source/demo.html

@@ -1,33 +1,33 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_TYPST_INVENTORY [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:document.typ
-             creates   file:image.py
-             creates   step:./image.py
-             creates   step:srr-compile-typst document.typ
+             creator   root:
+              source   file:plan.py
+             product   file:document.typ
+             product   file:image.py
+             product   step:./image.py
+             product   step:srr-compile-typst document.typ
 
 file:document.typ
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-typst document.typ
+             creator   step:./plan.py
+                sink   step:srr-compile-typst document.typ
 
 file:image.py
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:./image.py
+             creator   step:./plan.py
+                sink   step:./image.py
 
 step:srr-compile-typst document.typ
                state = SUCCEEDED
@@ -36,18 +36,18 @@ step:srr-compile-typst document.typ
                      = REPREP_TYPST_ARGS [amended]
                      = REPREP_TYPST_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:document.typ
-            consumes   file:image.jpg [amended]
-             creates   file:document.deps.json
-             creates   file:document.pdf
-            supplies   file:document.deps.json [amended]
-            supplies   file:document.pdf
+             creator   step:./plan.py
+              source   file:document.typ
+              source   file:image.jpg [amended]
+             product   file:document.deps.json
+             product   file:document.pdf
+                sink   file:document.deps.json [amended]
+                sink   file:document.pdf
 
 file:document.pdf
                state = BUILT
-          created by   step:srr-compile-typst document.typ
-            consumes   step:srr-compile-typst document.typ
+             creator   step:srr-compile-typst document.typ
+              source   step:srr-compile-typst document.typ
 
 step:./image.py
                state = SUCCEEDED
@@ -55,18 +55,18 @@ step:./image.py
            using_env = BG_COLOR [amended]
                      = FG_COLOR [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:image.py
-             creates   file:image.jpg
-            supplies   file:image.jpg
+             creator   step:./plan.py
+              source   file:image.py
+             product   file:image.jpg
+                sink   file:image.jpg
 
 file:image.jpg
                state = BUILT
-          created by   step:./image.py
-            consumes   step:./image.py
-            supplies   step:srr-compile-typst document.typ
+             creator   step:./image.py
+              source   step:./image.py
+                sink   step:srr-compile-typst document.typ
 
 file:document.deps.json
                state = BUILT
-          created by   step:srr-compile-typst document.typ
-            consumes   step:srr-compile-typst document.typ
+             creator   step:srr-compile-typst document.typ
+              source   step:srr-compile-typst document.typ

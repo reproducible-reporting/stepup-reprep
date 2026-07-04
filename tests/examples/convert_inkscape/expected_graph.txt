@@ -1,49 +1,49 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:glasses.svg
-             creates   file:smile.svg
-             creates   step:srr-convert-inkscape glasses.svg glasses.png
-             creates   step:srr-convert-inkscape smile.svg final.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:glasses.svg
+             product   file:smile.svg
+             product   step:srr-convert-inkscape glasses.svg glasses.png
+             product   step:srr-convert-inkscape smile.svg final.pdf
 
 file:glasses.svg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-inkscape glasses.svg glasses.png
+             creator   step:./plan.py
+                sink   step:srr-convert-inkscape glasses.svg glasses.png
 
 file:smile.svg
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-inkscape smile.svg final.pdf
+             creator   step:./plan.py
+                sink   step:srr-convert-inkscape smile.svg final.pdf
 
 step:srr-convert-inkscape glasses.svg glasses.png
                state = SUCCEEDED
-                need = DEFAULT (implied by consumers > OPTIONAL)
+                need = DEFAULT (implied by sinks > OPTIONAL)
            using_env = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PNG_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:glasses.svg
-             creates   file:glasses.png
-            supplies   file:glasses.png
+             creator   step:./plan.py
+              source   file:glasses.svg
+             product   file:glasses.png
+                sink   file:glasses.png
 
 file:glasses.png
                state = BUILT
-          created by   step:srr-convert-inkscape glasses.svg glasses.png
-            consumes   step:srr-convert-inkscape glasses.svg glasses.png
-            supplies   step:srr-convert-inkscape smile.svg final.pdf
+             creator   step:srr-convert-inkscape glasses.svg glasses.png
+              source   step:srr-convert-inkscape glasses.svg glasses.png
+                sink   step:srr-convert-inkscape smile.svg final.pdf
 
 step:srr-convert-inkscape smile.svg final.pdf
                state = SUCCEEDED
@@ -51,13 +51,13 @@ step:srr-convert-inkscape smile.svg final.pdf
            using_env = REPREP_INKSCAPE [amended]
                      = REPREP_INKSCAPE_PDF_ARGS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:glasses.png [amended]
-            consumes   file:smile.svg
-             creates   file:final.pdf
-            supplies   file:final.pdf
+             creator   step:./plan.py
+              source   file:glasses.png [amended]
+              source   file:smile.svg
+             product   file:final.pdf
+                sink   file:final.pdf
 
 file:final.pdf
                state = BUILT
-          created by   step:srr-convert-inkscape smile.svg final.pdf
-            consumes   step:srr-convert-inkscape smile.svg final.pdf
+             creator   step:srr-convert-inkscape smile.svg final.pdf
+              source   step:srr-convert-inkscape smile.svg final.pdf

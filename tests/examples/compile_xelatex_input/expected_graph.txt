@@ -1,102 +1,102 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:paper.tex
-             creates   step:echo '2 + 2' > subdir/code.txt
-             creates   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-             creates   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   root:
+              source   file:plan.py
+             product   file:paper.tex
+             product   step:echo '2 + 2' > subdir/code.txt
+             product   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+             product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_LATEX [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:paper.tex
-            consumes   file:subdir/code.txt [amended]
-            consumes   file:subdir/generated.tex [amended]
-             creates   file:paper-inventory.txt
-             creates   file:paper.aux
-             creates   file:paper.fls
-             creates   file:paper.log
-             creates   file:paper.out
-             creates   file:paper.pdf
-            supplies   file:paper-inventory.txt
-            supplies   file:paper.aux
-            supplies   file:paper.fls
-            supplies   file:paper.log [amended]
-            supplies   file:paper.out [amended]
-            supplies   file:paper.pdf
+             creator   step:./plan.py
+              source   file:paper.tex
+              source   file:subdir/code.txt [amended]
+              source   file:subdir/generated.tex [amended]
+             product   file:paper-inventory.txt
+             product   file:paper.aux
+             product   file:paper.fls
+             product   file:paper.log
+             product   file:paper.out
+             product   file:paper.pdf
+                sink   file:paper-inventory.txt
+                sink   file:paper.aux
+                sink   file:paper.fls
+                sink   file:paper.log [amended]
+                sink   file:paper.out [amended]
+                sink   file:paper.pdf
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.aux
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.fls
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.pdf
                state = BUILT
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-             creates   file:subdir/generated.tex
-            supplies   file:subdir/generated.tex
+             creator   step:./plan.py
+             product   file:subdir/generated.tex
+                sink   file:subdir/generated.tex
 
 file:subdir/generated.tex
                state = BUILT
-          created by   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-            consumes   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+              source   step:echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:echo '2 + 2' > subdir/code.txt
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-             creates   file:subdir/code.txt
-            supplies   file:subdir/code.txt
+             creator   step:./plan.py
+             product   file:subdir/code.txt
+                sink   file:subdir/code.txt
 
 file:subdir/code.txt
                state = BUILT
-          created by   step:echo '2 + 2' > subdir/code.txt
-            consumes   step:echo '2 + 2' > subdir/code.txt
-            supplies   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:echo '2 + 2' > subdir/code.txt
+              source   step:echo '2 + 2' > subdir/code.txt
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.log
                state = VOLATILE
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.out
                state = VOLATILE
-          created by   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-            consumes   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+             creator   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+              source   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt

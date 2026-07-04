@@ -1,36 +1,36 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_MUTOOL [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:example.pdf
-             creates   step:mutool draw -q -o example.png -r 100 example.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:example.pdf
+             product   step:mutool draw -q -o example.png -r 100 example.pdf
 
 file:example.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:mutool draw -q -o example.png -r 100 example.pdf
+             creator   step:./plan.py
+                sink   step:mutool draw -q -o example.png -r 100 example.pdf
 
 step:mutool draw -q -o example.png -r 100 example.pdf
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:example.pdf
-             creates   file:example.png
-            supplies   file:example.png
+             creator   step:./plan.py
+              source   file:example.pdf
+             product   file:example.png
+                sink   file:example.png
 
 file:example.png
                state = BUILT
-          created by   step:mutool draw -q -o example.png -r 100 example.pdf
-            consumes   step:mutool draw -q -o example.png -r 100 example.pdf
+             creator   step:mutool draw -q -o example.png -r 100 example.pdf
+              source   step:mutool draw -q -o example.png -r 100 example.pdf

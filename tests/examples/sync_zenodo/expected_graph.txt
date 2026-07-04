@@ -1,43 +1,43 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:README.txt
-             creates   file:zenodo.md
-             creates   file:zenodo.yaml
-             creates   step:srr-sync-zenodo zenodo.yaml
+             creator   root:
+              source   file:plan.py
+             product   file:README.txt
+             product   file:zenodo.md
+             product   file:zenodo.yaml
+             product   step:srr-sync-zenodo zenodo.yaml
 
 file:README.txt
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-sync-zenodo zenodo.yaml
+             creator   step:./plan.py
+                sink   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.md
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-sync-zenodo zenodo.yaml
+             creator   step:./plan.py
+                sink   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.yaml
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-sync-zenodo zenodo.yaml
+             creator   step:./plan.py
+                sink   step:srr-sync-zenodo zenodo.yaml
 
 step:srr-sync-zenodo zenodo.yaml
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_PATH_ZENODO_TOKEN [amended]
-          created by   step:./plan.py
-            consumes   file:README.txt [amended]
-            consumes   file:zenodo.md [amended]
-            consumes   file:zenodo.yaml
+             creator   step:./plan.py
+              source   file:README.txt [amended]
+              source   file:zenodo.md [amended]
+              source   file:zenodo.yaml

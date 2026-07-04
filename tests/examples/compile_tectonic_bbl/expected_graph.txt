@@ -1,31 +1,31 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:paper.bbl
-             creates   file:paper.tex
-             creates   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   root:
+              source   file:plan.py
+             product   file:paper.bbl
+             product   file:paper.tex
+             product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:paper.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:paper.bbl
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
                state = SUCCEEDED
@@ -34,20 +34,20 @@ step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
                      = REPREP_TECTONIC_ARGS [amended]
                      = REPREP_TECTONIC_KEEP_DEPS [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   step:./plan.py
-            consumes   file:paper.bbl [amended]
-            consumes   file:paper.tex
-             creates   file:paper-inventory.txt
-             creates   file:paper.pdf
-            supplies   file:paper-inventory.txt
-            supplies   file:paper.pdf
+             creator   step:./plan.py
+              source   file:paper.bbl [amended]
+              source   file:paper.tex
+             product   file:paper-inventory.txt
+             product   file:paper.pdf
+                sink   file:paper-inventory.txt
+                sink   file:paper.pdf
 
 file:paper-inventory.txt
                state = BUILT
-          created by   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-            consumes   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:paper.pdf
                state = BUILT
-          created by   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-            consumes   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex

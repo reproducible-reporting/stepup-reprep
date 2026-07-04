@@ -1,46 +1,46 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   st:.git/
-             creates   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creator   root:
+              source   file:plan.py
+             product   st:.git/
+             product   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 st:.git/
-          created by   step:./plan.py
-             creates   file:.git/HEAD
-             creates   file:.git/refs/heads/main
+             creator   step:./plan.py
+             product   file:.git/HEAD
+             product   file:.git/refs/heads/main
 
 step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:.git/HEAD [amended]
-            consumes   file:.git/refs/heads/main [amended]
-             creates   file:gitlog.txt
-            supplies   file:gitlog.txt
+             creator   step:./plan.py
+              source   file:.git/HEAD [amended]
+              source   file:.git/refs/heads/main [amended]
+             product   file:gitlog.txt
+                sink   file:gitlog.txt
 
 file:gitlog.txt
                state = BUILT
-          created by   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-            consumes   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creator   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+              source   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/HEAD
                state = STATIC
-          created by   st:.git/
-            supplies   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creator   st:.git/
+                sink   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/refs/heads/main
                state = STATIC
-          created by   st:.git/
-            supplies   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+             creator   st:.git/
+                sink   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'

@@ -4,7 +4,7 @@
         1/2 |    SUCCESS │ ./plan.py
         1/2 |      START │ srr-check-hrefs test.html
         1/2 | RESCHEDULE │ srr-check-hrefs test.html
-──────────────── Rescheduling due to unavailable amended inputs ────────────────
+────────────────────────── Unavailable amended inputs ──────────────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
         1/2 |    WARNING │ 1 step(s) remained pending ...

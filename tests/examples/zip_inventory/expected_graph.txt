@@ -1,65 +1,65 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:static.txt
-             creates   step:echo hello > built.txt
-             creates   step:srr-make-inventory static.txt built.txt -o inventory.txt
-             creates   step:srr-zip-inventory inventory.txt upload.zip
+             creator   root:
+              source   file:plan.py
+             product   file:static.txt
+             product   step:echo hello > built.txt
+             product   step:srr-make-inventory static.txt built.txt -o inventory.txt
+             product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:static.txt
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-make-inventory static.txt built.txt -o inventory.txt
+             creator   step:./plan.py
+                sink   step:srr-make-inventory static.txt built.txt -o inventory.txt
 
 step:echo hello > built.txt
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-             creates   file:built.txt
-            supplies   file:built.txt
+             creator   step:./plan.py
+             product   file:built.txt
+                sink   file:built.txt
 
 file:built.txt
                state = BUILT
-          created by   step:echo hello > built.txt
-            consumes   step:echo hello > built.txt
-            supplies   step:srr-make-inventory static.txt built.txt -o inventory.txt
+             creator   step:echo hello > built.txt
+              source   step:echo hello > built.txt
+                sink   step:srr-make-inventory static.txt built.txt -o inventory.txt
 
 step:srr-make-inventory static.txt built.txt -o inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:built.txt
-            consumes   file:static.txt
-             creates   file:inventory.txt
-            supplies   file:inventory.txt
+             creator   step:./plan.py
+              source   file:built.txt
+              source   file:static.txt
+             product   file:inventory.txt
+                sink   file:inventory.txt
 
 file:inventory.txt
                state = BUILT
-          created by   step:srr-make-inventory static.txt built.txt -o inventory.txt
-            consumes   step:srr-make-inventory static.txt built.txt -o inventory.txt
-            supplies   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-make-inventory static.txt built.txt -o inventory.txt
+              source   step:srr-make-inventory static.txt built.txt -o inventory.txt
+                sink   step:srr-zip-inventory inventory.txt upload.zip
 
 step:srr-zip-inventory inventory.txt upload.zip
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:inventory.txt
-             creates   file:upload.zip
-            supplies   file:upload.zip
+             creator   step:./plan.py
+              source   file:inventory.txt
+             product   file:upload.zip
+                sink   file:upload.zip
 
 file:upload.zip
                state = BUILT
-          created by   step:srr-zip-inventory inventory.txt upload.zip
-            consumes   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-zip-inventory inventory.txt upload.zip
+              source   step:srr-zip-inventory inventory.txt upload.zip

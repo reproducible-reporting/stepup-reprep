@@ -1,42 +1,42 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:doc1.pdf
-             creates   file:doc2.pdf
-             creates   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creator   root:
+              source   file:plan.py
+             product   file:doc1.pdf
+             product   file:doc2.pdf
+             product   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc1.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creator   step:./plan.py
+                sink   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 file:doc2.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creator   step:./plan.py
+                sink   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
 
 step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:doc1.pdf
-            consumes   file:doc2.pdf
-             creates   file:cat.pdf
-            supplies   file:cat.pdf
+             creator   step:./plan.py
+              source   file:doc1.pdf
+              source   file:doc2.pdf
+             product   file:cat.pdf
+                sink   file:cat.pdf
 
 file:cat.pdf
                state = BUILT
-          created by   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
-            consumes   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+             creator   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+              source   step:srr-cat-pdf doc1.pdf doc2.pdf cat.pdf

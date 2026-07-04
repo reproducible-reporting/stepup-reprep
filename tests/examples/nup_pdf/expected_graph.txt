@@ -1,25 +1,25 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:src.pdf
-             creates   step:srr-nup-pdf src.pdf dst.pdf -p A4
+             creator   root:
+              source   file:plan.py
+             product   file:src.pdf
+             product   step:srr-nup-pdf src.pdf dst.pdf -p A4
 
 file:src.pdf
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-nup-pdf src.pdf dst.pdf -p A4
+             creator   step:./plan.py
+                sink   step:srr-nup-pdf src.pdf dst.pdf -p A4
 
 step:srr-nup-pdf src.pdf dst.pdf -p A4
                state = SUCCEEDED
@@ -27,12 +27,12 @@ step:srr-nup-pdf src.pdf dst.pdf -p A4
            using_env = REPREP_NUP_MARGIN [amended]
                      = REPREP_NUP_NCOL [amended]
                      = REPREP_NUP_NROW [amended]
-          created by   step:./plan.py
-            consumes   file:src.pdf
-             creates   file:dst.pdf
-            supplies   file:dst.pdf
+             creator   step:./plan.py
+              source   file:src.pdf
+             product   file:dst.pdf
+                sink   file:dst.pdf
 
 file:dst.pdf
                state = BUILT
-          created by   step:srr-nup-pdf src.pdf dst.pdf -p A4
-            consumes   step:srr-nup-pdf src.pdf dst.pdf -p A4
+             creator   step:srr-nup-pdf src.pdf dst.pdf -p A4
+              source   step:srr-nup-pdf src.pdf dst.pdf -p A4

@@ -1,43 +1,43 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = REPREP_LATEXDIFF [amended]
                      = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:new.tex
-             creates   file:old.tex
-             creates   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+             creator   root:
+              source   file:plan.py
+             product   file:new.tex
+             product   file:old.tex
+             product   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:new.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+             creator   step:./plan.py
+                sink   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:old.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+             creator   step:./plan.py
+                sink   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:new.tex
-            consumes   file:old.tex
-             creates   file:diff.tex
-            supplies   file:diff.tex
+             creator   step:./plan.py
+              source   file:new.tex
+              source   file:old.tex
+             product   file:diff.tex
+                sink   file:diff.tex
 
 file:diff.tex
                state = BUILT
-          created by   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
-            consumes   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+             creator   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
+              source   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex

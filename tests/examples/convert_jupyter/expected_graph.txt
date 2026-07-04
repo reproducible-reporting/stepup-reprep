@@ -1,63 +1,63 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-             creates   file:data.json
-             creates   file:demo.ipynb
-             creates   file:points.txt
-             creates   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   root:
+              source   file:plan.py
+             product   file:data.json
+             product   file:demo.ipynb
+             product   file:points.txt
+             product   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:data.json
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:demo.ipynb
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:points.txt
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:data.json [amended]
-            consumes   file:demo.ipynb
-            consumes   file:points.txt
-             creates   file:demo.html
-             creates   file:plot.png
-             creates   file:result.txt
-            supplies   file:demo.html
-            supplies   file:plot.png
-            supplies   file:result.txt [amended]
+             creator   step:./plan.py
+              source   file:data.json [amended]
+              source   file:demo.ipynb
+              source   file:points.txt
+             product   file:demo.html
+             product   file:plot.png
+             product   file:result.txt
+                sink   file:demo.html
+                sink   file:plot.png
+                sink   file:result.txt [amended]
 
 file:demo.html
                state = BUILT
-          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
-            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+              source   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:plot.png
                state = BUILT
-          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
-            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+              source   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
 
 file:result.txt
                state = BUILT
-          created by   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
-            consumes   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+             creator   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'
+              source   step:srr-convert-jupyter demo.ipynb demo.html --to html --execute --parameters='{"dpi": 50}'

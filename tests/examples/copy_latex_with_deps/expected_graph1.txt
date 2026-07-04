@@ -1,67 +1,67 @@
 root:
-             creates   file:plan.py
-             creates   step:./plan.py
+             product   file:plan.py
+             product   step:./plan.py
 
 file:plan.py
                state = STATIC
-          created by   root:
-            supplies   step:./plan.py
+             creator   root:
+                sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
            using_env = STEPUP_PATH_FILTER [amended]
-          created by   root:
-            consumes   file:plan.py
-            consumes   file:snippet.tex [amended]
-             creates   file:doc.tex
-             creates   file:first.dat
-             creates   file:second.dat
-             creates   file:snippet.tex
-             creates   step:cp -p first.dat dest/first.dat
-             creates   step:cp -p snippet.tex dest/snippet.tex
+             creator   root:
+              source   file:plan.py
+              source   file:snippet.tex [amended]
+             product   file:doc.tex
+             product   file:first.dat
+             product   file:second.dat
+             product   file:snippet.tex
+             product   step:cp -p first.dat dest/first.dat
+             product   step:cp -p snippet.tex dest/snippet.tex
 
 file:doc.tex
                state = STATIC
-          created by   step:./plan.py
+             creator   step:./plan.py
 
 file:first.dat
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:cp -p first.dat dest/first.dat
+             creator   step:./plan.py
+                sink   step:cp -p first.dat dest/first.dat
 
 file:second.dat
                state = STATIC
-          created by   step:./plan.py
+             creator   step:./plan.py
 
 file:snippet.tex
                state = STATIC
-          created by   step:./plan.py
-            supplies   step:./plan.py
-            supplies   step:cp -p snippet.tex dest/snippet.tex
+             creator   step:./plan.py
+                sink   step:./plan.py
+                sink   step:cp -p snippet.tex dest/snippet.tex
 
 step:cp -p first.dat dest/first.dat
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:first.dat
-             creates   file:dest/first.dat
-            supplies   file:dest/first.dat
+             creator   step:./plan.py
+              source   file:first.dat
+             product   file:dest/first.dat
+                sink   file:dest/first.dat
 
 file:dest/first.dat
                state = BUILT
-          created by   step:cp -p first.dat dest/first.dat
-            consumes   step:cp -p first.dat dest/first.dat
+             creator   step:cp -p first.dat dest/first.dat
+              source   step:cp -p first.dat dest/first.dat
 
 step:cp -p snippet.tex dest/snippet.tex
                state = SUCCEEDED
                 need = DEFAULT
-          created by   step:./plan.py
-            consumes   file:snippet.tex
-             creates   file:dest/snippet.tex
-            supplies   file:dest/snippet.tex
+             creator   step:./plan.py
+              source   file:snippet.tex
+             product   file:dest/snippet.tex
+                sink   file:dest/snippet.tex
 
 file:dest/snippet.tex
                state = BUILT
-          created by   step:cp -p snippet.tex dest/snippet.tex
-            consumes   step:cp -p snippet.tex dest/snippet.tex
+             creator   step:cp -p snippet.tex dest/snippet.tex
+              source   step:cp -p snippet.tex dest/snippet.tex

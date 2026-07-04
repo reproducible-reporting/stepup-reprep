@@ -6,7 +6,7 @@
         2/3 |    SUCCESS │ srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
         2/3 |      START │ srr-check-hrefs main.pdf
         2/3 | RESCHEDULE │ srr-check-hrefs main.pdf
-──────────────── Rescheduling due to unavailable amended inputs ────────────────
+────────────────────────── Unavailable amended inputs ──────────────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
         2/3 |    WARNING │ 1 step(s) remained pending ...

@@ -23,6 +23,11 @@ This is release candidate 5 of the upcoming StepUp RepRep 4.0 release.
 ### Added
 
 - Support for `os.PathLike` objects in `stepup.reprep.api` functions.
+- An optional `inp` argument in `compile_typst()` to specify additional input files
+  on which the typst source may depend.
+  If not given, these dependencies are detected automatically after the typst compilation.
+  When some of these additional inputs are the outputs of other steps,
+  specifying them may improve scheduling efficiency.
 
 ### Changed
 
@@ -42,6 +47,8 @@ This is release candidate 5 of the upcoming StepUp RepRep 4.0 release.
 
 - The `tile_pdf` action has been removed, as it is no longer needed.
   This is easily replaced with a simple typst input.
+- The `compile_typst()` function no longer scans the `sysinp` dictionary for `Path` objects
+  to automatically mark them as input dependencies.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

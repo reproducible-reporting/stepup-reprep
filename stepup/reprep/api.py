@@ -389,6 +389,7 @@ def compile_typst(
     path_typ: StrPath,
     dest: StrPath | None = None,
     *,
+    inp: StrPath | Collection[StrPath] = (),
     sysinp: dict[str, str | int | float | StrPath] | None = None,
     resolution: int | None = None,
     workdir: StrPath = "./",
@@ -425,14 +426,17 @@ def compile_typst(
         For SVG and PNG outputs, this argument must be specified with the desired extension.
         If the output contains any of `{p}`, `{0p}` or `{t}`, the output paths are not
         known a priori and will be amended.
+    inp
+        Additional files that are inputs to the typst source, e.g. images or other typst files.
+        Note that these dependencies are detected automatically after the typst compilation,
+        so specifying them here is optional and only improves scheduling efficiency
+        when these inputs are the outputs of other steps.
     sysinp
         A dictionary with the input arguments passed to `typst` with `--input key=val`.
         Items are ignored when keys are not strings or when values
         are not of type `str`, `int`, `float`, `path.Path` or `os.PathLike`
         (e.g. `pathlib.Path`).
         If a key is not a valid Python identifier, an exception is raised.
-        When values are `path.Path` or `os.PathLike` instances,
-        they are treated as input dependencies for the step.
         These parameters are available in the document as `#sys.inputs.key`.
         One may also provide an object, which is converted into a `dict` with the `vars()` built-in.
     resolution
@@ -497,7 +501,6 @@ def compile_typst(
     parts.append(shq(path_typ))
     if path_typ[:-4] != path_out[:-4]:
         parts.append(f"--out={shq(path_out)}")
-    path_inp = [path_typ]
     if sysinp is not None:
         if not isinstance(sysinp, dict):
             sysinp = vars(sysinp)
@@ -510,19 +513,15 @@ def compile_typst(
                     continue
                 if not key.isidentifier():
                     raise ValueError(f"Invalid sysinp key: {key}")
-                if isinstance(val, Path | os.PathLike):
-                    val = coerce_path(val)
-                    parts.append(f"{key}={shq(val)}")
-                    path_inp.append(val)
-                else:
-                    parts.append(f"{key}={shlex.quote(str(val))}")
+                val = coerce_str(val) if isinstance(val, Path | os.PathLike) else str(val)
+                parts.append(f"{key}={shlex.quote(val)}")
     if len(typst_args) > 0:
         parts.append("--")
         parts.extend(shlex.quote(typst_arg) for typst_arg in typst_args)
 
     return run(
         " ".join(parts),
-        inp=path_inp,
+        inp=[path_typ, *coerce_paths(inp)],
         out=paths_out,
         workdir=workdir,
         optional=optional,

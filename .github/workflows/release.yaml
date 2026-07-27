@@ -13,6 +13,7 @@ on:
       - 'v*'
     paths:
       # ... and only if relevant files have changed.
+      # This list must be consistent with MANIFEST.in.
       - stepup/**
       - pyproject.toml
       - LICENSE
@@ -30,6 +31,9 @@ jobs:
   build:
     name: Build distribution
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
 
     steps:
     - uses: actions/checkout@v6
@@ -70,6 +74,7 @@ jobs:
       name: pypi
       url: https://pypi.org/p/${{ env.PYPI_NAME }}
     permissions:
+      actions: read
       id-token: write
 
     steps:
@@ -90,6 +95,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      actions: read
       contents: write
       id-token: write
 
@@ -141,6 +147,7 @@ jobs:
       url: https://test.pypi.org/p/${{ env.PYPI_NAME }}
 
     permissions:
+      actions: read
       id-token: write
 
     steps:

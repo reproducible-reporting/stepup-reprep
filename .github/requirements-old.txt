@@ -22,4 +22,4 @@ scipy==1.11.1
 semver==3.0.0
 stepup==4.0.0rc10
 svg.path==6.0
-weasyprint==68.0
+weasyprint==68.1

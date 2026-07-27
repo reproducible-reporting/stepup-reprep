@@ -16,9 +16,9 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 (no changes yet)
 
-## [4.0.0rc4][] - 2026-07-04 {: #v4.0.0rc4 }
+## [4.0.0rc5][] - 2026-07-27 {: #v4.0.0rc5 }
 
-This is release candidate 4 of the upcoming StepUp RepRep 4.0 release.
+This is release candidate 5 of the upcoming StepUp RepRep 4.0 release.
 
 ### Added
 
@@ -644,7 +644,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
-[4.0.0rc4]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc4
+[4.0.0rc5]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc5
 [3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11
 [3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10
 [3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9

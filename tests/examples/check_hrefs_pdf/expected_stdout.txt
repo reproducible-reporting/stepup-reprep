@@ -1,15 +1,16 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-        2/3 |    SUCCESS │ srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-        2/3 |      START │ srr-check-hrefs main.pdf
-        2/3 | RESCHEDULE │ srr-check-hrefs main.pdf
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+  SUCCESS │ srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+    START │ srr-check-hrefs main.pdf
+POSTPONED │ srr-check-hrefs main.pdf
 ────────────────────────── Unavailable amended inputs ──────────────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
-        2/3 |    WARNING │ 1 step(s) remained pending ...
+ DIRECTOR │ Ran 3 job(s).
+  WARNING │ 1 step(s) remained pending ...
 ─────────────────────────────── Detached inputs ────────────────────────────────
              AWAITED  BROKEN.md
 ───────────────────────────────── PENDING Step ─────────────────────────────────
@@ -20,7 +21,8 @@ Inputs        STATIC  README.txt [amended]
                BUILT  main.pdf
              AWAITED  (BROKEN.md) [amended]
 ────────────────────────────────────────────────────────────────────────────────
-        2/3 |    WARNING │ Skipping file cleanup due to incomplete build
-        2/3 |    WARNING │ Check logs: .stepup/warning.log
-        2/3 |      PHASE │ watch
-        2/3 |   DIRECTOR │ See you!
+  WARNING │ Skipping file cleanup due to incomplete build
+  WARNING │ Check logs: .stepup/warning.log
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DIRECTOR │ See you!

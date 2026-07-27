@@ -1,14 +1,13 @@
-        0/0 |    STARTUP │ Making failed steps pending
-        0/0 |    STARTUP │ Watching directories for 7 files from initial database
-        0/0 |    STARTUP │ Making steps pending that use changed environment variables
-        0/0 |    STARTUP │ Scanning initial database for changed files
-        0/0 |    UPDATED │ plan.py (digest c86ad98d ➜ 119b9c54, size 230 ➜ 254)
-        0/0 |    STARTUP │ Scanning initial database for new nglob matches
-        0/2 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-flatten-latex article_structured.tex article.tex
-        2/2 |    SUCCESS │ srr-flatten-latex article_structured.tex article.tex
-        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        2/2 |      PHASE │ watch
-        2/2 |   DIRECTOR │ See you!
+  STARTUP │ Watching 2 director(y|ies)
+  STARTUP │ Checking 5 file(s) for changes
+  UPDATED │ plan.py (digest c86ad98d ➜ 119b9c54, size 230 ➜ 254)
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-flatten-latex article_structured.tex article.tex
+  SUCCESS │ srr-flatten-latex article_structured.tex article.tex
+ DIRECTOR │ Ran 3 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph2.txt, current_graph2_provenance.dot and current_graph2_dependency.dot
+ DIRECTOR │ See you!

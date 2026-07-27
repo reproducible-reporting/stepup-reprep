@@ -1,13 +1,14 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-flatten-latex article_structured.tex article.tex
-        1/2 | RESCHEDULE │ srr-flatten-latex article_structured.tex article.tex
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-flatten-latex article_structured.tex article.tex
+POSTPONED │ srr-flatten-latex article_structured.tex article.tex
 ────────────────────────── Unavailable amended inputs ──────────────────────────
 sub/other.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ 1 step(s) remained pending ...
+ DIRECTOR │ Ran 2 job(s).
+  WARNING │ 1 step(s) remained pending ...
 ─────────────────────────────── Detached inputs ────────────────────────────────
              AWAITED  sub/other.tex
 ───────────────────────────────── PENDING Step ─────────────────────────────────
@@ -20,7 +21,8 @@ Inputs        STATIC  article_structured.tex
              AWAITED  (sub/other.tex) [amended]
 Outputs      AWAITED  article.tex
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ Skipping file cleanup due to incomplete build
-        1/2 |    WARNING │ Check logs: .stepup/warning.log
-        1/2 |      PHASE │ watch
-        1/2 |   DIRECTOR │ See you!
+  WARNING │ Skipping file cleanup due to incomplete build
+  WARNING │ Check logs: .stepup/warning.log
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph1.txt, current_graph1_provenance.dot and current_graph1_dependency.dot
+ DIRECTOR │ See you!

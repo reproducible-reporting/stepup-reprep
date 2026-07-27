@@ -1,23 +1,26 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/4 |    SUCCESS │ ./plan.py
-        1/4 |      START │ echo hello > built.txt
-        2/4 |    SUCCESS │ echo hello > built.txt
-        2/4 |      START │ srr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |    SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |      START │ srr-zip-inventory inventory.txt upload.zip
-        4/4 |    SUCCESS │ srr-zip-inventory inventory.txt upload.zip
-        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        4/4 |      PHASE │ watch
-        4/4 |    DELETED │ built.txt
-        4/4 |    DELETED │ upload.zip
-        1/4 |      PHASE │ build
-        1/4 |      START │ echo hello > built.txt
-        2/4 |    SUCCESS │ echo hello > built.txt
-        2/4 |       SKIP │ srr-make-inventory static.txt built.txt -o inventory.txt
-        3/4 |      START │ srr-zip-inventory inventory.txt upload.zip
-        4/4 |    SUCCESS │ srr-zip-inventory inventory.txt upload.zip
-        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        4/4 |      PHASE │ watch
-        4/4 |   DIRECTOR │ See you!
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ echo hello > built.txt
+  SUCCESS │ echo hello > built.txt
+    START │ srr-make-inventory static.txt built.txt -o inventory.txt
+  SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.txt
+    START │ srr-zip-inventory inventory.txt upload.zip
+  SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+ DIRECTOR │ Ran 4 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+  DELETED │ built.txt
+  DELETED │ upload.zip
+    PHASE │ build
+    START │ echo hello > built.txt
+  SUCCESS │ echo hello > built.txt
+     SKIP │ srr-make-inventory static.txt built.txt -o inventory.txt
+    START │ srr-zip-inventory inventory.txt upload.zip
+  SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+ DIRECTOR │ Ran 5 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ See you!

@@ -1,13 +1,14 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-check-hrefs test.md
-        1/2 | RESCHEDULE │ srr-check-hrefs test.md
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-check-hrefs test.md
+POSTPONED │ srr-check-hrefs test.md
 ────────────────────────── Unavailable amended inputs ──────────────────────────
 BROKEN.md
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ 1 step(s) remained pending ...
+ DIRECTOR │ Ran 2 job(s).
+  WARNING │ 1 step(s) remained pending ...
 ─────────────────────────────── Detached inputs ────────────────────────────────
              AWAITED  BROKEN.md
 ───────────────────────────────── PENDING Step ─────────────────────────────────
@@ -18,7 +19,8 @@ Inputs        STATIC  README.txt [amended]
               STATIC  test.md
              AWAITED  (BROKEN.md) [amended]
 ────────────────────────────────────────────────────────────────────────────────
-        1/2 |    WARNING │ Skipping file cleanup due to incomplete build
-        1/2 |    WARNING │ Check logs: .stepup/warning.log
-        1/2 |      PHASE │ watch
-        1/2 |   DIRECTOR │ See you!
+  WARNING │ Skipping file cleanup due to incomplete build
+  WARNING │ Check logs: .stepup/warning.log
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DIRECTOR │ See you!

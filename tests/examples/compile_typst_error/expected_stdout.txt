@@ -1,9 +1,9 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-compile-typst --keep-deps error.typ
-        1/1 |       FAIL │ srr-compile-typst --keep-deps error.typ
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-compile-typst --keep-deps error.typ
+     FAIL │ srr-compile-typst --keep-deps error.typ
 ──────────────────────────────── Failed command ────────────────────────────────
 srr-compile-typst --keep-deps error.typ  # exit=1
 ───────────────────────── Expected outputs not created ─────────────────────────
@@ -11,8 +11,11 @@ error.pdf
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────
-        1/1 |    WARNING │ 1 step(s) failed.
-        1/1 |    WARNING │ Skipping file cleanup due to incomplete build
-        1/1 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
-        1/1 |      PHASE │ watch
-        1/1 |   DIRECTOR │ See you!
+ DIRECTOR │ Ran 2 job(s).
+  WARNING │ 1 step(s) failed.
+  WARNING │ Scheduler is put on hold. Not reporting pending steps.
+  WARNING │ Skipping file cleanup due to incomplete build
+  WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DIRECTOR │ See you!

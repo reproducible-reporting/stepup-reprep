@@ -1,9 +1,9 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
-        1/1 |       FAIL │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+     FAIL │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ──────────────────────────────── Failed command ────────────────────────────────
 srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ──────────────────────────────── Invalid inputs ────────────────────────────────
@@ -23,11 +23,14 @@ Input changed unexpectedly: references.bib (digest 240c3a42 ➜ 5d12dcdd, size 1
     📓 The Journal of Chemical Physics -> J. Chem. Phys.
 💾 Please check the new or corrected file: references.bib
 ────────────────────────────────────────────────────────────────────────────────
-        1/1 |      ERROR │ The scheduler has been put on hold due to unexpected input changes.
-        1/1 |    WARNING │ 1 step(s) failed.
-        1/1 |    WARNING │ Scheduler is put on hold. Not reporting pending steps.
-        1/1 |    WARNING │ Skipping file cleanup due to incomplete build
-        1/1 |    WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
-        1/1 |      PHASE │ watch
-        1/1 |    UPDATED │ references.bib
-        1/1 |   DIRECTOR │ See you!
+    ERROR │ The scheduler has been put on hold due to unexpected input changes.
+ DIRECTOR │ Ran 2 job(s).
+  WARNING │ 1 step(s) failed.
+  WARNING │ Scheduler is put on hold. Not reporting pending steps.
+  WARNING │ Skipping file cleanup due to incomplete build
+  WARNING │ Check logs: .stepup/fail.log .stepup/warning.log
+    PHASE │ watch
+  UPDATED │ references.bib
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+UNCHANGED │ references.bib
+ DIRECTOR │ See you!

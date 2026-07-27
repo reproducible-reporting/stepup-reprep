@@ -1,15 +1,18 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
-        2/2 |    SUCCESS │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
-        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        2/2 |      PHASE │ watch
-        2/2 |    DELETED │ cat.pdf
-        1/2 |      PHASE │ build
-        1/2 |      START │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
-        2/2 |    SUCCESS │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
-        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        2/2 |      PHASE │ watch
-        2/2 |   DIRECTOR │ See you!
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+  SUCCESS │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+ DIRECTOR │ Ran 2 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+  DELETED │ cat.pdf
+    PHASE │ build
+    START │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+  SUCCESS │ srr-cat-pdf doc1.pdf doc2.pdf cat.pdf
+ DIRECTOR │ Ran 2 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ See you!

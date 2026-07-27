@@ -1,26 +1,28 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ srr-convert-inkscape smile.svg final.pdf
-        1/3 | RESCHEDULE │ srr-convert-inkscape smile.svg final.pdf
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-convert-inkscape smile.svg final.pdf
+POSTPONED │ srr-convert-inkscape smile.svg final.pdf
 ────────────────────────── Unavailable amended inputs ──────────────────────────
 glasses.png
 ────────────────────────────────────────────────────────────────────────────────
-        1/3 |      START │ srr-convert-inkscape glasses.svg glasses.png
-        2/3 |    SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
-        2/3 |      START │ srr-convert-inkscape smile.svg final.pdf
-        3/3 |    SUCCESS │ srr-convert-inkscape smile.svg final.pdf
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        3/3 |    WARNING │ Check logs: .stepup/warning.log
-        3/3 |      PHASE │ watch
-        3/3 |    DELETED │ final.pdf
-        3/3 |    DELETED │ glasses.png
-        1/3 |      PHASE │ build
-        1/3 |      START │ srr-convert-inkscape glasses.svg glasses.png
-        2/3 |    SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
-        2/3 |      START │ srr-convert-inkscape smile.svg final.pdf
-        3/3 |    SUCCESS │ srr-convert-inkscape smile.svg final.pdf
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ See you!
+    START │ srr-convert-inkscape glasses.svg glasses.png
+  SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
+    START │ srr-convert-inkscape smile.svg final.pdf
+  SUCCESS │ srr-convert-inkscape smile.svg final.pdf
+ DIRECTOR │ Ran 4 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+  DELETED │ final.pdf
+  DELETED │ glasses.png
+    PHASE │ build
+    START │ srr-convert-inkscape glasses.svg glasses.png
+  SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
+    START │ srr-convert-inkscape smile.svg final.pdf
+  SUCCESS │ srr-convert-inkscape smile.svg final.pdf
+ DIRECTOR │ Ran 4 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ See you!

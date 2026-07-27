@@ -1,9 +1,11 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/2 |    SUCCESS │ ./plan.py
-        1/2 |      START │ srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-        2/2 |    SUCCESS │ srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
-        2/2 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        2/2 |      PHASE │ watch
-        2/2 |   DIRECTOR │ See you!
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+  SUCCESS │ srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
+ DIRECTOR │ Ran 2 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph_1.txt, current_graph_1_provenance.dot and current_graph_1_dependency.dot
+ DIRECTOR │ See you!

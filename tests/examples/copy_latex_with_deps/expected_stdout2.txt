@@ -1,17 +1,16 @@
-        0/0 |    STARTUP │ Making failed steps pending
-        0/0 |    STARTUP │ Watching directories for 7 files from initial database
-        0/0 |    STARTUP │ Making steps pending that use changed environment variables
-        0/0 |    STARTUP │ Scanning initial database for changed files
-        0/0 |    UPDATED │ snippet.tex (digest 10071f6a ➜ f2456b05, size 35 ➜ 58)
-        0/0 |    STARTUP │ Scanning initial database for new nglob matches
-        1/3 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/4 |    SUCCESS │ ./plan.py
-        1/4 |       SKIP │ cp -p first.dat dest/first.dat
-        2/4 |      START │ cp -p second.dat dest/second.dat
-        3/4 |    SUCCESS │ cp -p second.dat dest/second.dat
-        3/4 |      START │ cp -p snippet.tex dest/snippet.tex
-        4/4 |    SUCCESS │ cp -p snippet.tex dest/snippet.tex
-        4/4 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        4/4 |      PHASE │ watch
-        4/4 |   DIRECTOR │ See you!
+  STARTUP │ Watching 2 director(y|ies)
+  STARTUP │ Checking 7 file(s) for changes
+  UPDATED │ snippet.tex (digest 10071f6a ➜ f2456b05, size 35 ➜ 58)
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+     SKIP │ cp -p first.dat dest/first.dat
+    START │ cp -p snippet.tex dest/snippet.tex
+  SUCCESS │ cp -p snippet.tex dest/snippet.tex
+    START │ cp -p second.dat dest/second.dat
+  SUCCESS │ cp -p second.dat dest/second.dat
+ DIRECTOR │ Ran 6 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph2.txt, current_graph2_provenance.dot and current_graph2_dependency.dot
+ DIRECTOR │ See you!

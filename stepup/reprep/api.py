@@ -51,6 +51,7 @@ def add_notes_pdf(
     path_dst: StrPath,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Add a notes page at every even page of a PDF file.
 
@@ -67,6 +68,9 @@ def add_notes_pdf(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -79,6 +83,7 @@ def add_notes_pdf(
         out=path_dst,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -89,6 +94,7 @@ def cat_pdf(
     insert_blank: bool = False,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Concatenate the pages of multiple PDFs into one document
 
@@ -106,6 +112,9 @@ def cat_pdf(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -121,6 +130,7 @@ def cat_pdf(
         out=path_out,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -128,6 +138,7 @@ def check_hrefs(
     path_src: StrPath,
     path_config: StrPath | None = None,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Check hyper references in a Markdown, HTML or PDF file.
 
@@ -141,6 +152,9 @@ def check_hrefs(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -152,7 +166,7 @@ def check_hrefs(
     if path_config is not None:
         parts.append(f"-c {shq(path_config)}")
         paths_inp.append(path_config)
-    return run(" ".join(parts), inp=paths_inp, resources=resources)
+    return run(" ".join(parts), inp=paths_inp, resources=resources, duration=duration)
 
 
 def _process_inventory(
@@ -178,6 +192,7 @@ def compile_latex(
     inventory: StrPath | bool | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a LaTeX source.
 
@@ -212,6 +227,9 @@ def compile_latex(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -263,6 +281,7 @@ def compile_latex(
         workdir=workdir,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -277,6 +296,7 @@ def compile_tectonic(
     inventory: StrPath | bool | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a LaTeX source with Tectonic.
 
@@ -318,6 +338,9 @@ def compile_tectonic(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -358,6 +381,7 @@ def compile_tectonic(
         workdir=workdir,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -374,6 +398,7 @@ def compile_typst(
     inventory: StrPath | bool | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Create a step for the compilation of a Typst source.
 
@@ -437,6 +462,9 @@ def compile_typst(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -499,6 +527,7 @@ def compile_typst(
         workdir=workdir,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -510,6 +539,7 @@ def convert_inkscape(
     inkscape_args: Collection[str] = (),
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert an SVG figure to a PDF file, detecting dependencies of the SVG on other files.
 
@@ -531,6 +561,9 @@ def convert_inkscape(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -556,7 +589,14 @@ def convert_inkscape(
     if len(inkscape_args) > 0:
         parts.append("--")
         parts.extend(shlex.quote(coerce_str(inkscape_arg)) for inkscape_arg in inkscape_args)
-    return run(" ".join(parts), inp=path_svg, out=path_out, optional=optional, resources=resources)
+    return run(
+        " ".join(parts),
+        inp=path_svg,
+        out=path_out,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def convert_inkscape_pdf(
@@ -567,6 +607,7 @@ def convert_inkscape_pdf(
     inkscape_args: Collection[StrPath] = (),
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
 
@@ -585,6 +626,7 @@ def convert_inkscape_pdf(
         inkscape_args=inkscape_args,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -596,6 +638,7 @@ def convert_inkscape_png(
     inkscape_args: Collection[StrPath] = (),
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_inkscape` with the output file derived from the SVG file.
 
@@ -614,6 +657,7 @@ def convert_inkscape_png(
         inkscape_args=inkscape_args,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -628,6 +672,7 @@ def convert_jupyter(
     parameters: dict | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a Jupyter notebook, by default to HTML with execution of cells.
 
@@ -667,6 +712,9 @@ def convert_jupyter(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -715,12 +763,13 @@ def convert_jupyter(
         else:
             raise TypeError(f"parameters must be a dict, got {type(parameters)}")
         parts.append(f"--parameters={shlex.quote(parameters_str)}")
-    run(
+    return run(
         " ".join(parts),
         inp=[path_nb, *inp],
         out=[path_out, *out],
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -731,6 +780,7 @@ def convert_markdown(
     paths_css: StrPath | Collection[StrPath] = (),
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a markdown to HTML.
 
@@ -751,6 +801,9 @@ def convert_markdown(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -770,7 +823,14 @@ def convert_markdown(
             paths_css = [paths_css]
         parts.append(f"--css={shq(paths_css)}")
         inp.extend(paths_css)
-    return run(" ".join(parts), inp=inp, out=path_html, optional=optional, resources=resources)
+    return run(
+        " ".join(parts),
+        inp=inp,
+        out=path_html,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def convert_mutool(
@@ -781,6 +841,7 @@ def convert_mutool(
     mutool: StrPath | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a PDF to a bitmap with mutool (from MuPDF).
 
@@ -800,6 +861,9 @@ def convert_mutool(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -816,6 +880,7 @@ def convert_mutool(
         out=path_out,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -827,6 +892,7 @@ def convert_mutool_png(
     mutool: StrPath | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_mutool` with the output file derived from the PDF file.
 
@@ -845,6 +911,7 @@ def convert_mutool_png(
         mutool=mutool,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -855,6 +922,7 @@ def convert_weasyprint(
     weasyprint: StrPath | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a HTML document to PDF.
 
@@ -872,6 +940,9 @@ def convert_weasyprint(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -887,7 +958,14 @@ def convert_weasyprint(
     parts = ["srr-convert-weasyprint", shq(path_html), shq(path_pdf)]
     if weasyprint is not None:
         parts.append(f"--weasyprint={shq(weasyprint)}")
-    return run(" ".join(parts), inp=path_html, out=path_pdf, optional=optional, resources=resources)
+    return run(
+        " ".join(parts),
+        inp=path_html,
+        out=path_pdf,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def convert_odf_pdf(
@@ -897,6 +975,7 @@ def convert_odf_pdf(
     libreoffice: StrPath | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a file in OpenDocument format to PDF.
 
@@ -913,6 +992,9 @@ def convert_odf_pdf(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -943,7 +1025,13 @@ def convert_odf_pdf(
         f"cp ${{WORK}}/*.pdf {shq(path_pdf)} && rm -r ${{WORK}}"
     )
     return run(
-        command, inp=path_odf, out=path_pdf, shell=True, optional=optional, resources=resources
+        command,
+        inp=path_odf,
+        out=path_pdf,
+        shell=True,
+        optional=optional,
+        resources=resources,
+        duration=duration,
     )
 
 
@@ -962,6 +1050,7 @@ def diff_latex(
     latexdiff_args: Collection[str] = DEFAULT_LATEXDIFF_ARGS,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     r"""Create a step to run latexdiff.
 
@@ -992,6 +1081,9 @@ def diff_latex(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1014,6 +1106,7 @@ def diff_latex(
         shell=True,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -1026,6 +1119,7 @@ def execute_papermill(
     parameters: dict[str] | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Execute a Jupyter Notebook with papermill and save the notebook with outputs as a new file.
 
@@ -1053,6 +1147,9 @@ def execute_papermill(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1079,6 +1176,7 @@ def execute_papermill(
         out=[path_out, *out],
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -1088,6 +1186,7 @@ def flatten_latex(
     *,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     r"""Flatten structured LaTeX source files (substitute `\input` and friends by their content).
 
@@ -1102,6 +1201,9 @@ def flatten_latex(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1114,6 +1216,7 @@ def flatten_latex(
         out=path_flat,
         optional=optional,
         resources=resources,
+        duration=duration,
     )
 
 
@@ -1122,6 +1225,7 @@ def make_inventory(
     path_def: StrPath | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Create an `inventory.txt` file.
 
@@ -1136,6 +1240,9 @@ def make_inventory(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -1155,7 +1262,12 @@ def make_inventory(
         paths_inp.append(path_def)
     parts.append(f"-o {shq(path_out)}")
     return run(
-        " ".join(parts), inp=paths_inp, out=[path_out], optional=optional, resources=resources
+        " ".join(parts),
+        inp=paths_inp,
+        out=[path_out],
+        optional=optional,
+        resources=resources,
+        duration=duration,
     )
 
 
@@ -1169,6 +1281,7 @@ def nup_pdf(
     page_format: str | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Put multiple pages per sheet using a fixed layout.
 
@@ -1195,6 +1308,9 @@ def nup_pdf(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1210,7 +1326,14 @@ def nup_pdf(
         parts.append(f"-m {margin!s}")
     if page_format is not None:
         parts.append(f"-p {shlex.quote(page_format)}")
-    return run(" ".join(parts), inp=path_src, out=path_dst, optional=optional, resources=resources)
+    return run(
+        " ".join(parts),
+        inp=path_src,
+        out=path_dst,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def raster_pdf(
@@ -1221,6 +1344,7 @@ def raster_pdf(
     quality: int | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Turn each page of a PDF into a rendered JPEG bitmap contained in a new PDF.
 
@@ -1242,6 +1366,9 @@ def raster_pdf(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1254,7 +1381,14 @@ def raster_pdf(
         parts.append(f"-r {resolution!s}")
     if quality is not None:
         parts.append(f"-q {quality!s}")
-    return run(" ".join(parts), inp=path_inp, out=path_out, optional=optional, resources=resources)
+    return run(
+        " ".join(parts),
+        inp=path_inp,
+        out=path_out,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def sanitize_bibtex(
@@ -1266,6 +1400,7 @@ def sanitize_bibtex(
     overwrite: bool = False,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Sanitize a BibTeX file.
 
@@ -1291,6 +1426,9 @@ def sanitize_bibtex(
         If `True`, the step is only executed when needed by other steps.
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
+        See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
 
     Returns
@@ -1320,7 +1458,12 @@ def sanitize_bibtex(
         if not overwrite:
             paths_out.append(path_out)
     return run(
-        " ".join(parts), inp=paths_inp, out=paths_out, optional=optional, resources=resources
+        " ".join(parts),
+        inp=paths_inp,
+        out=paths_out,
+        optional=optional,
+        resources=resources,
+        duration=duration,
     )
 
 
@@ -1329,6 +1472,7 @@ def sync_zenodo(
     *,
     verbose: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Synchronize data with an draft dataset on Zenodo.
 
@@ -1341,6 +1485,9 @@ def sync_zenodo(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1350,7 +1497,7 @@ def sync_zenodo(
     parts = [f"srr-sync-zenodo {shq(path_config)}"]
     if verbose:
         parts.append("--verbose")
-    return run(" ".join(parts), inp=path_config, resources=resources)
+    return run(" ".join(parts), inp=path_config, resources=resources, duration=duration)
 
 
 def unplot(
@@ -1359,6 +1506,7 @@ def unplot(
     *,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Convert a plot back to data.
 
@@ -1373,6 +1521,9 @@ def unplot(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1381,7 +1532,14 @@ def unplot(
     """
     path_out = make_path_out(path_svg, dest, ".json")
     command = f"srr-unplot {shq(path_svg)} {shq(path_out)}"
-    return run(command, inp=path_svg, out=path_out, optional=optional, resources=resources)
+    return run(
+        command,
+        inp=path_svg,
+        out=path_out,
+        optional=optional,
+        resources=resources,
+        duration=duration,
+    )
 
 
 def wrap_git(
@@ -1395,6 +1553,7 @@ def wrap_git(
     workdir: StrPath = "./",
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
     shell: bool = False,
 ) -> StepInfo:
     """Create a step to run a git command.
@@ -1437,6 +1596,9 @@ def wrap_git(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
     shell
         If `True`, the command is executed through the shell.
 
@@ -1463,6 +1625,7 @@ def wrap_git(
         workdir=workdir,
         optional=optional,
         resources=resources,
+        duration=duration,
         shell=shell,
     )
 
@@ -1473,6 +1636,7 @@ def zip_inventory(
     *,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
+    duration: float | None = None,
 ) -> StepInfo:
     """Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.
 
@@ -1488,6 +1652,9 @@ def zip_inventory(
     resources
         Named resources required to run this step, e.g. `{"gpu": 1}`.
         See `stepup.core.api.step()` for details.
+    duration
+        An initial estimate of the step's wall time in seconds.
+        See `stepup.core.api.step()` for details.
 
     Returns
     -------
@@ -1500,4 +1667,5 @@ def zip_inventory(
         out=path_zip,
         optional=optional,
         resources=resources,
+        duration=duration,
     )

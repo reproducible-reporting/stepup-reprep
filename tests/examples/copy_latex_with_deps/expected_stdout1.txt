@@ -1,11 +1,13 @@
-        0/0 |    STARTUP │ (Re)initialized boot script
-        0/1 |      PHASE │ build
-        0/1 |      START │ ./plan.py
-        1/3 |    SUCCESS │ ./plan.py
-        1/3 |      START │ cp -p first.dat dest/first.dat
-        2/3 |    SUCCESS │ cp -p first.dat dest/first.dat
-        2/3 |      START │ cp -p snippet.tex dest/snippet.tex
-        3/3 |    SUCCESS │ cp -p snippet.tex dest/snippet.tex
-        3/3 |   DIRECTOR │ Trying to delete 0 outdated output(s)
-        3/3 |      PHASE │ watch
-        3/3 |   DIRECTOR │ See you!
+  STARTUP │ (Re)initialized boot script
+    PHASE │ build
+    START │ ./plan.py
+  SUCCESS │ ./plan.py
+    START │ cp -p first.dat dest/first.dat
+  SUCCESS │ cp -p first.dat dest/first.dat
+    START │ cp -p snippet.tex dest/snippet.tex
+  SUCCESS │ cp -p snippet.tex dest/snippet.tex
+ DIRECTOR │ Ran 3 job(s).
+ DIRECTOR │ Trying to remove 0 outdated output(s)
+    PHASE │ watch
+ DIRECTOR │ Wrote graph to current_graph1.txt, current_graph1_provenance.dot and current_graph1_dependency.dot
+ DIRECTOR │ See you!

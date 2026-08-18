@@ -3,31 +3,31 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:document.typ
              product   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 file:document.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
 
 step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = REPREP_TYPST_KEEP_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = REPREP_TYPST_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:document.typ
              product   file:document-inventory.txt

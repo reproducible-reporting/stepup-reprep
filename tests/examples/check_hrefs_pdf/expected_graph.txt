@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:README.txt
@@ -20,25 +20,25 @@ step:./plan.py
              product   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 file:README.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-check-hrefs main.pdf
 
 file:check_hrefs.yaml
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-check-hrefs main.pdf
 
 file:main.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_LATEX [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_LATEX [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:main.tex
              product   file:main-inventory.txt
@@ -50,8 +50,8 @@ step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
                 sink   file:main-inventory.txt
                 sink   file:main.aux
                 sink   file:main.fls
-                sink   file:main.log [amended]
-                sink   file:main.out [amended]
+                sink   file:main.log [dynamic]
+                sink   file:main.out [dynamic]
                 sink   file:main.pdf
 
 file:main-inventory.txt
@@ -78,11 +78,11 @@ file:main.pdf
 step:srr-check-hrefs main.pdf
                state = PENDING
                 need = DEFAULT
-           using_env = REPREP_CHECK_HREFS_CONFIG [amended]
+           using_env = REPREP_CHECK_HREFS_CONFIG [dynamic]
              creator   step:./plan.py
-              source   (file:BROKEN.md) [amended]
-              source   file:README.txt [amended]
-              source   file:check_hrefs.yaml [amended]
+              source   (file:BROKEN.md) [dynamic]
+              source   file:README.txt [dynamic]
+              source   file:check_hrefs.yaml [dynamic]
               source   file:main.pdf
 
 file:main.log
@@ -96,5 +96,5 @@ file:main.out
               source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
 
 (file:BROKEN.md)
-               state = AWAITED
+               state = UNDECLARED
                 sink   step:srr-check-hrefs main.pdf

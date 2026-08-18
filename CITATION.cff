@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+cff-version: 1.2.0
+message: If you use this software, please cite it using these metadata.
+title: StepUp RepRep
+type: software
+url: https://reproducible-reporting.github.io/stepup-reprep
+abstract: >-
+  StepUp RepRep is the StepUp extension for Reproducible Reporting.
+authors:
+  - family-names: Verstraelen
+    given-names: Toon
+    orcid: https://orcid.org/0000-0001-9288-5608
+    affiliation: Center for Molecular Modeling (CMM), Ghent University
+    address: Technologiepark-Zwijnaarde 46
+    post-code: 9052
+    city: Zwijnaarde
+    country: BE
+license: LGPL-3.0-or-later
+repository-code: https://github.com/reproducible-reporting/stepup-reprep
+references:
+  - title: StepUp Core
+    type: software
+    authors:
+      - family-names: Verstraelen
+        given-names: Toon
+        orcid: https://orcid.org/0000-0001-9288-5608
+        affiliation: Center for Molecular Modeling (CMM), Ghent University
+    url: https://reproducible-reporting.github.io/stepup-core
+    repository-code: https://github.com/reproducible-reporting/stepup-core
+    license: LGPL-3.0-or-later
+    notes: StepUp RepRep is an extension of StepUp Core and requires it at runtime.

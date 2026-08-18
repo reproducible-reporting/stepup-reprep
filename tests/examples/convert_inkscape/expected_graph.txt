@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:glasses.svg
@@ -19,21 +19,21 @@ step:./plan.py
              product   step:srr-convert-inkscape smile.svg final.pdf
 
 file:glasses.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-inkscape glasses.svg glasses.png
 
 file:smile.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-inkscape smile.svg final.pdf
 
 step:srr-convert-inkscape glasses.svg glasses.png
                state = SUCCEEDED
                 need = DEFAULT (implied by sinks > OPTIONAL)
-           using_env = REPREP_INKSCAPE [amended]
-                     = REPREP_INKSCAPE_PNG_ARGS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_INKSCAPE [dynamic]
+                     = REPREP_INKSCAPE_PNG_ARGS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:glasses.svg
              product   file:glasses.png
@@ -48,11 +48,11 @@ file:glasses.png
 step:srr-convert-inkscape smile.svg final.pdf
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_INKSCAPE [amended]
-                     = REPREP_INKSCAPE_PDF_ARGS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_INKSCAPE [dynamic]
+                     = REPREP_INKSCAPE_PDF_ARGS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
-              source   file:glasses.png [amended]
+              source   file:glasses.png [dynamic]
               source   file:smile.svg
              product   file:final.pdf
                 sink   file:final.pdf

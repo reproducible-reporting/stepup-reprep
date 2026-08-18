@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:page.css
@@ -19,17 +19,17 @@ step:./plan.py
              product   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:page.css
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:sub/demo.css
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
 file:sub/demo.md
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
 
@@ -38,7 +38,7 @@ step:srr-convert-markdown sub/demo.md sub/demo.html --css=page.css
                 need = DEFAULT
              creator   step:./plan.py
               source   file:page.css
-              source   file:sub/demo.css [amended]
+              source   file:sub/demo.css [dynamic]
               source   file:sub/demo.md
              product   file:sub/demo.html
                 sink   file:sub/demo.html

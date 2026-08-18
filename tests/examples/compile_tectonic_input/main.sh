@@ -12,9 +12,9 @@ stepup graph current_graph
 # Reproducibility test
 rm generated.tex
 mv paper.pdf paper1.pdf
-stepup watch-delete paper.pdf
-stepup watch-delete generated.tex
-stepup run
+stepup wait -d paper.pdf
+stepup wait -d generated.tex
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt paper.pdf paper1.pdf
 

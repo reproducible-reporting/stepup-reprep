@@ -1,28 +1,28 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-convert-inkscape smile.svg final.pdf
-POSTPONED │ srr-convert-inkscape smile.svg final.pdf
-────────────────────────── Unavailable amended inputs ──────────────────────────
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-convert-inkscape smile.svg final.pdf
+DEFERRED │ srr-convert-inkscape smile.svg final.pdf
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
 glasses.png
 ────────────────────────────────────────────────────────────────────────────────
-    START │ srr-convert-inkscape glasses.svg glasses.png
-  SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
-    START │ srr-convert-inkscape smile.svg final.pdf
-  SUCCESS │ srr-convert-inkscape smile.svg final.pdf
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
-  DELETED │ final.pdf
-  DELETED │ glasses.png
-    PHASE │ build
-    START │ srr-convert-inkscape glasses.svg glasses.png
-  SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
-    START │ srr-convert-inkscape smile.svg final.pdf
-  SUCCESS │ srr-convert-inkscape smile.svg final.pdf
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ See you!
+   START │ srr-convert-inkscape glasses.svg glasses.png
+ SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
+   START │ srr-convert-inkscape smile.svg final.pdf
+ SUCCESS │ srr-convert-inkscape smile.svg final.pdf
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DELETED │ final.pdf
+ DELETED │ glasses.png
+   PHASE │ build
+   START │ srr-convert-inkscape glasses.svg glasses.png
+ SUCCESS │ srr-convert-inkscape glasses.svg glasses.png
+   START │ srr-convert-inkscape smile.svg final.pdf
+ SUCCESS │ srr-convert-inkscape smile.svg final.pdf
+DIRECTOR │ Ran 2 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

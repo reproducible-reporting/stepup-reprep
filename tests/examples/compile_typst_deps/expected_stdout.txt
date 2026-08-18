@@ -1,25 +1,25 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-compile-typst document.typ
-POSTPONED │ srr-compile-typst document.typ
-────────────────────────── Unavailable amended inputs ──────────────────────────
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-compile-typst document.typ
+DEFERRED │ srr-compile-typst document.typ
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
 image.jpg
 ────────────────────────────────────────────────────────────────────────────────
-    START │ ./image.py
-  SUCCESS │ ./image.py
-    START │ srr-compile-typst document.typ
-  SUCCESS │ srr-compile-typst document.typ
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
-  DELETED │ document.pdf
-    PHASE │ build
-    START │ srr-compile-typst document.typ
-  SUCCESS │ srr-compile-typst document.typ
- DIRECTOR │ Ran 2 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ See you!
+   START │ ./image.py
+ SUCCESS │ ./image.py
+   START │ srr-compile-typst document.typ
+ SUCCESS │ srr-compile-typst document.typ
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DELETED │ document.pdf
+   PHASE │ build
+   START │ srr-compile-typst document.typ
+ SUCCESS │ srr-compile-typst document.typ
+DIRECTOR │ Ran 1 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

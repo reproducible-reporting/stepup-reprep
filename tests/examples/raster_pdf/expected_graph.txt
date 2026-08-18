@@ -3,29 +3,29 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:smile.pdf
              product   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
 file:smile.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-raster-pdf smile.pdf rastered/smile.pdf
 
 step:srr-raster-pdf smile.pdf rastered/smile.pdf
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_RASTER_QUALITY [amended]
-                     = REPREP_RASTER_RESOLUTION [amended]
+           using_env = REPREP_RASTER_QUALITY [dynamic]
+                     = REPREP_RASTER_RESOLUTION [dynamic]
              creator   step:./plan.py
               source   file:smile.pdf
              product   file:rastered/smile.pdf

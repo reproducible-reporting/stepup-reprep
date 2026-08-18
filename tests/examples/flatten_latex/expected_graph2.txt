@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:article_structured.tex
@@ -21,22 +21,22 @@ step:./plan.py
              product   step:srr-flatten-latex article_structured.tex article.tex
 
 file:article_structured.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex article_structured.tex article.tex
 
 file:part1.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex article_structured.tex article.tex
 
 file:part2.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex article_structured.tex article.tex
 
 file:part3.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex article_structured.tex article.tex
 
@@ -45,10 +45,10 @@ step:srr-flatten-latex article_structured.tex article.tex
                 need = DEFAULT
              creator   step:./plan.py
               source   file:article_structured.tex
-              source   file:part1.tex [amended]
-              source   file:part2.tex [amended]
-              source   file:part3.txt [amended]
-              source   file:sub/other.tex [amended]
+              source   file:part1.tex [dynamic]
+              source   file:part2.tex [dynamic]
+              source   file:part3.txt [dynamic]
+              source   file:sub/other.tex [dynamic]
              product   file:article.tex
                 sink   file:article.tex
 
@@ -58,6 +58,6 @@ file:article.tex
               source   step:srr-flatten-latex article_structured.tex article.tex
 
 file:sub/other.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex article_structured.tex article.tex

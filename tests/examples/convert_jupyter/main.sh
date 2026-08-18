@@ -12,8 +12,8 @@ stepup graph current_graph
 
 # Reproducibility test
 mv demo.html demo1.html
-stepup watch-delete demo.html
-stepup run
+stepup wait -d demo.html
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt demo.html demo1.html
 

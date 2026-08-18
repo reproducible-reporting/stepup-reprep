@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
-                 ngm = ['data/**/*.out'] {}
+           using_env = STEPUP_PATH_FILTER [dynamic]
+               nglob = data/**/*.out
              creator   root:
               source   file:plan.py
              product   file:data/fine.out
@@ -21,17 +21,17 @@ step:./plan.py
              product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:data/fine.out
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/deeper/nested.out
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 
 file:data/sub/works.out
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
 

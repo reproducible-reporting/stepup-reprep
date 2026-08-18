@@ -19,10 +19,10 @@ sleep 0.1
 rm subdir/code.txt
 sleep 0.1
 mv paper.pdf paper1.pdf
-stepup watch-delete paper.pdf
-stepup watch-delete subdir/generated.tex
-stepup watch-delete subdir/code.txt
-stepup run
+stepup wait -d paper.pdf
+stepup wait -d subdir/generated.tex
+stepup wait -d subdir/code.txt
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt paper.pdf paper1.pdf
 

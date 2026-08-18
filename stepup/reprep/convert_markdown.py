@@ -12,7 +12,7 @@ from mdit_py_plugins.front_matter import front_matter_plugin
 from path import Path
 
 from stepup.core.api import amend, getenv
-from stepup.core.render_jinja import render_jinja
+from stepup.core.render_jinja import render_jinja_str
 
 __all__ = ("convert_markdown",)
 
@@ -117,7 +117,7 @@ def convert_markdown(
         "title": meta.get("title", "Untitled"),
         "css": "\n".join(f'<link rel="stylesheet" href="{path_css}" />' for path_css in paths_css),
     }
-    return render_jinja("HTML_TEMPLATE", variables, str_in=HTML_TEMPLATE)
+    return render_jinja_str(HTML_TEMPLATE, variables, name="HTML_TEMPLATE")
 
 
 if __name__ == "__main__":

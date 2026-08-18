@@ -3,22 +3,22 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_LIBREOFFICE [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_LIBREOFFICE [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:slide.odp
              product   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
 file:slide.odp
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 

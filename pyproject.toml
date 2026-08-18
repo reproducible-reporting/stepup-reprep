@@ -52,7 +52,7 @@ dependencies = [
     "requests>=2.33.0",
     "scipy>=1.11.1",
     "semver>=3.0.0",
-    "stepup>=4.0.0rc10,<5.0.0a1",
+    "stepup>=4.0.0rc11,<5.0.0a1",
     "svg.path>=6.0",
     "weasyprint>=69.0",
 ]
@@ -60,6 +60,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
+    "cffconvert",
     "matplotlib",
     "mike",
     "mkdocs",
@@ -122,6 +123,7 @@ select = [
     "PT", "PYI", "RET", "RSE", "RUF", "SIM", "TRY", "UP", "W"
 ]
 ignore = [
+    "ISC004",  # https://docs.astral.sh/ruff/rules/isc004/
     "PLR0904",  # https://docs.astral.sh/ruff/rules/too-many-public-methods/
     "PLR0911",  # https://docs.astral.sh/ruff/rules/too-many-return-statements/
     "PLR0912",  # https://docs.astral.sh/ruff/rules/too-many-branches/

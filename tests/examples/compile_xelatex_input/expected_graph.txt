@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:paper.tex
@@ -19,19 +19,19 @@ step:./plan.py
              product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_LATEX [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_LATEX [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:paper.tex
-              source   file:subdir/code.txt [amended]
-              source   file:subdir/generated.tex [amended]
+              source   file:subdir/code.txt [dynamic]
+              source   file:subdir/generated.tex [dynamic]
              product   file:paper-inventory.txt
              product   file:paper.aux
              product   file:paper.fls
@@ -41,8 +41,8 @@ step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                 sink   file:paper-inventory.txt
                 sink   file:paper.aux
                 sink   file:paper.fls
-                sink   file:paper.log [amended]
-                sink   file:paper.out [amended]
+                sink   file:paper.log [dynamic]
+                sink   file:paper.out [dynamic]
                 sink   file:paper.pdf
 
 file:paper-inventory.txt

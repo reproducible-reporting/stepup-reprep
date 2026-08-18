@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:data.json
@@ -19,17 +19,17 @@ step:./plan.py
              product   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:data.json
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:demo.ipynb
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
 file:points.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
 
@@ -37,7 +37,7 @@ step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
-              source   file:data.json [amended]
+              source   file:data.json [dynamic]
               source   file:demo.ipynb
               source   file:points.txt
              product   file:demo_out.ipynb
@@ -45,7 +45,7 @@ step:srr-execute-papermill demo.ipynb '{"dpi": 50}' demo_out.ipynb
              product   file:result.txt
                 sink   file:demo_out.ipynb
                 sink   file:plot.png
-                sink   file:result.txt [amended]
+                sink   file:result.txt [dynamic]
 
 file:demo_out.ipynb
                state = BUILT

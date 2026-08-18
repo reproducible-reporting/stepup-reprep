@@ -11,8 +11,8 @@ stepup graph current_graph
 # Reproducibility test
 rm built.txt
 mv upload.zip upload1.zip
-stepup watch-delete upload.zip
-stepup run
+stepup wait -d upload.zip
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt upload.zip upload1.zip
 

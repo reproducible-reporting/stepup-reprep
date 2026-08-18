@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from stepup.core.api import glob
+from stepup.core.api import static
 from stepup.reprep.api import compile_typst
 
-glob("*.typ")
-glob("*.svg")
-glob("*.png")
+static("*.typ")
+static("*.svg")
+static("*.png")
 compile_typst("demo.typ", keep_deps=True)

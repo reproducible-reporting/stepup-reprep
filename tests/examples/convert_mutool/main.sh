@@ -10,8 +10,8 @@ stepup graph current_graph
 
 # Reproducibility test
 mv example.png example1.png
-stepup watch-delete example.png
-stepup run
+stepup wait -d example.png
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt example.png example1.png
 

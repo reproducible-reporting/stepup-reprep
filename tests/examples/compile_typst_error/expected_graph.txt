@@ -3,31 +3,31 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_TYPST_INVENTORY [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:error.typ
              product   step:srr-compile-typst --keep-deps error.typ
 
 file:error.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps error.typ
 
 step:srr-compile-typst --keep-deps error.typ
                state = FAILED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:error.typ
              product   file:error.deps.json
@@ -41,6 +41,6 @@ file:error.deps.json
               source   step:srr-compile-typst --keep-deps error.typ
 
 file:error.pdf
-               state = AWAITED
+               state = PLANNED
              creator   step:srr-compile-typst --keep-deps error.typ
               source   step:srr-compile-typst --keep-deps error.typ

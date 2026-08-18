@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   st:.git/
@@ -25,8 +25,8 @@ step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
-              source   file:.git/HEAD [amended]
-              source   file:.git/refs/heads/main [amended]
+              source   file:.git/HEAD [dynamic]
+              source   file:.git/refs/heads/main [dynamic]
              product   file:gitlog.txt
                 sink   file:gitlog.txt
 
@@ -36,11 +36,11 @@ file:gitlog.txt
               source   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/HEAD
-               state = STATIC
+               state = CONFIRMED
              creator   st:.git/
                 sink   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'
 
 file:.git/refs/heads/main
-               state = STATIC
+               state = CONFIRMED
              creator   st:.git/
                 sink   step:srr-wrap-git --stdout=gitlog.txt -- git log -n1 --pretty='format:%cs (%h)'

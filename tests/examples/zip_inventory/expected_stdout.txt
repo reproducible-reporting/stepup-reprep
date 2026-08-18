@@ -1,26 +1,26 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ echo hello > built.txt
-  SUCCESS │ echo hello > built.txt
-    START │ srr-make-inventory static.txt built.txt -o inventory.txt
-  SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.txt
-    START │ srr-zip-inventory inventory.txt upload.zip
-  SUCCESS │ srr-zip-inventory inventory.txt upload.zip
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
-  DELETED │ built.txt
-  DELETED │ upload.zip
-    PHASE │ build
-    START │ echo hello > built.txt
-  SUCCESS │ echo hello > built.txt
-     SKIP │ srr-make-inventory static.txt built.txt -o inventory.txt
-    START │ srr-zip-inventory inventory.txt upload.zip
-  SUCCESS │ srr-zip-inventory inventory.txt upload.zip
- DIRECTOR │ Ran 5 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ See you!
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ echo hello > built.txt
+ SUCCESS │ echo hello > built.txt
+   START │ srr-make-inventory static.txt built.txt -o inventory.txt
+ SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.txt
+   START │ srr-zip-inventory inventory.txt upload.zip
+ SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DELETED │ built.txt
+ DELETED │ upload.zip
+   PHASE │ build
+   START │ echo hello > built.txt
+ SUCCESS │ echo hello > built.txt
+    SKIP │ srr-make-inventory static.txt built.txt -o inventory.txt
+   START │ srr-zip-inventory inventory.txt upload.zip
+ SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+DIRECTOR │ Ran 2 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

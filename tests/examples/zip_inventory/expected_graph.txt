@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:static.txt
@@ -19,7 +19,7 @@ step:./plan.py
              product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:static.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-make-inventory static.txt built.txt -o inventory.txt
 

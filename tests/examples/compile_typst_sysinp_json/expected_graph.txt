@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_TYPST_INVENTORY [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:persons.json
@@ -19,22 +19,22 @@ step:./plan.py
              product   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:persons.json
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 file:template.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
 
 step:srr-compile-typst template.typ --out=persons.pdf --sysinp json=persons.json
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = REPREP_TYPST_KEEP_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = REPREP_TYPST_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:persons.json
               source   file:template.typ

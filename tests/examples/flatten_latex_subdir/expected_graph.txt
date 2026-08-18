@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:sub/article_structured.tex
@@ -19,17 +19,17 @@ step:./plan.py
              product   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/article_structured.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/part1.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
 file:sub/part2.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-flatten-latex sub/article_structured.tex sub/article.tex
 
@@ -38,8 +38,8 @@ step:srr-flatten-latex sub/article_structured.tex sub/article.tex
                 need = DEFAULT
              creator   step:./plan.py
               source   file:sub/article_structured.tex
-              source   file:sub/part1.tex [amended]
-              source   file:sub/part2.tex [amended]
+              source   file:sub/part1.tex [dynamic]
+              source   file:sub/part2.tex [dynamic]
              product   file:sub/article.tex
                 sink   file:sub/article.tex
 

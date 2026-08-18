@@ -12,7 +12,7 @@ stepup join
 
 # Wait for background processes, if any.
 set +e; wait -fn $PID; RETURNCODE=$?; set -e
-[[ "${RETURNCODE}" -eq 34 ]] || exit 1
+[[ "${RETURNCODE}" -eq 36 ]] || exit 1
 grep 'Please check the new' .stepup/fail.log
 
 # Check files that are expected to be present and/or missing.

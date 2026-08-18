@@ -11,9 +11,9 @@ stepup graph current_graph
 # Reproducibility test
 mv final.pdf final1.pdf
 mv glasses.png glasses1.png
-stepup watch-delete final.pdf
-stepup watch-delete glasses.png
-stepup run
+stepup wait -d final.pdf
+stepup wait -d glasses.png
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_png_inventory.txt glasses.png glasses1.png
 srr-make-inventory -o reproducibility_pdf_inventory.txt final.pdf final1.pdf

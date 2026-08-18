@@ -193,7 +193,7 @@ include-git
 include-workflow BUILT */.stepup/workflow.mpk.gz
 ```
 
-(It is assumed that all STATIC files are already checked into the Git repository.)
+(It is assumed that all static files are already checked into the Git repository.)
 With this file, just follow the same steps as in option 2 of the previous subsection.
 
 ## Create a `README.md` for the Archives

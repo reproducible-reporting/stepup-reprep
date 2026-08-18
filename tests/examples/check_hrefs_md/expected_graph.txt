@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:README.txt
@@ -19,30 +19,30 @@ step:./plan.py
              product   step:srr-check-hrefs test.md
 
 file:README.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-check-hrefs test.md
 
 file:check_hrefs.yaml
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-check-hrefs test.md
 
 file:test.md
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-check-hrefs test.md
 
 step:srr-check-hrefs test.md
                state = PENDING
                 need = DEFAULT
-           using_env = REPREP_CHECK_HREFS_CONFIG [amended]
+           using_env = REPREP_CHECK_HREFS_CONFIG [dynamic]
              creator   step:./plan.py
-              source   (file:BROKEN.md) [amended]
-              source   file:README.txt [amended]
-              source   file:check_hrefs.yaml [amended]
+              source   (file:BROKEN.md) [dynamic]
+              source   file:README.txt [dynamic]
+              source   file:check_hrefs.yaml [dynamic]
               source   file:test.md
 
 (file:BROKEN.md)
-               state = AWAITED
+               state = UNDECLARED
                 sink   step:srr-check-hrefs test.md

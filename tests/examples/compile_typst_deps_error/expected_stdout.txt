@@ -1,18 +1,18 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-compile-typst document.typ
-POSTPONED │ srr-compile-typst document.typ
-────────────────────────── Unavailable amended inputs ──────────────────────────
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-compile-typst document.typ
+DEFERRED │ srr-compile-typst document.typ
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
 data.yaml
 ────────────────────────────────────────────────────────────────────────────────
-    START │ echo 'fixed: new' > data.yaml
-  SUCCESS │ echo 'fixed: new' > data.yaml
-    START │ srr-compile-typst document.typ
-  SUCCESS │ srr-compile-typst document.typ
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
- DIRECTOR │ See you!
+   START │ echo 'fixed: new' > data.yaml
+ SUCCESS │ echo 'fixed: new' > data.yaml
+   START │ srr-compile-typst document.typ
+ SUCCESS │ srr-compile-typst document.typ
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+DIRECTOR │ See you!

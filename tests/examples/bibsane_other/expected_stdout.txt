@@ -1,9 +1,9 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
-  SUCCESS │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
+ SUCCESS │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml --out=cleaned.bib
 ─────────────────────────────── Standard output ────────────────────────────────
 📂 Load references.bib
     Found 1 BibTeX entries
@@ -23,10 +23,10 @@
     📓 Proceedings -> Proc.
 💾 Please check the new or corrected file: cleaned.bib
 ────────────────────────────────────────────────────────────────────────────────
-    START │ cp -p cleaned.bib copy.bib
-  SUCCESS │ cp -p cleaned.bib copy.bib
- DIRECTOR │ Ran 3 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
- DIRECTOR │ See you!
+   START │ cp -p cleaned.bib copy.bib
+ SUCCESS │ cp -p cleaned.bib copy.bib
+DIRECTOR │ Ran 3 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+DIRECTOR │ See you!

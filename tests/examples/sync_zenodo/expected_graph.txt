@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:README.txt
@@ -19,25 +19,25 @@ step:./plan.py
              product   step:srr-sync-zenodo zenodo.yaml
 
 file:README.txt
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.md
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-sync-zenodo zenodo.yaml
 
 file:zenodo.yaml
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-sync-zenodo zenodo.yaml
 
 step:srr-sync-zenodo zenodo.yaml
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_PATH_ZENODO_TOKEN [amended]
+           using_env = REPREP_PATH_ZENODO_TOKEN [dynamic]
              creator   step:./plan.py
-              source   file:README.txt [amended]
-              source   file:zenodo.md [amended]
+              source   file:README.txt [dynamic]
+              source   file:zenodo.md [dynamic]
               source   file:zenodo.yaml

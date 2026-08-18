@@ -20,7 +20,7 @@ from path import Path
 from stepup.core.api import amend
 from stepup.core.extapi import run_subprocess
 from stepup.core.file import FileState
-from stepup.core.nglob import NGlobMulti
+from stepup.core.nglob import NamedGlob
 
 from .inventory import format_summary, get_summary
 
@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None):
         "paths",
         nargs="*",
         help="File to include in the inventory. "
-        "(Added after porcessing the inventory definition if any.)",
+        "(Added after processing the inventory definition if any.)",
     )
     parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
     parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
@@ -50,10 +50,10 @@ def make_inventory(args: argparse.Namespace):
         if len(args.paths) == 0:
             raise ValueError("At least inventory.def or a list of files are needed as input.")
         if args.inventory_txt is None:
-            raise ValueError("Whithout -i inventory.def, the -o option is no longer optional.")
+            raise ValueError("Without -i inventory.def, the -o option is no longer optional.")
     else:
         if not args.inventory_def.endswith(".def"):
-            raise ValueError("The inventory defintion file must end with .def")
+            raise ValueError("The inventory definition file must end with .def")
         if args.inventory_txt is None:
             args.inventory_txt = args.inventory_def[:-4] + ".txt"
         elif Path(args.inventory_txt).parent != Path(args.inventory_def).parent:
@@ -82,9 +82,12 @@ def get_file_list_nglob(i: int, args: list[str]) -> Collection[Path]:
         raise ValueError(
             f"Error on line {i} of the inventory definition: include or exclude has no arguments."
         )
-    ngm = NGlobMulti.from_patterns(args)
-    ngm.glob()
-    return ngm.files()
+    paths = []
+    for arg in args:
+        ng = NamedGlob(arg)
+        ng.glob()
+        paths.extend(ng.files())
+    return paths
 
 
 def get_file_list_git(i: int, args: list[str]) -> Collection[Path]:
@@ -102,9 +105,11 @@ def get_file_list_workflow(i: int, args: list[str]) -> Collection[Path]:
             f"Error on line {i} of the inventory definition: Expecting at least two arguments."
         )
     state = FileState[args[0]]
-    ngm = NGlobMulti.from_patterns(args[1:])
-    ngm.glob()
-    paths_graph_db = ngm.files()
+    paths_graph_db = []
+    for arg in args[1:]:
+        ng = NamedGlob(arg)
+        ng.glob()
+        paths_graph_db.extend(ng.files())
     if len(paths_graph_db) == 0:
         raise ValueError(
             f"Error on line {i} of the inventory definition: no matching graph.db workflow files."

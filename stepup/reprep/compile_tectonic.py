@@ -16,7 +16,7 @@ from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
-from stepup.core.utils import string_to_bool
+from stepup.core.utils import to_bool
 
 from .make_inventory import write_inventory
 
@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> None:
     # Prepare keep_deps argument
     do_amend_deps = False
     if args.keep_deps is None:
-        args.keep_deps = string_to_bool(getenv("REPREP_TECTONIC_KEEP_DEPS", "0"))
+        args.keep_deps = to_bool(getenv("REPREP_TECTONIC_KEEP_DEPS", "0"))
         if args.keep_deps:
             do_amend_deps = True
 

@@ -10,8 +10,8 @@ stepup graph current_graph
 
 # Reproducibility test
 mv diff.tex diff1.tex
-stepup watch-delete diff.tex
-stepup run
+stepup wait -d diff.tex
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt diff.tex diff1.tex
 

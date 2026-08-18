@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:plot1.svg
@@ -19,12 +19,12 @@ step:./plan.py
              product   step:srr-unplot plot2.svg current_plot2.json
 
 file:plot1.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-unplot plot1.svg current_plot1.json
 
 file:plot2.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-unplot plot2.svg current_plot2.json
 

@@ -11,8 +11,8 @@ stepup graph current_graph
 
 # Reproducibility test
 mv document.pdf document1.pdf
-stepup watch-delete document.pdf
-stepup run
+stepup wait -d document.pdf
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt document.pdf document1.pdf
 

@@ -28,21 +28,24 @@ repos:
   hooks:
     - id: remove-crlf
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.15.20
+  rev: v0.16.3
   hooks:
     - id: ruff-format
     - id: ruff-check
       args: ["--fix", "--show-fixes"]
 - repo: https://github.com/DavidAnson/markdownlint-cli2
-  rev: v0.23.0
+  rev: v0.23.2
   hooks:
   - id: markdownlint-cli2
     exclude: '^test'
     require_serial: true
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.37.4
+  rev: 0.38.0
   hooks:
     - id: check-github-workflows
+    # This hook validates CITATION.cff against the CFF 1.2.0 schema vendored inside
+    # check-jsonschema, so it needs no network access, unlike `--schemafile <url>`.
+    - id: check-citation-file-format
 - repo: https://github.com/srstevenson/nb-clean
   rev: "4.0.1"
   hooks:

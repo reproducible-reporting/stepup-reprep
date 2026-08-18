@@ -1,16 +1,16 @@
-  STARTUP │ Watching 2 director(y|ies)
-  STARTUP │ Checking 7 file(s) for changes
-  UPDATED │ snippet.tex (digest 10071f6a ➜ f2456b05, size 35 ➜ 58)
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-     SKIP │ cp -p first.dat dest/first.dat
-    START │ cp -p snippet.tex dest/snippet.tex
-  SUCCESS │ cp -p snippet.tex dest/snippet.tex
-    START │ cp -p second.dat dest/second.dat
-  SUCCESS │ cp -p second.dat dest/second.dat
- DIRECTOR │ Ran 6 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph2.txt, current_graph2_provenance.dot and current_graph2_dependency.dot
- DIRECTOR │ See you!
+ STARTUP │ Watching 2 directories
+ STARTUP │ Checking 7 file(s) for changes
+ UPDATED │ snippet.tex (digest 10071f6a ➜ f2456b05, size 35 ➜ 58)
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+    SKIP │ cp -p first.dat dest/first.dat
+   START │ cp -p snippet.tex dest/snippet.tex
+ SUCCESS │ cp -p snippet.tex dest/snippet.tex
+   START │ cp -p second.dat dest/second.dat
+ SUCCESS │ cp -p second.dat dest/second.dat
+DIRECTOR │ Ran 3 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph2.txt, current_graph2_provenance.dot and current_graph2_dependency.dot
+DIRECTOR │ See you!

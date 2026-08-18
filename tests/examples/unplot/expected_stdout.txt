@@ -1,13 +1,13 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-unplot plot1.svg current_plot1.json
-  SUCCESS │ srr-unplot plot1.svg current_plot1.json
-    START │ srr-unplot plot2.svg current_plot2.json
-  SUCCESS │ srr-unplot plot2.svg current_plot2.json
- DIRECTOR │ Ran 3 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
- DIRECTOR │ See you!
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-unplot plot1.svg current_plot1.json
+ SUCCESS │ srr-unplot plot1.svg current_plot1.json
+   START │ srr-unplot plot2.svg current_plot2.json
+ SUCCESS │ srr-unplot plot2.svg current_plot2.json
+DIRECTOR │ Ran 3 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+DIRECTOR │ See you!

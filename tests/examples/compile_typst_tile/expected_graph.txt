@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_TYPST_INVENTORY [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:figure.typ
@@ -24,55 +24,55 @@ step:./plan.py
              product   step:srr-compile-typst figure.typ
 
 file:figure.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:hexagon.png
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:horizontal.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:pentagon.jpg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:square.webp
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:triangle.gif
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 file:vertical.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst figure.typ
 
 step:srr-compile-typst figure.typ
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = REPREP_TYPST_KEEP_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = REPREP_TYPST_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:figure.typ
-              source   file:hexagon.png [amended]
-              source   file:horizontal.pdf [amended]
-              source   file:pentagon.jpg [amended]
-              source   file:square.webp [amended]
-              source   file:triangle.gif [amended]
-              source   file:vertical.svg [amended]
+              source   file:hexagon.png [dynamic]
+              source   file:horizontal.pdf [dynamic]
+              source   file:pentagon.jpg [dynamic]
+              source   file:square.webp [dynamic]
+              source   file:triangle.gif [dynamic]
+              source   file:vertical.svg [dynamic]
              product   file:figure.pdf
                 sink   file:figure.pdf
 

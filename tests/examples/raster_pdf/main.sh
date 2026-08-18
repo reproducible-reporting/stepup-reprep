@@ -10,8 +10,8 @@ stepup graph current_graph
 
 # Reproducibility test
 mv rastered/smile.pdf rastered/smile1.pdf
-stepup watch-delete rastered/smile.pdf
-stepup run
+stepup wait -d rastered/smile.pdf
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_inventory.txt rastered/smile.pdf rastered/smile1.pdf
 

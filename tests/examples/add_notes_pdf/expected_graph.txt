@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:notes.pdf
@@ -18,12 +18,12 @@ step:./plan.py
              product   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:notes.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 
 file:src.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-add-notes-pdf src.pdf notes.pdf dst.pdf
 

@@ -3,18 +3,18 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_TYPST_INVENTORY [amended]
-                     = STEPUP_PATH_FILTER [amended]
-                 ngm = ['*.typ'] {}
-                 ngm = ['*.svg'] {}
-                 ngm = ['*.png'] {}
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
+               nglob = *.typ
+               nglob = *.svg
+               nglob = *.png
              creator   root:
               source   file:plan.py
              product   file:demo.typ
@@ -24,36 +24,36 @@ step:./plan.py
              product   step:srr-compile-typst --keep-deps demo.typ
 
 file:demo.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:embedded.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:linked.svg
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps demo.typ
 
 file:random.png
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps demo.typ
 
 step:srr-compile-typst --keep-deps demo.typ
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:demo.typ
-              source   file:embedded.svg [amended]
-              source   file:linked.svg [amended]
-              source   file:random.png [amended]
+              source   file:embedded.svg [dynamic]
+              source   file:linked.svg [dynamic]
+              source   file:random.png [dynamic]
              product   file:demo.deps.json
              product   file:demo.pdf
                 sink   file:demo.deps.json

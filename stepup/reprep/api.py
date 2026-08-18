@@ -9,11 +9,10 @@ from collections.abc import Collection
 
 from path import Path
 
-from stepup.core.api import getenv, run, shq
-from stepup.core.extapi import subs_env_vars
+from stepup.core.api import getenv, run, shq, subs_env_vars
 from stepup.core.path import StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
 from stepup.core.stepinfo import StepInfo
-from stepup.core.utils import string_to_bool
+from stepup.core.utils import to_bool
 
 __all__ = (
     "add_notes_pdf",
@@ -173,7 +172,7 @@ def _process_inventory(
     inventory: StrPath | bool | None, prog: str, stem: str, parts: list, paths_out: list
 ):
     if inventory is None:
-        inventory = string_to_bool(getenv(f"REPREP_{prog}_INVENTORY", "0"))
+        inventory = to_bool(getenv(f"REPREP_{prog}_INVENTORY", "0"))
     if inventory is True:
         inventory = f"{stem}-inventory.txt"
     if inventory is not False:

@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_TYPST_INVENTORY [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:document.typ
@@ -20,28 +20,28 @@ step:./plan.py
              product   step:srr-compile-typst document.typ
 
 file:document.typ
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst document.typ
 
 file:image.py
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:./image.py
 
 step:srr-compile-typst document.typ
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TYPST [amended]
-                     = REPREP_TYPST_ARGS [amended]
-                     = REPREP_TYPST_KEEP_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = REPREP_TYPST_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:document.typ
-              source   file:image.jpg [amended]
+              source   file:image.jpg [dynamic]
              product   file:document.deps.json
              product   file:document.pdf
-                sink   file:document.deps.json [amended]
+                sink   file:document.deps.json [dynamic]
                 sink   file:document.pdf
 
 file:document.pdf
@@ -52,9 +52,9 @@ file:document.pdf
 step:./image.py
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = BG_COLOR [amended]
-                     = FG_COLOR [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = BG_COLOR [dynamic]
+                     = FG_COLOR [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:image.py
              product   file:image.jpg

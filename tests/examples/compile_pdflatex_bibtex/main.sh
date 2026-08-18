@@ -13,9 +13,9 @@ stepup graph current_graph
 rm paper.aux paper.log
 mv paper.pdf paper1.pdf
 mv paper.bbl paper1.bbl
-stepup watch-delete paper.pdf
-stepup watch-delete paper.bbl
-stepup run
+stepup wait -d paper.pdf
+stepup wait -d paper.bbl
+stepup rebuild
 stepup join
 srr-make-inventory -o reproducibility_pdf_inventory.txt paper.pdf paper1.pdf
 srr-make-inventory -o reproducibility_bbl_inventory.txt paper.bbl paper1.bbl

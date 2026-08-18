@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = LATEX_MAIN [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = LATEX_MAIN [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:bibsane.yaml
@@ -21,17 +21,17 @@ step:./plan.py
              product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:paper.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:bibsane.yaml
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 
 file:references.bib
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
                 sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
@@ -39,12 +39,12 @@ file:references.bib
 step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_BIBTEX [amended]
-                     = REPREP_LATEX [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_BIBTEX [dynamic]
+                     = REPREP_LATEX [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:paper.tex
-              source   file:references.bib [amended]
+              source   file:references.bib [dynamic]
              product   file:paper-inventory.txt
              product   file:paper.aux
              product   file:paper.bbl
@@ -53,9 +53,9 @@ step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
              product   file:paper.pdf
                 sink   file:paper-inventory.txt
                 sink   file:paper.aux
-                sink   file:paper.bbl [amended]
+                sink   file:paper.bbl [dynamic]
                 sink   file:paper.fls
-                sink   file:paper.log [amended]
+                sink   file:paper.log [dynamic]
                 sink   file:paper.pdf
 
 file:paper-inventory.txt

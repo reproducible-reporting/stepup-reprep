@@ -3,17 +3,17 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
-              source   file:snippet.tex [amended]
+              source   file:snippet.tex [dynamic]
              product   file:doc.tex
              product   file:first.dat
              product   file:second.dat
@@ -22,20 +22,20 @@ step:./plan.py
              product   step:cp -p snippet.tex dest/snippet.tex
 
 file:doc.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
 
 file:first.dat
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:cp -p first.dat dest/first.dat
 
 file:second.dat
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
 
 file:snippet.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:./plan.py
                 sink   step:cp -p snippet.tex dest/snippet.tex

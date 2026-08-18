@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:block.png
@@ -19,28 +19,28 @@ step:./plan.py
              product   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:block.png
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:doc.html
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 file:style.css
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-weasyprint doc.html doc.pdf
 
 step:srr-convert-weasyprint doc.html doc.pdf
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_WEASYPRINT [amended]
+           using_env = REPREP_WEASYPRINT [dynamic]
              creator   step:./plan.py
-              source   file:block.png [amended]
+              source   file:block.png [dynamic]
               source   file:doc.html
-              source   file:style.css [amended]
+              source   file:style.css [dynamic]
              product   file:doc.pdf
                 sink   file:doc.pdf
 

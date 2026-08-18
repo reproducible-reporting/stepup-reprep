@@ -3,30 +3,30 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:src.pdf
              product   step:srr-nup-pdf src.pdf dst.pdf -p A4
 
 file:src.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-nup-pdf src.pdf dst.pdf -p A4
 
 step:srr-nup-pdf src.pdf dst.pdf -p A4
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_NUP_MARGIN [amended]
-                     = REPREP_NUP_NCOL [amended]
-                     = REPREP_NUP_NROW [amended]
+           using_env = REPREP_NUP_MARGIN [dynamic]
+                     = REPREP_NUP_NCOL [dynamic]
+                     = REPREP_NUP_NROW [dynamic]
              creator   step:./plan.py
               source   file:src.pdf
              product   file:dst.pdf

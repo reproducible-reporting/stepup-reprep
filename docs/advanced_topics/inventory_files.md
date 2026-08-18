@@ -53,7 +53,7 @@ The following rules are supported:
 - The `include-workflow` and `exclude-workflow` extract a file list
   from one or more StepUp `graph.db` files.
   The first argument is the state of the files to be selected.
-  (`STATIC` or `BUILT` are common. Other states exist but make less sense.)
+  (`CONFIRMED` or `BUILT` are common. Other states exist but make less sense.)
   All subsequent arguments are (Named Glob patterns matching) StepUp `graph.db` files.
 
 If any of these rules produces directories, they will not be included in the inventory.

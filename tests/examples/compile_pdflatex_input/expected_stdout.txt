@@ -1,29 +1,29 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-POSTPONED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-────────────────────────── Unavailable amended inputs ──────────────────────────
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DEFERRED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
 generated.tex
 ────────────────────────────────────────────────────────────────────────────────
-    START │ echo 'Hi there!' > generated.tex
-  SUCCESS │ echo 'Hi there!' > generated.tex
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-  SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
-  DELETED │ paper.aux
-  DELETED │ generated.tex
-  DELETED │ paper.pdf
-    PHASE │ build
-    START │ echo 'Hi there!' > generated.tex
-  SUCCESS │ echo 'Hi there!' > generated.tex
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-  SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- DIRECTOR │ Ran 4 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ See you!
+   START │ echo 'Hi there!' > generated.tex
+ SUCCESS │ echo 'Hi there!' > generated.tex
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DELETED │ paper.aux
+ DELETED │ generated.tex
+ DELETED │ paper.pdf
+   PHASE │ build
+   START │ echo 'Hi there!' > generated.tex
+ SUCCESS │ echo 'Hi there!' > generated.tex
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DIRECTOR │ Ran 2 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

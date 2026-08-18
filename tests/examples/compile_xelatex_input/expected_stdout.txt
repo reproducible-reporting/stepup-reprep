@@ -1,34 +1,34 @@
-  STARTUP │ (Re)initialized boot script
-    PHASE │ build
-    START │ ./plan.py
-  SUCCESS │ ./plan.py
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-POSTPONED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-────────────────────────── Unavailable amended inputs ──────────────────────────
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DEFERRED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
 subdir/generated.tex
 ────────────────────────────────────────────────────────────────────────────────
-    START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-  SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-    START │ echo '2 + 2' > subdir/code.txt
-  SUCCESS │ echo '2 + 2' > subdir/code.txt
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-  SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- DIRECTOR │ Ran 5 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
-  DELETED │ paper.aux
-  DELETED │ subdir/generated.tex
-  DELETED │ subdir/code.txt
-  DELETED │ paper.pdf
-    PHASE │ build
-    START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-  SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
-    START │ echo '2 + 2' > subdir/code.txt
-  SUCCESS │ echo '2 + 2' > subdir/code.txt
-    START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-  SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- DIRECTOR │ Ran 6 job(s).
- DIRECTOR │ Trying to remove 0 outdated output(s)
-    PHASE │ watch
- DIRECTOR │ See you!
+   START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+ SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+   START │ echo '2 + 2' > subdir/code.txt
+ SUCCESS │ echo '2 + 2' > subdir/code.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DIRECTOR │ Ran 5 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ DELETED │ paper.aux
+ DELETED │ subdir/generated.tex
+ DELETED │ subdir/code.txt
+ DELETED │ paper.pdf
+   PHASE │ build
+   START │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+ SUCCESS │ echo 'Verbatim input:\verbatiminput{code.txt}' > subdir/generated.tex
+   START │ echo '2 + 2' > subdir/code.txt
+ SUCCESS │ echo '2 + 2' > subdir/code.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+DIRECTOR │ Ran 3 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

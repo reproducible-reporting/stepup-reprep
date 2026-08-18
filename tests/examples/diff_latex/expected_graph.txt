@@ -3,15 +3,15 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_LATEXDIFF [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_LATEXDIFF [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:new.tex
@@ -19,12 +19,12 @@ step:./plan.py
              product   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:new.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 
 file:old.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:latexdiff --append-context2cmd=abstract,supplementary,dataavailability,funding,authorcontributions,conflictsofinterest,abbreviations old.tex new.tex --no-label > diff.tex
 

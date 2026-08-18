@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:paper.bbl
@@ -18,24 +18,24 @@ step:./plan.py
              product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:paper.tex
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:paper.bbl
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_TECTONIC [amended]
-                     = REPREP_TECTONIC_ARGS [amended]
-                     = REPREP_TECTONIC_KEEP_DEPS [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_TECTONIC [dynamic]
+                     = REPREP_TECTONIC_ARGS [dynamic]
+                     = REPREP_TECTONIC_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
-              source   file:paper.bbl [amended]
+              source   file:paper.bbl [dynamic]
               source   file:paper.tex
              product   file:paper-inventory.txt
              product   file:paper.pdf

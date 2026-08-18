@@ -3,22 +3,22 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = REPREP_MUTOOL [amended]
-                     = STEPUP_PATH_FILTER [amended]
+           using_env = REPREP_MUTOOL [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:example.pdf
              product   step:mutool draw -q -o example.png -r 100 example.pdf
 
 file:example.pdf
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:mutool draw -q -o example.png -r 100 example.pdf
 

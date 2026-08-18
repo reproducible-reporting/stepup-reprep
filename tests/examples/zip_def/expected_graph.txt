@@ -3,14 +3,14 @@ root:
              product   step:./plan.py
 
 file:plan.py
-               state = STATIC
+               state = CONFIRMED
              creator   root:
                 sink   step:./plan.py
 
 step:./plan.py
                state = SUCCEEDED
                 need = PLAN
-           using_env = STEPUP_PATH_FILTER [amended]
+           using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
              product   file:inventory.def
@@ -19,7 +19,7 @@ step:./plan.py
              product   step:srr-zip-inventory inventory.txt upload.zip
 
 file:inventory.def
-               state = STATIC
+               state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
@@ -35,11 +35,11 @@ step:srr-make-inventory -i inventory.def -o inventory.txt
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
-              source   file:data/bla.inp [amended]
-              source   file:data/fine.out [amended]
-              source   file:data/sub/deeper/brrr.inp [amended]
-              source   file:data/sub/deeper/nested.out [amended]
-              source   file:data/sub/works.out [amended]
+              source   file:data/bla.inp [dynamic]
+              source   file:data/fine.out [dynamic]
+              source   file:data/sub/deeper/brrr.inp [dynamic]
+              source   file:data/sub/deeper/nested.out [dynamic]
+              source   file:data/sub/works.out [dynamic]
               source   file:inventory.def
              product   file:inventory.txt
                 sink   file:inventory.txt
@@ -64,26 +64,26 @@ file:upload.zip
               source   step:srr-zip-inventory inventory.txt upload.zip
 
 file:data/bla.inp
-               state = STATIC
+               state = CONFIRMED
              creator   st:data/
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/fine.out
-               state = STATIC
+               state = CONFIRMED
              creator   st:data/
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/brrr.inp
-               state = STATIC
+               state = CONFIRMED
              creator   st:data/
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/deeper/nested.out
-               state = STATIC
+               state = CONFIRMED
              creator   st:data/
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 file:data/sub/works.out
-               state = STATIC
+               state = CONFIRMED
              creator   st:data/
                 sink   step:srr-make-inventory -i inventory.def -o inventory.txt

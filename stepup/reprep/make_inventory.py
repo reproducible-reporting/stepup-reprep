@@ -45,7 +45,6 @@ def main(argv: list[str] | None = None):
 
 
 def make_inventory(args: argparse.Namespace):
-    # Check arguments
     if args.inventory_def is None:
         if len(args.paths) == 0:
             raise ValueError("At least inventory.def or a list of files are needed as input.")
@@ -63,7 +62,6 @@ def make_inventory(args: argparse.Namespace):
     if not args.inventory_txt.endswith(".txt"):
         raise ValueError("The inventory output file must end with .txt")
 
-    # Collect the complete list of files.
     path_inventory_txt = Path(args.inventory_txt)
     root = path_inventory_txt.parent.normpath()
     if args.inventory_def is None:
@@ -188,12 +186,12 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
         These must be paths relative to the current working directory.
         They will be written to the inventory file
         as paths relative to the parent of the inventory file.
+    do_amend
+        When True, `paths` are amended as inputs of the current step,
+        so that the inventory is rebuilt when they change.
+        Set this to False when the step already declares these files itself,
+        because the extra amendment may then introduce a cyclic dependency.
     """
-    # Amend all paths included in the inventory file as inputs.
-    # This is needed to ensure that the inventory is rebuilt when the paths change.
-    # Other actions calling this function may not want this,
-    # because they already take care of file dependencies and amendments
-    # may then cause cyclic dependencies.
     if do_amend:
         inp_paths = []
         for path in paths:
@@ -203,7 +201,6 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
             inp_paths.append(path)
         amend(inp=inp_paths)
 
-    # Write the inventory file.
     path_txt = Path(path_txt)
     root = path_txt.parent.normpath()
     with open(path_txt, "w") as fh:

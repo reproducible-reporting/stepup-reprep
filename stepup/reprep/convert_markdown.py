@@ -89,21 +89,18 @@ def convert_markdown(
     """
     md = MarkdownIt().use(front_matter_plugin).use(anchors_plugin)
 
-    # Convert to HTML and get front matter.
     tokens = md.parse(text_md)
     body = md.renderer.render(tokens, md.options, {})
     meta = {}
     if tokens[0].type == "front_matter":
         meta = yaml.safe_load(tokens[0].content)
 
-    # Collect CSS paths from the source and amend them
     parent_html = Path(parent_html)
     paths_doc_css = meta.get("css", [])
     if isinstance(paths_doc_css, str):
         paths_doc_css = [paths_doc_css]
     amend(inp=[parent_html / path_css for path_css in paths_doc_css if "://" not in path_css])
 
-    # Convert the given CSS files to be relative to the parent of the HTML file.
     if isinstance(paths_css, str):
         paths_css = paths_css.split(":")
     paths_css = [
@@ -111,7 +108,6 @@ def convert_markdown(
     ]
     paths_css.extend(paths_doc_css)
 
-    # Use Jinja to finalize the HTML page.
     variables = {
         "body": body,
         "title": meta.get("title", "Untitled"),

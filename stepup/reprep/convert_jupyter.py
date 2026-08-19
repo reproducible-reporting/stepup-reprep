@@ -18,10 +18,8 @@ def main():
     if not args.path_nb.endswith(".ipynb"):
         raise ValueError("The notebook file must have extension .ipynb")
 
-    # Read notebook
     notebook = read(args.path_nb, as_version=4)
 
-    # Inject parameters if provided
     if args.parameters is not None:
         parameters_data = json.loads(args.parameters)
         param_lines = [
@@ -39,7 +37,6 @@ def main():
         else:
             raise RuntimeError("No cell with tag 'parameters' found in the notebook.")
 
-    # Execute if requested
     if args.execute:
         ep = ExecutePreprocessor(
             timeout=600,
@@ -50,15 +47,12 @@ def main():
             notebook, {"metadata": {"path": str(Path(args.path_nb).parent)}}
         )
 
-    # Get exporter
     exporter_class = exporters.get_exporter(args.to)
 
     exporter = exporter_class()
 
-    # Convert
     body, _resources = exporter.from_notebook_node(notebook)
 
-    # Write output
     Path(args.path_out).parent.mkdir(parents=True, exist_ok=True)
     with open(args.path_out, "w", encoding="utf-8") as f:
         f.write(body)

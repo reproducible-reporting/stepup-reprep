@@ -105,7 +105,6 @@ def nup_pdf(
     xshift = (width - margin) / ncol
     yshift = (height - margin) / nrow
 
-    # double loop adding all (small) pages to the destination PDF.
     for icoarse in range(0, len(src), nup):
         dst_page = dst.new_page(width=width, height=height)
         for ifine in range(icoarse, min(icoarse + nup, len(src))):

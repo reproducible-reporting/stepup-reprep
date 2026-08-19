@@ -32,11 +32,6 @@ def main():
     if not (args.path_out is None or args.path_out.suffix in (".pdf", ".png", ".svg", ".html")):
         raise ValueError("The Typst output must be a PDF, PNG, SVG, or HTML file.")
 
-    # Get Typst executable
-    if args.typst is None:
-        args.typst = getenv("REPREP_TYPST", "typst")
-
-    # Prepare the command to run Typst
     if args.typst is None:
         args.typst = getenv("REPREP_TYPST", "typst")
     typst_args = [args.typst, "compile", args.path_typ]
@@ -57,7 +52,6 @@ def main():
         args.typst_args = shlex.split(getenv("REPREP_TYPST_ARGS", ""))
     typst_args.extend(args.typst_args)
 
-    # Prepare the keep_deps argument.
     do_amend_deps = False
     if args.keep_deps is None:
         args.keep_deps = to_bool(getenv("REPREP_TYPST_KEEP_DEPS", "0"))
@@ -76,12 +70,8 @@ def main():
             path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
         typst_args.extend(["--deps", path_deps, "--deps-format", "json"])
 
-        # Run typst compile
         cp = run_subprocess(shlex.join(typst_args), check=False)
         sys.stdout.write(cp.stdout)
-        # Assume there is a single output file, which is the one specified.
-        # This is not correct when there are multiple outputs, e.g. as with SVG and PNG outputs.
-        # Get required input files from the dependency file.
         if path_deps.is_file():
             with open(path_deps) as fh:
                 depinfo = json.load(fh)
@@ -96,19 +86,16 @@ def main():
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
-    # Write inventory
     if args.inventory is not None:
         inventory_paths = sorted(inp_paths) + sorted(out_paths)
         write_inventory(args.inventory, inventory_paths, do_amend=False)
 
-    # If the output path contains placeholders `{p}`, `{0p}`, or `{t}`,
-    # we need to amend the output.
+    # Placeholders in the output path expand to several files,
+    # whose names are only known after the compilation.
     if any(p in args.path_out for p in ("{p}", "{0p}", "{t}")):
         amend(out=out_paths)
 
     if cp.returncode != 0:
-        # Only use sys.exit in cases of an error,
-        # so other programs may call this function without exiting.
         sys.exit(cp.returncode)
 
 

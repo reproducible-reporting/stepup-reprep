@@ -135,10 +135,8 @@ def transform_pixel_data(axes: list[Axis], px_curve: NDArray) -> NDArray:
     px_xunit = x_axis.end - x_axis.start
     px_yunit = y_axis.end - y_axis.start
 
-    # The affine transformation to pixel coordinates.
     mat_to_pix = np.array([px_xunit, px_yunit]).T
 
-    # The inverse affine transformation.
     mat_from_pix = np.linalg.inv(mat_to_pix)
 
     # Reference point for the x and y values.
@@ -150,7 +148,6 @@ def transform_pixel_data(axes: list[Axis], px_curve: NDArray) -> NDArray:
     data[0] -= x_low[0]
     data[1] -= y_low[1]
 
-    # Convert to plot units.
     convert_unit(data[0], x_axis)
     convert_unit(data[1], y_axis)
 

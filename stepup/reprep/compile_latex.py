@@ -39,10 +39,8 @@ def main(argv: list[str] | None = None) -> None:
     for ext in exts_to_remove:
         (workdir / f"{stem}.{ext}").remove_p()
 
-    # Detect additional inputs
     inp, bib, out, vol = scan_latex_deps(fn_tex, do_amend=False)
 
-    # Get LaTeX executable
     if args.latex is None:
         args.latex = getenv("REPREP_LATEX", "pdflatex")
 
@@ -51,7 +49,6 @@ def main(argv: list[str] | None = None) -> None:
         amend(inp=inp, out=out, vol=vol)
         inventory_files = [*inp, *out]
     elif args.run_bibtex:
-        # Get other executables and files
         if args.bibtex is None:
             args.bibtex = getenv("REPREP_BIBTEX", "bibtex")
 
@@ -72,7 +69,6 @@ def main(argv: list[str] | None = None) -> None:
 
         aux_digest_hist.append(compute_file_digest(path_aux))
 
-        # BibTeX
         with contextlib.chdir(workdir):
             cp = run_subprocess(f"{shlex.quote(args.bibtex)} {stem}", check=False)
         if cp.returncode != 0:
@@ -109,7 +105,6 @@ def main(argv: list[str] | None = None) -> None:
             print(digest.hex(), file=sys.stderr)
         sys.exit(1)
 
-    # Write inventory
     inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
     if args.inventory is not None:
         write_inventory(args.inventory, inventory_files, do_amend=False)

@@ -31,7 +31,7 @@ def main():
         )
     inp_paths = filter_dependencies(search_svg_deps(args.path_svg))
     amend(inp=inp_paths)
-    # SELF_CALL=x is a workaround for a known Inkscape bug
+    # SELF_CALL=x works around an Inkscape bug that was observed up to Inkscape 1.4.4,
     # when multiple Inkscape processes are running in parallel.
     # See https://gitlab.com/inkscape/inkscape/-/work_items/4716
     args = [

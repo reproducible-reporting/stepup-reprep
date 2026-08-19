@@ -32,7 +32,7 @@ def main():
 
 
 def parse_args() -> argparse.Namespace:
-    """Define command-line arguments."""
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-execute-papermill", description="Execute a Jupyter notebook with papermill."
     )

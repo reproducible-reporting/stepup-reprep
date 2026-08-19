@@ -412,8 +412,7 @@ def compile_typst(
 
         - SVG figures with references to external SVG images are not processed correctly.
           These images are not rendered, neither are they included in the dep file.
-          This currently being addressed in the following issue:
-          <https://github.com/typst/typst/issues/6858>
+          Tracked upstream in <https://github.com/typst/typst/issues/6858>.
 
     Parameters
     ----------
@@ -571,8 +570,9 @@ def convert_inkscape(
 
     Notes
     -----
-    A wrapper around inkscape is used to carry out the conversion: `stepup.reprep.convert_inkscape`.
-    The wrapper scans the SVG for dependencies, which may be a bit slow in case of large files.
+    Images and other files referenced by the SVG are detected automatically
+    and amended as inputs of the step.
+    This scan may be a bit slow in case of large files.
     """
     with subs_env_vars() as subs:
         path_svg = subs(path_svg)
@@ -1015,7 +1015,6 @@ def convert_odf_pdf(
         # Simple things should be simple! ;) See:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
         # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
-        # Not solved yet:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
         "WORK=`mktemp -d --suffix=reprep` && "
         f"{shq(libreoffice)} -env:UserInstallation=file://${{WORK}} --convert-to pdf "

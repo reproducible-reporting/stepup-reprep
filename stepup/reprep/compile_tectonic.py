@@ -86,14 +86,11 @@ def main(argv: list[str] | None = None) -> None:
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)
 
-    # Write inventory
     if args.inventory is not None:
         inventory_paths = sorted(inp_paths) + out_paths
         write_inventory(args.inventory, inventory_paths, do_amend=False)
 
     if cp.returncode != 0:
-        # Only use sys.exit in cases of an error,
-        # so other programs may call this function without exiting.
         sys.exit(cp.returncode)
 
 

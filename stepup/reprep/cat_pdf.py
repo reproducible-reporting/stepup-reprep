@@ -21,9 +21,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="srr-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
     )
-    parser.add_argument(
-        "paths_src", help="The source PDFs to which notes should be added.", nargs="+"
-    )
+    parser.add_argument("paths_src", help="The source PDFs to concatenate.", nargs="+")
     parser.add_argument("path_dst", help="The output PDF.")
     parser.add_argument(
         "-i",
@@ -41,12 +39,12 @@ def cat_pdf(
     path_dst: str,
     insert_blank: bool,
 ):
-    """Put multiple pages in a single page, using a fixed layout.
+    """Concatenate PDFs into a single document.
 
     Parameters
     ----------
     paths_src
-        The source PDF filename.
+        The source PDF filenames, in the order they are concatenated.
     path_dst
         The destination PDF filename.
     insert_blank

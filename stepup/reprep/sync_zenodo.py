@@ -29,7 +29,8 @@ Unofficial information on how to use the Invenio RDM API with Zenodo:
 - https://github.com/zenodo/developers.zenodo.org/issues/62
 - https://github.com/zenodo/zenodo/issues/2544
 
-Note that the new Zenodo API (based on Invenio RDM) is still not fully stable.
+The Zenodo API based on Invenio RDM was not fully stable when this module was
+written in June 2025.
 Some of the features implemented in this module were deduced from the Zenodo web interface.
 """
 
@@ -595,24 +596,21 @@ class ZenodoWrapper:
         self.rest.post(f"records/{rid}/draft")
 
     def publish_record(self, rid: int):
-        """Publish are draft record or a record in edit mode."""
+        """Publish a draft record or a record in edit mode."""
         self.rest.post(f"records/{rid}/draft/actions/publish")
 
     def start_uploads(self, rid: int, paths: list[Path]):
         self.rest.post(f"records/{rid}/draft/files", json=[{"key": path.name} for path in paths])
 
     def upload_file(self, rid: int, path: Path):
-        """Upload a file. The bucket must belong to a record in draft mode."""
-        # Upload the file
+        """Upload a file to a record that is in draft mode."""
         with open(path, "rb") as fh:
             self.rest.put(f"records/{rid}/draft/files/{path.name}/content", data=fh)
-        # Commit it
         res = self.rest.post(f"records/{rid}/draft/files/{path.name}/commit")
 
         if not res["checksum"].startswith("md5:"):
             raise ZenodoError(f"Zenodo returned an unexpected checksum format: {res['checksum']}")
 
-        # Check the checksum and file size
         if not res["size"] == path.size:
             raise ZenodoError(
                 f"File size mismatch for {path.name}: "
@@ -691,7 +689,6 @@ def clean_online(config: Config, verbose: bool):
     with open(path_token) as fh:
         zenodo = ZenodoWrapper(fh.read().strip(), config.endpoint, verbose=verbose)
 
-    # Get all records.
     response = zenodo.rest.get("user/records")
     for record in response["hits"]["hits"]:
         rid = record["id"]
@@ -761,7 +758,7 @@ def update_online(config: Config, verbose: bool):
     else:
         # When a dataset exists, the actions depend on the current status of the record.
         record = zenodo.get_record(rid)
-        # At the time of coding, the Zenodo API does not return the full metadata of the record.
+        # As observed in June 2025, the Zenodo API does not return the full metadata here.
         rid = record["id"]
         zenodo_version = record["metadata"]["version"]
         if record.get("submitted", False):
@@ -800,8 +797,8 @@ def _create_new(zenodo: ZenodoWrapper, config: Config) -> dict[str, Any]:
     return record
 
 
-def _compute_md5(path: str) -> bool:
-    """Compute the MD5 sum of a file and compare to the given checksum."""
+def _compute_md5(path: str) -> str:
+    """The MD5 sum of a file, as a hexadecimal string."""
     with open(path, "rb") as fh:
         return hashlib.file_digest(fh, hashlib.md5).hexdigest()
 

@@ -36,7 +36,6 @@ def main() -> None:
     """Main program."""
     args = parse_args()
 
-    # Determine the git root directory.
     cp = run_subprocess(
         "git rev-parse --show-toplevel",
         check=False,
@@ -45,7 +44,8 @@ def main() -> None:
         raise RuntimeError("Failed to determine git root directory.")
     git_root = Path(cp.stdout.strip()).relpath()
 
-    # Mark the HEAD file as an input dependency.
+    # The commit that git reports depends on HEAD and on the branch file it points to,
+    # so both are inputs of this step.
     head_path = git_root / ".git" / "HEAD"
     amend(inp=head_path)
     with open(head_path) as fh:
@@ -54,10 +54,8 @@ def main() -> None:
             raise ValueError("HEAD is not a symbolic reference, cannot determine commit id.")
     ref_path = head_content[5:].strip()
 
-    # Mark the ref path as an input dependency.
     amend(inp=git_root / ".git" / ref_path)
 
-    # Run the git command.
     command = "GIT_PAGER=cat " + shlex.join(args.git_args)
     cp = run_subprocess(command, check=False)
     if args.stdout is None:

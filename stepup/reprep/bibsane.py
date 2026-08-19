@@ -122,27 +122,23 @@ def main(argv: list[str] | None = None) -> int:
     """Main program."""
     args = parse_args(argv)
 
-    # Load the bib file.
     print("📂 Load", args.bib)
     with open(args.bib) as f:
         entries = parse_bib(f.read())
     print(f"    Found {len(entries)} BibTeX entries")
 
-    # Check for duplicate keys
     if args.config.duplicate_key == DuplicatePolicy.FAIL:
         print("🔨 Checking for duplicate BibTeX entry keys")
         if not check_duplicate_keys(entries):
             print("    ❌ Stop early due to duplicate BibTeX entry keys")
             return RETURN_CODE_BROKEN
 
-    # Check for duplicate DOIs
     if args.config.duplicate_doi == DuplicatePolicy.FAIL:
         print("🔨 Checking for duplicate DOIs")
         if not check_duplicate_dois(entries):
             print("    ❌ Stop early due to duplicate DOIs")
             return RETURN_CODE_BROKEN
 
-    # Load the aux file.
     if args.aux is not None:
         if not args.aux.endswith(".aux"):
             print("    ❌ Aux file has no extension .aux:", args.aux)
@@ -155,14 +151,12 @@ def main(argv: list[str] | None = None) -> int:
         if len(citations) == 0:
             print("    ❓ Ignored aux file because it lacks citations.")
         else:
-            # Report unused and check for missing
             print("🔨 Checking unused and missing citations")
             bibdata_complete = check_citations(entries, citations)
             if not bibdata_complete:
                 print("    ❌ Stop early due to missing citations")
                 return RETURN_CODE_BROKEN
 
-    # Drop irrelevant entry types
     if len(args.config.drop_entry_types) > 0:
         print("🔨 Drop irrelevant entry types")
         drop_entry_types(entries, args.config.drop_entry_types)
@@ -171,7 +165,6 @@ def main(argv: list[str] | None = None) -> int:
     # The default return code, assuming some changes are made but no errors found.
     retcode = RETURN_CODE_CHANGED
 
-    # Clean entries
     if len(args.config.citation_policies) > 0:
         print("🔨 Apply and check citation policies")
         if not clean_entries(entries, args.config.citation_policies):
@@ -189,28 +182,23 @@ def main(argv: list[str] | None = None) -> int:
         if not valid_dois:
             retcode = RETURN_CODE_BROKEN
 
-    # Remove redundant whitespace
     if args.config.normalize_whitespace:
         print("🔨 Normalize whitespace")
         normalize_whitespace(entries)
 
-    # Fix page double hyphen
     if args.config.fix_page_double_hyphen:
         print("🔨 Fix double hyphen in page ranges")
         if not fix_page_double_hyphen(entries):
             retcode = RETURN_CODE_BROKEN
 
-    # Abbreviate journal names
     if args.config.abbreviate_journals:
         print("🔨 Abbreviate journal names")
         abbreviate_journal_iso(entries, args.config.custom_abbreviations)
 
-    # Normalize braces in titles, booktitles and journal names
     if args.config.normalize_braces:
         print("🔨 Normalize braces in titles, booktitles and journal names")
         normalize_braces(entries)
 
-    # Merge entries
     if args.config.duplicate_key == DuplicatePolicy.MERGE:
         print("🔨 Merge references by BibTeX key")
         if merge_entries(entries, "__KEY__"):
@@ -222,12 +210,10 @@ def main(argv: list[str] | None = None) -> int:
             retcode = RETURN_CODE_BROKEN
         print(f"    {len(entries)} entries left")
 
-    # Sort entries
     if args.config.sort:
         print("🔨 Sort by Year + Author + Title")
         sort_entries(entries)
 
-    # Overwrite if needed.
     fn_out = args.bib if args.out is None else args.out
     retcode = write_output(entries, fn_out, retcode)
     if args.out is not None and retcode == RETURN_CODE_CHANGED:
@@ -454,7 +440,7 @@ def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
     for entry in entries:
         journal = entry.get("journal")
         if journal is not None and "." not in journal:
-            # Pyiso4 cannot handle LaTeX escapes, which is critical for ampersands.
+            # Pyiso4 0.1.6 cannot handle LaTeX escapes, which is critical for ampersands.
             journal = journal.replace(r"\&", "&")
             abbrev = custom.get(journal)
             if abbrev is None:
@@ -466,7 +452,7 @@ def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
 
 
 def normalize_braces(entries: list[dict]):
-    """Wrap words in titles that should preserve capitalization in braces."""
+    """Brace the words that must keep their capitalization in title, booktitle and journal."""
     for entry in entries:
         for key in "title", "booktitle", "journal":
             value = entry.get(key)
@@ -478,7 +464,7 @@ NEEDS_BRACES = re.compile(r"^.+[A-Z].*$")
 
 
 def brace_words(title: str) -> str:
-    """Wrap words in titles that should preserve capitalization in braces."""
+    """Wrap every word with a capital beyond its first character in braces."""
     # Remove all existing braces first.
     title = re.sub(r"[{}]", "", title)
     result = []

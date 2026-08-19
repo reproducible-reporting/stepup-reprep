@@ -91,13 +91,13 @@ def scan_latex_deps(path_tex, tex_root=None, do_amend=True):
     Returns
     -------
     inp
-        Filenames to be added as amended inputs.
+        Files read by the LaTeX source, excluding BibTeX databases.
     bib
-        BibTeX files, a special case of inputs to amend.
+        BibTeX databases referenced by the LaTeX source.
     out
-        Filenames to be added as amended outputs.
+        Files declared with a `%REPREP out` comment in the LaTeX source.
     vol
-        Filenames to be added as amended volatile outputs.
+        Files declared with a `%REPREP vol` comment in the LaTeX source.
     """
     inp = set()
     out = set()

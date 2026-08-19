@@ -57,7 +57,6 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
         raise ValueError(f"Destination must have a `.zip` extension. Got {path_zip}")
     path_zip = Path(path_zip)
 
-    # Create a new ZIP archive.
     root = path_inventory.parent
     nskip = 0 if root == "" else len(root) + 1
     with tempfile.TemporaryDirectory("srr-zip-inventory") as path_tmp:
@@ -72,10 +71,8 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
                 dst = path_tmp / "todo"
                 dst.remove_p()
                 src.copy(dst, follow_symlinks=False)
-                # Check the file before adding it to the ZIP
                 new = get_summary(dst, path_tmp)
                 check_summary(new, ref)
-                # Store
                 if ref.size is None:
                     # Symbolic link
                     zipinfo = zipfile.ZipInfo(src[nskip:])

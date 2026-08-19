@@ -103,8 +103,8 @@ Documentation of the fields in the `zenodo.yaml` configuration file:
 - `path_record_id`:
   A TXT file containing the record ID of the most recent version of the resource on Zenodo.
   This file is updated by the `srr-sync-zenodo` command.
-  You should not need to modify it unless you created or discarded new records
-  manually through the Zenodo web interface.
+  You should not need to modify it
+  unless you created or discarded new records manually through the Zenodo web interface.
   It is recommended to commit this file to the Git history.
   Changes to this file are not tracked by StepUp.
 
@@ -353,7 +353,7 @@ sync_zenodo("zenodo.yaml")
 ## Try the Following
 
 When creating a publication starting from the RepRep [Template Tutorial](../from_template/introduction.md),
-one can use the [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] function to
-continuously synchronize the latest version of a publication with co-authors.
+one can use the [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] function
+to continuously synchronize the latest version of a publication with co-authors.
 Drafts of datasets can be shared with co-authors,
 in this case to give them access to the most recent build of the publication PDFs.

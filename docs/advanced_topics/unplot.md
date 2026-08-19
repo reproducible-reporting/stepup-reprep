@@ -39,8 +39,7 @@ Unplot converts plots back into data points.
    Unplot can handle cases where the x and y axes are not orthogonal or are rotated,
    e.g. due to a bad scan.
 
-5. Draw one or more polylines consisting of straight line segments
-   over the curve(s) of interest.
+5. Draw one or more polylines consisting of straight line segments over the curve(s) of interest.
    Make sure that your drawing falls nicely over the curve in the scanned image,
    as this will also determine the accuracy of the final data.
    It may be helpful to use a brightly colored and semi-transparent line style.
@@ -58,8 +57,8 @@ Unplot converts plots back into data points.
         - `scale`: `linear` or `log`
         - `units`: the unit of the axis
     - Select the y-axis in the figure and add the same attributes for the second axis.
-    - The paths over the curves should be given a `data` attribute whose value is
-      is a label to identify the data series in the output.
+    - The paths over the curves should be given a `data` attribute
+      whose value is a label to identify the data series in the output.
 
 7. In the menu, select "File" ➔ "Save As..." to save the file in SVG format.
 
@@ -136,11 +135,12 @@ and the corresponding value is a list with two lists (x- and y-coordinates).
 ## Tips and tricks
 
 **Q.**
-The data points are flipped horizontally or vertically. How can I fix this?
+The data points are flipped horizontally or vertically.
+How can I fix this?
 
 > **A.**
-> You need to make sure that the order of the two points in the line segments for the x
-> (or y) axes is compatible with the `low` and `high` attributes.
+> You need to make sure that the order of the two points in the line segments
+> for the x (or y) axes is compatible with the `low` and `high` attributes.
 > Add a special end marker in Inkscape to identify the end point of the line segment.
 > The menu item "Path" ➔ "Reverse" allows you to swap start and end.
 

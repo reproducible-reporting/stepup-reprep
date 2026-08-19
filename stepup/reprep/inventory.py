@@ -37,8 +37,7 @@ def get_summary(path: str, root: str) -> FileSummary:
     Parameters
     ----------
     path
-        The location of the file to be summarized,
-        relative to the current working directory.
+        The location of the file to be summarized, relative to the current working directory.
     root
         The parent of the inventory file, to construct relative paths.
 

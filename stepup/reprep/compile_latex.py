@@ -30,9 +30,10 @@ def main(argv: list[str] | None = None) -> None:
     stem = fn_tex[:-4]
     path_aux = workdir / f"{stem}.aux"
 
-    # Remove existing outputs from a previous run, which could potentially
-    # conflict with the new tex source files. In 99% of the cases, this is
-    # not a problem, but sometimes LaTeX chokes on remnants in old outputs.
+    # Remove existing outputs from a previous run,
+    # which could potentially conflict with the new tex source files.
+    # In 99% of the cases, this is not a problem,
+    # but sometimes LaTeX chokes on remnants in old outputs.
     exts_to_remove = ["log", "aux", "blg", "fls", "out", "toc", "nlo", "synctex"]
     if args.run_bibtex:
         exts_to_remove.append("bbl")
@@ -124,8 +125,9 @@ def main(argv: list[str] | None = None) -> None:
                 if not (path in inventory_files or path == args.inventory):
                     fls_vol.add(path)
     fls_inp.difference_update(fls_vol)
-    # Both inputs and outputs must be filtered because, strangely,
-    # LaTeX sometimes outputs files in the weirdest places, e.g. in the TEXMF tree.
+    # Both inputs and outputs must be filtered
+    # because, strangely, LaTeX sometimes outputs files in the weirdest places,
+    # e.g. in the TEXMF tree.
     amend(inp=filter_dependencies(fls_inp), vol=filter_dependencies(fls_vol))
 
 

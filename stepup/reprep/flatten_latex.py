@@ -15,7 +15,8 @@ The following commands are rewritten to be consistent with the location of the f
 
 This script is intentionally somewhat limited.
 It expects that ``\input`` and ``\import`` commands are the only ones present on their line,
-to avoid ambiguities. If this is not the case, the script will fail.
+to avoid ambiguities.
+If this is not the case, the script will fail.
 The script also assumes the ``\includgraphics``, ``\thebibliography`` and ``\verbatiminput``
 commands are contained within a single line.
 """
@@ -73,15 +74,14 @@ def flatten_latex(
     Parameters
     ----------
     path_tex
-        The LaTeX source to be flattened, may be the main file or
-        an included file in one of the recursions.
+        The LaTeX source to be flattened,
+        may be the main file or an included file in one of the recursions.
     fh_out
         The file object to write the flattened file to.
     out_root
         The directory of the output file, needed to fix relative paths.
     tex_root
-        The directory with respect to which paths in the LaTeX source must
-        be interpreted.
+        The directory with respect to which paths in the LaTeX source must be interpreted.
 
     Returns
     -------
@@ -167,11 +167,10 @@ def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
         A line of LaTeX source code, possibly containing ``\includegraphics``
         or ``\thebibliography`` commands that need fixing.
     tex_root
-        The directory with respect to which paths in the LaTeX source should
-        be interpreted.
+        The directory with respect to which paths in the LaTeX source should be interpreted.
     out_root
-        The new directory, with respect to which paths in the rewritten
-        LaTeX source must be interpreted.
+        The new directory,
+        with respect to which paths in the rewritten LaTeX source must be interpreted.
 
     Returns
     -------

@@ -210,7 +210,8 @@ def compile_latex(
     workdir
         The working directory where the LaTeX command must be executed.
     latex
-        Path to the LaTeX executable. Note that only PDF-producing LaTeX compilers are supported:
+        Path to the LaTeX executable.
+        Note that only PDF-producing LaTeX compilers are supported:
         `pdflatex`, `xelatex` or `lualatex`.
         Defaults to `${REPREP_LATEX}` variable or `pdflatex` if the variable is unset.
     bibtex
@@ -239,8 +240,8 @@ def compile_latex(
     Notes
     -----
     The LaTeX source is compiled with the `srr-compile-latex` command,
-    which can detect dependencies on other files by scanning for
-    `\\input`, `\\include`, `\\includegraphics`, etc.
+    which can detect dependencies on other files
+    by scanning for `\\input`, `\\include`, `\\includegraphics`, etc.
     Due to the complexity of LaTeX, the dependency scanning is not perfect.
     You can manually specify dependencies in the LaTeX source with the following comments:
 
@@ -250,8 +251,8 @@ def compile_latex(
 
     When any of these paths is a relative path,
     it is interpreted in the same way as the LaTeX compiler would resolve it.
-    You can also hide lines from the dependency scanner by adding `%REPREP ignore`
-    at the end of a line.
+    You can also hide lines from the dependency scanner
+    by adding `%REPREP ignore` at the end of a line.
     """
     with subs_env_vars() as subs:
         path_tex = subs(path_tex)
@@ -1564,8 +1565,7 @@ def wrap_git(
 
     As a result, the step will be rescheduled when the current commit id or branch changes.
 
-    It is recommended to make gitroot / '.git/' and all of its contents static
-    as follows:
+    It is recommended to make gitroot / '.git/' and all of its contents static as follows:
 
     ```python
     static(".git/")

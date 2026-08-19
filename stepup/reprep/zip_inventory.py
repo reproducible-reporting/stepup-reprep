@@ -45,8 +45,8 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
     path_zip
         The ZIP file to be created.
         When not given, the `.zip` suffix is added to the prefix of `path_inventory`.
-        The existing ZIP file with the same path is only overwritten when the ZIP
-        file is first succesfully created in a temporary directory.
+        The existing ZIP file with the same path is only overwritten
+        when the ZIP file is first succesfully created in a temporary directory.
     """
     if not path_inventory.endswith(".txt"):
         raise ValueError(f"The inventory file must have a `.txt` extension. Got {path_inventory}")
@@ -65,8 +65,8 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
         with zipfile.ZipFile(path_zip_tmp, "w") as fz:
             for ref in iter_inventory(path_inventory):
                 # Copy the file to a temp dir.
-                # This saves bandwith in case of remote datasets and allows
-                # fixing the timestamp before compression.
+                # This saves bandwith in case of remote datasets
+                # and allows fixing the timestamp before compression.
                 src = Path(root / ref.path)
                 dst = path_tmp / "todo"
                 dst.remove_p()

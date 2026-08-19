@@ -289,8 +289,8 @@ StepUp addresses the above issues as follows:
 - If you change one or more scripts, StepUp will determine which scripts need to be re-executed,
   as opposed to manually re-executing cells in notebooks (which is error-prone).
 - If you want to create simple reports that integrate your comments, results and figures,
-  you can write Markdown files with figures and convert them to PDF using
-  [`convert_markdown()`][stepup.reprep.api.convert_markdown]
+  you can write Markdown files with figures and convert them to PDF
+  using [`convert_markdown()`][stepup.reprep.api.convert_markdown]
   and [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint].
 
 ### HDF5
@@ -299,8 +299,8 @@ If a process is killed while writing to an HDF5 file,
 there is a tiny chance that the entire file will become unreadable,
 not just the part that was being written.
 Such an abrupt process termination can never be ruled out (e.g., power failure).
-We are not aware of any recent fixes for this, e.g.,
-some form of [journaling](https://en.wikipedia.org/wiki/Journaling_file_system)
+We are not aware of any recent fixes for this,
+e.g., some form of [journaling](https://en.wikipedia.org/wiki/Journaling_file_system)
 may make the format resilient to interrupted writes.
 This happens so rarely that the issue is often dismissed as irrelevant,
 see [https://news.ycombinator.com/item?id=10860496](https://news.ycombinator.com/item?id=10860496)

@@ -125,8 +125,8 @@ Bugfix release
 ### Fixed
 
 - Correctly report merged records in bibsane's screen output.
-- Fix handling of LaTeX encoding in bibsane and abbreviation
-  of journal names with non-ASCII characters.
+- Fix handling of LaTeX encoding in bibsane
+  and abbreviation of journal names with non-ASCII characters.
 
 ## [3.1.6][] - 2025-11-21 {: v3.1.6 }
 
@@ -146,8 +146,8 @@ Update for Typst 0.14, refactored bibsane using pybtex.
 
 ### Changed
 
-- Refactor bibsane to use [`pybtex`](https://pybtex.org/) instead of
-  [`bibtexparser`](https://bibtexparser.readthedocs.io/en/latest/)
+- Refactor bibsane to use [`pybtex`](https://pybtex.org/)
+  instead of [`bibtexparser`](https://bibtexparser.readthedocs.io/en/latest/)
   for reading and writing BibTeX files.
   Several minor issues have been fixed in the process, which result in a small change in behavior.
   Most notably, the indentation style has changed because this is yet not configurable in `pybtex`.
@@ -175,11 +175,11 @@ Minor API improvements.
 
 ### Changes
 
-- Add support for other objects than `dict` for the `sysinp` argument of
-  [`compile_typst()`][stepup.reprep.api.compile_typst].
+- Add support for other objects than `dict`
+  for the `sysinp` argument of [`compile_typst()`][stepup.reprep.api.compile_typst].
 - The dictionary passed to the `sysinp` argument of
-  [`compile_typst()`][stepup.reprep.api.compile_typst] is now
-  sanitized to only contain strings as keys and values.
+  [`compile_typst()`][stepup.reprep.api.compile_typst]
+  is now sanitized to only contain strings as keys and values.
   Integer, float and path values are converted to strings automatically.
 - Add sanity check on the positional argument of
   [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex]
@@ -336,8 +336,8 @@ Improved handling of LaTeX fls file and refactored `make_inventory()` function.
 ### Changed
 
 - The arguments of [`make_inventory()`][stepup.reprep.api.make_inventory] are now variadic.
-  Files to be included are passed as positional arguments and the last positional argument
-  is the inventory file to be written.
+  Files to be included are passed as positional arguments
+  and the last positional argument is the inventory file to be written.
   An optional argument `path_def` can be used to specify an inventory definition file.
 - The `include-git` and `exclude-git` commands in an inventory definition now accept arguments,
   which are passed to the `git ls-files` command.
@@ -426,8 +426,8 @@ more ways to specify variables in `render_jinja()`.
         - `convert_svg_png()` becomes [`convert_inkscape_png()`][stepup.reprep.api.convert_inkscape_png]
     - The `inkscape_args` of [`convert_inkscape()`][stepup.reprep.api.convert_inkscape]
       must now be a list instead of a string.
-    - [`compile_latex()`][stepup.reprep.api.compile_latex] no longer creates
-      an inventory file by default.
+    - [`compile_latex()`][stepup.reprep.api.compile_latex]
+      no longer creates an inventory file by default.
       To recover the old behavior, add `inventory=True` to the arguments
       or set the environment variable `REPREP_LATEX_INVENTORY="1"`.
     - [`compile_latex()`][stepup.reprep.api.compile_latex] no longer calls `bibsane`

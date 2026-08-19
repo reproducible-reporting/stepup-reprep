@@ -13,8 +13,9 @@ The following competences are required (at a basic level) for this template to b
 - Git
 - Python
 
-Without these competences, it is still possible to contribute to a publication
-created with StepUp RepRep, but it will be difficult to take the lead.
+Without these competences,
+it is still possible to contribute to a publication created with StepUp RepRep,
+but it will be difficult to take the lead.
 
 ## Required Software and Configuration
 
@@ -106,8 +107,7 @@ sudo dnf install \
 
 ### Conda or Pip
 
-A new dedicated
-[pip](https://pip.pypa.io/en/stable/) or [micromamba](https://mamba.readthedocs.io/)
+A new dedicated [pip](https://pip.pypa.io/en/stable/) or [micromamba](https://mamba.readthedocs.io/)
 software environment is created for each publication.
 It is up to each co-author to decide which one they prefer:
 

@@ -25,7 +25,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def pdf_normalize(path_pdf: str):
-    """Replace a PDF file by its normalized equivalent. This helps making PDFs reproducible."""
+    """Replace a PDF file by its normalized equivalent.
+
+    This helps making PDFs reproducible.
+    """
     if not path_pdf.endswith(".pdf"):
         raise ValueError(f"The input must have a `.pdf` extension, got: {path_pdf}")
     pdf = fitz.open(path_pdf)

@@ -32,8 +32,9 @@ it will identify which entries were actually cited in the LaTeX document.
 It will then clean up the `.bib` file by removing unused entries,
 fixing common formatting issues, and checking for missing or malformed fields.
 
-The `sanitize_bibtex()` function also accepts a `path_cfg` argument to specify
-a YAML configuration file for `reprep-bibsane`, i.e. the script that actually implements the cleanup.
+The `sanitize_bibtex()` function also accepts a `path_cfg` argument
+to specify a YAML configuration file for `reprep-bibsane`,
+i.e. the script that actually implements the cleanup.
 (Without configuration file, a minimal cleanup is performed.)
 For example, you can create a `bibsane.yml` file with the following content
 to enable more checks and cleanups:

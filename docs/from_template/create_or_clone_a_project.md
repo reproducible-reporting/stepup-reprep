@@ -51,8 +51,9 @@ to become familiar with the basic concepts.
 
     Replace `'slug'` with the directory created by the cookiecutter.
 
-- Before making a first commit, define the software requirements,
-  e.g., for post-processing and plotting, in `requirements.in` and/or `environment.yaml`.
+- Before making a first commit,
+  define the software requirements, e.g., for post-processing and plotting,
+  in `requirements.in` and/or `environment.yaml`.
   Pin versions of your dependencies with `==X.Y.Z` as shown in the example files in the template.
 
     - If you must use micromamba, because you have non-Python dependencies,
@@ -62,8 +63,9 @@ to become familiar with the basic concepts.
 
     Note that the Python environment uses [pip-tools](https://github.com/jazzband/pip-tools)
     to manage dependencies.
-    This facilitates reproducibility because the results of the package dependency calculation
-    are stored in `requirements.txt` and this file is also committed to the Git repository
+    This facilitates reproducibility
+    because the results of the package dependency calculation are stored in `requirements.txt`
+    and this file is also committed to the Git repository
 
 - Now you can add all the files, commit them, define a remote URL and push the initial contents online:
 

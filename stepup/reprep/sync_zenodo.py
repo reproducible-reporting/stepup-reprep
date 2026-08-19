@@ -346,13 +346,19 @@ class Access:
         default="public",
         validator=attrs.validators.in_(["public", "restricted"]),
     )
-    """The access level of the record. Public means that the record is visible to everyone."""
+    """The access level of the record.
+
+    Public means that the record is visible to everyone.
+    """
 
     files: str = attrs.field(
         default="public",
         validator=attrs.validators.in_(["public", "restricted"]),
     )
-    """The access level of the files. Public means that the files are visible to everyone."""
+    """The access level of the files.
+
+    Public means that the files are visible to everyone.
+    """
 
     def to_zenodo(self) -> dict[str, str]:
         """Convert the access configuration to a dictionary suitable for Zenodo."""
@@ -414,7 +420,10 @@ class Award:
     identifiers: list[dict[str, str]] = attrs.field(
         factory=list,
     )
-    """Identifiers of the award, e.g. a DOI or a funder ID. Keys must be lower case strings."""
+    """Identifiers of the award, e.g. a DOI or a funder ID.
+
+    Keys must be lower case strings.
+    """
 
     @identifiers.validator
     def _validate_identifiers(self, attribute, value):
@@ -624,7 +633,10 @@ class ZenodoWrapper:
             )
 
     def delete_file(self, rid: int, name: str):
-        """Delete a file. The file must belong to a record in draft mode."""
+        """Delete a file.
+
+        The file must belong to a record in draft mode.
+        """
         self.rest.delete(f"records/{rid}/draft/files/{name}")
 
     def get_latest_version(self, parent_rid: int) -> dict[str] | None:
@@ -632,7 +644,10 @@ class ZenodoWrapper:
         return self.rest.get(f"records/{parent_rid}/versions")
 
     def create_new_version(self, rid: int) -> dict[str]:
-        """Create a new version of a published record. The result is a draft record."""
+        """Create a new version of a published record.
+
+        The result is a draft record.
+        """
         return self.rest.post(f"records/{rid}/versions")
 
 

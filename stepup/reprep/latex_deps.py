@@ -59,8 +59,8 @@ def iter_latex_references(tex_no_comments):
         The filename of the file included, may include directory.
     ext
         The extension one may add if not given.
-        (Approximate guess, because the correct extension for figures
-        depends on details of the LaTeX compiler.)
+        (Approximate guess,
+        because the correct extension for figures depends on details of the LaTeX compiler.)
     """
     for fn_inc in re.findall(RE_INPUT, tex_no_comments):
         yield ".", fn_inc, ".tex"

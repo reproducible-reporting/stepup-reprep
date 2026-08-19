@@ -101,8 +101,7 @@ The migration can be performed in two steps:
 
 The subsections below show how to archive a Git repository in different ways.
 Depending on your use case, you may want to combine several archiving methods.
-For example, compact archives may be preserved over longer times
-than larger ones.
+For example, compact archives may be preserved over longer times than larger ones.
 
 !!! note "Note: Work in the Git root"
 
@@ -121,8 +120,7 @@ than larger ones.
     you must first migrate from an LFS-enabled repository to a normal one,
     as explained above.
 
-The following command will archive the entire history
-of the source files in the Git repository:
+The following command will archive the entire history of the source files in the Git repository:
 
 ```bash
 git bundle create main.bundle main
@@ -132,8 +130,8 @@ It is recommended that you use a more descriptive name than `main.bundle`.
 The bundle file will contain the entire history of the `main` branch
 and some metadata stored under `.git/`.
 You can specify additional branches.
-For more details on bundles, see the
-[Git bundle documentation](https://git-scm.com/docs/git-bundle).
+For more details on bundles,
+see the [Git bundle documentation](https://git-scm.com/docs/git-bundle).
 
 If you want to recreate a Git repository from a bundle, run:
 
@@ -156,8 +154,7 @@ There are two options, the latter of which is preferable:
    using StepUp RepRep's [Inventory Files](inventory_files.md):
 
     - Make sure that the working tree is clean.
-      The `git status` command should print
-      `nothing to commit, working tree clean`.
+      The `git status` command should print `nothing to commit, working tree clean`.
 
     - Write an `inventory-main.def` file with the following line,
       to include all files recorded by Git:
@@ -198,8 +195,8 @@ With this file, just follow the same steps as in option 2 of the previous subsec
 
 ## Create a `README.md` for the Archives
 
-Archives created using the instructions above must be accompanied by a `README.md`
-file that includes the following:
+Archives created using the instructions above must be accompanied by a `README.md` file
+that includes the following:
 
 - A brief overview of the archive files and a few sentences  about their contents.
   The archive file itself should also contain a top-level `README.md` file,

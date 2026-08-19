@@ -4,13 +4,13 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 # Welcome to StepUp RepRep
 
-StepUp RepRep is the publication build tool for
-[Reproducible Reporting](https://github.com/reproducible-reporting).
-It is a domain-specific extension of a powerful universal build tool called
-[StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
+StepUp RepRep is the publication build tool
+for [Reproducible Reporting](https://github.com/reproducible-reporting).
+It is a domain-specific extension of a powerful universal build tool
+called [StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
 
-To get started, we recommend to follow the
-[Template Tutorial](from_template/introduction.md) in this documentation.
+To get started,
+we recommend to follow the [Template Tutorial](from_template/introduction.md) in this documentation.
 StepUp RepRep will be installed in your instance of the template, as part of the setup.
 It is not mandatory to use the template tutorial to use StepUp RepRep,
 see for example the [ACID test dataset](https://github.com/molmod/acid),
@@ -49,8 +49,9 @@ which are not easily connected and shared among co-authors.
 Raw results need to be analyzed, tabulated, and plotted and presented in a convenient way to the reader.
 Today, such data processing is increasingly done using scripting languages (Python, R, Notebooks, ...)
 because they allow more advanced analysis than spreadsheets or manual calculations.
-Too often, however, the results of such scripting tools are incorporated
-into a publication (or subsequent analysis tool) by tedious copy-paste or manual import.
+Too often, however,
+the results of such scripting tools are incorporated into a publication
+(or subsequent analysis tool) by tedious copy-paste or manual import.
 While each tool can be very advanced,
 the transfer of information from one step to the next is often not.
 This becomes problematic in at least the following scenarios:
@@ -73,8 +74,8 @@ This becomes problematic in at least the following scenarios:
    Even if the data and scripts are archived and made available,
    the knowledge of how to reproduce these results is not easily shared.
 
-StepUp RepRep overcomes these difficulties by fully formalizing
-the interactions between different scripts, analysis tools and authoring software.
+StepUp RepRep overcomes these difficulties by fully formalizing the interactions
+between different scripts, analysis tools and authoring software.
 Once configured, the entire process,
 from raw results and source files all the way to a ZIP file to be uploaded to the publisher,
 can be reproduced by simply running the `stepup` program once.

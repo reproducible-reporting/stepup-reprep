@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Execution of notebooks with papermill.
 
-The execution is implemented as a function here instead of calling
-a `jupyter nbconvert` command directly, to avoid creating a subprocess.
+The execution is implemented as a function here
+instead of calling a `jupyter nbconvert` command directly,
+to avoid creating a subprocess.
 Performing the execution in the worker process is more efficient,
 especially when executing many notebooks that all require the same imports.
 """

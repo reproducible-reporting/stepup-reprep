@@ -1088,8 +1088,9 @@ and when provided with the corresponding <code>.aux</code> file,
 it will identify which entries were actually cited in the LaTeX document.
 It will then clean up the <code>.bib</code> file by removing unused entries,
 fixing common formatting issues, and checking for missing or malformed fields.</p>
-<p>The <code>sanitize_bibtex()</code> function also accepts a <code>path_cfg</code> argument to specify
-a YAML configuration file for <code>reprep-bibsane</code>, i.e. the script that actually implements the cleanup.
+<p>The <code>sanitize_bibtex()</code> function also accepts a <code>path_cfg</code> argument
+to specify a YAML configuration file for <code>reprep-bibsane</code>,
+i.e. the script that actually implements the cleanup.
 (Without configuration file, a minimal cleanup is performed.)
 For example, you can create a <code>bibsane.yml</code> file with the following content
 to enable more checks and cleanups:</p>

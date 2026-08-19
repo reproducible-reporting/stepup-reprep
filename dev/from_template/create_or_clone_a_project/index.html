@@ -1237,8 +1237,9 @@ You will need to enter:</p>
 <p>Replace <code>'slug'</code> with the directory created by the cookiecutter.</p>
 </li>
 <li>
-<p>Before making a first commit, define the software requirements,
-  e.g., for post-processing and plotting, in <code>requirements.in</code> and/or <code>environment.yaml</code>.
+<p>Before making a first commit,
+  define the software requirements, e.g., for post-processing and plotting,
+  in <code>requirements.in</code> and/or <code>environment.yaml</code>.
   Pin versions of your dependencies with <code>==X.Y.Z</code> as shown in the example files in the template.</p>
 <ul>
 <li>If you must use micromamba, because you have non-Python dependencies,
@@ -1248,8 +1249,9 @@ You will need to enter:</p>
 </ul>
 <p>Note that the Python environment uses <a href="https://github.com/jazzband/pip-tools">pip-tools</a>
 to manage dependencies.
-This facilitates reproducibility because the results of the package dependency calculation
-are stored in <code>requirements.txt</code> and this file is also committed to the Git repository</p>
+This facilitates reproducibility
+because the results of the package dependency calculation are stored in <code>requirements.txt</code>
+and this file is also committed to the Git repository</p>
 </li>
 <li>
 <p>Now you can add all the files, commit them, define a remote URL and push the initial contents online:</p>

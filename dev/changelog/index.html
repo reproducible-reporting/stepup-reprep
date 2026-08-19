@@ -4069,8 +4069,8 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Correctly report merged records in bibsane&rsquo;s screen output.</li>
-<li>Fix handling of LaTeX encoding in bibsane and abbreviation
-  of journal names with non-ASCII characters.</li>
+<li>Fix handling of LaTeX encoding in bibsane
+  and abbreviation of journal names with non-ASCII characters.</li>
 </ul>
 <h2 id="316-2025-11-21" v3.1.6="v3.1.6"><a href="https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.6">3.1.6</a> - 2025-11-21<a class="headerlink" href="#316-2025-11-21" title="Permanent link">&para;</a></h2>
 <p>Preliminary Tectonic support and minor fixes.</p>
@@ -4086,8 +4086,8 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <p>Update for Typst 0.14, refactored bibsane using pybtex.</p>
 <h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Refactor bibsane to use <a href="https://pybtex.org/"><code>pybtex</code></a> instead of
-  <a href="https://bibtexparser.readthedocs.io/en/latest/"><code>bibtexparser</code></a>
+<li>Refactor bibsane to use <a href="https://pybtex.org/"><code>pybtex</code></a>
+  instead of <a href="https://bibtexparser.readthedocs.io/en/latest/"><code>bibtexparser</code></a>
   for reading and writing BibTeX files.
   Several minor issues have been fixed in the process, which result in a small change in behavior.
   Most notably, the indentation style has changed because this is yet not configurable in <code>pybtex</code>.</li>
@@ -4111,11 +4111,11 @@ and this project adheres to <a href="https://jacobtomlinson.dev/effver/">Effort-
 <p>Minor API improvements.</p>
 <h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Add support for other objects than <code>dict</code> for the <code>sysinp</code> argument of
-  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, inp=(), sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.</li>
+<li>Add support for other objects than <code>dict</code>
+  for the <code>sysinp</code> argument of <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, inp=(), sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>.</li>
 <li>The dictionary passed to the <code>sysinp</code> argument of
-  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, inp=(), sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a> is now
-  sanitized to only contain strings as keys and values.
+  <a class="autorefs autorefs-internal" title="compile_typst(path_typ, dest=None, *, inp=(), sysinp=None, resolution=None, workdir='./', typst=None, keep_deps=None, typst_args=(), inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_typst"><code>compile_typst()</code></a>
+  is now sanitized to only contain strings as keys and values.
   Integer, float and path values are converted to strings automatically.</li>
 <li>Add sanity check on the positional argument of
   <a class="autorefs autorefs-internal" title="sanitize_bibtex(path_bib, *, path_aux=None, path_cfg=None, path_out=None, overwrite=False, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.sanitize_bibtex"><code>sanitize_bibtex()</code></a>
@@ -4252,8 +4252,8 @@ This requires an update the <code>bibsane.yaml</code> configuration file.</p>
 <h3 id="changed_11">Changed<a class="headerlink" href="#changed_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>The arguments of <a class="autorefs autorefs-internal" title="make_inventory(*paths, path_def=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.make_inventory"><code>make_inventory()</code></a> are now variadic.
-  Files to be included are passed as positional arguments and the last positional argument
-  is the inventory file to be written.
+  Files to be included are passed as positional arguments
+  and the last positional argument is the inventory file to be written.
   An optional argument <code>path_def</code> can be used to specify an inventory definition file.</li>
 <li>The <code>include-git</code> and <code>exclude-git</code> commands in an inventory definition now accept arguments,
   which are passed to the <code>git ls-files</code> command.</li>
@@ -4342,8 +4342,8 @@ more ways to specify variables in <code>render_jinja()</code>.</p>
 </li>
 <li>The <code>inkscape_args</code> of <a class="autorefs autorefs-internal" title="convert_inkscape(path_svg, path_out, *, inkscape=None, inkscape_args=(), optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.convert_inkscape"><code>convert_inkscape()</code></a>
   must now be a list instead of a string.</li>
-<li><a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a> no longer creates
-  an inventory file by default.
+<li><a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a>
+  no longer creates an inventory file by default.
   To recover the old behavior, add <code>inventory=True</code> to the arguments
   or set the environment variable <code>REPREP_LATEX_INVENTORY="1"</code>.</li>
 <li><a class="autorefs autorefs-internal" title="compile_latex(path_tex, *, run_bibtex=True, maxrep=5, workdir='./', latex=None, bibtex=None, inventory=None, optional=False, resources=None, duration=None)" href="../reference/stepup.reprep.api/#stepup.reprep.api.compile_latex"><code>compile_latex()</code></a> no longer calls <code>bibsane</code>

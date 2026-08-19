@@ -1890,8 +1890,8 @@ combine scripts and analysis tools implemented in Python modules (or packages) a
 <li>If you change one or more scripts, StepUp will determine which scripts need to be re-executed,
   as opposed to manually re-executing cells in notebooks (which is error-prone).</li>
 <li>If you want to create simple reports that integrate your comments, results and figures,
-  you can write Markdown files with figures and convert them to PDF using
-  <a class="autorefs autorefs-internal" title="convert_markdown(path_md, dest=None, *, paths_css=(), optional=False, resources=None, duration=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_markdown"><code>convert_markdown()</code></a>
+  you can write Markdown files with figures and convert them to PDF
+  using <a class="autorefs autorefs-internal" title="convert_markdown(path_md, dest=None, *, paths_css=(), optional=False, resources=None, duration=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_markdown"><code>convert_markdown()</code></a>
   and <a class="autorefs autorefs-internal" title="convert_weasyprint(path_html, dest=None, *, weasyprint=None, optional=False, resources=None, duration=None)" href="../../reference/stepup.reprep.api/#stepup.reprep.api.convert_weasyprint"><code>convert_weasyprint()</code></a>.</li>
 </ul>
 <h3 id="hdf5">HDF5<a class="headerlink" href="#hdf5" title="Permanent link">&para;</a></h3>
@@ -1899,8 +1899,8 @@ combine scripts and analysis tools implemented in Python modules (or packages) a
 there is a tiny chance that the entire file will become unreadable,
 not just the part that was being written.
 Such an abrupt process termination can never be ruled out (e.g., power failure).
-We are not aware of any recent fixes for this, e.g.,
-some form of <a href="https://en.wikipedia.org/wiki/Journaling_file_system">journaling</a>
+We are not aware of any recent fixes for this,
+e.g., some form of <a href="https://en.wikipedia.org/wiki/Journaling_file_system">journaling</a>
 may make the format resilient to interrupted writes.
 This happens so rarely that the issue is often dismissed as irrelevant,
 see <a href="https://news.ycombinator.com/item?id=10860496">https://news.ycombinator.com/item?id=10860496</a></p>

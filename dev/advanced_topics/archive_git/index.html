@@ -1415,8 +1415,7 @@ and make sure you really want to do this before you proceed.</p>
 <h2 id="archival-recipes">Archival Recipes<a class="headerlink" href="#archival-recipes" title="Permanent link">&para;</a></h2>
 <p>The subsections below show how to archive a Git repository in different ways.
 Depending on your use case, you may want to combine several archiving methods.
-For example, compact archives may be preserved over longer times
-than larger ones.</p>
+For example, compact archives may be preserved over longer times than larger ones.</p>
 <div class="admonition note">
 <p class="admonition-title">Note: Work in the Git root</p>
 <p>All the commands below should be run from the root directory of your Git repository.
@@ -1433,16 +1432,15 @@ If you want to include the large files in the bundle,
 you must first migrate from an LFS-enabled repository to a normal one,
 as explained above.</p>
 </div>
-<p>The following command will archive the entire history
-of the source files in the Git repository:</p>
+<p>The following command will archive the entire history of the source files in the Git repository:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>bundle<span class="w"> </span>create<span class="w"> </span>main.bundle<span class="w"> </span>main
 </span></code></pre></div>
 <p>It is recommended that you use a more descriptive name than <code>main.bundle</code>.
 The bundle file will contain the entire history of the <code>main</code> branch
 and some metadata stored under <code>.git/</code>.
 You can specify additional branches.
-For more details on bundles, see the
-<a href="https://git-scm.com/docs/git-bundle">Git bundle documentation</a>.</p>
+For more details on bundles,
+see the <a href="https://git-scm.com/docs/git-bundle">Git bundle documentation</a>.</p>
 <p>If you want to recreate a Git repository from a bundle, run:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git<span class="w"> </span>clone<span class="w"> </span>main.bundle
 </span></code></pre></div>
@@ -1461,8 +1459,7 @@ For more details on bundles, see the
 <ul>
 <li>
 <p>Make sure that the working tree is clean.
-  The <code>git status</code> command should print
-  <code>nothing to commit, working tree clean</code>.</p>
+  The <code>git status</code> command should print <code>nothing to commit, working tree clean</code>.</p>
 </li>
 <li>
 <p>Write an <code>inventory-main.def</code> file with the following line,
@@ -1496,8 +1493,8 @@ that will include all files recorded by Git and all outputs of the StepUp workfl
 <p>(It is assumed that all static files are already checked into the Git repository.)
 With this file, just follow the same steps as in option 2 of the previous subsection.</p>
 <h2 id="create-a-readmemd-for-the-archives">Create a <code>README.md</code> for the Archives<a class="headerlink" href="#create-a-readmemd-for-the-archives" title="Permanent link">&para;</a></h2>
-<p>Archives created using the instructions above must be accompanied by a <code>README.md</code>
-file that includes the following:</p>
+<p>Archives created using the instructions above must be accompanied by a <code>README.md</code> file
+that includes the following:</p>
 <ul>
 <li>
 <p>A brief overview of the archive files and a few sentences  about their contents.

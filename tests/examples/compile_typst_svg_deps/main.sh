@@ -1,9 +1,6 @@
 #!/usr/bin/env -S bash -x
 source ../example.rc
 
-# Pre-install based typst package
-typst compile - /dev/null -f pdf <<< '#import "@preview/based:0.1.0": encode64'
-
 # Run the example
 sb -w -j 1 & # > current_stdout.txt &
 

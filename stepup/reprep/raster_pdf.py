@@ -11,7 +11,7 @@ import fitz
 
 from stepup.core.api import getenv
 
-__all__ = ("raster_pdf",)
+__all__ = ("main", "raster_pdf")
 
 
 def main():

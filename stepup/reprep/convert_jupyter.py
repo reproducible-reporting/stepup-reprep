@@ -10,6 +10,8 @@ from nbconvert import exporters
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat import read, v4
 
+__all__ = ("main",)
+
 
 def main():
     """Main program."""

@@ -18,6 +18,8 @@ from .latex_deps import scan_latex_deps
 from .latex_log import parse_latex_log
 from .make_inventory import write_inventory
 
+__all__ = ("main",)
+
 
 def main(argv: list[str] | None = None) -> None:
     """Main program."""

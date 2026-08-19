@@ -7,7 +7,7 @@ import sys
 
 import fitz
 
-__all__ = ("cat_pdf",)
+__all__ = ("cat_pdf", "main")
 
 
 def main():

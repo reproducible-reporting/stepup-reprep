@@ -12,6 +12,8 @@ from path import Path
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
 
+__all__ = ("main",)
+
 
 def main():
     """Main program."""

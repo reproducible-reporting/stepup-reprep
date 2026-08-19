@@ -9,6 +9,8 @@ from path import Path
 from stepup.core.api import amend
 from stepup.core.extapi import filter_dependencies
 
+__all__ = ("scan_latex_deps",)
+
 RE_OPTIONS = re.MULTILINE | re.DOTALL
 RE_INPUT = re.compile(r"\\input\s*\{([^}]*)}", RE_OPTIONS)
 RE_VERBATIMINPUT = re.compile(r"\\verbatiminput\s*\{([^}]*)}", RE_OPTIONS)

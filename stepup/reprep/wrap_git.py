@@ -11,6 +11,8 @@ from path import Path
 from stepup.core.api import amend
 from stepup.core.extapi import run_subprocess
 
+__all__ = ("main",)
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""

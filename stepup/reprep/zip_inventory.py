@@ -12,7 +12,7 @@ from path import Path
 from .check_inventory import iter_inventory
 from .inventory import check_summary, get_summary
 
-__all__ = ("zip_inventory",)
+__all__ = ("main", "zip_inventory")
 
 
 TIMESTAMP = datetime.datetime(1980, 1, 1).timestamp()

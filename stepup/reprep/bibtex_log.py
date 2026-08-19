@@ -4,6 +4,8 @@ r"""Identification of errors in BibTeX logs."""
 
 from .latex_log import DEFAULT_MESSAGE, ErrorInfo
 
+__all__ = ("parse_bibtex_log",)
+
 
 def parse_bibtex_log(path_blg: str) -> ErrorInfo | None:
     """Parse a BibTeX log file.

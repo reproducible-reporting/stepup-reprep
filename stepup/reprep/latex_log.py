@@ -7,6 +7,8 @@ import sys
 
 import attrs
 
+__all__ = ("DEFAULT_MESSAGE", "ErrorInfo", "parse_latex_log")
+
 
 @attrs.define
 class ErrorInfo:

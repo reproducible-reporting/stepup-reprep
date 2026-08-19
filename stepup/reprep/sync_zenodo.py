@@ -52,6 +52,8 @@ from rich import print  # noqa: A004
 
 from stepup.core.api import amend, getenv
 
+__all__ = ("main",)
+
 
 class RESTError(Exception):
     """Raised when a REST API call is not successful."""

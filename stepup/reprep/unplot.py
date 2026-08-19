@@ -13,6 +13,8 @@ from numpy.typing import NDArray
 from path import Path
 from svg.path import parse_path
 
+__all__ = ("main",)
+
 
 def main(argv: list[str] | None = None):
     """Main program."""

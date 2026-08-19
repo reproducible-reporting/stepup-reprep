@@ -7,7 +7,7 @@ import sys
 
 import fitz
 
-__all__ = ("add_notes_pdf",)
+__all__ = ("add_notes_pdf", "main")
 
 
 def main(argv: list[str] | None = None):

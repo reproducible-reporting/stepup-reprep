@@ -16,6 +16,8 @@ from path import Path
 
 from stepup.core.api import amend, getenv
 
+__all__ = ("main",)
+
 
 def main():
     """Main program."""

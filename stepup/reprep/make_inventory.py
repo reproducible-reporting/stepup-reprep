@@ -18,8 +18,8 @@ from collections.abc import Collection
 from path import Path
 
 from stepup.core.api import amend
+from stepup.core.enums import FileState
 from stepup.core.extapi import run_subprocess
-from stepup.core.file import FileState
 from stepup.core.nglob import NamedGlob
 
 from .inventory import format_summary, get_summary

@@ -8,7 +8,7 @@ import fitz
 
 from stepup.core.api import getenv
 
-__all__ = ("nup_pdf",)
+__all__ = ("main", "nup_pdf")
 
 
 def main():

@@ -9,7 +9,7 @@ import tempfile
 import fitz
 from path import Path
 
-__all__ = ("pdf_normalize",)
+__all__ = ("main", "pdf_normalize")
 
 
 def main():

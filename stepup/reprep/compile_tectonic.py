@@ -20,6 +20,8 @@ from stepup.core.utils import to_bool
 
 from .make_inventory import write_inventory
 
+__all__ = ("main",)
+
 
 def main(argv: list[str] | None = None) -> None:
     """Main program."""

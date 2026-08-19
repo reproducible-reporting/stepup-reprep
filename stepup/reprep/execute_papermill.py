@@ -15,6 +15,8 @@ import json
 from papermill import execute_notebook
 from path import Path
 
+__all__ = ("main",)
+
 
 def main():
     """Main program."""

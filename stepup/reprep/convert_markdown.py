@@ -14,7 +14,7 @@ from path import Path
 from stepup.core.api import amend, getenv
 from stepup.core.render_jinja import render_jinja_str
 
-__all__ = ("convert_markdown",)
+__all__ = ("convert_markdown", "main")
 
 
 def main():

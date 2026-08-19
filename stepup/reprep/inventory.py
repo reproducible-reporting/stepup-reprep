@@ -9,6 +9,8 @@ from path import Path
 
 from stepup.core.hash import compute_file_digest
 
+__all__ = ("FileSummary", "check_summary", "format_summary", "get_summary", "parse_summary")
+
 
 @attrs.define
 class FileSummary:

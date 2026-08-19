@@ -5,7 +5,7 @@
 import argparse
 import sys
 
-import fitz
+import pymupdf
 
 __all__ = ("cat_pdf", "main")
 
@@ -56,10 +56,10 @@ def cat_pdf(
             raise ValueError(
                 f"All arguments must have a `.pdf` extension, got: {path_pdf}", file=sys.stderr
             )
-    dst = fitz.open()
+    dst = pymupdf.open()
 
     for path_src in paths_src:
-        src = fitz.open(path_src)
+        src = pymupdf.open(path_src)
         # See https://github.com/pymupdf/PyMuPDF/issues/3635
         src.scrub()
         dst.insert_pdf(src)

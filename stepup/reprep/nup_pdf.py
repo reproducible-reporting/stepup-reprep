@@ -4,7 +4,7 @@
 
 import argparse
 
-import fitz
+import pymupdf
 
 from stepup.core.api import getenv
 
@@ -90,16 +90,16 @@ def nup_pdf(
     for path_pdf in path_src, path_dst:
         if not path_pdf.endswith(".pdf"):
             raise ValueError(f"All arguments must have a `.pdf` extension, got: {path_pdf}")
-    src = fitz.open(path_src)
+    src = pymupdf.open(path_src)
     # See https://github.com/pymupdf/PyMuPDF/issues/3635
     src.scrub()
-    dst = fitz.open()
+    dst = pymupdf.open()
 
     nup = nrow * ncol
     unit = 72 / 25.4
     # Convert distances in mm to points
     margin *= unit
-    width, height = fitz.paper_size(page_format)
+    width, height = pymupdf.paper_size(page_format)
 
     # Spacing between two top-left corners of neighboring panels.
     xshift = (width - margin) / ncol
@@ -112,7 +112,7 @@ def nup_pdf(
             irow = ioffset // ncol
             icol = ioffset % ncol
             dst_page.show_pdf_page(
-                fitz.Rect(
+                pymupdf.Rect(
                     margin + xshift * icol,
                     margin + yshift * irow,
                     xshift * (icol + 1),

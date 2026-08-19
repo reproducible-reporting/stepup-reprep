@@ -7,7 +7,7 @@ This is mainly intended to impede (the quality of) unauthorized copies.
 
 import argparse
 
-import fitz
+import pymupdf
 
 from stepup.core.api import getenv
 
@@ -44,8 +44,8 @@ def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
         raise ValueError(f"The output must have a `.pdf` extension, got: {path_out}")
     if resolution <= 0:
         raise ValueError(f"The resolution must be strictly positive, git: {resolution}")
-    with fitz.open(path_inp) as src:
-        dst = fitz.open()
+    with pymupdf.open(path_inp) as src:
+        dst = pymupdf.open()
         for src_page in src:
             src_page.wrap_contents()
             if src_page.rotation in (90, 270):

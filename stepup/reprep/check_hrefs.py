@@ -8,7 +8,7 @@ import sys
 
 import attrs
 import cattrs.preconf.pyyaml
-import fitz
+import pymupdf
 import yaml
 from bs4 import BeautifulSoup
 from markdown_it import MarkdownIt
@@ -101,13 +101,13 @@ def collect_hrefs_html(fn_html: str) -> list[HRef]:
 def collect_hrefs_pdf(fn_pdf: str) -> list[HRef]:
     """Find all hyper references in a PDF file."""
     # See https://pymupdf.readthedocs.io/en/latest/page.html#description-of-get-links-entries
-    doc = fitz.open(fn_pdf)
+    doc = pymupdf.open(fn_pdf)
     hrefs = []
     for page in doc:
         for link in page.get_links():
-            if link["kind"] in (fitz.LINK_LAUNCH, fitz.LINK_GOTOR):
+            if link["kind"] in (pymupdf.LINK_LAUNCH, pymupdf.LINK_GOTOR):
                 hrefs.append(HRef(link["file"]))
-            elif link["kind"] == fitz.LINK_URI:
+            elif link["kind"] == pymupdf.LINK_URI:
                 hrefs.append(HRef(link["uri"]))
     return hrefs
 

@@ -5,7 +5,7 @@
 import argparse
 import sys
 
-import fitz
+import pymupdf
 
 __all__ = ("add_notes_pdf", "main")
 
@@ -33,13 +33,13 @@ def add_notes_pdf(path_src: str, path_notes: str, path_dst: str):
     for path_pdf in path_src, path_notes, path_dst:
         if not path_pdf.endswith(".pdf"):
             raise ValueError(f"All arguments must have a `.pdf` extension, got: {path_pdf}")
-    src = fitz.open(path_src)
+    src = pymupdf.open(path_src)
     # See https://github.com/pymupdf/PyMuPDF/issues/3635
     src.scrub()
-    notes = fitz.open(path_notes)
+    notes = pymupdf.open(path_notes)
 
     # Create the combined PDF
-    dst = fitz.open()
+    dst = pymupdf.open()
     for isrc in range(len(src)):
         final = isrc == len(src) - 1
         dst.insert_pdf(src, from_page=isrc, to_page=isrc, final=final)

@@ -6,7 +6,7 @@ import argparse
 import shutil
 import tempfile
 
-import fitz
+import pymupdf
 from path import Path
 
 __all__ = ("main", "pdf_normalize")
@@ -31,7 +31,7 @@ def pdf_normalize(path_pdf: str):
     """
     if not path_pdf.endswith(".pdf"):
         raise ValueError(f"The input must have a `.pdf` extension, got: {path_pdf}")
-    pdf = fitz.open(path_pdf)
+    pdf = pymupdf.open(path_pdf)
     pdf.set_metadata({})
     pdf.del_xml_metadata()
     pdf.xref_set_key(-1, "ID", "null")

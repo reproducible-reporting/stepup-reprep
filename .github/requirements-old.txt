@@ -15,7 +15,7 @@ numpy==1.24.3
 path==16.14.0
 papermill==2.6.0
 pyiso4==0.1.6
-pymupdf==1.23.7
+pymupdf==1.24.3
 pyyaml==6.0
 requests==2.33.0
 scipy==1.11.1

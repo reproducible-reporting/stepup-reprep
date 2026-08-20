@@ -18,6 +18,10 @@ authors:
     country: BE
 license: LGPL-3.0-or-later
 repository-code: https://github.com/reproducible-reporting/stepup-reprep
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22024042
+    description: Concept DOI, which always resolves to the latest archived version.
 references:
   - title: StepUp Core
     type: software

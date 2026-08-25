@@ -8,7 +8,6 @@ prune .github
 prune .vscode
 exclude .editorconfig
 exclude .gitignore
-exclude .markdownlint-cli2.jsonc
 exclude .pre-commit-config.yaml
 exclude mkdocs.yaml
 

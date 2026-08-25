@@ -28,17 +28,16 @@ repos:
   hooks:
     - id: remove-crlf
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.3
+  rev: v0.16.4
   hooks:
     - id: ruff-format
     - id: ruff-check
       args: ["--fix", "--show-fixes"]
-- repo: https://github.com/DavidAnson/markdownlint-cli2
-  rev: v0.23.2
+- repo: https://github.com/jackdewinter/pymarkdown
+  rev: v0.9.39
   hooks:
-  - id: markdownlint-cli2
+  - id: pymarkdown
     exclude: '^test'
-    require_serial: true
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.38.0
   hooks:

@@ -2,11 +2,6 @@
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
-<!-- markdownlint-configure-file { "MD013": {
-    "line_length": 100,
-    "heading_line_length": 100,
-    "code_block_line_length": 1000
-} } -->
 
 # Unplot
 
@@ -71,6 +66,7 @@ and the necessary paths have been drawn over it as input for Unplot.
 Open this file in Inkscape to inspect the paths in the XML Editor.
 You will find the following (among other attributes):
 
+<!-- pyml disable-num-lines 22 md013 -->
 ```xml
 <path
     d="M 51.564216,441.96145 51.70753,13.139368"

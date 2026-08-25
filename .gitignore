@@ -26,10 +26,6 @@ docs/.stepup
 *.swp
 tmp
 
-# NodeJS (for markdownlint)
-node_modules/
-package-lock.json
-package.json
 # Devenv
 .devenv*
 devenv.local.nix

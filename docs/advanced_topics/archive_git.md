@@ -2,6 +2,7 @@
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
+
 # Archive a Git Repository (of a StepUp project)
 
 ## Git Repositories Versus Long-term Archival

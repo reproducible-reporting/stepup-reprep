@@ -1,0 +1,52 @@
+{
+  "upload_type": "software",
+  "title": "StepUp RepRep",
+  "description": "StepUp RepRep is the publication build tool for Reproducible Reporting. It is a domain-specific extension of StepUp Core, a universal dynamic build tool, and targets the last mile of the publication process: the creation of a publication from raw research results.",
+  "creators": [
+    {
+      "name": "Verstraelen, Toon",
+      "orcid": "0000-0001-9288-5608",
+      "affiliation": "Center for Molecular Modeling (CMM), Ghent University"
+    }
+  ],
+  "license": "lgpl-3.0-or-later",
+  "access_right": "open",
+  "communities": [
+    {
+      "identifier": "ugent"
+    }
+  ],
+  "language": "eng",
+  "keywords": [
+    "reproducibility",
+    "reproducible research",
+    "reproducible reporting",
+    "research software",
+    "open science",
+    "build tool",
+    "workflow automation",
+    "scientific publishing",
+    "scientific writing",
+    "publication repository",
+    "LaTeX",
+    "Typst",
+    "Markdown",
+    "Inkscape",
+    "Jupyter notebook",
+    "extension",
+    "StepUp Core",
+    "Python"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://reproducible-reporting.github.io/stepup-reprep",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-softwaredocumentation"
+    },
+    {
+      "identifier": "10.5281/zenodo.22018869",
+      "relation": "requires",
+      "resource_type": "software"
+    }
+  ]
+}

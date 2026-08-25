@@ -43,7 +43,6 @@ repos:
   rev: 0.38.0
   hooks:
     - id: check-github-workflows
-    - id: check-citation-file-format
 - repo: https://github.com/srstevenson/nb-clean
   rev: "4.0.1"
   hooks:
@@ -53,3 +52,7 @@ repos:
   rev: v6.2.0
   hooks:
   - id: reuse
+- repo: https://github.com/reproducible-reporting/check-zenodo-json
+  rev: v1.1.1
+  hooks:
+  - id: check-zenodo-json

@@ -4,6 +4,7 @@
 
 import argparse
 import json
+from collections.abc import Sequence
 from xml.etree.ElementTree import Element
 
 import attrs
@@ -16,7 +17,7 @@ from svg.path import parse_path
 __all__ = ("main",)
 
 
-def main(argv: list[str] | None = None):
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     axes, px_curves = load_pixel_data_svg(args.inp)
@@ -31,7 +32,7 @@ def main(argv: list[str] | None = None):
         fh.write("\n")
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-unplot", description="Extract data points from bitmap plots."

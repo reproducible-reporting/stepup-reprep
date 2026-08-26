@@ -4,7 +4,7 @@
 
 import argparse
 import shlex
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 
 from defusedxml import ElementTree
 from path import Path
@@ -15,9 +15,9 @@ from stepup.core.extapi import run_subprocess
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if not args.path_pdf.endswith(".pdf"):
         raise ValueError("The output must have a pdf extensions.")
     if args.weasyprint is None:
@@ -28,7 +28,7 @@ def main():
     run_subprocess(shlex.join(popenargs))
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-convert-weasyprint",
@@ -41,7 +41,7 @@ def parse_args() -> argparse.Namespace:
         help="The weasyprint executable to use. "
         "Defaults to `${REPREP_WEASYPRINT}` variable or `weasyprint` if the variable is unset.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def search_html_deps(src: str) -> list[str]:

@@ -13,7 +13,7 @@ import argparse
 import contextlib
 import shlex
 import sqlite3
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 
 from path import Path
 
@@ -27,7 +27,7 @@ from .inventory import format_summary, get_summary
 __all__ = ("main", "write_inventory")
 
 
-def main(argv: list[str] | None = None):
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
         prog="srr-make-inventory", description="Make an inventory.txt file."

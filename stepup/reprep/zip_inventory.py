@@ -6,6 +6,7 @@ import argparse
 import datetime
 import tempfile
 import zipfile
+from collections.abc import Sequence
 
 from path import Path
 
@@ -18,7 +19,7 @@ __all__ = ("main", "zip_inventory")
 TIMESTAMP = datetime.datetime(1980, 1, 1).timestamp()
 
 
-def main(argv: list[str] | None = None):
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
         prog="srr-zip-inventory", description="Create a reproducible ZIP file."

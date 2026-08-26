@@ -6,6 +6,7 @@ import argparse
 import contextlib
 import shlex
 import sys
+from collections.abc import Sequence
 
 from path import Path
 
@@ -21,7 +22,7 @@ from .make_inventory import write_inventory
 __all__ = ("main",)
 
 
-def main(argv: list[str] | None = None) -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
 
@@ -133,7 +134,7 @@ def main(argv: list[str] | None = None) -> None:
     amend(inp=filter_dependencies(fls_inp), vol=filter_dependencies(fls_vol))
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-compile-latex",
@@ -173,4 +174,4 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

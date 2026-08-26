@@ -26,6 +26,7 @@ import enum
 import re
 import sys
 import tempfile
+from collections.abc import Sequence
 from typing import TextIO
 
 from path import Path
@@ -35,9 +36,9 @@ from stepup.core.api import amend
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     with tempfile.TemporaryDirectory("srr-latex-flat") as tmpdir:
         tmpdir = Path(tmpdir)
         path_flat_tmp = tmpdir / "flat.tex"
@@ -51,7 +52,7 @@ def main():
             raise RuntimeError(f"Flattening failed with status {status.name}. ")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-flatten-latex",
@@ -59,7 +60,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("path_tex", help="The top-level tex file.")
     parser.add_argument("path_flat", help="The flattened output tex file.")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 class FlattenStatus(enum.Enum):

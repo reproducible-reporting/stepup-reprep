@@ -38,6 +38,7 @@ import argparse
 import datetime
 import hashlib
 import json
+from collections.abc import Sequence
 from typing import Any
 
 import attrs
@@ -653,7 +654,7 @@ class ZenodoWrapper:
         return self.rest.post(f"records/{rid}/versions")
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
         prog="srr-sync-zenodo",
@@ -674,7 +675,7 @@ def main():
         help="Remove all draft data sets before proceeding. "
         "This also deletes the record ID json file.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     with open(args.config) as fh:
         data = yaml.safe_load(fh)
     if not isinstance(data.get("metadata").get("version"), str):

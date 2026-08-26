@@ -11,6 +11,7 @@ import contextlib
 import re
 import shlex
 import sys
+from collections.abc import Sequence
 
 from path import Path, TempDir
 
@@ -23,7 +24,7 @@ from .make_inventory import write_inventory
 __all__ = ("main",)
 
 
-def main(argv: list[str] | None = None) -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
 
@@ -96,7 +97,7 @@ def main(argv: list[str] | None = None) -> None:
         sys.exit(cp.returncode)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-compile-tectonic",
@@ -137,4 +138,4 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

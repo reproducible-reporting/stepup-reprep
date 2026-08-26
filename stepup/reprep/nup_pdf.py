@@ -3,6 +3,7 @@
 """Put multiple pages per sheet using a fixed layout."""
 
 import argparse
+from collections.abc import Sequence
 
 import pymupdf
 
@@ -11,9 +12,9 @@ from stepup.core.api import getenv
 __all__ = ("main", "nup_pdf")
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.nrow is None:
         args.nrow = int(getenv("REPREP_NUP_NROW", "2"))
     if args.ncol is None:
@@ -25,7 +26,7 @@ def main():
     nup_pdf(args.path_src, args.path_dst, args.nrow, args.ncol, args.margin, args.page_format)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-nup-pdf", description="Put multiple pages per sheet using a fixed layout."
@@ -59,7 +60,7 @@ def parse_args() -> argparse.Namespace:
         help="The output page format. "
         "The default is ${REPREP_NUP_PAGE_FORMAT} or A4-L if the variable is not set.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def nup_pdf(

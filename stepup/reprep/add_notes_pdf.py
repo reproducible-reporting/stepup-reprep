@@ -4,19 +4,20 @@
 
 import argparse
 import sys
+from collections.abc import Sequence
 
 import pymupdf
 
 __all__ = ("add_notes_pdf", "main")
 
 
-def main(argv: list[str] | None = None):
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     args = parse_args(argv)
     add_notes_pdf(args.path_src, args.path_notes, args.path_dst)
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-add-notes-pdf",

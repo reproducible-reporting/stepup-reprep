@@ -3,7 +3,7 @@
 """Checking of inventory files."""
 
 import argparse
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 
 from path import Path
 
@@ -12,7 +12,7 @@ from .inventory import FileSummary, check_summary, get_summary, parse_summary
 __all__ = ("check_inventory", "iter_inventory", "main")
 
 
-def main(argv: list[str] | None = None):
+def main(argv: Sequence[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
         prog="srr-check-inventory", description="Check an inventory.txt."

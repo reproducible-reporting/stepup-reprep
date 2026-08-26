@@ -5,6 +5,7 @@
 import argparse
 import re
 import sys
+from collections.abc import Sequence
 
 import attrs
 import cattrs.preconf.pyyaml
@@ -19,9 +20,9 @@ from stepup.core.api import amend, getenv
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.path_config is None:
         args.path_config = getenv("REPREP_CHECK_HREFS_CONFIG", "check_hrefs.yaml", back=True)
         amend(inp=args.path_config)
@@ -31,7 +32,7 @@ def main():
     check_hrefs(hrefs, Path(args.path_src).parent.normpath(), config.accept)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-check-hrefs", description="Check hyper references Markdown, HTML or PDF files."
@@ -44,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         help="Configuration yaml file. "
         "The default is ${REPREP_CHECK_HREFS_CONFIG} or check_hrefs.yaml if it is not set.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 @attrs.define

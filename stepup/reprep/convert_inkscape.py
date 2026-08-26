@@ -4,7 +4,7 @@
 
 import argparse
 import shlex
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 
 from defusedxml import ElementTree
 from path import Path
@@ -15,9 +15,9 @@ from stepup.core.extapi import filter_dependencies, run_subprocess
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
 
     path_out = Path(args.path_out)
     allowed_extensions = [".pdf", ".png"]
@@ -47,7 +47,7 @@ def main():
     run_subprocess(shlex.join(args))
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-convert-inkscape",
@@ -68,7 +68,7 @@ def parse_args() -> argparse.Namespace:
         help="The inkscape executable to use. "
         "Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def search_svg_deps(src: str) -> list[str]:

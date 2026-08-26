@@ -13,6 +13,7 @@ import contextlib
 import json
 import shlex
 import sys
+from collections.abc import Sequence
 
 from path import Path, TempDir
 
@@ -25,9 +26,9 @@ from .make_inventory import write_inventory
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
 
     if not args.path_typ.endswith(".typ"):
         raise ValueError("The Typst source must have extension .typ")
@@ -101,7 +102,7 @@ def main():
         sys.exit(cp.returncode)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-compile-typst",
@@ -149,7 +150,7 @@ def parse_args() -> argparse.Namespace:
         help="Additional arguments to be passed to typst. "
         "The defaults is `${REPREP_TYPST_ARGS}`, if the environment variable is defined.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 
 import attrs
 import cattrs
@@ -118,7 +118,7 @@ RETURN_CODE_CHANGED = 1
 RETURN_CODE_BROKEN = 2
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     """Main program."""
     args = parse_args(argv)
 
@@ -221,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
     return retcode
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-bibsane",

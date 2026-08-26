@@ -4,19 +4,20 @@
 
 import argparse
 import sys
+from collections.abc import Sequence
 
 import pymupdf
 
 __all__ = ("cat_pdf", "main")
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     cat_pdf(args.paths_src, args.path_dst, args.insert_blank)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-cat-pdf", description="Concatenate PDFs, optionally inserting blank pages."
@@ -31,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         default=False,
         action="store_true",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def cat_pdf(

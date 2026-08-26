@@ -5,6 +5,7 @@
 import argparse
 import shlex
 import sys
+from collections.abc import Sequence
 
 from path import Path
 
@@ -14,7 +15,7 @@ from stepup.core.extapi import run_subprocess
 __all__ = ("main",)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-wrap-git", description="Run git commands that depend on the current commit id."
@@ -31,12 +32,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         help="The git command to run.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
 
     cp = run_subprocess(
         "git rev-parse --show-toplevel",

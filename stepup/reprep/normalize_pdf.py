@@ -5,6 +5,7 @@
 import argparse
 import shutil
 import tempfile
+from collections.abc import Sequence
 
 import pymupdf
 from path import Path
@@ -12,16 +13,16 @@ from path import Path
 __all__ = ("main", "pdf_normalize")
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    pdf_normalize(parse_args().path_pdf)
+    pdf_normalize(parse_args(argv).path_pdf)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(prog="srr-normalize-pdf", description="Normalize a PDF file.")
     parser.add_argument("path_pdf", help="The pdf to be normalized (in place).")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def pdf_normalize(path_pdf: str):

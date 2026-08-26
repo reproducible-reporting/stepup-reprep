@@ -4,6 +4,7 @@
 
 import argparse
 import json
+from collections.abc import Sequence
 from pathlib import Path
 
 from nbconvert import exporters
@@ -13,9 +14,9 @@ from nbformat import read, v4
 __all__ = ("main",)
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
 
     if not args.path_nb.endswith(".ipynb"):
         raise ValueError("The notebook file must have extension .ipynb")
@@ -60,7 +61,7 @@ def main():
         f.write(body)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="srr-convert-jupyter",
@@ -83,7 +84,7 @@ def parse_args() -> argparse.Namespace:
         type=str,
         help="Arguments to pass to the notebook as a literal JSON string.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ This is mainly intended to impede (the quality of) unauthorized copies.
 """
 
 import argparse
+from collections.abc import Sequence
 
 import pymupdf
 
@@ -14,9 +15,9 @@ from stepup.core.api import getenv
 __all__ = ("main", "raster_pdf")
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     """Main program."""
-    args = parse_args()
+    args = parse_args(argv)
     if args.resolution is None:
         args.resolution = int(getenv("REPREP_RASTER_RESOLUTION", "100"))
     if args.quality is None:
@@ -26,14 +27,14 @@ def main():
     return 0
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(prog="srr-raster-pdf", description="Raster a PDF file.")
     parser.add_argument("path_inp", help="The input PDF file.")
     parser.add_argument("path_out", help="The output PDF file.")
     parser.add_argument("-r", "--resolution", type=int, help="Bitmap resolution")
     parser.add_argument("-q", "--quality", type=int, help="JPEG quality")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):

@@ -63,7 +63,7 @@ jobs:
         with:
           tectonic-version: ${{ env.TECTONIC_VERSION }}
       - name: Cache the Tectonic downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           # Tectonic 0.16 used `~/.cache/Tectonic` for this instead.
           path: ~/.cache/tectonic

@@ -14,8 +14,15 @@ SPDX-License-Identifier: LGPL-3.0-or-later
 ![LGPL-3 License](https://img.shields.io/badge/License-LGPL_v3-blue.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/reproducible-reporting/stepup-reprep/badge)](https://www.codefactor.io/repository/github/reproducible-reporting/stepup-reprep)
 
-StepUp RepRep is the [StepUp](https://github.com/reproducible-reporting/stepup-core) extension
+<!-- snipwise.md BEGIN abstract -->
+StepUp RepRep is the publication build tool
 for [Reproducible Reporting](https://github.com/reproducible-reporting).
+It is a domain-specific extension of
+[StepUp Core](https://reproducible-reporting.github.io/stepup-core/),
+a universal dynamic build tool,
+and targets the last mile of the publication process:
+the creation of a publication from raw research results.
+<!-- snipwise.md END abstract -->
 
 For more information, consult the [documentation](http://reproducible-reporting.github.io/stepup-reprep).
 

@@ -5,10 +5,15 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Welcome to StepUp RepRep
 
+<!-- snipwise.md BEGIN abstract -->
 StepUp RepRep is the publication build tool
 for [Reproducible Reporting](https://github.com/reproducible-reporting).
-It is a domain-specific extension of a powerful universal build tool
-called [StepUp Core](https://reproducible-reporting.github.io/stepup-core/).
+It is a domain-specific extension of
+[StepUp Core](https://reproducible-reporting.github.io/stepup-core/),
+a universal dynamic build tool,
+and targets the last mile of the publication process:
+the creation of a publication from raw research results.
+<!-- snipwise.md END abstract -->
 
 To get started,
 we recommend to follow the [Template Tutorial](from_template/introduction.md) in this documentation.

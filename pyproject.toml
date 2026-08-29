@@ -33,7 +33,6 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: Markdown",
 ]
 dependencies = [
-    # Ensure changes to these dependencies are reflected in .github/requirements-old.txt
     "attrs>=23.1.0",
     "cattrs>=23.2.3",
     "defusedxml>=0.7.0",
@@ -59,17 +58,25 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
+# What the test suite needs, and nothing more.
+# The pytest workflow installs this extra rather than `dev`,
+# because it resolves the oldest supported versions of the direct dependencies,
+# which is only meaningful for packages that the tests actually exercise.
+tests = [
+    "matplotlib>=3.8.0",
+    "pillow>=10.0.0",
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist>=3.5.0",
+]
 dev = [
-    "matplotlib",
+    "stepup-reprep[tests]",
     "mike",
     "mkdocs",
     "mkdocstrings[python]",
     "mkdocs-macros-plugin",
     "mkdocs-material",
     "psutil",
-    "pytest",
-    "pytest-asyncio>=0.24",
-    "pytest-xdist",
     "reuse",
 ]
 

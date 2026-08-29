@@ -35,6 +35,8 @@ jobs:
       STEPUP_BUILD_DURATION: 0
       # RPC timeout is set shorter to speed up tests in case of failures.
       STEPUP_SYNC_RPC_TIMEOUT: 10
+      # The Tectonic version is also part of the cache key of its downloads.
+      TECTONIC_VERSION: 0.17.0
     strategy:
       matrix:
         include:
@@ -59,7 +61,23 @@ jobs:
       - name: Install Tectonic
         uses: wtfjoke/setup-tectonic@v4
         with:
-          tectonic-version: 0.16.9
+          tectonic-version: ${{ env.TECTONIC_VERSION }}
+      - name: Cache the Tectonic downloads
+        uses: actions/cache@v4
+        with:
+          # Tectonic 0.16 used `~/.cache/Tectonic` for this instead.
+          path: ~/.cache/tectonic
+          key: tectonic-${{ matrix.runner }}-${{ env.TECTONIC_VERSION }}
+      - name: Warm up the Tectonic cache
+        # On a cache miss, Tectonic downloads its bundle and builds a LaTeX format
+        # on first use, which takes far longer than the example tests allow.
+        # This document pulls in the same bundle files as the Tectonic examples,
+        # so that the cost is paid here instead of inside a test.
+        run: |
+          mkdir -p "${RUNNER_TEMP}/tectonic-warmup"
+          cp .github/warmup.tex "${RUNNER_TEMP}/tectonic-warmup/warmup.tex"
+          cp .github/warmup.bib "${RUNNER_TEMP}/tectonic-warmup/warmup.bib"
+          tectonic -c minimal "${RUNNER_TEMP}/tectonic-warmup/warmup.tex"
       - name: Install typst
         uses: typst-community/setup-typst@v5
         with:

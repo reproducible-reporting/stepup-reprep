@@ -23,6 +23,14 @@ from .make_inventory import write_inventory
 
 __all__ = ("main",)
 
+MISSING_INPUT_PATTERN = re.compile(r"^error: .*?`([^`]+)' not found", flags=re.MULTILINE)
+r"""Pattern for the missing input files that Tectonic reports on the standard error stream.
+
+Only lines starting with `error: ` are considered.
+As of Tectonic 0.17, a halted run also dumps the engine transcript to the same stream,
+and the definition of `\@missingfileerror` quoted in it matches the same phrase.
+"""
+
 
 def main(argv: Sequence[str] | None = None) -> None:
     """Main program."""
@@ -81,10 +89,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     # Look for missing input files in the standard error stream and amend them.
     if cp.returncode != 0:
-        inp_paths.extend(
-            workdir / m.group(1)
-            for m in re.finditer(r"`([^`]+)' not found", cp.stderr, flags=re.MULTILINE)
-        )
+        inp_paths.extend(workdir / m.group(1) for m in MISSING_INPUT_PATTERN.finditer(cp.stderr))
     sys.stderr.write(cp.stderr)
     inp_paths = filter_dependencies(inp_paths)
     amend(inp=inp_paths)

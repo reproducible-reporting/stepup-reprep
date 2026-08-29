@@ -302,7 +302,7 @@ def compile_tectonic(
 
     !!! warning
 
-        This feature is only tested with Tectonic 0.15
+        This feature is only tested with Tectonic 0.17
 
         Support for Tectonic in StepUp RepRep is experimental.
         Expect breaking changes in future releases.

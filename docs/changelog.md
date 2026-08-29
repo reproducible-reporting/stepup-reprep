@@ -13,8 +13,6 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
-
 ## [4.0.0rc8][] - 2026-08-26 {: #v4.0.0rc8 }
 
 Compatibility with StepUp Core 4 and a few minor improvements.
@@ -53,6 +51,13 @@ and will be updated with any further changes before the final release.)
   This is easily replaced with a simple typst input.
 - The `compile_typst()` function no longer scans the `sysinp` dictionary for `Path` objects
   to automatically mark them as input dependencies.
+
+### Fixed
+
+- `compile_tectonic()` only scans the `error:` lines of Tectonic's standard error stream
+  for missing input files.
+  As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
+  from which paths were picked up that are no files at all.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

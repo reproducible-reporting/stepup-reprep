@@ -1,6 +1,0 @@
-# SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
-# SPDX-License-Identifier: CC-BY-SA-4.0
-
-Sitemap: https://reproducible-reporting.github.io/stepup-reprep/sitemap.xml
-User-agent: *
-Allow: /

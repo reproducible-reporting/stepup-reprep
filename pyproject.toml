@@ -97,7 +97,6 @@ tests = [
 ]
 dev = [
     "stepup-reprep[tests]",
-    "mike",
     "mkdocs",
     "mkdocstrings[python]",
     "mkdocs-macros-plugin",

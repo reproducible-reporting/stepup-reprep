@@ -1,0 +1,53 @@
+<!--
+SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+{% extends "main.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <script>
+    // Recover links to the versioned documentation that was published before StepUp RepRep 4.0.
+    // Those URLs carried a version segment, such as /stable/, /dev/ or /3.1/,
+    // which the current flat site no longer has.
+    //
+    // GitHub Pages serves this page with an HTTP 404 status and offers no way to change that,
+    // so this rewrite fixes broken links for readers but does not transfer search ranking.
+    (function () {
+      var siteUrl = {{ (config.site_url or "/") | tojson }};
+      var base = new URL(siteUrl, window.location.origin).pathname;
+      var version = /^(?:stable|latest|dev|[0-9]+(?:\.[0-9]+)*)$/;
+
+      var path = window.location.pathname;
+      if (path.slice(0, base.length) !== base) {
+        return;
+      }
+      var parts = path.slice(base.length).split("/");
+      if (!version.test(parts[0])) {
+        // No version segment, so this is a genuine 404.
+        // Returning here also stops a rewrite from bouncing further,
+        // because the rewritten path never carries a version segment.
+        return;
+      }
+      // Every page of the versioned documentation still exists under the same path,
+      // except advanced_topics/tile_pdfs/ and reference/stepup.reprep.tile_pdf/,
+      // which document a feature that was removed and have no successor.
+      var rest = parts.slice(1).join("/").replace(/index\.html$/, "");
+      window.location.replace(base + rest + window.location.search + window.location.hash);
+    })();
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h1>404 - Page not found</h1>
+  <p>
+    This page does not exist.
+    If you followed a link to the documentation of an older StepUp RepRep release,
+    note that only the current version is published from now on,
+    and that some pages were removed along the way.
+  </p>
+  <p>
+    Use the search box at the top of this page,
+    or start again from the <a href="{{ base_url }}/">documentation home page</a>.
+  </p>
+{% endblock %}

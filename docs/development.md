@@ -58,6 +58,8 @@ pytest -vv
 ## Documentation
 
 The documentation is created with [MkDocs](https://www.mkdocs.org/).
+Only the current version is published:
+every commit on the main branch republishes the site with GitHub Pages.
 
 Edit the documentation markdown files with a live preview by running:
 

@@ -92,7 +92,8 @@ tests = [
     "pillow>=10.0.0",
     "pytest>=8.2.0",
     "pytest-asyncio>=0.24",
-    "pytest-xdist>=3.5.0",
+    "pytest-timeout>=2.3.1",
+    "pytest-xdist>=3.6.1",
 ]
 dev = [
     "stepup-reprep[tests]",
@@ -144,6 +145,7 @@ filterwarnings = [
     "error",
     "ignore:.*idutils.*:DeprecationWarning",
 ]
+timeout = 15
 
 [tool.ruff]
 line-length = 100

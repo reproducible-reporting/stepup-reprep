@@ -9,10 +9,25 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
     This feature was added to StepUp RepRep 1.3.
 
-    As of StepUp RepRep 3.1, the schema of the `zenodo.yaml` file has changed.
-    The `sync_zenodo()` function interacts with Zenodo through the invenio RMD REST API,
-    which is not officially documented yet,
-    but it offers more features than the official Zenodo API.
+    As of StepUp RepRep 3.1, the schema of the configuration file has changed,
+    because `sync_zenodo()` interacts with Zenodo through the InvenioRDM REST API,
+    which offers fields that the legacy Zenodo API cannot express.
+
+    As of StepUp RepRep 4.0:
+
+    - The token is taken directly from an environment variable, instead of reading it from a file.
+    - The configuration file may also be written in JSON or TOML instead of YAML.
+    - The recommended file names are `sync_zenodo.yaml` for the configuration
+      and `zenodo_description.md` for the description,
+      instead of `zenodo.yaml` and `zenodo.md`,
+      which are easily confused with the legacy `.zenodo.json` file.
+    - The `custom_fields` section describes more kinds of resources,
+      with the rights holder, journal, meeting, imprint and thesis fields.
+    - The `publisher` field is required,
+      because Zenodo refuses to publish a record without one.
+    - The files to upload and the description are arguments of `sync_zenodo()`,
+      so the `path_token`, `path_readme` and `paths` fields of the configuration file
+      are no longer supported.
 
 StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
@@ -24,321 +39,101 @@ to review and contribute to the (meta)data before the dataset is published on Ze
 You will still need to use the Zenodo web interface to publish the dataset,
 and to add it to a community for review.
 If your files change, and you want to create a new version,
-you must increment the version numbers
-using the [semantic version numbering](https://semver.org/) format.
+you must change the version in the configuration file into one that was not published before.
 
-## Configure a Zenodo dataset
+## Legacy Deposit Versus the InvenioRDM API
 
-To prepare a dataset, you need to create a `zenodo.yaml` file
-by filling in the following template:
+Zenodo can be told about a record in more than one way,
+and the three ways below are easily confused,
+because they use different names for overlapping metadata.
 
-```yaml
-path_record_id: .zenodo-record-id.txt
-endpoint: https://sandbox.zenodo.org/api
-path_token: ~/.config/sandbox-zenodo-org-token.txt
-metadata:
-  title: 'A title'
-  version: '1.0.0'
-  keywords:
-    - keyword1
-    - keyword2
-  license:
-    - cc-by-nc-4.0
-  resource_type: dataset
-  publisher: 'Publisher name'
-  creators:
-    - family_name: 'Last name 1'
-      given_name: 'First name 1'
-      identifiers:
-        orcid: '0000-0002-1825-0097'
-      affiliations:
-        - ror: ROR_CODE  # See https://ror.org/
-        - name: >-
-            Research group,
-            University,
-            Street and number,
-            ZIP code
-            City,
-            Country
-        - name: >-
-            Consortium name,
-            Some more details,
-            ...
-    - name: 'Last name 2, First name 2'
-      identifiers:
-        orcid: '0000-0002-1825-0098'
-      affiliations:
-        - name: >-
-            Research group,
-            University,
-            Street and number,
-            ZIP code
-            City,
-            Country
-    - ...
-  related:
-    - scheme: doi
-      identifier: 10.1234/zenodo.1234567
-      relation_type: cites
-      resource_type: publication
-    - ...
-  funding:
-    - funder:
-        ror: ROR_CODE  # See https://ror.org/
-      award:
-        title: 'Full title of the award'
-        number: 'Award number'
-        identifiers:
-          - url: 'https://example.org/award/1234'
-          - url: 'https://example.org/award/5678'
-          - ...
-code_repository: https://github.com/example/repo2
-path_readme: zenodo.md
-paths:
-  - file1
-  - sub/file2
-```
+- **The legacy deposit metadata, `.zenodo.json`.**
+  This is a file in a Git repository,
+  which Zenodo reads when it archives a GitHub release through its
+  [GitHub integration](https://developers.zenodo.org/#github).
+  Its schema is the legacy deposit schema,
+  [`legacyrecord.json`](https://github.com/zenodo/zenodo/blob/master/zenodo/modules/deposit/jsonschemas/deposits/records/legacyrecord.json).
+  The loader silently drops keys it does not recognize
+  and rejects values outside its controlled vocabularies.
+  Zenodo publishes this schema, but it lags the loader that Zenodo runs,
+  which is worth knowing before you rely on it.
 
-Documentation of the fields in the `zenodo.yaml` configuration file:
+- **The legacy REST API, `/api/deposit/depositions`.**
+  This is what <https://developers.zenodo.org/> documents.
+  Earlier versions of `sync_zenodo()` used it.
 
-- `path_record_id`:
-  A TXT file containing the record ID of the most recent version of the resource on Zenodo.
-  This file is updated by the `srr-sync-zenodo` command.
-  You should not need to modify it
-  unless you created or discarded new records manually through the Zenodo web interface.
-  It is recommended to commit this file to the Git history.
-  Changes to this file are not tracked by StepUp.
+- **The InvenioRDM API, `/api/records`.**
+  This is what `srr-sync-zenodo` uses today.
+  Zenodo does not document it itself,
+  but InvenioRDM, the software that Zenodo runs, does,
+  in its [REST API reference](https://inveniordm.docs.cern.ch/reference/rest_api_index/)
+  and its [metadata reference](https://inveniordm.docs.cern.ch/reference/metadata/).
+  It offers fields that the legacy API cannot express,
+  which is why the schema of the configuration file changed in StepUp RepRep 3.1.
 
-- `endpoint`:
-  If you want to test the upload without using the production Zenodo platform,
-  use the sandbox endpoint.
-  Remove the `sandbox.` prefix for production uploads.
+A key that works in `.zenodo.json` is not necessarily a key that works here,
+and a key of the configuration file is not necessarily a key of `.zenodo.json`,
+so do not copy metadata between the two files by hand.
+A project may well have both:
+a `.zenodo.json` for the archive of its source code,
+and a `sync_zenodo.yaml` for the dataset built from it.
 
-- `path_token`:
-  The location of a text file with your Zenodo (sandbox) personal access token.
-  If the token file is not present,
-  the plan.py below will validate this file without uploading.
+## Configure Your Zenodo Token
 
-    To create the token, go to the settings of your
-    [Zenodo account](https://zenodo.org/account/settings/applications/tokens/new/) or
-    [Zenodo Sandbox account](https://sandbox.zenodo.org/account/settings/applications/tokens/new/).
-    Enable the `deposit:actions` and `deposit:write` scopes when creating a new token.
-    Save the token immediately, as it cannot be retrieved later.
+The `srr-sync-zenodo` command takes your personal access token
+from the `REPREP_ZENODO_TOKEN` environment variable.
+This is the token itself, not the path to a file containing it.
 
-- `metadata`:
-  A section with metadata fields to describe the dataset on Zenodo.
+To create the token, go to the settings of your
+[Zenodo account](https://zenodo.org/account/settings/applications/tokens/new/) or
+[Zenodo Sandbox account](https://sandbox.zenodo.org/account/settings/applications/tokens/new/).
+Enable the `deposit:actions` and `deposit:write` scopes when creating a new token.
+Save the token immediately, as it cannot be retrieved later.
 
-    - `title`:
-      A short description of the dataset.
+Because the token is a secret, it is not tracked by StepUp,
+so it never ends up in the workflow graph.
+Keep it out of your repository, for example by exporting it from a file that Git ignores.
 
-    - `keywords`:
-      A list of keywords to describe the dataset.
-      (Optional)
+When `REPREP_ZENODO_TOKEN` is unset,
+`srr-sync-zenodo` validates the configuration file and exits without contacting Zenodo.
+Use the `--dry-run` option to validate the configuration offline on purpose.
 
-    - `publisher`:
-      The name of the publisher of the dataset.
-      (Optional)
+The endpoint is not an environment variable but a field of the configuration file,
+so that StepUp notices when you switch between the sandbox and the production instance.
 
-    - `version`:
-      The version of your current data.
+## Configure a Zenodo Dataset
 
-        Put the version number in quotes to prevent it from being
-        interpreted as a floating-point number.
-        Use [semantic version numbers](https://semver.org/).
+The metadata of the dataset is written in a configuration file,
+for which `sync_zenodo.yaml` is the recommended name.
+Every field of this file is documented in
+[The `srr-sync-zenodo` Configuration File](../reference/sync_zenodo_config.md),
+which also holds a template to start from.
 
-        If you have published the dataset, only metadata of the published versions
-        can be updated, but not the files.
-        If you want to upload newer files, you can increment this version number.
-        The `srr-sync-zenodo` command will create a new version for you on Zenodo,
-        which stays in draft mode until you manually publish it through the Zenodo web interface.
-
-    - `copyright`:
-      A copyright statement describing the ownership of the dataset.
-      (Optional)
-
-    - `license`:
-      A list of license SPDX identifier (will be converted to lowercase).
-      The list of licenses supported by Zenodo (and their identifiers)
-      can be found in [SPDX License list](https://spdx.org/licenses/).
-      When specifying multiple licenses, it is recommended to clarify in the Zenodo readme
-      how the different licenses apply to different parts of the dataset.
-
-    - `resource_type`
-      Select one of:
-
-        - `audio`
-        - `dataset`
-        - `event`
-        - `image`
-        - `image-diagram`
-        - `image-drawing`
-        - `image-figure`
-        - `image-other`
-        - `image-photo`
-        - `image-plot`
-        - `lesson`
-        - `model`
-        - `other`
-        - `physicalobject`
-        - `poster`
-        - `presentation`
-        - `publication`
-        - `publication-annotationcollection`
-        - `publication-article`
-        - `publication-book`
-        - `publication-conferencepaper`
-        - `publication-conferenceproceeding`
-        - `publication-datamanagementplan`
-        - `publication-datapaper`
-        - `publication-deliverable`
-        - `publication-dissertation`
-        - `publication-journal`
-        - `publication-milestone`
-        - `publication-other`
-        - `publication-patent`
-        - `publication-peerreview`
-        - `publication-preprint`
-        - `publication-proposal`
-        - `publication-report`
-        - `publication-section`
-        - `publication-softwaredocumentation`
-        - `publication-standard`
-        - `publication-taxonomictreatment`
-        - `publication-technicalnote`
-        - `publication-thesis`
-        - `publication-workingpaper`
-        - `software`
-        - `software-computationalnotebook`
-        - `video`
-        - `workflow`
-
-    - `creators`:
-      List one or more creators of the data.
-
-        - `family_name`:
-          The last name(s) of a creator.
-        - `given_name`:
-          The first name(s) of a creator.
-        - `identifiers`:
-          A dictionary with identifiers of the creator.
-          The only supported identifier are `orcid` and `isni`.
-        - `affiliations`
-          The list of affiliations of the creator.
-          Each affiliation is a dictionary with either a `ror` or `name` field.
-
-    - `related`:
-      A list of related resources. (Optional)
-      Each resource is a dictionary with the following fields:
-
-        - `scheme`: The identifier scheme, can be any of the following:
-
-            - `ark`
-            - `arxiv`
-            - `ads`
-            - `crossreffunderid`
-            - `doi`
-            - `ean13`
-            - `eissn`
-            - `grid`
-            - `handle`
-            - `igsn`
-            - `isbn`
-            - `isni`
-            - `issn`
-            - `istc`
-            - `lissn`
-            - `lsid`
-            - `pmid`
-            - `purl`
-            - `upc`
-            - `url`
-            - `urn`
-            - `w3id`
-            - `other`
-
-        - `identifier`: The identifier of the resource.
-        - `resource_type`:
-          The type of the related resource, can be any of the values listed above for `resource_type`.
-        - `relation_type`: The type of relation, which can be any of the following.
-          Use this a in the following sentence: *This resource {relation_type} the related resource*.
-
-            - `cites`
-            - `compiles`
-            - `continues`
-            - `describes`
-            - `documents`
-            - `hasmetadata`
-            - `haspart`
-            - `hasversion`
-            - `iscitedby`
-            - `iscompiledby`
-            - `iscontinuedby`
-            - `isderivedfrom`
-            - `isdescribedby`
-            - `isdocumentedby`
-            - `isidenticalto`
-            - `ismetadatafor`
-            - `isnewversionof`
-            - `isobsoletedby`
-            - `isoriginalformof`
-            - `ispartof`
-            - `ispreviousversionof`
-            - `ispublishedin`
-            - `isreferencedby`
-            - `isrequiredby`
-            - `isreviewedby`
-            - `issourceof`
-            - `issupplementedby`
-            - `issupplementto`
-            - `isvariantformof`
-            - `isversionof`
-            - `obsoletes`
-            - `references`
-            - `requires`
-            - `reviews`
-
-- `funding`:
-  A list of funding information. (Optional)
-  Each funding entry is a dictionary with the following fields:
-
-    - `funder`: A dictionary with either the ROR code of the funder or its name.
-      The ROR code can be found on [ROR.org](https://ror.org/).
-    - `award`: A dictionary with the details of the award.
-      It can contain the following fields:
-        - `title`: The full title of the award.
-        - `number`: The award number.
-        - `identifiers`: A list of identifiers for the award, such as URLs.
-          Each identifiers is a dictionary with a single key, the scheme,
-          and the identifier as value.
-          The same schemes as for the `related` section can be used here.
-
-- `code_repository`
-  Software resources, can specify the URL of the git repository. (Optional)
-
-- `path_readme`:
-  If given, it will be used as description metadata. (Optional)
-  When the file has a `.md` extension, it will be converted to HTML.
-
-- `paths`:
-  The dataset files to be uploaded.
-
-    Zenodo does not support subdirectories,
-    so files are uploaded without reference to their parent directory.
-    This also means that two files with the same name in different subdirectories
-    cannot both be included.
-    If you have such files or if you have a large number of files,
-    consider uploading a ZIP archive instead of separate files.
-
-## Synchronize your dataset
+## Synchronize Your Dataset
 
 The command `srr-sync-zenodo` will create or synchronize the online dataset
-and store the `record_id` in the versions JSON file.
+and store the record ID in the file named by the `path_record_id` field.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.
 
+The files to be uploaded are not listed in the configuration file
+but are given as arguments after the configuration file.
+The `--description` option takes a Markdown or HTML file with the description of the dataset.
 Once you have all the files you need, execute the script:
 
 ```bash
-srr-sync-zenodo zenodo.yaml
+srr-sync-zenodo sync_zenodo.yaml file1 sub/file2 \
+  --description=zenodo_description.md
+```
+
+Add the `--dry-run` option to check the configuration without contacting Zenodo.
+It validates the configuration file, resolves the description,
+prints the metadata that would be sent to Zenodo and exits.
+This works with or without a token,
+so it is the way to review the metadata before the first upload.
+
+```bash
+srr-sync-zenodo sync_zenodo.yaml file1 sub/file2 \
+  --description=zenodo_description.md --dry-run
 ```
 
 You can also include this command as a step in your `plan.py` file:
@@ -347,14 +142,45 @@ You can also include this command as a step in your `plan.py` file:
 from stepup.core.api import static
 from stepup.reprep.api import sync_zenodo
 
-static("zenodo.yaml", "zenodo.md", "file1", "sub/file2")
-sync_zenodo("zenodo.yaml")
+static("sync_zenodo.yaml", "zenodo_description.md", "file1", "sub/file2")
+sync_zenodo(
+    "sync_zenodo.yaml",
+    ["file1", "sub/file2"],
+    path_description="zenodo_description.md",
+)
 ```
 
-## Try the Following
+Because the files and the description are given as arguments,
+StepUp knows all inputs of this step when the plan is made.
 
-When creating a publication starting from the RepRep [Template Tutorial](../from_template/introduction.md),
-one can use the [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] function
-to continuously synchronize the latest version of a publication with co-authors.
-Drafts of datasets can be shared with co-authors,
-in this case to give them access to the most recent build of the publication PDFs.
+Zenodo does not support subdirectories,
+so files are uploaded without reference to their parent directory.
+This also means that two files with the same name in different subdirectories
+cannot both be included.
+Zenodo also limits the number of files in a record to 100.
+If you run into either limitation,
+consider uploading a ZIP archive instead of separate files.
+`srr-sync-zenodo` rejects both cases before it contacts Zenodo.
+
+## Related Work
+
+[zenodraft](https://github.com/zenodraft/zenodraft) is a Node command line tool
+that also creates and updates Zenodo drafts from metadata in a repository.
+It talks to the legacy deposit API and is not tied to a build system,
+whereas `srr-sync-zenodo` is a StepUp step,
+so the files it uploads are the tracked outputs of a build,
+and it talks to the InvenioRDM API.
+
+## Recommended Workflow
+
+Set up `sync_zenodo()` early,
+ideally when you start a publication from the RepRep
+[Template Tutorial](../from_template/introduction.md),
+instead of preparing the dataset only after the manuscript is finished.
+Review the metadata with `--dry-run`, create the draft,
+and let every build refresh it afterwards.
+
+Share the draft with your co-authors as soon as it exists.
+They then always have access to the most recent build of the publication PDFs,
+and they can review and correct the metadata while the work is still in progress,
+which avoids a rush of last-minute corrections just before publication.

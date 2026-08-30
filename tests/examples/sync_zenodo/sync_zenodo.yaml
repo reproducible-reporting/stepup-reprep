@@ -1,6 +1,5 @@
 path_record_id: .zenodo-record-id.txt
 endpoint: https://sandbox.zenodo.org/api
-path_token: does-not-exist.txt
 metadata:
   title: 'Drink a coffee and try to think of a better title'
   keywords:
@@ -43,7 +42,20 @@ metadata:
         number: 'GN23549'
         identifiers:
           - url: 'https://example.com/award/123456789'
-code_repository: https://github.com/example/repo2
-path_readme: zenodo.md
-paths:
-  - README.txt
+custom_fields:
+  code_repository: https://github.com/example/repo2
+  development_status: active
+  programming_languages:
+    - python
+    - jupyter_notebook
+  rights_holder: Ghent University
+  meeting:
+    title: 'International Conference on Coffee'
+    acronym: ICC24
+    dates: '1-3 June 2024'
+    place: 'Ghent, Belgium'
+    url: https://example.org/icc24
+    identifiers:
+      # The scheme is optional, because Zenodo derives it from the identifier.
+      - scheme: doi
+        identifier: '10.5281/zenodo.1234567'

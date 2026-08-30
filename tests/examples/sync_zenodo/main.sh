@@ -1,6 +1,10 @@
 #!/usr/bin/env -S bash -x
 source ../example.rc
 
+# Without a token, srr-sync-zenodo validates the config and skips the upload.
+# Clear the variable, so the example never contacts Zenodo on a developer machine.
+unset REPREP_ZENODO_TOKEN
+
 # Run the example
 sb -w -j 1 & # > current_stdout.txt &
 PID=$!
@@ -17,4 +21,4 @@ set +e; wait -fn $PID; RETURNCODE=$?; set -e
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f README.txt ]] || exit 1
-[[ -f zenodo.md ]] || exit 1
+[[ -f zenodo_description.md ]] || exit 1

@@ -2,8 +2,11 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-sync-zenodo zenodo.yaml
- SUCCESS │ srr-sync-zenodo zenodo.yaml
+   START │ srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
+ SUCCESS │ srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
+──────────────────────────────── Standard error ────────────────────────────────
+(stripped)
+────────────────────────────────────────────────────────────────────────────────
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

@@ -13,6 +13,7 @@ from stepup.core.api import getenv, run, shq, subs_env_vars
 from stepup.core.path import StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
 from stepup.core.stepinfo import StepInfo
 from stepup.core.utils import to_bool
+from stepup.reprep.utils import check_zenodo_paths
 
 __all__ = (
     "add_notes_pdf",
@@ -1467,17 +1468,28 @@ def sanitize_bibtex(
 
 def sync_zenodo(
     path_config: StrPath,
+    paths: StrPath | Collection[StrPath] = (),
     *,
+    path_description: StrPath | None = None,
     verbose: bool = False,
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,
 ) -> StepInfo:
-    """Synchronize data with an draft dataset on Zenodo.
+    """Synchronize data with a draft dataset on Zenodo.
 
     Parameters
     ----------
     path_config
-        The YAML configuration file for the Zenodo upload.
+        The configuration file for the Zenodo upload, in YAML, JSON or TOML format.
+    paths
+        The files to upload to Zenodo.
+        Zenodo does not support directory layouts,
+        so all files must have different names.
+        At most 100 files can be uploaded to a single record.
+    path_description
+        The path to a Markdown or HTML file with the description of the dataset.
+        Markdown is converted to HTML before it is sent to Zenodo.
+        The `description` field in the configuration file must be unset when this is given.
     verbose
         Set to True to print Zenodo API requests and responses to the standard output.
     resources
@@ -1492,10 +1504,17 @@ def sync_zenodo(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
+    paths = check_zenodo_paths(paths)
     parts = [f"srr-sync-zenodo {shq(path_config)}"]
+    paths_inp = [path_config, *paths]
+    if len(paths) > 0:
+        parts.append(shq(paths))
+    if path_description is not None:
+        parts.append(f"--description={shq(path_description)}")
+        paths_inp.append(path_description)
     if verbose:
         parts.append("--verbose")
-    return run(" ".join(parts), inp=path_config, resources=resources, duration=duration)
+    return run(" ".join(parts), inp=paths_inp, resources=resources, duration=duration)
 
 
 def unplot(

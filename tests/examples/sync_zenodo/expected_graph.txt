@@ -14,30 +14,29 @@ step:./plan.py
              creator   root:
               source   file:plan.py
              product   file:README.txt
-             product   file:zenodo.md
-             product   file:zenodo.yaml
-             product   step:srr-sync-zenodo zenodo.yaml
+             product   file:sync_zenodo.yaml
+             product   file:zenodo_description.md
+             product   step:srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
 
 file:README.txt
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-sync-zenodo zenodo.yaml
+                sink   step:srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
 
-file:zenodo.md
+file:sync_zenodo.yaml
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-sync-zenodo zenodo.yaml
+                sink   step:srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
 
-file:zenodo.yaml
+file:zenodo_description.md
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-sync-zenodo zenodo.yaml
+                sink   step:srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
 
-step:srr-sync-zenodo zenodo.yaml
+step:srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = REPREP_PATH_ZENODO_TOKEN [dynamic]
              creator   step:./plan.py
-              source   file:README.txt [dynamic]
-              source   file:zenodo.md [dynamic]
-              source   file:zenodo.yaml
+              source   file:README.txt
+              source   file:sync_zenodo.yaml
+              source   file:zenodo_description.md

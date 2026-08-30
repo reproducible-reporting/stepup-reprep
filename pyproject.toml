@@ -75,7 +75,6 @@ dependencies = [
     "pyyaml>=6.0",
     "requests>=2.33.0",
     "scipy>=1.11.1",
-    "semver>=3.0.0",
     "stepup>=4.0.0rc14,<5.0.0a1",
     "svg.path>=6.0",
     "weasyprint>=69.0",

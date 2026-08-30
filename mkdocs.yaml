@@ -77,6 +77,7 @@ nav:
     - advanced_topics/unplot.md
     - advanced_topics/sync_zenodo.md
   - Reference:
+    - reference/sync_zenodo_config.md
     - reference/stepup.reprep.api.md
     - reference/stepup.reprep.bibsane.md
   - changelog.md

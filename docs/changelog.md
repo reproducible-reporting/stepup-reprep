@@ -30,6 +30,29 @@ and will be updated with any further changes before the final release.)
   If not given, these dependencies are detected automatically after the typst compilation.
   When some of these additional inputs are the outputs of other steps,
   specifying them may improve scheduling efficiency.
+- The configuration file of `srr-sync-zenodo` may be written in YAML, JSON or TOML.
+  The parser is selected by the suffix of the file name:
+  `.yaml` and `.yml`, `.json` or `.toml`.
+  YAML remains the recommended format, because it is the only one that supports comments.
+  A file named `.zenodo.json` is rejected,
+  because that is the metadata Zenodo reads when it archives a GitHub release,
+  which follows a different schema.
+- A `--dry-run` option in `srr-sync-zenodo`,
+  which validates the configuration, resolves the description,
+  prints the metadata that would be sent to Zenodo and exits.
+  Unlike an unset `REPREP_ZENODO_TOKEN`, this does not depend on the environment.
+- Five more custom fields in the `custom_fields` section of the configuration file of
+  `srr-sync-zenodo`, which Zenodo deploys as
+  `dc:rightsHolder`, `journal:journal`, `meeting:meeting`, `imprint:imprint`
+  and `thesis:thesis`.
+  They are written as `rights_holder`, `journal`, `meeting`, `imprint` and `thesis`,
+  and everything that can be checked without contacting Zenodo is checked locally:
+  the ISSN of a journal, the ISBN of an imprint,
+  the URL and the identifiers of a meeting,
+  and a thesis date that looks like a plain calendar date.
+  There is no `creator` custom field,
+  because it would repeat `metadata.creators` as free text,
+  without ORCIDs or affiliations.
 
 ### Changed
 
@@ -44,6 +67,91 @@ and will be updated with any further changes before the final release.)
 - Rename environment variables for consistency:
     - `REPREP_KEEP_TECTONIC_DEPS` -> `REPREP_TECTONIC_KEEP_DEPS`
     - `REPREP_KEEP_TYPST_DEPS` -> `REPREP_TYPST_KEEP_DEPS`
+- The Zenodo synchronization has been refactored, including some breaking changes:
+    - The `srr-sync-zenodo` command no longer amends input files.
+      Instead, all inputs are determined when `sync_zenodo()` is called.
+      This has two consequences:
+        - The files to upload to Zenodo are no longer listed
+          in the `paths` field of the configuration file.
+          Instead, they are passed as the second argument of `sync_zenodo()`
+          and as positional arguments of `srr-sync-zenodo`, after the configuration file.
+          Both entry points reject duplicate file names and more than 100 files,
+          which Zenodo does not accept.
+        - The description is no longer taken from the `path_readme` field of `sync_zenodo.yaml`.
+          Instead, it is passed with the `path_description` argument of `sync_zenodo()`
+          and with the `--description` option of `srr-sync-zenodo`.
+          (Markdown is converted to HTML automatically.)
+    - The token must be specified in the `REPREP_ZENODO_TOKEN` environment variable,
+      instead of being specified in the configuration file.
+      The old variable `REPREP_PATH_ZENODO_TOKEN` is no longer supported.
+      Note that `REPREP_ZENODO_TOKEN` holds the token itself,
+      whereas `REPREP_PATH_ZENODO_TOKEN` held the path to a file containing the token.
+      When `REPREP_ZENODO_TOKEN` is unset, `srr-sync-zenodo` validates the configuration
+      and exits without contacting Zenodo.
+      The endpoint stays a field of the configuration file, `endpoint`,
+      which is optional and defaults to `https://sandbox.zenodo.org/api`.
+      Because StepUp tracks the configuration file,
+      switching between the sandbox and the production instance invalidates the step.
+    - Unsupported keys in `sync_zenodo.yaml` now raise an error instead of being ignored,
+      and values that must be strings are no longer coerced silently.
+      For example, an unquoted `version: 1.0` is rejected instead of becoming `"1.0"`.
+    - The `code_repository` field of `sync_zenodo.yaml` was replaced by a `custom_fields` section,
+      holding the fields with which Zenodo extends the InvenioRDM record.
+      It takes `code_repository` and the other fields listed under Added above.
+    - Every field that takes an identifier from a controlled vocabulary of Zenodo
+      is validated against the identifiers Zenodo has deployed:
+      `license`, `resource_type`, `relation_type`,
+      `development_status` and `programming_languages`.
+      An identifier that Zenodo does not know makes a deposit fail,
+      so it is rejected locally instead,
+      with an error message naming the vocabulary and its URL.
+      Two resource types that `srr-sync-zenodo` used to accept are gone,
+      because Zenodo no longer offers them: `audio`, for which `video` is the replacement,
+      and `publication-thesis`, for which `publication-dissertation` is.
+      The identifiers live in `zenodo_vocabularies.yaml`,
+      which is regenerated from the Zenodo API
+      by `tools/update_zenodo_vocabularies.py` in the source repository.
+    - The fields that Zenodo requires are also required in `sync_zenodo.yaml`,
+      and the length bounds that Zenodo enforces are checked locally:
+      `metadata.creators` holds at least one creator,
+      every creator carries a `family_name`,
+      and `metadata.title` counts at least three characters.
+    - The `metadata.publisher` field is required.
+      It used to be optional, but Zenodo refuses to publish a record without a publisher,
+      because it needs one to register a DOI,
+      so a missing publisher is now reported before the record is created.
+    - The `metadata.version` field may follow any convention,
+      as long as it is a non-empty string of at most 191 characters.
+      Zenodo stores it as free text and does not order the versions of a dataset by it,
+      so `srr-sync-zenodo` only tests it for equality with the versions published on Zenodo.
+      It creates a new version on Zenodo when the local version was never published,
+      and refuses a version that is already published,
+      which is usually a stale checkout or a revert instead of a new release.
+      For the same reason, it refuses to synchronize a record
+      that is no longer the latest published version of the dataset.
+    - When a value in `sync_zenodo.yaml` is rejected,
+      the error message now explains what is wrong with it,
+      instead of only stating that the value is invalid.
+    - Everything that the user has to correct, and every request that Zenodo refuses,
+      is reported as a message on standard error, after which `srr-sync-zenodo` exits with code 1.
+      It used to re-raise the exception after printing the message,
+      so the diagnosis was followed by a traceback,
+      which for a rejected config file was a nested exception group of about forty lines,
+      most of them pointing into the structuring code that `cattrs` generates.
+      Only the errors that this command raises on purpose are reported this way.
+      An unexpected error still ends in a traceback, because that is a bug to be reported.
+    - The documentation and the example now recommend the names `sync_zenodo.yaml`
+      for the configuration file and `zenodo_description.md` for the description,
+      instead of `zenodo.yaml` and `zenodo.md`,
+      because the old names are easily confused with the legacy `.zenodo.json` file.
+      These names are only a convention:
+      `srr-sync-zenodo` and `sync_zenodo()` accept any path.
+    - The documentation of the Zenodo synchronization is split into two pages:
+      a guide, which also explains how the legacy `.zenodo.json` file
+      and the two Zenodo APIs relate to each other,
+      and a reference of the configuration file, with one section per top level key.
+      The `access` section, which decides who can see the record and download its files,
+      is documented for the first time.
 
 ### Removed
 
@@ -54,10 +162,39 @@ and will be updated with any further changes before the final release.)
 
 ### Fixed
 
+- In `sync_zenodo.yaml`, a single value written where a list of strings belongs
+  is read as a one element list.
+  For example, `keywords: coffee` is the same as a list holding one keyword.
+  This already worked for `license` and now also works for `keywords`
+  and `programming_languages`,
+  which were previously split into a list of characters.
+  A value that is neither a string nor a list of strings is rejected
+  with a message naming the expected type.
 - `compile_tectonic()` only scans the `error:` lines of Tectonic's standard error stream
   for missing input files.
   As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
   from which paths were picked up that are no files at all.
+- `srr-sync-zenodo` reads a record that carries no version on Zenodo,
+  instead of failing with a `KeyError`.
+  Zenodo does not require a version,
+  so a record deposited through its web interface before `srr-sync-zenodo` was adopted
+  may well have none.
+  Such a record never matches the local version, so a new version is created for it.
+- The `--clean` option of `srr-sync-zenodo` removes the drafts
+  that Zenodo serves beyond the first page of the records of a user.
+  As observed on 2026-08-30, that page holds at most 25 records,
+  so the drafts of a user with more records than that were silently left behind.
+- `srr-sync-zenodo` no longer fails when it is given no files to upload.
+  It declared an empty list of uploads, which Zenodo rejects,
+  after it had already created the record,
+  so every run left another draft behind without recording its id.
+  Note that Zenodo refuses to publish a record without files,
+  as observed on the sandbox instance on 2026-08-30.
+- `srr-sync-zenodo` keeps the publication date of a record that is already published.
+  It sent the date of the build with every metadata update,
+  which moved the publication date of a published version to the day of the last build.
+  A record that is not published yet is still dated on the day it was last synchronized,
+  and a new version still gets the date on which it is created.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

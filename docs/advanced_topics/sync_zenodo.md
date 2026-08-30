@@ -347,7 +347,7 @@ You can also include this command as a step in your `plan.py` file:
 from stepup.core.api import static
 from stepup.reprep.api import sync_zenodo
 
-static("zenodo.yaml", "zenodo.md", "file1", "sub/", "sub/file2")
+static("zenodo.yaml", "zenodo.md", "file1", "sub/file2")
 sync_zenodo("zenodo.yaml")
 ```
 

@@ -18,11 +18,6 @@ step:./plan.py
              product   step:srr-make-inventory -i inventory.def -o inventory.txt
              product   step:srr-zip-inventory inventory.txt upload.zip
 
-file:inventory.def
-               state = CONFIRMED
-             creator   step:./plan.py
-                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
-
 st:data/
              creator   step:./plan.py
              product   file:data/bla.inp
@@ -30,6 +25,11 @@ st:data/
              product   file:data/sub/deeper/brrr.inp
              product   file:data/sub/deeper/nested.out
              product   file:data/sub/works.out
+
+file:inventory.def
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-make-inventory -i inventory.def -o inventory.txt
 
 step:srr-make-inventory -i inventory.def -o inventory.txt
                state = SUCCEEDED

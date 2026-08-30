@@ -3,6 +3,5 @@
 from stepup.core.api import static
 from stepup.reprep.api import compile_tectonic
 
-static("paper.tex")
-static("paper.bbl")
+static("paper.tex", "paper.bbl")
 compile_tectonic("paper.tex", inventory=True)

@@ -17,12 +17,12 @@ step:./plan.py
              product   file:paper.tex
              product   step:srr-compile-latex paper.tex --inventory=paper-inventory.txt
 
-file:paper.tex
+file:paper.bbl
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-latex paper.tex --inventory=paper-inventory.txt
 
-file:paper.bbl
+file:paper.tex
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-latex paper.tex --inventory=paper-inventory.txt

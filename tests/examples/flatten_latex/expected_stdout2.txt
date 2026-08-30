@@ -1,6 +1,6 @@
  STARTUP │ Watching 2 directories
  STARTUP │ Checking 5 file(s) for changes
- UPDATED │ plan.py (digest c86ad98d ➜ 119b9c54, size 230 ➜ 254)
+ UPDATED │ plan.py (digest c86ad98d ➜ 78581c5c, size 230 ➜ 247)
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py

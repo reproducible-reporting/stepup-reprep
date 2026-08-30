@@ -17,13 +17,13 @@ step:./plan.py
              product   st:common/
              product   step:srr-convert-markdown source/demo.md source/demo.html
 
+st:common/
+             creator   step:./plan.py
+
 file:source/demo.md
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-convert-markdown source/demo.md source/demo.html
-
-st:common/
-             creator   step:./plan.py
 
 step:srr-convert-markdown source/demo.md source/demo.html
                state = SUCCEEDED

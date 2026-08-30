@@ -20,15 +20,15 @@ step:./plan.py
              product   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
              product   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
-file:paper.tex
-               state = CONFIRMED
-             creator   step:./plan.py
-                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-
 file:bibsane.yaml
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+
+file:paper.tex
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
 
 file:references.bib
                state = CONFIRMED

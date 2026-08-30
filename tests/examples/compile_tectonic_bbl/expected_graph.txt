@@ -17,12 +17,12 @@ step:./plan.py
              product   file:paper.tex
              product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
-file:paper.tex
+file:paper.bbl
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
-file:paper.bbl
+file:paper.tex
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex

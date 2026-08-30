@@ -20,15 +20,15 @@ step:./plan.py
              product   step:srr-bibsane references.bib --config=bibsane.yaml
              product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
-file:paper.tex
-               state = CONFIRMED
-             creator   step:./plan.py
-                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-
 file:bibsane.yaml
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-bibsane references.bib --config=bibsane.yaml
+
+file:paper.tex
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
 
 file:references.bib
                state = CONFIRMED

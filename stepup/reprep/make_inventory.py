@@ -13,6 +13,7 @@ import argparse
 import contextlib
 import shlex
 import sqlite3
+import sys
 from collections.abc import Collection, Sequence
 
 from path import Path
@@ -209,4 +210,4 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -3,6 +3,7 @@
 """Checking of inventory files."""
 
 import argparse
+import sys
 from collections.abc import Iterator, Sequence
 
 from path import Path
@@ -43,4 +44,4 @@ def check_inventory(path_inventory: str):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

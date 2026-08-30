@@ -11,6 +11,7 @@ especially when executing many notebooks that all require the same imports.
 
 import argparse
 import json
+import sys
 from collections.abc import Sequence
 
 from papermill import execute_notebook
@@ -51,4 +52,4 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

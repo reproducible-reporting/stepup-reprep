@@ -4,6 +4,7 @@
 
 import argparse
 import shutil
+import sys
 import tempfile
 from collections.abc import Sequence
 
@@ -45,4 +46,4 @@ def pdf_normalize(path_pdf: str):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

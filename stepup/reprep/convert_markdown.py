@@ -3,6 +3,7 @@
 """Markdown to HTML conversion."""
 
 import argparse
+import sys
 from collections.abc import Collection, Sequence
 
 import yaml
@@ -117,4 +118,4 @@ def convert_markdown(
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

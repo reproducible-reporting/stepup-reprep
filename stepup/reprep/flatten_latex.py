@@ -190,4 +190,4 @@ def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

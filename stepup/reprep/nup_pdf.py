@@ -3,6 +3,7 @@
 """Put multiple pages per sheet using a fixed layout."""
 
 import argparse
+import sys
 from collections.abc import Sequence
 
 import pymupdf
@@ -135,4 +136,4 @@ def nup_pdf(
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

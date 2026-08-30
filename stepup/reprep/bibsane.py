@@ -7,6 +7,7 @@ import enum
 import os
 import re
 import shutil
+import sys
 import tempfile
 from collections.abc import Collection, Sequence
 
@@ -560,4 +561,4 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

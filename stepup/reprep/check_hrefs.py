@@ -151,4 +151,4 @@ def check_href(href: HRef, root: Path, accept: set[str]) -> bool:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

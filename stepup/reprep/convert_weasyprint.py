@@ -4,6 +4,7 @@
 
 import argparse
 import shlex
+import sys
 from collections.abc import Iterator, Sequence
 
 from defusedxml import ElementTree
@@ -85,4 +86,4 @@ def iter_html_hrefs(path_html: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

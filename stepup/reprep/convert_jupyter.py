@@ -4,6 +4,7 @@
 
 import argparse
 import json
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -88,4 +89,4 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -4,6 +4,7 @@
 
 import argparse
 import shlex
+import sys
 from collections.abc import Iterator, Sequence
 
 from defusedxml import ElementTree
@@ -106,4 +107,4 @@ def iter_svg_image_hrefs(path_svg: str) -> Iterator[str]:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

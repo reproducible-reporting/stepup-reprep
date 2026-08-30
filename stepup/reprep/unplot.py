@@ -4,6 +4,7 @@
 
 import argparse
 import json
+import sys
 from collections.abc import Sequence
 from xml.etree.ElementTree import Element
 
@@ -174,4 +175,4 @@ def convert_unit(values: NDArray, axis: Axis):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

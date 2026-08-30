@@ -6,6 +6,7 @@ This is mainly intended to impede (the quality of) unauthorized copies.
 """
 
 import argparse
+import sys
 from collections.abc import Sequence
 
 import pymupdf
@@ -61,4 +62,4 @@ def raster_pdf(path_inp: str, path_out: str, resolution: int, quality: int):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

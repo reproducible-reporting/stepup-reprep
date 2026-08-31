@@ -10,8 +10,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
     This feature was added to StepUp RepRep 1.3.
 
     As of StepUp RepRep 3.1, the schema of the configuration file has changed,
-    because `sync_zenodo()` interacts with Zenodo through the InvenioRDM REST API,
-    which offers fields that the legacy Zenodo API cannot express.
+    because `sync_zenodo()` interacts with Zenodo through the InvenioRDM REST API.
+    The fields that motivated the change are listed in
+    [Fields Only the InvenioRDM API Offers](#fields-only-the-inveniordm-api-offers).
 
     As of StepUp RepRep 4.0:
 
@@ -70,12 +71,40 @@ because they use different names for overlapping metadata.
   and its [metadata reference](https://inveniordm.docs.cern.ch/reference/metadata/).
   It offers fields that the legacy API cannot express,
   which is why the schema of the configuration file changed in StepUp RepRep 3.1.
+  These fields are listed in the next section.
 
 A key that works in `.zenodo.json` is not necessarily a key that works here,
 and vice versa, so do not blindly copy metadata between the two.
 A project may well have both:
 a `.zenodo.json` for the archive of its source code,
 and a `sync_zenodo.yaml` for the dataset built from it.
+
+### Fields Only the InvenioRDM API Offers
+
+The following features of `srr-sync-zenodo` have no legacy equivalent,
+as observed on 2026-08-31 in the loader that Zenodo runs,
+`zenodo_rdm.legacy.deserializers`:
+
+- `metadata.license` and `metadata.languages` are lists,
+  while the legacy loader reads a single `license` and a single `language`.
+- `metadata.copyright` has no legacy counterpart.
+- `metadata.creators[].affiliations` is a list,
+  and an affiliation may be given by its ROR identifier,
+  while the legacy `affiliation` is a single free text name.
+- `metadata.creators[].identifiers` accepts `isni`,
+  while the legacy loader accepts only `orcid` and `gnd`.
+- `metadata.related[].scheme` states the scheme of an identifier,
+  while the legacy loader detects the scheme from the value and cannot be corrected.
+- `metadata.funding[]` describes a funder by name or ROR identifier,
+  and an award by title, number and identifiers,
+  while the legacy `grants` can only refer to an award that Zenodo already knows,
+  written as `<funder DOI>::<award id>`.
+- `access.record` can be `restricted`,
+  while every legacy `access_right` results in a public record,
+  because `restricted` and `closed` restrict the files only.
+- `srr-sync-zenodo` also sets the order of the files
+  and the file shown in the preview,
+  which the legacy API does not store.
 
 ## Configure Your Zenodo Token
 

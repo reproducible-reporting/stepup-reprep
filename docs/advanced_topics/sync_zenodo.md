@@ -60,7 +60,7 @@ because they use different names for overlapping metadata.
 
 - **The legacy REST API, `/api/deposit/depositions`**,
   as documented on <https://developers.zenodo.org/>.
-  Earlier versions of `sync_zenodo()` used it.
+  Earlier versions of `srr-sync-zenodo` used it.
 
 - **The InvenioRDM API, `/api/records`**,
   which `srr-sync-zenodo` currently uses.
@@ -72,8 +72,7 @@ because they use different names for overlapping metadata.
   which is why the schema of the configuration file changed in StepUp RepRep 3.1.
 
 A key that works in `.zenodo.json` is not necessarily a key that works here,
-and a key of the configuration file is not necessarily a key of `.zenodo.json`,
-so do not copy metadata between the two files by hand.
+and vice versa, so do not blindly copy metadata between the two.
 A project may well have both:
 a `.zenodo.json` for the archive of its source code,
 and a `sync_zenodo.yaml` for the dataset built from it.

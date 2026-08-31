@@ -35,16 +35,17 @@ from stepup.reprep.sync_zenodo import (
     _clean_online,
     _describe_version,
     _format_error,
+    _get_record_files,
+    _get_record_version,
     _load_config_data,
     _load_vocabularies,
     _make_converter,
     _parse_args,
-    _record_files,
     _record_publication_date,
-    _record_version,
     _refresh_existing_record,
     _refresh_files,
     _search_hits,
+    _upload_new_record,
     main,
 )
 
@@ -389,6 +390,7 @@ def test_custom_fields_nested_error_message():
 VOCABULARY_NAMES = [
     "code:developmentStatus",
     "code:programmingLanguages",
+    "languages",
     "licenses",
     "relationtypes",
     "resourcetypes",
@@ -918,6 +920,7 @@ def _v1_record(rid: int, checksums: dict[str, str], **kwargs) -> dict:
     """Build a record as Zenodo serializes it for `application/vnd.inveniordm.v1+json`."""
     return {
         "id": rid,
+        "links": {"self_html": f"https://zenodo.org/record/{rid}"},
         "files": {
             "enabled": len(checksums) > 0,
             "order": [],
@@ -951,6 +954,12 @@ class _FakeZenodo:
         self.versions = [record] if versions is None else versions
         self.calls = []
 
+    def create_new_record(self, config):
+        self.calls.append(("create_new_record",))
+        if self.record is None:
+            self.record = {"id": 7, "links": {"self_html": "https://zenodo.org/record/7"}}
+        return self.record
+
     def get_record(self, rid):
         self.calls.append(("get_record", rid))
         return self.record
@@ -963,6 +972,8 @@ class _FakeZenodo:
         self.calls.append(("delete_file", name))
 
     def start_uploads(self, rid, paths):
+        if len(paths) == 0:
+            return
         self.calls.append(("start_uploads", [path.name for path in paths]))
 
     def upload_file(self, rid, path):
@@ -1047,20 +1058,20 @@ def test_get_user_records_pagination(num):
 def test_record_files_entries():
     """The file entries are read from the InvenioRDM representation."""
     record = _v1_record(1, {"one.txt": "abc"})
-    assert _record_files(record) == {
+    assert _get_record_files(record) == {
         "one.txt": {"key": "one.txt", "checksum": "md5:abc", "size": 0}
     }
 
 
 def test_record_files_without_files():
     """A record whose files are disabled has no entries."""
-    assert _record_files({"id": 1, "files": {"enabled": False}}) == {}
+    assert _get_record_files({"id": 1, "files": {"enabled": False}}) == {}
 
 
 def test_record_files_unexpected_shape():
     """The legacy representation, which lists the files, is reported as such."""
     with pytest.raises(ZenodoError) as exc_info:
-        _record_files({"id": 1, "files": [{"key": "one.txt", "checksum": "md5:abc"}]})
+        _get_record_files({"id": 1, "files": [{"key": "one.txt", "checksum": "md5:abc"}]})
     assert INVENIORDM_MIMETYPE in str(exc_info.value)
 
 
@@ -1238,13 +1249,13 @@ def test_clean_online_deletes_drafts_on_every_page(tmp_path):
 
 
 def test_record_version_present():
-    assert _record_version(_published(7, "1.0.0")) == "1.0.0"
+    assert _get_record_version(_published(7, "1.0.0")) == "1.0.0"
 
 
 @pytest.mark.parametrize("record", [{"id": 7}, {"id": 7, "metadata": {}}])
 def test_record_version_absent(record):
     """Zenodo does not require a version, so a record may carry none."""
-    assert _record_version(record) is None
+    assert _get_record_version(record) is None
 
 
 def test_record_publication_date_present():
@@ -1332,3 +1343,43 @@ def test_start_uploads_without_files():
     zenodo.rest = _FakeRest([])
     zenodo.start_uploads(7, [])
     assert zenodo.rest.posted == []
+
+
+def test_create_new_record_with_files(tmp_path):
+    """A new record with files creates the record, uploads files, and updates metadata."""
+    path = _write_file(tmp_path, "one.txt", "hello")
+    config = _config_with_version(tmp_path, "1.0.0")
+    zenodo = _FakeZenodo(_v1_record(7, {}))
+    _upload_new_record(zenodo, config, [path])
+    assert zenodo.calls == [
+        ("create_new_record",),
+        ("start_uploads", ["one.txt"]),
+        ("upload_file", "one.txt"),
+        ("update_metadata", 7, None),
+    ]
+
+
+def test_create_new_record_without_files(tmp_path):
+    """A new record without files creates the record without starting uploads or extra updates."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    zenodo = _FakeZenodo(_v1_record(7, {}))
+    _upload_new_record(zenodo, config, [])
+    assert zenodo.calls == [
+        ("create_new_record",),
+    ]
+
+
+def test_refresh_existing_record_published_new_version_with_files(tmp_path):
+    """A new version created from a published record updates metadata after refreshing files."""
+    path = _write_file(tmp_path, "two.txt", "world")
+    config = _config_with_version(tmp_path, "1.1.0")
+    zenodo = _FakeZenodo(_published(7, "1.0.0"))
+    _refresh_existing_record(zenodo, 7, config, [path])
+    assert zenodo.calls == [
+        ("get_record", 7),
+        ("get_versions", 7),
+        ("create_new_version", 7),
+        ("start_uploads", ["two.txt"]),
+        ("upload_file", "two.txt"),
+        ("update_metadata", 7, None),
+    ]

@@ -55,12 +55,15 @@ import requests
 import yaml
 from markdown_it import MarkdownIt
 from path import Path
-from rich import print  # noqa: A004
+from rich.console import Console
 from rich.json import JSON
 
 from stepup.reprep.utils import MAX_NUM_ZENODO_FILES, check_zenodo_paths
 
 __all__ = ("main",)
+
+
+CONSOLE = Console(soft_wrap=True, highlight=False)
 
 
 class RESTError(Exception):
@@ -103,10 +106,10 @@ class RESTWrapper:
         """
         url = f"{self.endpoint}/{loc}"
         if self.verbose:
-            print(f"[b]{method} {url}[/b]")
+            CONSOLE.print(f"[b]{method} {url}[/b]")
             if "json" in kwargs:
-                print("[b]REQUEST[/b]")
-                print(JSON.from_data(kwargs["json"]))
+                CONSOLE.print("[b]REQUEST[/b]")
+                CONSOLE.print(JSON.from_data(kwargs["json"]))
         headers = self.headers | kwargs.pop("headers", {})
         res = requests.request(method, url, headers=headers, **kwargs)
         data = None if len(res.text) == 0 else res.json()
@@ -115,9 +118,9 @@ class RESTWrapper:
                 f"Failed {method} {url}: {res.status_code}\n" + json.dumps(data, indent=2)
             )
         if self.verbose:
-            print("[b]RESPONSE[/b]")
-            print(JSON.from_data(data))
-            print()
+            CONSOLE.print("[b]RESPONSE[/b]")
+            CONSOLE.print(JSON.from_data(data))
+            CONSOLE.print()
         return data
 
     def get(self, loc: str, **kwargs):
@@ -473,6 +476,7 @@ class Metadata:
     """
 
     title: str = attrs.field(validator=attrs.validators.min_len(3))
+
     version: str = attrs.field(
         validator=[attrs.validators.min_len(1), attrs.validators.max_len(191)]
     )
@@ -484,12 +488,8 @@ class Metadata:
     It must be non-empty, because it is the only thing identifying the local version.
     """
 
-    license: list[str] = attrs.field(
-        converter=_convert_license,
-        validator=attrs.validators.deep_iterable(_in_vocabulary("licenses")),
-    )
     resource_type: str = attrs.field(validator=_in_vocabulary("resourcetypes"))
-    creators: list[Creator] = attrs.field(validator=attrs.validators.min_len(1))
+
     publisher: str = attrs.field(validator=attrs.validators.min_len(1))
     """The name under which the dataset is made available, e.g. `Zenodo`.
 
@@ -498,16 +498,34 @@ class Metadata:
     so a publisher is required here to fail before the record is created.
     """
 
+    creators: list[Creator] = attrs.field(validator=attrs.validators.min_len(1))
+
+    keywords: list[str] = attrs.field(factory=list)
+    """A list of keywords to describe the dataset."""
+
+    license: list[str] = attrs.field(
+        factory=list,
+        converter=_convert_license,
+        validator=attrs.validators.deep_iterable(_in_vocabulary("licenses")),
+    )
+
     copyright: str | None = attrs.field(
         default=None,
         validator=attrs.validators.optional(attrs.validators.min_len(1)),
     )
-    keywords: list[str] = attrs.field(factory=list)
+
+    languages: list[str] = attrs.field(
+        factory=list, validator=attrs.validators.deep_iterable(_in_vocabulary("languages"))
+    )
+    """A list of ISO 639-3 language codes, e.g. `eng` for English or `fra` for French."""
+
     description: str | None = attrs.field(
         default=None,
         validator=attrs.validators.optional(attrs.validators.min_len(3)),
     )
+
     related: list[Related] = attrs.field(factory=list)
+
     funding: list[Funding] = attrs.field(factory=list)
 
     def to_zenodo(self, publication_date: str | None = None) -> dict[str, Any]:
@@ -525,12 +543,15 @@ class Metadata:
         data = {
             "title": self.title,
             "version": self.version,
-            "rights": [{"id": lic} for lic in self.license],
             "resource_type": {"id": self.resource_type},
-            "creators": [creator.to_zenodo() for creator in self.creators],
-            "description": self.description,
-            "publication_date": publication_date,
             "publisher": self.publisher,
+            "keywords": [{"keyword": keyword} for keyword in self.keywords],
+            "rights": [{"id": lic} for lic in self.license],
+            "copyright": self.copyright,
+            "languages": [{"id": lang} for lang in self.languages],
+            "description": self.description,
+            "creators": [creator.to_zenodo() for creator in self.creators],
+            "publication_date": publication_date,
             "related_identifiers": [rel.to_zenodo() for rel in self.related],
             "funding": [fund.to_zenodo() for fund in self.funding],
         }
@@ -1009,9 +1030,10 @@ class ZenodoWrapper:
 
     # Main API methods
 
-    def create_new_record(self, config: Config, paths: list[Path]) -> dict[str]:
+    def create_new_record(self, config: Config) -> dict[str]:
         """Create a new record on Zenodo, which remains in draft until it is published manually."""
-        return self.rest.post("records", json=config.to_zenodo(paths))
+        # There is no point in specifying the file order before uploading.
+        return self.rest.post("records", json=config.to_zenodo([]))
 
     def get_record(self, rid: int) -> dict[str]:
         """Get an (un)published record with given id."""
@@ -1160,25 +1182,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         _run(args)
     except (ZenodoError, RESTError) as exc:
-        _print_error(str(exc))
+        print(str(exc), file=sys.stderr)
         return 1
     except cattrs.ClassValidationError as exc:
         # Report what is wrong with each value instead of the nested exception group,
         # of which most frames sit in the structuring code that cattrs generates.
         for line in cattrs.transform_error(exc, repr(args.config), _format_error):
-            _print_error(line)
+            print(line, file=sys.stderr)
         return 1
     return 0
-
-
-def _print_error(message: str):
-    """Write an error message to standard error, verbatim.
-
-    The `print` of this module is `rich.print`,
-    which wraps long lines and reads square brackets as markup,
-    either of which would alter the message of an error.
-    """
-    sys.stderr.write(f"{message}\n")
 
 
 def _run(args: argparse.Namespace):
@@ -1200,14 +1212,14 @@ def _run(args: argparse.Namespace):
         config.metadata.description = _load_description(args.description)
 
     if args.dry_run:
-        print("[b]The following metadata would be sent to Zenodo:[/b]")
-        print(JSON.from_data(config.to_zenodo(paths)))
+        CONSOLE.print("[b]The following metadata would be sent to Zenodo:[/b]")
+        CONSOLE.print(JSON.from_data(config.to_zenodo(paths)))
         return
 
     # The token is not tracked by StepUp to keep sensitive information out of the workflow graph.
     token = os.getenv("REPREP_ZENODO_TOKEN")
     if token is None:
-        print(NO_TOKEN_WARNING, file=sys.stderr)
+        CONSOLE.print(NO_TOKEN_WARNING)
         return
     zenodo = ZenodoWrapper(token, config.endpoint, verbose=args.verbose)
 
@@ -1435,13 +1447,13 @@ def _clean_online(zenodo: ZenodoWrapper, config: Config):
     for record in zenodo.get_user_records():
         rid = record["id"]
         if record.get("is_published", False):
-            print(f"[yellow]Record {rid} is already published, skipping.[/yellow]")
+            CONSOLE.print(f"[yellow]Record {rid} is already published, skipping.[/yellow]")
             continue
-        print(f"Deleting draft record {rid}.")
+        CONSOLE.print(f"Deleting draft record {rid}.")
         try:
             zenodo.rest.delete(f"records/{rid}/draft")
         except RESTError as exc:
-            print(f"[red]Failed to delete record {rid}: {exc}[/red]")
+            CONSOLE.print(f"[red]Failed to delete record {rid}: {exc}[/red]")
     config.path_record_id.remove_p()
 
 
@@ -1469,24 +1481,31 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
     # Interact with Zenodo.
     if rid is None:
         # New record, when getting started with a dataset.
-        record = _create_new_record(zenodo, config, paths)
+        record = _upload_new_record(zenodo, config, paths)
         with open(config.path_record_id, "w") as fh:
             fh.write(f"{record['id']}\n")
     else:
         _refresh_existing_record(zenodo, rid, config, paths)
 
 
-def _create_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]) -> dict[str, Any]:
+def _upload_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]) -> dict[str, Any]:
     """Create a new record on Zenodo."""
-    record = zenodo.create_new_record(config, paths)
+    record = zenodo.create_new_record(config)
+    url = record.get("links", {}).get("self_html")
+    if url is None:
+        raise ZenodoError("Zenodo did not return a link to the new record.")
+    CONSOLE.print(f"[b]New record:[/b] {url}")
 
     # Declare the files to be uploaded.
     zenodo.start_uploads(record["id"], paths)
 
     # Actual uploads, one by one.
     for path in paths:
-        print(f"Uploading {path}")
+        CONSOLE.print(f"[green]Uploading:[/green] {path}")
         zenodo.upload_file(record["id"], path)
+    if len(paths) > 0:
+        # Send metadata update, now with the file order and default preview.
+        record = zenodo.update_metadata(record["id"], config, paths)
     return record
 
 
@@ -1494,10 +1513,14 @@ def _refresh_existing_record(zenodo: ZenodoWrapper, rid: int, config: Config, pa
     """Refresh an existing record on Zenodo."""
     # When a dataset exists, the actions depend on the current status of the record.
     record = zenodo.get_record(rid)
-    named_paths = {path.name: path for path in paths}
+    url = record.get("links", {}).get("self_html")
+    if url is None:
+        raise ZenodoError(f"Zenodo did not return a link to the existing record ({rid}).")
+    CONSOLE.print(f"[b]Existing record:[/b] {url}")
+
     # As observed in June 2025, the Zenodo API does not return the full metadata.
-    rid = record["id"]
-    zenodo_version = _record_version(record)
+    named_paths = {path.name: path for path in paths}
+    zenodo_version = _get_record_version(record)
     if record.get("is_published", False):
         _check_version_chain(zenodo, record, config)
         if config.metadata.version == zenodo_version:
@@ -1505,13 +1528,17 @@ def _refresh_existing_record(zenodo: ZenodoWrapper, rid: int, config: Config, pa
             # Unconditionally republish the metadata, because we cannot compare the metadata.
             _republish_metadata(zenodo, rid, config, paths, _record_publication_date(record))
         else:
-            record = _create_new_version(zenodo, rid, config, paths)
+            record = _create_new_version(zenodo, rid, config)
             with open(config.path_record_id, "w") as fh:
                 fh.write(f"{record['id']}\n")
             _refresh_files(zenodo, record, named_paths, config.metadata.version)
+            # Unconditionally update the metadata, because we cannot compare the metadata.
+            CONSOLE.print("Updating metadata of draft record.")
+            zenodo.update_metadata(record["id"], config, paths)
     else:
         _refresh_files(zenodo, record, named_paths, config.metadata.version)
         # Unconditionally update the metadata, because we cannot compare the metadata.
+        CONSOLE.print("Updating metadata of draft record.")
         zenodo.update_metadata(rid, config, paths)
 
 
@@ -1544,7 +1571,7 @@ def _check_version_chain(zenodo: ZenodoWrapper, record: dict[str, Any], config: 
     for other in zenodo.get_versions(rid):
         if other.get("versions", {}).get("is_latest", False):
             latest = other
-        if str(other["id"]) != str(rid) and _record_version(other) == version:
+        if str(other["id"]) != str(rid) and _get_record_version(other) == version:
             taken = other
     if latest is None:
         raise ZenodoError(
@@ -1595,7 +1622,7 @@ def _search_hits(data: dict[str, Any]) -> list[dict[str, Any]]:
     return hits["hits"]
 
 
-def _record_version(record: dict[str, Any]) -> str | None:
+def _get_record_version(record: dict[str, Any]) -> str | None:
     """Extract the version of a record.
 
     Zenodo does not require a version,
@@ -1633,11 +1660,11 @@ def _record_publication_date(record: dict[str, Any]) -> str | None:
 
 def _describe_version(record: dict[str, Any]) -> str:
     """Describe the version of a record for use in an error message."""
-    version = _record_version(record)
+    version = _get_record_version(record)
     return "no version" if version is None else f"version {version}"
 
 
-def _record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
+def _get_record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
     """Extract the file entries of a record.
 
     Parameters
@@ -1663,8 +1690,9 @@ def _record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 def _check_record_md5(record: dict[str], paths: dict[str, Path], version: str):
     """Sanity check of MD5 hashes received from Zenodo"""
-    entries = _record_files(record)
+    entries = _get_record_files(record)
     for file in entries.values():
+        CONSOLE.print(f"[cyan]Checking MD5:[/cyan] {file['key']} ({version}, published)")
         if file["key"] not in paths:
             raise ZenodoError(
                 f"File {file['key']} exists online but not locally ({version}, published)"
@@ -1689,19 +1717,18 @@ def _republish_metadata(
     The publication date of the record is preserved,
     because this version was published on that date, not today.
     """
-    print(f"Editing metadata and publishing same version ({config.metadata.version}) again.")
+    CONSOLE.print(
+        f"Editing metadata and publishing same version ({config.metadata.version}) again."
+    )
     zenodo.edit_record(rid)
     zenodo.update_metadata(rid, config, paths, publication_date)
     zenodo.publish_record(rid)
 
 
-def _create_new_version(
-    zenodo: ZenodoWrapper, rid: int, config: Config, paths: list[Path]
-) -> dict[str]:
-    """Create a new version of the dataset and refresh the metadata."""
-    print(f"Creating a new version ({config.metadata.version})")
-    record = zenodo.create_new_version(rid)
-    return zenodo.update_metadata(record["id"], config, paths)
+def _create_new_version(zenodo: ZenodoWrapper, rid: int, config: Config) -> dict[str]:
+    """Create a new version of the dataset."""
+    CONSOLE.print(f"Creating a new version ({config.metadata.version})")
+    return zenodo.create_new_version(rid)
 
 
 def _refresh_files(
@@ -1713,26 +1740,28 @@ def _refresh_files(
     Files that are no longer listed locally are also removed online.
     """
     changed = False
-    entries = _record_files(record)
+    entries = _get_record_files(record)
     for file in entries.values():
         if not file["checksum"].startswith("md5:"):
             raise ZenodoError(f"Zenodo returned an unexpected checksum format: {file['checksum']}")
         if file["key"] not in paths:
-            print(f"Deleting {file['key']} ({version}, draft)")
+            CONSOLE.print(f"[red]Deleting:[/red] {file['key']} ({version}, draft)")
             zenodo.delete_file(record["id"], file["key"])
             changed = True
         else:
             path = paths[file["key"]]
             local_md5 = _compute_md5(path)
             if local_md5 != file["checksum"][4:]:
-                print(f"Replacing {path} ({version}, draft)")
+                CONSOLE.print(f"[yellow]Replacing:[/yellow] {path} ({version}, draft)")
                 zenodo.delete_file(record["id"], file["key"])
                 zenodo.start_uploads(record["id"], [path])
                 zenodo.upload_file(record["id"], path)
                 changed = True
+            else:
+                CONSOLE.print(f"[cyan]Same MD5:[/cyan] {path} ({version}, draft)")
     for name, path in paths.items():
         if name not in entries:
-            print(f"Uploading {path} ({version}, draft)")
+            CONSOLE.print(f"[green]Uploading:[/green] {path} ({version}, draft)")
             zenodo.start_uploads(record["id"], [path])
             zenodo.upload_file(record["id"], path)
             changed = True

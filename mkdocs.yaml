@@ -78,6 +78,7 @@ nav:
     - advanced_topics/sync_zenodo.md
   - Reference:
     - reference/sync_zenodo_config.md
+    - reference/zenodo_vocabularies.md
     - reference/stepup.reprep.api.md
     - reference/stepup.reprep.bibsane.md
   - changelog.md

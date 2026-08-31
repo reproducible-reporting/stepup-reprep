@@ -1486,6 +1486,7 @@ def sync_zenodo(
         Zenodo does not support directory layouts,
         so all files must have different names.
         At most 100 files can be uploaded to a single record.
+        The first file is selected for preview on Zenodo.
     path_description
         The path to a Markdown or HTML file with the description of the dataset.
         Markdown is converted to HTML before it is sent to Zenodo.

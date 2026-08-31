@@ -58,12 +58,12 @@ because they use different names for overlapping metadata.
   Zenodo publishes this schema, but it lags the loader that Zenodo runs,
   which is worth knowing before you rely on it.
 
-- **The legacy REST API, `/api/deposit/depositions`.**
-  This is what <https://developers.zenodo.org/> documents.
+- **The legacy REST API, `/api/deposit/depositions`**,
+  as documented on <https://developers.zenodo.org/>.
   Earlier versions of `sync_zenodo()` used it.
 
-- **The InvenioRDM API, `/api/records`.**
-  This is what `srr-sync-zenodo` uses today.
+- **The InvenioRDM API, `/api/records`**,
+  which `srr-sync-zenodo` currently uses.
   Zenodo does not document it itself,
   but InvenioRDM, the software that Zenodo runs, does,
   in its [REST API reference](https://inveniordm.docs.cern.ch/reference/rest_api_index/)
@@ -125,6 +125,9 @@ srr-sync-zenodo sync_zenodo.yaml file1 sub/file2 \
   --description=zenodo_description.md
 ```
 
+The files will appear in the draft in the same order
+and the first is always selected as the default preview file.
+
 Add the `--dry-run` option to check the configuration without contacting Zenodo.
 It validates the configuration file, resolves the description,
 prints the metadata that would be sent to Zenodo and exits.
@@ -168,7 +171,7 @@ consider uploading a ZIP archive instead of separate files.
 that also creates and updates Zenodo drafts from metadata in a repository.
 It talks to the legacy deposit API and is not tied to a build system,
 whereas `srr-sync-zenodo` is a StepUp step,
-so the files it uploads are the tracked outputs of a build,
+so the files it uploads can be the tracked outputs of a build,
 and it talks to the InvenioRDM API.
 
 ## Recommended Workflow

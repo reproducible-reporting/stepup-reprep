@@ -31,17 +31,7 @@ metadata:
   title: 'A title'        # required
   version: '1.0.0'        # required
   resource_type: dataset  # required
-  keywords:
-    - keyword1
-    - keyword2
-  license:
-    - cc-by-nc-4.0  # Zenodo's default
-  publisher: 'Publisher name'  # required
-  copyright: 'Copyright statement'
-  description: >-
-    A short description of the dataset, in plain text or HTML.
-    Anything longer is better passed in with the --description option,
-    which takes a Markdown or HTML file.
+  publisher: 'Zenodo'     # required
   # Add at least one creator
   creators:
     - given_name: 'First name 1'
@@ -74,6 +64,19 @@ metadata:
             City,
             Country
     - ...
+  keywords:
+    - keyword1
+    - keyword2
+  license:
+    - cc-by-nc-4.0  # Zenodo's default
+  copyright: 'Copyright statement'
+  languages:
+    - eng
+    - fra
+  description: >-
+    A short description of the dataset, in plain text or HTML.
+    Anything longer is better passed in with the --description option,
+    which takes a Markdown or HTML file.
   related:
     - scheme: doi
       identifier: 10.1234/zenodo.1234567
@@ -190,20 +193,6 @@ Each new version gets its own publication date this way.
 
     > A short description of the dataset, of at least three characters.
 
-- `keywords` *(optional)*:
-
-     > A list of keywords to describe the dataset.
-     > A single keyword may be written without the list markup.
-
-- `publisher` *(required)*:
-
-    > The name under which the dataset is made available, e.g. `Zenodo`.
-    >
-    > Zenodo accepts a draft without a publisher but refuses to publish it,
-    > because it needs one to register a DOI.
-    > It is therefore required here, so that a missing publisher is reported
-    > before the record is created instead of when you try to publish it.
-
 - `version` *(required)*:
 
     > The version of your current data, as a non-empty string of at most 191 characters.
@@ -223,33 +212,20 @@ Each new version gets its own publication date this way.
     > It refuses to reuse a version that was published before,
     > because that is usually a stale checkout or a revert instead of a new release.
 
-- `copyright` *(optional)*:
-
-    > A copyright statement describing the ownership of the dataset.
-
-- `description` *(optional)*:
-
-    > A description of the dataset, in plain text or HTML.
-    >
-    > For anything longer than a few lines, use the
-    > [`--description` option](../advanced_topics/sync_zenodo.md#synchronize-your-dataset) instead.
-    > The two cannot be combined.
-
-- `license` *(required)*:
-
-    > A list of license SPDX identifiers (will be converted to lowercase).
-    > A single license may be written without the list markup.
-    > The identifiers are taken from the `licenses` vocabulary,
-    > described in [Controlled Vocabularies](#controlled-vocabularies) below.
-    >
-    > When specifying multiple licenses, it is recommended to clarify in the Zenodo readme
-    > how the different licenses apply to different parts of the dataset.
-
 - `resource_type` *(required)*:
 
     > The type of the deposited resource, e.g. `dataset`, `software` or `publication-article`.
     > The identifiers are taken from the `resourcetypes` vocabulary,
     > described in [Controlled Vocabularies](#controlled-vocabularies) below.
+
+- `publisher` *(required)*:
+
+    > The name under which the dataset is made available, e.g. `Zenodo`.
+    >
+    > Zenodo accepts a draft without a publisher but refuses to publish it,
+    > because it needs one to register a DOI.
+    > It is therefore required here, so that a missing publisher is reported
+    > before the record is created instead of when you try to publish it.
 
 - `creators` *(required)*:
 
@@ -277,6 +253,39 @@ Each new version gets its own publication date this way.
         > The list of affiliations of the creator.
         > Each affiliation is a dictionary with either a `ror` or `name` field.
 
+- `keywords` *(optional)*:
+
+     > A list of keywords to describe the dataset.
+     > A single keyword may be written without the list markup.
+
+- `license` *(required)*:
+
+    > A list of license SPDX identifiers (will be converted to lowercase).
+    > A single license may be written without the list markup.
+    > The identifiers are taken from the `licenses` vocabulary,
+    > described in [Controlled Vocabularies](#controlled-vocabularies) below.
+    >
+    > When specifying multiple licenses, it is recommended to clarify in the Zenodo readme
+    > how the different licenses apply to different parts of the dataset.
+
+- `copyright` *(optional)*:
+
+    > A copyright statement describing the ownership of the dataset.
+
+- `languages` *(optional)*:
+
+    > A list of ISO 639-3 language codes, e.g. `eng` for English or `fra` for French.
+    > A single language may be written without the list markup.
+    > Zenodo uses these codes to describe the languages in which the dataset is written.
+
+- `description` *(optional)*:
+
+    > A description of the dataset, in plain text or HTML.
+    >
+    > For anything longer than a few lines, use the
+    > [`--description` option](../advanced_topics/sync_zenodo.md#synchronize-your-dataset) instead.
+    > The two cannot be combined.
+
 - `related` *(optional)*:
 
     > A list of related resources.
@@ -300,7 +309,8 @@ Each new version gets its own publication date this way.
     - `relation_type` *(required)*:
 
         > The type of relation, e.g. `cites`, `ispartof` or `isversionof`.
-        > Use this in the following sentence: *This resource {relation_type} the related resource*.
+        > Select the relation such that the following sentence works:
+        > *This record {relation_type} the related record*.
         > The identifiers are taken from the `relationtypes` vocabulary,
         > described in [Controlled Vocabularies](#controlled-vocabularies) below.
 
@@ -596,15 +606,7 @@ cannot be set through the configuration file.
 
 ## Controlled Vocabularies
 
-Several fields take an identifier from a controlled vocabulary of Zenodo.
-Zenodo rejects a deposit with an identifier that is not in its vocabularies,
-including one that only differs in capitalization,
-which is why `srr-sync-zenodo` validates these identifiers before contacting Zenodo.
-
-The identifiers are stored in
-[`zenodo_vocabularies.yaml`](https://github.com/reproducible-reporting/stepup-reprep/blob/main/stepup/reprep/zenodo_vocabularies.yaml),
-one key per vocabulary,
-and each vocabulary is also served at `https://zenodo.org/api/vocabularies/<name>`:
+The following table shows which fields take an identifier from a controlled vocabulary of Zenodo:
 
 | Field | Vocabulary |
 | --- | --- |
@@ -615,7 +617,16 @@ and each vocabulary is also served at `https://zenodo.org/api/vocabularies/<name
 | `custom_fields.development_status` | `code:developmentStatus` |
 | `custom_fields.programming_languages` | `code:programmingLanguages` |
 
-Zenodo extends its vocabularies over time,
+Zenodo rejects a deposit with an identifier that is not in its vocabularies,
+including one that only differs in capitalization,
+which is why `srr-sync-zenodo` validates these identifiers before contacting Zenodo.
+
+StepUp RepRep documents a local copy of [Zenodo Vocabularies](zenodo_vocabularies.md)
+relevant for the `srr-sync-zenodo` script,
+and they are also stored in machine-readable form in
+[`zenodo_vocabularies.yaml`](https://github.com/reproducible-reporting/stepup-reprep/blob/main/stepup/reprep/zenodo_vocabularies.yaml).
+
+Note that Zenodo extends its vocabularies over time,
 so an identifier that Zenodo has added since the data file was written is rejected locally.
 The error message names the vocabulary URL,
 so you can check there whether the identifier is valid
@@ -627,7 +638,7 @@ Maintainers of `stepup-reprep` refresh the file from the Zenodo API with:
 python tools/update_zenodo_vocabularies.py
 ```
 
-That script rewrites `zenodo_vocabularies.yaml` in place
+That script rewrites `zenodo_vocabularies.yaml` and `zenodo_vocabularies.md` files in place
 and prints the added and removed identifiers per vocabulary,
 so that the refresh can be reviewed before it is committed.
-Do not edit the file by hand.
+Do not edit these files by hand.

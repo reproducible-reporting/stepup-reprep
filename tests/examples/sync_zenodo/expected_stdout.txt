@@ -4,8 +4,10 @@
  SUCCESS │ ./plan.py
    START │ srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
  SUCCESS │ srr-sync-zenodo sync_zenodo.yaml README.txt --description=zenodo_description.md
-──────────────────────────────── Standard error ────────────────────────────────
-(stripped)
+─────────────────────────────── Standard output ────────────────────────────────
+The REPREP_ZENODO_TOKEN environment variable is not set.
+Exiting early without interacting with the Zenodo endpoint.
+Use --dry-run to validate the config file offline on purpose.
 ────────────────────────────────────────────────────────────────────────────────
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)

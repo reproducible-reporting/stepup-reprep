@@ -100,7 +100,7 @@ and will be updated with any further changes before the final release.)
       It takes `code_repository` and the other fields listed under Added above.
     - Every field that takes an identifier from a controlled vocabulary of Zenodo
       is validated against the identifiers Zenodo has deployed:
-      `license`, `resource_type`, `relation_type`,
+      `languages`, `license`, `resource_type`, `relation_type`,
       `development_status` and `programming_languages`.
       An identifier that Zenodo does not know makes a deposit fail,
       so it is rejected locally instead,
@@ -146,12 +146,14 @@ and will be updated with any further changes before the final release.)
       because the old names are easily confused with the legacy `.zenodo.json` file.
       These names are only a convention:
       `srr-sync-zenodo` and `sync_zenodo()` accept any path.
-    - The documentation of the Zenodo synchronization is split into two pages:
-      a guide, which also explains how the legacy `.zenodo.json` file
-      and the two Zenodo APIs relate to each other,
-      and a reference of the configuration file, with one section per top level key.
-      The `access` section, which decides who can see the record and download its files,
+    - The documentation of the Zenodo synchronization is split into three pages:
+        1. A guide, which also explains how the legacy `.zenodo.json` file
+           and the two Zenodo APIs relate to each other.
+        2. A reference of the configuration file, with one section per top level key.
+        3. A page with the relevant Zenodo vocabularies, which is generated from the Zenodo API.
+    - The `access` section, which decides who can see the record and download its files,
       is documented for the first time.
+    - The `languages` field has been added.
 
 ### Removed
 

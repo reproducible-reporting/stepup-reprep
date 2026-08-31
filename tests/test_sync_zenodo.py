@@ -388,6 +388,7 @@ def test_custom_fields_nested_error_message():
 
 
 VOCABULARY_NAMES = [
+    "_date",
     "code:developmentStatus",
     "code:programmingLanguages",
     "languages",
@@ -403,7 +404,7 @@ def test_load_vocabularies():
     assert all(len(vocabularies[name]) > 0 for name in VOCABULARY_NAMES)
 
 
-@pytest.mark.parametrize("name", VOCABULARY_NAMES)
+@pytest.mark.parametrize("name", VOCABULARY_NAMES[1:])
 def test_vocabularies_data_file_sorted_and_unique(name):
     """Guard against a hand edit that the refresh script would have prevented."""
     text = resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text()

@@ -230,6 +230,17 @@ and will be updated with any further changes before the final release.)
   A value outside a fixed set, such as an unknown `access.record`,
   used to be followed by the internal representation of the attribute,
   and an unknown `related.scheme` by the validators of every scheme Zenodo knows.
+- The run after a failed upload finishes the draft that `srr-sync-zenodo` left behind.
+  A file is declared to Zenodo before its content is sent,
+  so an upload that broke off halfway left a file name without content,
+  which the next run compared to a checksum that Zenodo does not have yet.
+  It reported an unexpected checksum format instead,
+  which left `--clean` as the only way forward.
+- `srr-sync-zenodo` creates the directory of the file named by `path_record_id`
+  when it does not exist, and reports the failure to write that file as a message.
+  Because the file is not an output of the step, its directory is not prepared for it,
+  so a `path_record_id` inside a directory that a build does not create
+  ended in a traceback right after the record was created on Zenodo.
 - A string written where a list of sections belongs, such as `creators: Jane Doe`,
   is reported once instead of once per character,
   and a scalar written where a section belongs names the type of the value.

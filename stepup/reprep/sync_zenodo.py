@@ -346,6 +346,10 @@ class Organization:
         return {"name": self.name} if self.ror is None else {"id": self.ror}
 
 
+CREATOR_IDENTIFIER_SCHEMES = ("orcid", "isni")
+"""The identifier schemes that `srr-sync-zenodo` deposits for a creator."""
+
+
 @attrs.define
 class Creator:
     """A subset of InvenioRDM creator."""
@@ -360,40 +364,37 @@ class Creator:
     """Given name."""
 
     identifiers: dict[str, str] = attrs.field(factory=dict)
-    """Identifiers of the creator, e.g. ORCID or ISNI.
+    """Identifiers of the creator, keyed by scheme.
 
-    Keys must be lower case strings.
-    Values must not contain a https:// prefix, but only the identifier itself.
-    For example, for ORCID, use '0000-0001-9288-5608'
-    instead of 'https://orcid.org/0000-0001-9288-5608'.
+    The scheme is one of `CREATOR_IDENTIFIER_SCHEMES`.
+    The value is the identifier itself, without a URL prefix,
+    e.g. '0000-0001-9288-5608' instead of 'https://orcid.org/0000-0001-9288-5608'.
     """
 
     @identifiers.validator
     def _validate_identifiers(self, attribute, value):
         """Validate the identifiers."""
-        if not isinstance(value, dict):
-            raise TypeError("Identifiers must be a dictionary.")
-        for key in value:
-            if key not in ["orcid", "isni"]:
+        for scheme in value:
+            if scheme not in CREATOR_IDENTIFIER_SCHEMES:
                 raise ValueError(
-                    f"Unknown identifier type: {key}. Only 'orcid' or 'isni' are allowed."
+                    f"Unknown identifier scheme for '{attribute.name}': {scheme!r}. "
+                    f"Zenodo reads one of: {', '.join(CREATOR_IDENTIFIER_SCHEMES)}."
                 )
-        if "orcid" in value:
-            if not idutils.is_orcid(value["orcid"]):
-                raise ValueError(f"Invalid ORCID: {value['orcid']}")
-            if value["orcid"].startswith("http"):
-                raise ValueError(
-                    "ORCID identifiers must not start with 'http'. "
-                    "Use only the identifier itself, e.g. '0000-0001-9288-5608'."
-                )
-        if "isni" in value:
-            if not idutils.is_isni(value["isni"]):
-                raise ValueError(f"Invalid ISNI: {value['isni']}")
-            if value["isni"].startswith("http"):
-                raise ValueError(
-                    "ISNI identifiers must not start with 'http'. "
-                    "Use only the identifier itself, e.g. '0000 0001 6785 333X'."
-                )
+        orcid = value.get("orcid")
+        if orcid is not None and not (idutils.is_orcid(orcid) and not orcid.startswith("http")):
+            raise ValueError(
+                f"Invalid ORCID for '{attribute.name}': {orcid!r}. "
+                "Zenodo reads sixteen characters in groups of four, "
+                "ending in a check character and without a URL prefix, "
+                "e.g. '0000-0001-9288-5608'."
+            )
+        isni = value.get("isni")
+        if isni is not None and not idutils.is_isni(isni):
+            raise ValueError(
+                f"Invalid ISNI for '{attribute.name}': {isni!r}. "
+                "Zenodo reads sixteen characters ending in a check character "
+                "and without a URL prefix, e.g. '0000 0001 6785 333X'."
+            )
 
     affiliations: list[Organization] = attrs.field(factory=list)
     """The affiliation of the creator, e.g. a university or research institute."""
@@ -1673,9 +1674,31 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
 
 
 def _write_record_id(path: Path, rid: str):
-    """Store the id of the record that the next run has to update."""
-    with open(path, "w") as fh:
-        fh.write(f"{rid}\n")
+    """Store the id of the record that the next run has to update.
+
+    The parent directory is created when it does not exist,
+    because the record id file is not an output of the StepUp step
+    and its directory is therefore not prepared for it.
+
+    Raises
+    ------
+    ZenodoError
+        When the file cannot be written.
+        The record then exists on Zenodo while nothing local points at it,
+        so the message says which id to record by hand.
+    """
+    try:
+        # A bare file name has no parent directory to create.
+        if path.parent != "":
+            path.parent.makedirs_p()
+        with open(path, "w") as fh:
+            fh.write(f"{rid}\n")
+    except OSError as exc:
+        raise ZenodoError(
+            f"Cannot write the record ID file {path}: {exc}. "
+            f"Record {rid} exists on Zenodo, so put its id in that file by hand, "
+            "or remove the draft with --clean."
+        ) from exc
 
 
 def _upload_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
@@ -1714,11 +1737,10 @@ def _refresh_existing_record(zenodo: ZenodoWrapper, rid: str, config: Config, pa
     record = zenodo.get_record(rid)
     CONSOLE.print(f"[b]Existing record:[/b] {_record_url(zenodo, record)}")
 
-    named_paths = {path.name: path for path in paths}
-    zenodo_version = _get_record_version(record)
     if _is_published(record):
         _check_version_chain(zenodo, record, config)
-        if config.metadata.version == zenodo_version:
+        if config.metadata.version == _get_record_version(record):
+            named_paths = {path.name: path for path in paths}
             _check_record_md5(record, named_paths, config.metadata.version)
             _republish_metadata(zenodo, rid, config, paths, _record_publication_date(record))
         else:
@@ -1994,7 +2016,7 @@ def _get_record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
     -------
     entries
         The file entry of every file in the record, keyed by file name.
-        Each entry holds at least a `key`, a `checksum` and a `size`.
+        An entry of a draft record whose content is not uploaded yet carries no checksum.
     """
     files = record.get("files")
     if not isinstance(files, dict):
@@ -2108,7 +2130,11 @@ def _refresh_files(
             zenodo.delete_file(rid, name)
         else:
             path = paths[name]
-            if _compute_md5(path) != _entry_md5(entry):
+            if entry.get("checksum") is None:
+                # The file is declared already, so only its content has to be sent.
+                CONSOLE.print(f"[green]Completing:[/green] {path} ({version}, draft)")
+                zenodo.upload_file(rid, path)
+            elif _compute_md5(path) != _entry_md5(entry):
                 CONSOLE.print(f"[yellow]Replacing:[/yellow] {path} ({version}, draft)")
                 zenodo.delete_file(rid, name)
                 zenodo.start_uploads(rid, [path])

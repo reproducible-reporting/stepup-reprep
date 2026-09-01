@@ -59,11 +59,13 @@ from stepup.reprep.sync_zenodo import (
     _record_id,
     _record_publication_date,
     _record_url,
+    _refresh_draft,
     _refresh_existing_record,
     _refresh_files,
     _search_hits,
     _update_online,
     _upload_new_record,
+    _write_record_id,
     main,
 )
 
@@ -98,6 +100,32 @@ def test_creator_orcid_valid(orcid):
 def test_creator_orcid_invalid(orcid):
     with pytest.raises(ValueError):
         Creator("Test User", "StepUp RepRep", {"orcid": orcid})
+
+
+@pytest.mark.parametrize("scheme", ["ORCID", "gnd", "ror", ""])
+def test_creator_identifier_scheme_unknown(scheme):
+    with pytest.raises(ValueError, match="Unknown identifier scheme for 'identifiers'"):
+        Creator("Test User", "StepUp RepRep", {scheme: "0000-0001-9288-5608"})
+
+
+def test_creator_orcid_message_names_the_attribute():
+    """The error surfaces at the creator, so the message has to say which field is wrong."""
+    with pytest.raises(ValueError, match="Invalid ORCID for 'identifiers'"):
+        Creator("Test User", identifiers={"orcid": "https://orcid.org/0000-0001-9288-5608"})
+
+
+@pytest.mark.parametrize("isni", ["0000 0001 6785 333X", "0000000016785333"])
+def test_creator_isni_valid(isni):
+    Creator("Test User", identifiers={"isni": isni})
+
+
+@pytest.mark.parametrize(
+    "isni",
+    ["https://isni.org/isni/0000000016785333", "0000 0001 6785 3330", "abc", ""],
+)
+def test_creator_isni_invalid(isni):
+    with pytest.raises(ValueError, match="Invalid ISNI for 'identifiers'"):
+        Creator("Test User", identifiers={"isni": isni})
 
 
 def test_custom_fields_to_zenodo():
@@ -991,8 +1019,12 @@ def test_config_creators_missing(tmp_path):
     assert any("creators" in message for message in messages)
 
 
-def _v1_record(rid: int, checksums: dict[str, str], **kwargs) -> dict:
-    """Build a record as Zenodo serializes it for `application/vnd.inveniordm.v1+json`."""
+def _v1_record(rid: int, checksums: dict[str, str | None], **kwargs) -> dict:
+    """Build a record as Zenodo serializes it for `application/vnd.inveniordm.v1+json`.
+
+    A `None` checksum builds the entry of a file
+    that is declared with `start_uploads` and whose content is not uploaded yet.
+    """
     return {
         "id": rid,
         "links": {"self_html": f"https://zenodo.org/record/{rid}"},
@@ -1002,7 +1034,9 @@ def _v1_record(rid: int, checksums: dict[str, str], **kwargs) -> dict:
             "count": len(checksums),
             "total_bytes": 0,
             "entries": {
-                name: {"key": name, "checksum": f"md5:{md5}", "size": 0}
+                name: {"key": name}
+                if md5 is None
+                else {"key": name, "checksum": f"md5:{md5}", "size": 0}
                 for name, md5 in checksums.items()
             },
         },
@@ -1265,6 +1299,66 @@ def test_refresh_files_replace_changed(tmp_path):
         ("delete_file", "one.txt"),
         ("start_uploads", ["one.txt"]),
         ("upload_file", "one.txt"),
+    ]
+
+
+def test_refresh_files_complete_pending(tmp_path):
+    """A file that was declared but never uploaded is completed, not compared to a checksum."""
+    path = _write_file(tmp_path, "one.txt", "hello")
+    record = _v1_record(1, {"one.txt": None})
+    zenodo = _FakeZenodo()
+    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
+    # The file is declared already, so it is neither deleted nor declared again.
+    assert zenodo.calls == [("upload_file", "one.txt")]
+
+
+def test_refresh_files_pending_next_to_uploaded(tmp_path):
+    """Only the pending file of a half finished upload is sent again."""
+    path_one = _write_file(tmp_path, "one.txt", "hello")
+    path_two = _write_file(tmp_path, "two.txt", "bye")
+    record = _v1_record(1, {"one.txt": _md5("hello"), "two.txt": None})
+    zenodo = _FakeZenodo()
+    paths = {"one.txt": path_one, "two.txt": path_two}
+    _refresh_files(zenodo, "1", record, paths, "1.0.0")
+    assert zenodo.calls == [("upload_file", "two.txt")]
+
+
+def test_refresh_files_delete_pending_removed(tmp_path):
+    """A pending file that is no longer listed locally is removed like an uploaded one."""
+    record = _v1_record(1, {"gone.txt": None})
+    zenodo = _FakeZenodo()
+    _refresh_files(zenodo, "1", record, {}, "1.0.0")
+    assert zenodo.calls == [("delete_file", "gone.txt")]
+
+
+def test_refresh_draft_completes_failed_upload(tmp_path):
+    """The run after a failed upload completes the draft, as `_upload_new_record` promises.
+
+    The first run declares both files and fails while sending the content of the first one.
+    The second run finds one pending entry and no uploaded entry, and sends both.
+    """
+    path_one = _write_file(tmp_path, "one.txt", "hello")
+    path_two = _write_file(tmp_path, "two.txt", "bye")
+    config = _config_with_version(tmp_path, "1.0.0")
+    zenodo = _FakeZenodo(_v1_record(7, {}))
+
+    def fail(rid, path):
+        raise RESTError("Failed PUT https://zenodo.org/api/records/7/draft/files: 500")
+
+    zenodo.upload_file = fail
+    with pytest.raises(RESTError):
+        _upload_new_record(zenodo, config, [path_one, path_two])
+    assert config.path_record_id.read_text().strip() == "7"
+
+    # Zenodo now holds the names of both files without their content.
+    draft = _v1_record(7, {"one.txt": None, "two.txt": None}, is_published=False)
+    zenodo = _FakeZenodo(draft)
+    _refresh_draft(zenodo, "7", draft, config, [path_one, path_two])
+    assert zenodo.calls == [
+        ("update_metadata", "7", None),
+        ("upload_file", "one.txt"),
+        ("upload_file", "two.txt"),
+        ("update_metadata", "7", None),
     ]
 
 
@@ -1831,6 +1925,34 @@ def test_record_id_missing():
     with pytest.raises(ZenodoError) as exc_info:
         _record_id({"metadata": {}})
     assert INVENIORDM_MIMETYPE in str(exc_info.value)
+
+
+def test_write_record_id_creates_parent(tmp_path):
+    path = Path(tmp_path) / "sub" / "dir" / "record_id.txt"
+    _write_record_id(path, "7")
+    assert path.read_text() == "7\n"
+
+
+def test_write_record_id_without_parent(tmp_path, monkeypatch):
+    """A bare file name has no parent directory to create."""
+    monkeypatch.chdir(tmp_path)
+    _write_record_id(Path("record_id.txt"), "7")
+    assert Path("record_id.txt").read_text() == "7\n"
+
+
+def test_write_record_id_unwritable(tmp_path):
+    """A record that exists on Zenodo but cannot be recorded locally is reported, not raised raw."""
+    path = Path(tmp_path) / "record_id.txt"
+    path.mkdir()
+    with pytest.raises(ZenodoError, match="Cannot write the record ID file"):
+        _write_record_id(path, "7")
+
+
+def test_write_record_id_unwritable_parent(tmp_path):
+    path = Path(tmp_path) / "blocked"
+    path.write_text("not a directory")
+    with pytest.raises(ZenodoError, match="Cannot write the record ID file"):
+        _write_record_id(path / "record_id.txt", "7")
 
 
 def test_update_online_empty_record_id(tmp_path):

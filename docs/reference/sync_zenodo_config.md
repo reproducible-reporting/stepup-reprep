@@ -250,6 +250,8 @@ Each new version gets its own publication date this way.
 
         > A dictionary with identifiers of the creator.
         > The only supported identifiers are `orcid` and `isni`.
+        > Write the identifier itself, without a URL prefix,
+        > e.g. `0000-0001-9288-5608` and not `https://orcid.org/0000-0001-9288-5608`.
 
     - `affiliations` *(optional)*:
 

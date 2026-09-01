@@ -12,6 +12,8 @@ from nbconvert import exporters
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat import read, v4
 
+from stepup.reprep.jupyter_kernel import ipc_kernel_config
+
 __all__ = ("main",)
 
 
@@ -42,14 +44,16 @@ def main(argv: Sequence[str] | None = None):
             raise RuntimeError("No cell with tag 'parameters' found in the notebook.")
 
     if args.execute:
-        ep = ExecutePreprocessor(
-            timeout=600,
-            kernel_name="python3",
-            extra_arguments=["--IPKernelApp.log_level=40"],
-        )
-        notebook, _resources = ep.preprocess(
-            notebook, {"metadata": {"path": str(Path(args.path_nb).parent)}}
-        )
+        with ipc_kernel_config() as config:
+            ep = ExecutePreprocessor(
+                config=config,
+                timeout=600,
+                kernel_name="python3",
+                extra_arguments=["--IPKernelApp.log_level=40"],
+            )
+            notebook, _resources = ep.preprocess(
+                notebook, {"metadata": {"path": str(Path(args.path_nb).parent)}}
+            )
 
     exporter_class = exporters.get_exporter(args.to)
 

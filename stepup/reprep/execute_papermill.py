@@ -17,6 +17,8 @@ from collections.abc import Sequence
 from papermill import execute_notebook
 from path import Path
 
+from stepup.reprep.jupyter_kernel import ipc_kernel_config
+
 __all__ = ("main",)
 
 
@@ -27,13 +29,15 @@ def main(argv: Sequence[str] | None = None):
         raise ValueError("The input must have a .ipynb extension.")
     if not args.path_out.endswith(".ipynb"):
         raise ValueError("The output must have a .ipynb extension.")
-    execute_notebook(
-        input_path=args.path_inp,
-        output_path=args.path_out,
-        parameters=json.loads(args.parameters) if args.parameters else {},
-        progress_bar=False,
-        extra_arguments=["--IPKernelApp.log_level=40"],
-    )
+    with ipc_kernel_config() as config:
+        execute_notebook(
+            input_path=args.path_inp,
+            output_path=args.path_out,
+            parameters=json.loads(args.parameters) if args.parameters else {},
+            progress_bar=False,
+            extra_arguments=["--IPKernelApp.log_level=40"],
+            config=config,
+        )
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

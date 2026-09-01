@@ -210,6 +210,7 @@ async def test_typst_example(path_tmp: Path, name: str):
     "name",
     [
         "convert_jupyter",
+        pytest.param("convert_jupyter_concurrency", marks=pytest.mark.heavy),
     ],
 )
 @pytest.mark.asyncio

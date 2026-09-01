@@ -1,12 +1,21 @@
 # SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 # SPDX-License-Identifier: LGPL-3.0-or-later
-"""Unit tests for stepup.reprep.jupyter_kernel"""
+"""Unit tests for stepup.reprep.jupyter_kernel
+
+The `main` functions are deliberately not called in process.
+The synchronous Jupyter API creates an asyncio event loop that it never closes
+(observed with jupyter-core 5.9.1),
+and the socket pair of such a loop makes Python emit a `ResourceWarning`
+when the garbage collector eventually reclaims the loop.
+That happens at an unpredictable moment,
+so in process it would turn an arbitrary later test into a failure.
+"""
 
 import os
 import shutil
-import subprocess
 
 import pytest
+from conftest import run_tool
 from nbformat import read, v4, write
 from path import Path
 
@@ -30,20 +39,6 @@ def test_ipc_kernel_config():
         assert os.path.isdir(path_dir)
         assert os.path.dirname(config.KernelManager.connection_file) == path_dir
     assert not os.path.exists(path_dir)
-
-
-def run_tool(*args: str):
-    """Run one of the RepRep command-line tools in a subprocess, as StepUp does.
-
-    The `main` functions are deliberately not called in process.
-    The synchronous Jupyter API creates an asyncio event loop that it never closes
-    (observed with jupyter-core 5.9.1),
-    and the socket pair of such a loop makes Python emit a `ResourceWarning`
-    when the garbage collector eventually reclaims the loop.
-    That happens at an unpredictable moment,
-    so in process it would turn an arbitrary later test into a failure.
-    """
-    subprocess.run(args, stdin=subprocess.DEVNULL, check=True)
 
 
 def write_transport_notebook(path_nb: Path):

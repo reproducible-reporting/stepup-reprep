@@ -1,20 +1,24 @@
 # SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 # SPDX-License-Identifier: LGPL-3.0-or-later
-"""Unit tests for stepup.reprep.unplot."""
+"""Unit tests for stepup.reprep.unplot.
+
+The main function is deliberately not called in process.
+In Python 3.15, a direct call to `main` causes a
+`ResourceWarning: unclosed iterparse iterator`.
+"""
 
 import json
 
 import numpy as np
+from conftest import run_tool
 from numpy.testing import assert_allclose
-
-from stepup.reprep.unplot import main
 
 
 def test_bearing_speed_effect(path_tmp):
     # Plot taken from:
     # https://en.m.wikipedia.org/wiki/File:Measured_Bearing_Speed_Effect_data_and_curve.jpg
     path_out = path_tmp / "out.json"
-    main(["docs/advanced_topics/unplot/plot.svg", path_out])
+    run_tool("srr-unplot", "docs/advanced_topics/unplot/plot.svg", path_out)
     with open(path_out) as fh:
         data = json.load(fh)
     assert data["units"]["mill speed"] == "mpm"
@@ -33,7 +37,7 @@ def test_allosteric_modulator(path_tmp):
     # Plot taken from:
     # https://en.m.wikipedia.org/wiki/File:Negative_allosteric_modulator_plot.svg
     path_out = path_tmp / "out.json"
-    main(["tests/examples/unplot/plot1.svg", path_out])
+    run_tool("srr-unplot", "tests/examples/unplot/plot1.svg", path_out)
     with open(path_out) as fh:
         data = json.load(fh)
     xl = "agonist concentration"
@@ -71,7 +75,7 @@ def test_allosteric_modulator(path_tmp):
 
 def test_simple(path_tmp):
     path_out = path_tmp / "out.json"
-    main(["tests/examples/unplot/plot2.svg", path_out])
+    run_tool("srr-unplot", "tests/examples/unplot/plot2.svg", path_out)
     with open(path_out) as fh:
         data = json.load(fh)
     assert data["units"]["h"] == "1"

@@ -174,83 +174,92 @@ and will be updated with any further changes before the final release.)
 
 ### Fixed
 
-- In `sync_zenodo.yaml`, a single value written where a list of strings belongs
-  is read as a one element list.
-  For example, `keywords: coffee` is the same as a list holding one keyword.
-  This already worked for `license` and now also works for `keywords`
-  and `programming_languages`,
-  which were previously split into a list of characters.
-  A value that is neither a string nor a list of strings is rejected
-  with a message naming the expected type.
-- `compile_tectonic()` only scans the `error:` lines of Tectonic's standard error stream
-  for missing input files.
-  As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
-  from which paths were picked up that are no files at all.
-- `srr-sync-zenodo` reads a record that carries no version on Zenodo,
-  instead of failing with a `KeyError`.
-  Zenodo does not require a version,
-  so a record deposited through its web interface before `srr-sync-zenodo` was adopted
-  may well have none.
-  Such a record never matches the local version, so a new version is created for it.
-- The `--clean` option of `srr-sync-zenodo` removes the drafts
-  that Zenodo serves beyond the first page of the records of a user.
-  As observed on 2026-08-30, that page holds at most 25 records,
-  so the drafts of a user with more records than that were silently left behind.
-- `srr-sync-zenodo` no longer fails when it is given no files to upload.
-  It declared an empty list of uploads, which Zenodo rejects,
-  after it had already created the record,
-  so every run left another draft behind without recording its id.
-  Note that Zenodo refuses to publish a record without files,
-  as observed on the sandbox instance on 2026-08-30.
-- `srr-sync-zenodo` keeps the publication date of a record that is already published.
-  It sent the date of the build with every metadata update,
-  which moved the publication date of a published version to the day of the last build.
-  A record that is not published yet is still dated on the day it was last synchronized,
-  and a new version still gets the date on which it is created.
-- Every request that `srr-sync-zenodo` sends to Zenodo times out after 60 seconds,
-  instead of waiting forever for a connection that stalls.
-  A request that cannot reach Zenodo at all is reported as a message,
-  like a request that Zenodo refuses, instead of as a traceback.
-- `srr-sync-zenodo` reads a record as published only when Zenodo answers
-  that its draft does not exist.
-  Any other response, such as a refused token or an error of a gateway,
-  is reported instead of being mistaken for a record without a draft.
-- `srr-sync-zenodo` escapes the file name in the address of an upload,
-  so a name holding a character that delimits a URL, such as `#` or `?`,
-  no longer truncates that address.
-- When the local files differ from those of a published version,
-  `srr-sync-zenodo` explains that the version in the configuration file has to be changed,
-  instead of only reporting the difference.
-- `srr-sync-zenodo` sends the metadata of a draft before it uploads the files,
-  because Zenodo only accepts an upload to a record whose metadata has enabled its files.
-  A draft that was created without files could therefore not be given any.
-  The metadata is sent again after the upload,
-  so that Zenodo also applies the order of the files and the default preview.
-- A value that `srr-sync-zenodo` rejects is reported with the message of the validator alone.
-  A value outside a fixed set, such as an unknown `access.record`,
-  used to be followed by the internal representation of the attribute,
-  and an unknown `related.scheme` by the validators of every scheme Zenodo knows.
-- The run after a failed upload finishes the draft that `srr-sync-zenodo` left behind.
-  A file is declared to Zenodo before its content is sent,
-  so an upload that broke off halfway left a file name without content,
-  which the next run compared to a checksum that Zenodo does not have yet.
-  It reported an unexpected checksum format instead,
-  which left `--clean` as the only way forward.
-- `srr-sync-zenodo` creates the directory of the file named by `path_record_id`
-  when it does not exist, and reports the failure to write that file as a message.
-  Because the file is not an output of the step, its directory is not prepared for it,
-  so a `path_record_id` inside a directory that a build does not create
-  ended in a traceback right after the record was created on Zenodo.
-- A string written where a list of sections belongs, such as `creators: Jane Doe`,
-  is reported once instead of once per character,
-  and a scalar written where a section belongs names the type of the value.
-- `srr-sync-zenodo` checks that the files to upload exist before it contacts Zenodo.
-- `srr-sync-zenodo` stops collecting a paginated search result after a hundred pages,
-  instead of requesting pages forever if Zenodo keeps sending full ones.
-- A record, a file entry or a commit response in which Zenodo leaves out
-  the id, the checksum or the size is reported as a message instead of a `KeyError`.
-- A trailing slash on the `endpoint` in `sync_zenodo.yaml` is removed,
-  so that it does not end up in the middle of every address.
+- Many issues have been fixed in `srr-sync-zenodo`:
+    - In `sync_zenodo.yaml`, a single value written where a list of strings belongs
+      is read as a one element list.
+      For example, `keywords: coffee` is the same as a list holding one keyword.
+      This already worked for `license` and now also works for `keywords`
+      and `programming_languages`,
+      which were previously split into a list of characters.
+      A value that is neither a string nor a list of strings is rejected
+      with a message naming the expected type.
+    - `compile_tectonic()` only scans the `error:` lines of Tectonic's standard error stream
+      for missing input files.
+      As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
+      from which paths were picked up that are no files at all.
+    - `srr-sync-zenodo` reads a record that carries no version on Zenodo,
+      instead of failing with a `KeyError`.
+      Zenodo does not require a version,
+      so a record deposited through its web interface before `srr-sync-zenodo` was adopted
+      may well have none.
+      Such a record never matches the local version, so a new version is created for it.
+    - `srr-sync-zenodo` now handles the case where a record has no version.
+      This prevents errors when syncing records that were created before the versioning system was implemented.
+    - The `--clean` option of `srr-sync-zenodo` removes the drafts
+      that Zenodo serves beyond the first page of the records of a user.
+      As observed on 2026-08-30, that page holds at most 25 records,
+      so the drafts of a user with more records than that were silently left behind.
+    - `srr-sync-zenodo` no longer fails when it is given no files to upload.
+      It declared an empty list of uploads, which Zenodo rejects,
+      after it had already created the record,
+      so every run left another draft behind without recording its id.
+      Note that Zenodo refuses to publish a record without files,
+      as observed on the sandbox instance on 2026-08-30.
+    - `srr-sync-zenodo` keeps the publication date of a record that is already published.
+      It sent the date of the build with every metadata update,
+      which moved the publication date of a published version to the day of the last build.
+      A record that is not published yet is still dated on the day it was last synchronized,
+      and a new version still gets the date on which it is created.
+    - Every request that `srr-sync-zenodo` sends to Zenodo times out after 60 seconds,
+      instead of waiting forever for a connection that stalls.
+      A request that cannot reach Zenodo at all is reported as a message,
+      like a request that Zenodo refuses, instead of as a traceback.
+    - `srr-sync-zenodo` reads a record as published only when Zenodo answers
+      that its draft does not exist.
+      Any other response, such as a refused token or an error of a gateway,
+      is reported instead of being mistaken for a record without a draft.
+    - `srr-sync-zenodo` escapes the file name in the address of an upload,
+      so a name holding a character that delimits a URL, such as `#` or `?`,
+      no longer truncates that address.
+    - When the local files differ from those of a published version,
+      `srr-sync-zenodo` explains that the version in the configuration file has to be changed,
+      instead of only reporting the difference.
+    - `srr-sync-zenodo` sends the metadata of a draft before it uploads the files,
+      because Zenodo only accepts an upload to a record whose metadata has enabled its files.
+      A draft that was created without files could therefore not be given any.
+      The metadata is sent again after the upload,
+      so that Zenodo also applies the order of the files and the default preview.
+    - A value that `srr-sync-zenodo` rejects is reported with the message of the validator alone.
+      A value outside a fixed set, such as an unknown `access.record`,
+      used to be followed by the internal representation of the attribute,
+      and an unknown `related.scheme` by the validators of every scheme Zenodo knows.
+    - The run after a failed upload finishes the draft that `srr-sync-zenodo` left behind.
+      A file is declared to Zenodo before its content is sent,
+      so an upload that broke off halfway left a file name without content,
+      which the next run compared to a checksum that Zenodo does not have yet.
+      It reported an unexpected checksum format instead,
+      which left `--clean` as the only way forward.
+    - `srr-sync-zenodo` creates the directory of the file named by `path_record_id`
+      when it does not exist, and reports the failure to write that file as a message.
+      Because the file is not an output of the step, its directory is not prepared for it,
+      so a `path_record_id` inside a directory that a build does not create
+      ended in a traceback right after the record was created on Zenodo.
+    - A string written where a list of sections belongs, such as `creators: Jane Doe`,
+      is reported once instead of once per character,
+      and a scalar written where a section belongs names the type of the value.
+    - `srr-sync-zenodo` checks that the files to upload exist before it contacts Zenodo.
+    - `srr-sync-zenodo` stops collecting a paginated search result after a hundred pages,
+      instead of requesting pages forever if Zenodo keeps sending full ones.
+    - A record, a file entry or a commit response in which Zenodo leaves out
+      the id, the checksum or the size is reported as a message instead of a `KeyError`.
+    - A trailing slash on the `endpoint` in `sync_zenodo.yaml` is removed,
+      so that it does not end up in the middle of every address.
+- The Jupyter kernels started by `convert_jupyter()` and `execute_papermill()`
+  now communicate over ZeroMQ IPC sockets in a private temporary directory,
+  instead of TCP sockets on localhost.
+  When many notebooks were converted in parallel on a single machine,
+  some conversions could fail with "Address already in use",
+  because `jupyter_client` selects free TCP ports before the kernel binds them.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

@@ -53,8 +53,6 @@ metadata:
             ...
     - given_name: 'First name 2'
       family_name: 'Last name 2'
-      identifiers:
-        orcid: '0000-0002-1825-0098'
       affiliations:
         - name: >-
             Research group,
@@ -84,16 +82,21 @@ metadata:
       resource_type: publication
     - ...
   funding:
+    # Describe an award that Zenodo already knows by its id.
     - funder:
         ror: ROR_CODE  # See https://ror.org/
       award:
-        # Either an id, or a title and a number. Not both.
         id: '00k4n6c32::041117'  # See https://zenodo.org/api/awards
+    # Describe any other award with free text, never in combination with an id.
+    - funder:
+        name: 'Full name of the funder'
+      award:
         title: 'Full title of the award'
         number: 'Award number'
         identifiers:
-          - url: 'https://example.org/award/1234'
-          - url: 'https://example.org/award/5678'
+          - identifier: 'https://example.org/award/1234'
+          - scheme: doi
+            identifier: '10.5281/zenodo.1234567'
           - ...
 custom_fields:
   code_repository: https://github.com/example/repo2
@@ -257,6 +260,8 @@ Each new version gets its own publication date this way.
 
      > A list of keywords to describe the dataset.
      > A single keyword may be written without the list markup.
+     > The InvenioRDM metadata has no keyword field,
+     > so Zenodo stores these as free text subjects.
 
 - `license` *(required)*:
 
@@ -354,10 +359,10 @@ Each new version gets its own publication date this way.
 
         - `identifiers` *(optional)*:
 
-            > A list of identifiers for the award, such as URLs.
-            > Each identifier is a dictionary with a single key, the scheme,
-            > and the identifier as value.
-            > The same schemes as for the `related` section can be used here.
+            > A list of identifiers of the award, e.g. the URL of its description.
+            > Each entry is a dictionary with an `identifier`
+            > and an optional `scheme` taken from the same list as in the `related` section.
+            > Zenodo derives the scheme from the identifier when it is left out.
 
 ## `custom_fields` *(optional)*
 

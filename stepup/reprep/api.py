@@ -6,6 +6,7 @@ import json
 import os
 import shlex
 from collections.abc import Collection
+from typing import Any
 
 from path import Path
 
@@ -1115,7 +1116,7 @@ def execute_papermill(
     *,
     inp: StrPath | Collection[StrPath] = (),
     out: StrPath | Collection[StrPath] = (),
-    parameters: dict[str] | None = None,
+    parameters: dict[str, Any] | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,

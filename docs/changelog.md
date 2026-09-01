@@ -98,6 +98,10 @@ and will be updated with any further changes before the final release.)
     - The `code_repository` field of `sync_zenodo.yaml` was replaced by a `custom_fields` section,
       holding the fields with which Zenodo extends the InvenioRDM record.
       It takes `code_repository` and the other fields listed under Added above.
+    - The identifiers of an award in the `metadata.funding` section are written
+      like those of a meeting, as entries with an `identifier` and an optional `scheme`.
+      They used to be entries with the scheme as the only key and the identifier as its value,
+      which described the same thing in two ways within one configuration file.
     - Every field that takes an identifier from a controlled vocabulary of Zenodo
       is validated against the identifiers Zenodo has deployed:
       `languages`, `license`, `resource_type`, `relation_type`,
@@ -154,6 +158,12 @@ and will be updated with any further changes before the final release.)
     - The `access` section, which decides who can see the record and download its files,
       is documented for the first time.
     - The `languages` field has been added.
+    - `srr-sync-zenodo` only sends the metadata keys that carry a value.
+      The keywords are deposited as subjects only,
+      because the InvenioRDM metadata has no keyword field.
+      As observed on the sandbox on 2026-09-01,
+      Zenodo silently dropped the unknown `keywords` key and accepted the empty values,
+      so this does not change the records deposited with earlier versions.
 
 ### Removed
 
@@ -197,6 +207,39 @@ and will be updated with any further changes before the final release.)
   which moved the publication date of a published version to the day of the last build.
   A record that is not published yet is still dated on the day it was last synchronized,
   and a new version still gets the date on which it is created.
+- Every request that `srr-sync-zenodo` sends to Zenodo times out after 60 seconds,
+  instead of waiting forever for a connection that stalls.
+  A request that cannot reach Zenodo at all is reported as a message,
+  like a request that Zenodo refuses, instead of as a traceback.
+- `srr-sync-zenodo` reads a record as published only when Zenodo answers
+  that its draft does not exist.
+  Any other response, such as a refused token or an error of a gateway,
+  is reported instead of being mistaken for a record without a draft.
+- `srr-sync-zenodo` escapes the file name in the address of an upload,
+  so a name holding a character that delimits a URL, such as `#` or `?`,
+  no longer truncates that address.
+- When the local files differ from those of a published version,
+  `srr-sync-zenodo` explains that the version in the configuration file has to be changed,
+  instead of only reporting the difference.
+- `srr-sync-zenodo` sends the metadata of a draft before it uploads the files,
+  because Zenodo only accepts an upload to a record whose metadata has enabled its files.
+  A draft that was created without files could therefore not be given any.
+  The metadata is sent again after the upload,
+  so that Zenodo also applies the order of the files and the default preview.
+- A value that `srr-sync-zenodo` rejects is reported with the message of the validator alone.
+  A value outside a fixed set, such as an unknown `access.record`,
+  used to be followed by the internal representation of the attribute,
+  and an unknown `related.scheme` by the validators of every scheme Zenodo knows.
+- A string written where a list of sections belongs, such as `creators: Jane Doe`,
+  is reported once instead of once per character,
+  and a scalar written where a section belongs names the type of the value.
+- `srr-sync-zenodo` checks that the files to upload exist before it contacts Zenodo.
+- `srr-sync-zenodo` stops collecting a paginated search result after a hundred pages,
+  instead of requesting pages forever if Zenodo keeps sending full ones.
+- A record, a file entry or a commit response in which Zenodo leaves out
+  the id, the checksum or the size is reported as a message instead of a `KeyError`.
+- A trailing slash on the `endpoint` in `sync_zenodo.yaml` is removed,
+  so that it does not end up in the middle of every address.
 
 ## [3.1.11][] - 2026-06-16 {: v3.1.11 }
 

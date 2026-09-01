@@ -43,16 +43,18 @@ import os
 import re
 import sys
 import tomllib
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from importlib import resources
-from typing import Any
-from urllib.parse import urlparse
+from typing import Any, get_args, get_origin
+from urllib.parse import quote, urlparse
 
 import attrs
 import cattrs
 import idutils
 import requests
 import yaml
+from cattrs.cols import list_structure_factory
+from cattrs.gen import make_dict_structure_fn
 from markdown_it import MarkdownIt
 from path import Path
 from rich.console import Console
@@ -65,9 +67,29 @@ __all__ = ("main",)
 
 CONSOLE = Console(soft_wrap=True, highlight=False)
 
+REQUEST_TIMEOUT = 60.0
+"""The number of seconds to wait for Zenodo, before a request is considered lost.
 
+This bounds the wait for the connection and the wait for the next byte of the response,
+not the time it takes to send the body of an upload,
+so a large file may well take longer than this to transfer.
+"""
+
+
+# Comparison is left to `Exception`, which compares by identity,
+# because two errors that happen to carry the same message are not the same error.
+@attrs.define(eq=False)
 class RESTError(Exception):
     """Raised when a REST API call is not successful."""
+
+    message: str = attrs.field()
+    """The complete diagnosis, naming the request and quoting the response of Zenodo."""
+
+    status_code: int | None = attrs.field(default=None)
+    """The status code of the response, or `None` when the request never received one."""
+
+    def __str__(self) -> str:
+        return self.message
 
 
 class ZenodoError(Exception):
@@ -98,11 +120,17 @@ class RESTWrapper:
         kwargs
             Keyword arguments to pass on to the `requests.request` function.
             Headers given here are merged into the ones stored in this wrapper.
+            The timeout defaults to `REQUEST_TIMEOUT` and can be overridden here.
 
         Returns
         -------
         response_data
             Deserialized JSON response data.
+
+        Raises
+        ------
+        RESTError
+            When Zenodo does not accept the request or cannot be reached.
         """
         url = f"{self.endpoint}/{loc}"
         if self.verbose:
@@ -111,12 +139,20 @@ class RESTWrapper:
                 CONSOLE.print("[b]REQUEST[/b]")
                 CONSOLE.print(JSON.from_data(kwargs["json"]))
         headers = self.headers | kwargs.pop("headers", {})
-        res = requests.request(method, url, headers=headers, **kwargs)
-        data = None if len(res.text) == 0 else res.json()
+        kwargs.setdefault("timeout", REQUEST_TIMEOUT)
+        try:
+            res = requests.request(method, url, headers=headers, **kwargs)
+        except requests.RequestException as exc:
+            # A request that never reaches Zenodo, or whose response never arrives,
+            # is reported like a refused one, so the caller has a single error to handle.
+            raise RESTError(f"Failed {method} {url}: {exc}") from exc
         if not res.ok:
+            # The body is passed on as it arrived, because an error is not always JSON.
+            # A gateway between here and Zenodo may answer with an HTML page instead.
             raise RESTError(
-                f"Failed {method} {url}: {res.status_code}\n" + json.dumps(data, indent=2)
+                f"Failed {method} {url}: {res.status_code}\n{res.text}", res.status_code
             )
+        data = None if len(res.text) == 0 else res.json()
         if self.verbose:
             CONSOLE.print("[b]RESPONSE[/b]")
             CONSOLE.print(JSON.from_data(data))
@@ -124,19 +160,19 @@ class RESTWrapper:
         return data
 
     def get(self, loc: str, **kwargs):
-        """Create a GET HTTP requests. See `request` method for details."""
+        """Send a GET HTTP request. See `request` method for details."""
         return self.request("GET", loc, **kwargs)
 
     def post(self, loc: str, **kwargs):
-        """Create a POST HTTP requests. See `request` method for details."""
+        """Send a POST HTTP request. See `request` method for details."""
         return self.request("POST", loc, **kwargs)
 
     def put(self, loc: str, **kwargs):
-        """Create a PUT HTTP requests. See `request` method for details."""
+        """Send a PUT HTTP request. See `request` method for details."""
         return self.request("PUT", loc, **kwargs)
 
     def delete(self, loc: str, **kwargs):
-        """Create a DELETE HTTP requests. See `request` method for details."""
+        """Send a DELETE HTTP request. See `request` method for details."""
         return self.request("DELETE", loc, **kwargs)
 
 
@@ -155,9 +191,15 @@ def _load_vocabularies() -> dict[str, frozenset[str]]:
     -------
     vocabularies
         The identifiers Zenodo accepts, for each vocabulary name in its API.
+        The keys of the data file that start with an underscore are left out,
+        because they hold bookkeeping of the refresh instead of a vocabulary.
     """
     text = resources.files(__package__).joinpath(VOCABULARIES_FILENAME).read_text(encoding="utf-8")
-    return {name: frozenset(ids) for name, ids in yaml.safe_load(text).items()}
+    return {
+        name: frozenset(ids)
+        for name, ids in yaml.safe_load(text).items()
+        if not name.startswith("_")
+    }
 
 
 def _in_vocabulary(name: str) -> Callable[[Any, attrs.Attribute, str], None]:
@@ -213,6 +255,66 @@ IDENTIFIER_SCHEMES = {
 }
 
 
+def _check_scheme(name: str, scheme: str):
+    """Check the name of an identifier scheme.
+
+    Parameters
+    ----------
+    name
+        The name of the attribute holding the scheme, used in the error message.
+    scheme
+        The scheme to check.
+
+    Raises
+    ------
+    ValueError
+        When Zenodo does not know the scheme.
+    """
+    if scheme not in IDENTIFIER_SCHEMES:
+        raise ValueError(
+            f"Unknown identifier scheme for '{name}': {scheme!r}. "
+            f"Zenodo reads one of: {', '.join(sorted(IDENTIFIER_SCHEMES))}."
+        )
+
+
+def _check_identifier(scheme: str, identifier: str):
+    """Check an identifier against the format of its scheme.
+
+    Parameters
+    ----------
+    scheme
+        The scheme of the identifier, which Zenodo must know.
+    identifier
+        The identifier to check.
+
+    Raises
+    ------
+    ValueError
+        When the identifier does not have the format of the scheme.
+    """
+    if not IDENTIFIER_SCHEMES[scheme](identifier):
+        raise ValueError(
+            f"Invalid identifier for scheme {scheme}: {identifier!r}. "
+            "Please check the identifier format."
+        )
+
+
+def _to_zenodo_object(**values: Any) -> dict[str, Any]:
+    """Build a JSON object for Zenodo, leaving out the keys whose value is not set.
+
+    Parameters
+    ----------
+    values
+        The candidate keys of the object, with the value of the corresponding attribute.
+
+    Returns
+    -------
+    object
+        The keys whose value is set, in the order in which they were given.
+    """
+    return {key: value for key, value in values.items() if value is not None and value != []}
+
+
 @attrs.define
 class Organization:
     """A subset of InvenioRDM affiliation / funder."""
@@ -230,7 +332,10 @@ class Organization:
     def _validate_ror(self, attribute, value):
         """Validate the ROR identifiers."""
         if not (value is None or idutils.is_ror(value)):
-            raise ValueError("Invalid ROR identifier format.")
+            raise ValueError(
+                f"Invalid ROR identifier for '{attribute.name}': {value!r}. "
+                "Zenodo reads nine characters starting with a zero, e.g. '03yrm5c26'."
+            )
 
     def __attrs_post_init__(self):
         if not ((self.name is None) ^ (self.ror is None)):
@@ -295,20 +400,17 @@ class Creator:
 
     def to_zenodo(self) -> dict[str, Any]:
         """Convert the creator to a dictionary suitable for Zenodo."""
-        result = {
-            "person_or_org": {
-                "type": "personal",
-                "family_name": self.family_name,
-                "given_name": self.given_name,
-            }
-        }
-        if len(self.identifiers) > 0:
-            result["person_or_org"]["identifiers"] = [
-                {"scheme": key, "identifier": value} for key, value in self.identifiers.items()
-            ]
-        if len(self.affiliations) > 0:
-            result["affiliations"] = [aff.to_zenodo() for aff in self.affiliations]
-        return result
+        return _to_zenodo_object(
+            person_or_org=_to_zenodo_object(
+                type="personal",
+                family_name=self.family_name,
+                given_name=self.given_name,
+                identifiers=[
+                    {"scheme": key, "identifier": value} for key, value in self.identifiers.items()
+                ],
+            ),
+            affiliations=[aff.to_zenodo() for aff in self.affiliations],
+        )
 
 
 @attrs.define
@@ -345,28 +447,59 @@ class Access:
 
 
 @attrs.define
-class Related:
-    scheme: str = attrs.field(validator=attrs.validators.in_(IDENTIFIER_SCHEMES))
-    """The scheme of the identifier, e.g. 'doi', 'arxiv'"""
+class Identifier:
+    """An identifier of something Zenodo does not store as a record, e.g. an award."""
 
     identifier: str = attrs.field()
-    """The identifier itself, e.g. '10.5281/zenodo.1234567'"""
+    """The identifier itself, e.g. '10.5281/zenodo.1234567'."""
+
+    scheme: str | None = attrs.field(default=None)
+    """The scheme of the identifier, e.g. 'doi' or 'url'.
+
+    Zenodo derives the scheme from the identifier when it is not given.
+    """
+
+    @scheme.validator
+    def _validate_scheme(self, attribute, value):
+        """Validate the scheme and the identifier it describes."""
+        if value is None:
+            return
+        _check_scheme(attribute.name, value)
+        _check_identifier(value, self.identifier)
+
+    def to_zenodo(self) -> dict[str, Any]:
+        """Convert the identifier to a dictionary suitable for Zenodo."""
+        return _to_zenodo_object(scheme=self.scheme, identifier=self.identifier)
+
+
+@attrs.define
+class Related:
+    """A subset of InvenioRDM related identifier."""
+
+    scheme: str = attrs.field()
+    """The scheme of the identifier, e.g. 'doi' or 'arxiv'."""
+
+    @scheme.validator
+    def _validate_scheme(self, attribute, value):
+        """Validate the scheme."""
+        _check_scheme(attribute.name, value)
+
+    identifier: str = attrs.field()
+    """The identifier itself, e.g. '10.5281/zenodo.1234567'."""
 
     @identifier.validator
     def _validate_identifier(self, attribute, value):
         """Validate the identifier."""
-        if not IDENTIFIER_SCHEMES[self.scheme](value):
-            raise ValueError(
-                f"Invalid identifier for scheme {self.scheme}: {value}. "
-                "Please check the identifier format."
-            )
+        _check_identifier(self.scheme, value)
 
     relation_type: str = attrs.field(validator=_in_vocabulary("relationtypes"))
+    """How the record relates to the identified resource, e.g. 'issupplementto'."""
 
     resource_type: str | None = attrs.field(
         default=None,
         validator=attrs.validators.optional(_in_vocabulary("resourcetypes")),
     )
+    """The kind of resource the identifier points to, e.g. 'publication-article'."""
 
     def to_zenodo(self) -> dict[str, Any]:
         """Convert the related identifier to a dictionary suitable for Zenodo."""
@@ -393,51 +526,26 @@ class Award:
     number: str | None = attrs.field(default=None)
     """The award number, e.g. 'RE-123456'."""
 
-    identifiers: list[dict[str, str]] = attrs.field(
-        factory=list,
-    )
-    """Identifiers of the award, e.g. a DOI or a funder ID.
-
-    Keys must be lower case strings.
-    """
-
-    @identifiers.validator
-    def _validate_identifiers(self, attribute, value):
-        """Validate the identifiers."""
-        if not isinstance(value, list):
-            raise TypeError("Identifiers must be a list of dictionaries.")
-        for item in value:
-            if not isinstance(item, dict):
-                raise TypeError("Each identifier must be a dictionary.")
-            if len(item) != 1:
-                raise ValueError("Each identifier must have exactly one key.")
-            scheme, identifier = next(iter(item.items()))
-            if scheme not in IDENTIFIER_SCHEMES:
-                raise ValueError(f"Unknown identifier scheme: {scheme}")
-            if not IDENTIFIER_SCHEMES[scheme](identifier):
-                raise ValueError(f"Invalid identifier for scheme {scheme}: {identifier}")
+    identifiers: list[Identifier] = attrs.field(factory=list)
+    """Identifiers of the award, e.g. its DOI or the URL of its description."""
 
     def __attrs_post_init__(self):
         if not ((self.id is None) ^ (self.title is None and self.number is None)):
-            raise ValueError("Exactly one of 'id' or ('title', 'number') must be set for an award.")
+            raise ValueError(
+                "An award is described either by 'id', "
+                "or by 'title' and 'number', of which at least one must be given. "
+                "Zenodo fills in the title and the number of an award it already knows, "
+                "so free text next to an 'id' would be ignored."
+            )
 
     def to_zenodo(self) -> dict[str, Any]:
         """Convert the award information to a dictionary suitable for Zenodo."""
-        result = {}
-        if self.id is not None:
-            result["id"] = self.id
-        if self.title is not None:
-            result["title"] = {"en": self.title}
-        if self.number is not None:
-            result["number"] = self.number
-        if len(self.identifiers) > 0:
-            result["identifiers"] = []
-            for item in self.identifiers:
-                if not isinstance(item, dict) or len(item) != 1:
-                    raise ValueError("Each identifier must be a dictionary with exactly one key.")
-                scheme, identifier = next(iter(item.items()))
-                result["identifiers"].append({"scheme": scheme, "identifier": identifier})
-        return result
+        return _to_zenodo_object(
+            id=self.id,
+            title=None if self.title is None else {"en": self.title},
+            number=self.number,
+            identifiers=[identifier.to_zenodo() for identifier in self.identifiers],
+        )
 
 
 @attrs.define
@@ -459,7 +567,12 @@ class Funding:
 
 
 def _convert_license(arg):
+    """Lower case the license identifiers, which Zenodo takes from SPDX in lower case."""
     return [lic.lower() for lic in arg]
+
+
+MIN_DESCRIPTION_LEN = 3
+"""The shortest description Zenodo accepts."""
 
 
 @attrs.define
@@ -470,7 +583,7 @@ class Metadata:
 
     Zenodo requires `title`, `resource_type` and `creators`,
     and enforces the length bounds checked below.
-    Both were read on 2026-08-30 from `MetadataSchema` in
+    These requirements were read on 2026-08-30 from `MetadataSchema` in
     `invenio_rdm_records/services/schemas/metadata.py`.
     A deposit that violates them fails, so they are checked before contacting Zenodo.
     """
@@ -501,7 +614,10 @@ class Metadata:
     creators: list[Creator] = attrs.field(validator=attrs.validators.min_len(1))
 
     keywords: list[str] = attrs.field(factory=list)
-    """A list of keywords to describe the dataset."""
+    """A list of keywords to describe the dataset.
+
+    Zenodo has no keyword field and stores these as free text subjects.
+    """
 
     license: list[str] = attrs.field(
         factory=list,
@@ -521,7 +637,7 @@ class Metadata:
 
     description: str | None = attrs.field(
         default=None,
-        validator=attrs.validators.optional(attrs.validators.min_len(3)),
+        validator=attrs.validators.optional(attrs.validators.min_len(MIN_DESCRIPTION_LEN)),
     )
 
     related: list[Related] = attrs.field(factory=list)
@@ -540,26 +656,21 @@ class Metadata:
         """
         if publication_date is None:
             publication_date = datetime.date.today().isoformat()
-        data = {
-            "title": self.title,
-            "version": self.version,
-            "resource_type": {"id": self.resource_type},
-            "publisher": self.publisher,
-            "keywords": [{"keyword": keyword} for keyword in self.keywords],
-            "rights": [{"id": lic} for lic in self.license],
-            "copyright": self.copyright,
-            "languages": [{"id": lang} for lang in self.languages],
-            "description": self.description,
-            "creators": [creator.to_zenodo() for creator in self.creators],
-            "publication_date": publication_date,
-            "related_identifiers": [rel.to_zenodo() for rel in self.related],
-            "funding": [fund.to_zenodo() for fund in self.funding],
-        }
-        if self.copyright is not None:
-            data["copyright"] = self.copyright
-        if len(self.keywords) > 0:
-            data["subjects"] = [{"subject": keyword} for keyword in self.keywords]
-        return data
+        return _to_zenodo_object(
+            title=self.title,
+            version=self.version,
+            resource_type={"id": self.resource_type},
+            publisher=self.publisher,
+            subjects=[{"subject": keyword} for keyword in self.keywords],
+            rights=[{"id": lic} for lic in self.license],
+            copyright=self.copyright,
+            languages=[{"id": lang} for lang in self.languages],
+            description=self.description,
+            creators=[creator.to_zenodo() for creator in self.creators],
+            publication_date=publication_date,
+            related_identifiers=[rel.to_zenodo() for rel in self.related],
+            funding=[fund.to_zenodo() for fund in self.funding],
+        )
 
 
 URL_SCHEMES = frozenset(["http", "https", "ftp", "ftps"])
@@ -615,22 +726,6 @@ def _to_vocabulary_ids(values: list[str]) -> list[dict[str, str]]:
     return [{"id": value} for value in values]
 
 
-def _to_zenodo_object(**values: Any) -> dict[str, Any]:
-    """Build the JSON object Zenodo expects for a nested custom field.
-
-    Parameters
-    ----------
-    values
-        The candidate keys of the object, with the value of the corresponding attribute.
-
-    Returns
-    -------
-    object
-        The keys whose value is set, in the order in which they were given.
-    """
-    return {key: value for key, value in values.items() if value is not None and value != []}
-
-
 def _to_nested(value: Any) -> dict[str, Any]:
     """Convert a nested value object into the JSON object Zenodo expects."""
     return value.to_zenodo()
@@ -676,40 +771,6 @@ class Journal:
 
 
 @attrs.define
-class MeetingIdentifier:
-    """An identifier of a meeting, e.g. the DOI of its proceedings."""
-
-    identifier: str = attrs.field()
-    """The identifier itself, e.g. '10.5281/zenodo.1234567'."""
-
-    scheme: str | None = attrs.field(default=None)
-    """The scheme of the identifier, e.g. 'doi' or 'url'.
-
-    Zenodo derives the scheme from the identifier when it is not given.
-    """
-
-    @scheme.validator
-    def _validate_scheme(self, attribute, value):
-        """Validate the scheme and the identifier it describes."""
-        if value is None:
-            return
-        if value not in IDENTIFIER_SCHEMES:
-            raise ValueError(
-                f"Unknown identifier scheme for '{attribute.name}': {value!r}. "
-                f"Zenodo reads one of: {', '.join(sorted(IDENTIFIER_SCHEMES))}."
-            )
-        if not IDENTIFIER_SCHEMES[value](self.identifier):
-            raise ValueError(
-                f"Invalid identifier for scheme {value}: {self.identifier!r}. "
-                "Please check the identifier format."
-            )
-
-    def to_zenodo(self) -> dict[str, Any]:
-        """Convert the meeting identifier to a dictionary suitable for Zenodo."""
-        return _to_zenodo_object(scheme=self.scheme, identifier=self.identifier)
-
-
-@attrs.define
 class Meeting:
     """The meeting at which the resource was presented."""
 
@@ -737,7 +798,7 @@ class Meeting:
     )
     """The website of the meeting."""
 
-    identifiers: list[MeetingIdentifier] = attrs.field(factory=list)
+    identifiers: list[Identifier] = attrs.field(factory=list)
     """Identifiers of the meeting, e.g. the DOI of its proceedings."""
 
     def to_zenodo(self) -> dict[str, Any]:
@@ -954,6 +1015,18 @@ class CustomFields:
         return result
 
 
+def _convert_endpoint(arg: str) -> str:
+    """Remove the trailing slashes of an endpoint URL."""
+    return arg.rstrip("/")
+
+
+DEFAULT_ENDPOINT = "https://sandbox.zenodo.org/api"
+"""The Zenodo instance to talk to when the config file names none.
+
+This is the sandbox, so that a first run cannot deposit anything on the production instance.
+"""
+
+
 @attrs.define
 class Config:
     """Configuration of the sync-zenodo script.
@@ -963,7 +1036,9 @@ class Config:
 
     path_record_id: Path = attrs.field(converter=Path)
     metadata: Metadata = attrs.field()
-    endpoint: str = attrs.field(default="https://sandbox.zenodo.org/api", validator=_validate_url)
+    endpoint: str = attrs.field(
+        default=DEFAULT_ENDPOINT, converter=_convert_endpoint, validator=_validate_url
+    )
     custom_fields: CustomFields = attrs.field(factory=CustomFields)
     access: Access = attrs.field(factory=Access)
 
@@ -1003,6 +1078,10 @@ and a published record is marked with `is_published` here and with `submitted` t
 """
 
 
+MD5_PREFIX = "md5:"
+"""The algorithm with which Zenodo prefixes the checksum of a file."""
+
+
 SEARCH_PAGE_SIZE = 100
 """The number of records requested per page when a paginated search result is collected.
 
@@ -1010,12 +1089,39 @@ As observed on 2026-08-30, Zenodo refuses a page larger than this.
 """
 
 
+MAX_SEARCH_PAGES = 100
+"""The number of pages to request before a paginated search result is considered endless.
+
+This bounds the work of collecting a search result,
+also when Zenodo keeps sending full pages.
+"""
+
+
+def _file_loc(rid: str, name: str) -> str:
+    """Build the address of one file of a draft record.
+
+    Parameters
+    ----------
+    rid
+        The id of the record.
+    name
+        The name of the file.
+        It becomes a single path segment, so every character that delimits a URL is escaped.
+
+    Returns
+    -------
+    loc
+        The address of the file, to be appended after the endpoint.
+    """
+    return f"records/{rid}/draft/files/{quote(name, safe='')}"
+
+
 @attrs.define
 class ZenodoWrapper:
     """Python interface to a subset of the Zenodo API."""
 
     token: str = attrs.field()
-    endpoint: str = attrs.field(default="https://sandbox.zenodo.org/api")
+    endpoint: str = attrs.field(default=DEFAULT_ENDPOINT)
     verbose: bool = attrs.field(default=False)
     rest: RESTWrapper = attrs.field(init=False)
 
@@ -1030,24 +1136,32 @@ class ZenodoWrapper:
 
     # Main API methods
 
-    def create_new_record(self, config: Config) -> dict[str]:
-        """Create a new record on Zenodo, which remains in draft until it is published manually."""
-        # There is no point in specifying the file order before uploading.
-        return self.rest.post("records", json=config.to_zenodo([]))
+    def create_new_record(self, config: Config, paths: list[Path]) -> dict[str, Any]:
+        """Create a new record on Zenodo, which remains in draft until it is published manually.
 
-    def get_record(self, rid: int) -> dict[str]:
-        """Get an (un)published record with given id."""
+        The files are declared here, even though none of them is uploaded yet,
+        because Zenodo refuses an upload to a record whose files it does not have enabled.
+        """
+        return self.rest.post("records", json=config.to_zenodo(paths))
+
+    def get_record(self, rid: str) -> dict[str, Any]:
+        """Get an (un)published record with given id.
+
+        The draft is preferred, because it carries the changes that are not published yet.
+        Only a record without a draft is read as a published one,
+        so that a refused or lost request is not mistaken for a published dataset.
+        """
         try:
-            # If the dataset is in draft
             res = self.rest.get(f"records/{rid}/draft")
-        except RESTError:
-            # If the dataset is published
+        except RESTError as exc:
+            if exc.status_code != 404:
+                raise
             res = self.rest.get(f"records/{rid}")
         return res
 
     def update_metadata(
-        self, rid: int, config: Config, paths: list[Path], publication_date: str | None = None
-    ) -> dict[str]:
+        self, rid: str, config: Config, paths: list[Path], publication_date: str | None = None
+    ) -> dict[str, Any]:
         """Update the metadata of a record.
 
         This is applicable to draft records and published records in edit mode.
@@ -1057,15 +1171,15 @@ class ZenodoWrapper:
         """
         return self.rest.put(f"records/{rid}/draft", json=config.to_zenodo(paths, publication_date))
 
-    def edit_record(self, rid: int):
+    def edit_record(self, rid: str):
         """Put a published record into edit mode."""
         self.rest.post(f"records/{rid}/draft")
 
-    def publish_record(self, rid: int):
+    def publish_record(self, rid: str):
         """Publish a draft record or a record in edit mode."""
         self.rest.post(f"records/{rid}/draft/actions/publish")
 
-    def start_uploads(self, rid: int, paths: list[Path]):
+    def start_uploads(self, rid: str, paths: list[Path]):
         """Declare the files that will be uploaded to a record in draft mode.
 
         Nothing is sent when there are no files,
@@ -1075,33 +1189,30 @@ class ZenodoWrapper:
             return
         self.rest.post(f"records/{rid}/draft/files", json=[{"key": path.name} for path in paths])
 
-    def upload_file(self, rid: int, path: Path):
+    def upload_file(self, rid: str, path: Path):
         """Upload a file to a record that is in draft mode."""
+        loc = _file_loc(rid, path.name)
         with open(path, "rb") as fh:
-            self.rest.put(f"records/{rid}/draft/files/{path.name}/content", data=fh)
-        res = self.rest.post(f"records/{rid}/draft/files/{path.name}/commit")
-
-        if not res["checksum"].startswith("md5:"):
-            raise ZenodoError(f"Zenodo returned an unexpected checksum format: {res['checksum']}")
-
-        if not res["size"] == path.size:
+            self.rest.put(f"{loc}/content", data=fh)
+        res = self.rest.post(f"{loc}/commit")
+        if res.get("size") != path.size:
             raise ZenodoError(
                 f"File size mismatch for {path.name}: "
-                f"expected {path.size}, got {res['size']} bytes."
+                f"expected {path.size}, got {res.get('size')} bytes."
             )
         local_md5 = _compute_md5(path)
-        if local_md5 != res["checksum"][4:]:
+        online_md5 = _entry_md5(res)
+        if local_md5 != online_md5:
             raise ZenodoError(
-                f"MD5 checksum mismatch for {path.name}, "
-                f"local {local_md5}, online {res['checksum'][4:]}."
+                f"MD5 checksum mismatch for {path.name}, local {local_md5}, online {online_md5}."
             )
 
-    def delete_file(self, rid: int, name: str):
+    def delete_file(self, rid: str, name: str):
         """Delete a file.
 
         The file must belong to a record in draft mode.
         """
-        self.rest.delete(f"records/{rid}/draft/files/{name}")
+        self.rest.delete(_file_loc(rid, name))
 
     def get_all_pages(self, loc: str) -> list[dict[str, Any]]:
         """Collect the records of a paginated search result.
@@ -1115,19 +1226,27 @@ class ZenodoWrapper:
         -------
         records
             The records of every page, in the order Zenodo returns them.
+
+        Raises
+        ------
+        ZenodoError
+            When Zenodo sends more than `MAX_SEARCH_PAGES` full pages.
         """
         records = []
-        page = 1
-        while True:
+        for page in range(1, MAX_SEARCH_PAGES + 1):
             data = self.rest.get(loc, params={"page": page, "size": SEARCH_PAGE_SIZE})
             hits = _search_hits(data)
             records.extend(hits)
             if len(hits) < SEARCH_PAGE_SIZE:
                 break
-            page += 1
+        else:
+            raise ZenodoError(
+                f"Zenodo sent {MAX_SEARCH_PAGES} full pages of results for {loc}, "
+                "which is more than this module collects."
+            )
         return records
 
-    def get_versions(self, rid: int) -> list[dict[str, Any]]:
+    def get_versions(self, rid: str) -> list[dict[str, Any]]:
         """Get all published versions of the dataset to which a record belongs.
 
         Parameters
@@ -1153,7 +1272,7 @@ class ZenodoWrapper:
         """
         return self.get_all_pages("user/records")
 
-    def create_new_version(self, rid: int) -> dict[str]:
+    def create_new_version(self, rid: str) -> dict[str, Any]:
         """Create a new version of a published record.
 
         The result is a draft record.
@@ -1184,7 +1303,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (ZenodoError, RESTError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
-    except cattrs.ClassValidationError as exc:
+    except cattrs.BaseValidationError as exc:
         # Report what is wrong with each value instead of the nested exception group,
         # of which most frames sit in the structuring code that cattrs generates.
         for line in cattrs.transform_error(exc, repr(args.config), _format_error):
@@ -1199,6 +1318,9 @@ def _run(args: argparse.Namespace):
         paths = check_zenodo_paths(args.paths)
     except ValueError as exc:
         raise ZenodoError(str(exc)) from exc
+    missing = [path for path in paths if not path.is_file()]
+    if len(missing) > 0:
+        raise ZenodoError(f"The following files to upload do not exist: {', '.join(missing)}.")
     data = _load_config_data(args.config)
     _check_outdated_config(data, args.config)
     config = _make_converter().structure(data, Config)
@@ -1306,7 +1428,7 @@ LEGACY_ZENODO_JSON = ".zenodo.json"
 
 
 def _format_suffixes() -> str:
-    """The supported config file suffixes, as a comma-separated list."""
+    """Join the supported config file suffixes into a comma-separated list."""
     return ", ".join(sorted(CONFIG_LOADERS))
 
 
@@ -1356,6 +1478,7 @@ REPLACED_CONFIG_KEYS = {
     "paths": "Specify the files to upload as command line arguments instead.",
     "path_token": "Set the REPREP_ZENODO_TOKEN environment variable instead.",
     "path_readme": "Specify the description file with the --description option instead.",
+    "code_repository": "Move it into the 'custom_fields' section.",
 }
 """Keys that older config files may still contain, with a hint on how to replace them."""
 
@@ -1375,7 +1498,69 @@ def _make_converter() -> cattrs.Converter:
     converter = cattrs.Converter(forbid_extra_keys=True)
     converter.register_structure_hook(str, _structure_str)
     converter.register_structure_hook_func(lambda type_: type_ == list[str], _structure_list_str)
+    converter.register_structure_hook_factory(attrs.has, _make_section_hook)
+    converter.register_structure_hook_factory(_is_list_of_sections, _make_list_of_sections_hook)
     return converter
+
+
+def _make_section_hook(type_: type, converter: cattrs.Converter) -> Callable:
+    """Create a hook that structures a section of the config file into an attrs class.
+
+    Parameters
+    ----------
+    type_
+        The attrs class to structure into.
+    converter
+        The converter for which the hook is made.
+
+    Returns
+    -------
+    hook
+        A cattrs structuring hook rejecting a value that is not a mapping.
+    """
+    structure_mapping = make_dict_structure_fn(type_, converter)
+
+    def structure(value: Any, type__: type) -> Any:
+        if not isinstance(value, Mapping):
+            raise TypeError(
+                f"Expected a mapping of keys to values, got {type(value).__name__}: {value!r}."
+            )
+        return structure_mapping(value, type__)
+
+    return structure
+
+
+def _is_list_of_sections(type_: Any) -> bool:
+    """Tell whether a type annotation describes a list of sections of the config file."""
+    args = get_args(type_)
+    return get_origin(type_) is list and len(args) == 1 and attrs.has(args[0])
+
+
+def _make_list_of_sections_hook(type_: type, converter: cattrs.Converter) -> Callable:
+    """Create a hook that structures a list of sections of the config file.
+
+    Parameters
+    ----------
+    type_
+        The list type to structure into, whose item type is an attrs class.
+    converter
+        The converter for which the hook is made.
+
+    Returns
+    -------
+    hook
+        A cattrs structuring hook rejecting a value that is not a list.
+        A string is rejected too, even though it is a sequence,
+        because it would otherwise be structured item by item, one error per character.
+    """
+    structure_list = list_structure_factory(type_, converter)
+
+    def structure(value: Any, type__: type) -> Any:
+        if isinstance(value, str) or not isinstance(value, Sequence):
+            raise TypeError(f"Expected a list of mappings, got {type(value).__name__}: {value!r}.")
+        return structure_list(value, type__)
+
+    return structure
 
 
 def _structure_str(value: Any, _type) -> str:
@@ -1423,7 +1608,9 @@ def _format_error(exc: BaseException, type_: type | None) -> str:
         A description of what is wrong with the value.
     """
     if isinstance(exc, ValueError | TypeError) and len(exc.args) > 0:
-        return str(exc)
+        # Only the first argument holds the message.
+        # The validators of attrs pass the attribute, the options and the value as well.
+        return str(exc.args[0])
     return cattrs.v.format_exception(exc, type_)
 
 
@@ -1439,14 +1626,19 @@ def _load_description(path: str | Path) -> str:
         description = fh.read()
     if suffix == ".md":
         description = MarkdownIt().render(description)
+    if len(description) < MIN_DESCRIPTION_LEN:
+        raise ZenodoError(
+            f"The description file {path} holds too little text. "
+            f"Zenodo reads a description of at least {MIN_DESCRIPTION_LEN} characters."
+        )
     return description
 
 
 def _clean_online(zenodo: ZenodoWrapper, config: Config):
     """Remove all draft data sets on Zenodo."""
     for record in zenodo.get_user_records():
-        rid = record["id"]
-        if record.get("is_published", False):
+        rid = _record_id(record)
+        if _is_published(record):
             CONSOLE.print(f"[yellow]Record {rid} is already published, skipping.[/yellow]")
             continue
         CONSOLE.print(f"Deleting draft record {rid}.")
@@ -1469,76 +1661,103 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
     paths
         The files to upload to Zenodo, validated with `check_zenodo_paths`.
     """
-    # Check if the parent record ID file exists, and load if it does.
     rid = None
     if config.path_record_id.exists():
-        with open(config.path_record_id) as fh:
-            try:
-                rid = int(fh.read().strip())
-            except ValueError as exc:
-                raise ZenodoError(f"Invalid record ID in {config.path_record_id}: {exc}") from exc
-
-    # Interact with Zenodo.
+        rid = config.path_record_id.read_text().strip()
+        if len(rid) == 0:
+            raise ZenodoError(f"The record ID file {config.path_record_id} is empty.")
     if rid is None:
-        # New record, when getting started with a dataset.
-        record = _upload_new_record(zenodo, config, paths)
-        with open(config.path_record_id, "w") as fh:
-            fh.write(f"{record['id']}\n")
+        _upload_new_record(zenodo, config, paths)
     else:
         _refresh_existing_record(zenodo, rid, config, paths)
 
 
-def _upload_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]) -> dict[str, Any]:
-    """Create a new record on Zenodo."""
-    record = zenodo.create_new_record(config)
-    url = record.get("links", {}).get("self_html")
-    if url is None:
-        raise ZenodoError("Zenodo did not return a link to the new record.")
-    CONSOLE.print(f"[b]New record:[/b] {url}")
+def _write_record_id(path: Path, rid: str):
+    """Store the id of the record that the next run has to update."""
+    with open(path, "w") as fh:
+        fh.write(f"{rid}\n")
+
+
+def _upload_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
+    """Create a new record on Zenodo and upload the files to it.
+
+    The record id is stored before the files are uploaded,
+    so a failed upload leaves a draft that the next run completes,
+    instead of an orphan that only `--clean` can remove.
+    """
+    record = zenodo.create_new_record(config, paths)
+    rid = _record_id(record)
+    _write_record_id(config.path_record_id, rid)
+    CONSOLE.print(f"[b]New record:[/b] {_record_url(zenodo, record)}")
 
     # Declare the files to be uploaded.
-    zenodo.start_uploads(record["id"], paths)
+    zenodo.start_uploads(rid, paths)
 
     # Actual uploads, one by one.
     for path in paths:
         CONSOLE.print(f"[green]Uploading:[/green] {path}")
-        zenodo.upload_file(record["id"], path)
+        zenodo.upload_file(rid, path)
     if len(paths) > 0:
-        # Send metadata update, now with the file order and default preview.
-        record = zenodo.update_metadata(record["id"], config, paths)
-    return record
+        # The metadata is sent again, now that the files exist,
+        # so that Zenodo applies the order and the default preview to them.
+        zenodo.update_metadata(rid, config, paths)
 
 
-def _refresh_existing_record(zenodo: ZenodoWrapper, rid: int, config: Config, paths: list[Path]):
-    """Refresh an existing record on Zenodo."""
+def _refresh_existing_record(zenodo: ZenodoWrapper, rid: str, config: Config, paths: list[Path]):
+    """Refresh an existing record on Zenodo.
+
+    The metadata is always sent again, without comparing it to what is online,
+    because the API does not return all the metadata it accepts,
+    as observed in June 2025.
+    """
     # When a dataset exists, the actions depend on the current status of the record.
     record = zenodo.get_record(rid)
-    url = record.get("links", {}).get("self_html")
-    if url is None:
-        raise ZenodoError(f"Zenodo did not return a link to the existing record ({rid}).")
-    CONSOLE.print(f"[b]Existing record:[/b] {url}")
+    CONSOLE.print(f"[b]Existing record:[/b] {_record_url(zenodo, record)}")
 
-    # As observed in June 2025, the Zenodo API does not return the full metadata.
     named_paths = {path.name: path for path in paths}
     zenodo_version = _get_record_version(record)
-    if record.get("is_published", False):
+    if _is_published(record):
         _check_version_chain(zenodo, record, config)
         if config.metadata.version == zenodo_version:
             _check_record_md5(record, named_paths, config.metadata.version)
-            # Unconditionally republish the metadata, because we cannot compare the metadata.
             _republish_metadata(zenodo, rid, config, paths, _record_publication_date(record))
         else:
             record = _create_new_version(zenodo, rid, config)
-            with open(config.path_record_id, "w") as fh:
-                fh.write(f"{record['id']}\n")
-            _refresh_files(zenodo, record, named_paths, config.metadata.version)
-            # Unconditionally update the metadata, because we cannot compare the metadata.
-            CONSOLE.print("Updating metadata of draft record.")
-            zenodo.update_metadata(record["id"], config, paths)
+            rid = _record_id(record)
+            _write_record_id(config.path_record_id, rid)
+            _refresh_draft(zenodo, rid, record, config, paths)
     else:
-        _refresh_files(zenodo, record, named_paths, config.metadata.version)
-        # Unconditionally update the metadata, because we cannot compare the metadata.
-        CONSOLE.print("Updating metadata of draft record.")
+        _refresh_draft(zenodo, rid, record, config, paths)
+
+
+def _refresh_draft(
+    zenodo: ZenodoWrapper, rid: str, record: dict[str, Any], config: Config, paths: list[Path]
+):
+    """Bring the files and the metadata of a draft record up to date.
+
+    The metadata is sent before and after the files are refreshed,
+    because Zenodo only accepts an upload to a record whose metadata has enabled the files,
+    and it only applies their order and default preview once they exist.
+
+    Parameters
+    ----------
+    zenodo
+        The Zenodo wrapper.
+    rid
+        The id of the draft record.
+    record
+        The draft record as returned by the Zenodo API.
+    config
+        The configuration loaded from the config file.
+    paths
+        The files to upload to Zenodo, validated with `check_zenodo_paths`.
+    """
+    CONSOLE.print("Updating metadata of draft record.")
+    zenodo.update_metadata(rid, config, paths)
+    named_paths = {path.name: path for path in paths}
+    _refresh_files(zenodo, rid, record, named_paths, config.metadata.version)
+    if len(paths) > 0:
+        CONSOLE.print("Updating file order of draft record.")
         zenodo.update_metadata(rid, config, paths)
 
 
@@ -1564,40 +1783,64 @@ def _check_version_chain(zenodo: ZenodoWrapper, record: dict[str, Any], config: 
         When the record is not the latest published version of the dataset,
         or when the local version is already published as another version.
     """
-    rid = record["id"]
+    rid = _record_id(record)
     version = config.metadata.version
     latest = None
     taken = None
     for other in zenodo.get_versions(rid):
         if other.get("versions", {}).get("is_latest", False):
             latest = other
-        if str(other["id"]) != str(rid) and _get_record_version(other) == version:
+        if _record_id(other) != rid and _get_record_version(other) == version:
             taken = other
     if latest is None:
         raise ZenodoError(
             f"Zenodo did not mark any published version of record {rid} as the latest one. "
             f"The Accept header of this module, {INVENIORDM_MIMETYPE}, may no longer be honored."
         )
-    if str(latest["id"]) != str(rid):
+    if _record_id(latest) != rid:
         raise ZenodoError(
             f"Record {rid} ({_describe_version(record)}) "
             "is not the latest published version of this dataset. "
-            f"That is record {latest['id']} ({_describe_version(latest)}). "
+            f"That is record {_record_id(latest)} ({_describe_version(latest)}). "
             f"Update {config.path_record_id} and the version in the config file, "
             "e.g. by pulling in the work of your collaborators."
         )
     if taken is not None:
         raise ZenodoError(
-            f"Version {version} is already published as record {taken['id']} of this dataset, "
-            f"while the latest published version has {_describe_version(latest)}. "
+            f"Version {version} is already published as record {_record_id(taken)} of "
+            f"this dataset, while the latest published version has {_describe_version(latest)}. "
             "Put a version in the config file that was not published before."
         )
 
 
-def _compute_md5(path: str) -> str:
-    """The MD5 sum of a file, as a hexadecimal string."""
+def _compute_md5(path: Path) -> str:
+    """Compute the MD5 sum of a local file, as a hexadecimal string."""
     with open(path, "rb") as fh:
         return hashlib.file_digest(fh, hashlib.md5).hexdigest()
+
+
+def _entry_md5(entry: dict[str, Any]) -> str:
+    """Extract the MD5 sum that Zenodo computed for a file, as a hexadecimal string.
+
+    Parameters
+    ----------
+    entry
+        The file entry of a record, or the response to the commit of an upload.
+
+    Returns
+    -------
+    md5
+        The hexadecimal digest, without the name of the algorithm.
+
+    Raises
+    ------
+    ZenodoError
+        When Zenodo used another algorithm, whose digest cannot be compared to a local MD5 sum.
+    """
+    checksum = entry.get("checksum")
+    if not (isinstance(checksum, str) and checksum.startswith(MD5_PREFIX)):
+        raise ZenodoError(f"Zenodo returned an unexpected checksum format: {checksum!r}")
+    return checksum[len(MD5_PREFIX) :]
 
 
 def _search_hits(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1641,6 +1884,34 @@ def _get_record_version(record: dict[str, Any]) -> str | None:
     return record.get("metadata", {}).get("version")
 
 
+def _is_published(record: dict[str, Any]) -> bool:
+    """Tell whether a record is published, as opposed to a draft that was never published.
+
+    Parameters
+    ----------
+    record
+        A record as returned by the Zenodo API.
+
+    Returns
+    -------
+    is_published
+        Whether the record is published.
+
+    Raises
+    ------
+    ZenodoError
+        When the record does not say, because acting on a guess would either
+        delete a record or try to change the files of a published one.
+    """
+    is_published = record.get("is_published")
+    if not isinstance(is_published, bool):
+        raise ZenodoError(
+            f"Zenodo did not say whether record {record.get('id')} is published. "
+            f"The Accept header of this module, {INVENIORDM_MIMETYPE}, may no longer be honored."
+        )
+    return is_published
+
+
 def _record_publication_date(record: dict[str, Any]) -> str | None:
     """Extract the publication date of a record.
 
@@ -1656,6 +1927,53 @@ def _record_publication_date(record: dict[str, Any]) -> str | None:
         or `None` when the record has none.
     """
     return record.get("metadata", {}).get("publication_date")
+
+
+def _record_id(record: dict[str, Any]) -> str:
+    """Extract the id of a record.
+
+    Parameters
+    ----------
+    record
+        A record as returned by the Zenodo API.
+
+    Returns
+    -------
+    rid
+        The id of the record, as the string that identifies it in an address.
+
+    Raises
+    ------
+    ZenodoError
+        When the record does not carry an id.
+    """
+    rid = record.get("id")
+    if rid is None:
+        raise ZenodoError(
+            "Zenodo did not send the id of a record. "
+            f"The Accept header of this module, {INVENIORDM_MIMETYPE}, may no longer be honored."
+        )
+    return str(rid)
+
+
+def _record_url(zenodo: ZenodoWrapper, record: dict[str, Any]) -> str:
+    """Build the address of a record to show to the user.
+
+    Parameters
+    ----------
+    zenodo
+        The Zenodo wrapper.
+    record
+        A record as returned by the Zenodo API.
+
+    Returns
+    -------
+    url
+        The address of the record on the website of Zenodo,
+        or its address in the API when Zenodo did not send one.
+    """
+    url = record.get("links", {}).get("self_html")
+    return f"{zenodo.endpoint}/records/{_record_id(record)}" if url is None else url
 
 
 def _describe_version(record: dict[str, Any]) -> str:
@@ -1688,29 +2006,56 @@ def _get_record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return files.get("entries", {})
 
 
-def _check_record_md5(record: dict[str], paths: dict[str, Path], version: str):
-    """Sanity check of MD5 hashes received from Zenodo"""
+PUBLISHED_FILE_MISMATCH_HINT = (
+    "The files of a published version cannot be changed. "
+    "Put a version in the config file that was not published before, "
+    "so that the local files are deposited as a new version."
+)
+
+
+def _check_record_md5(record: dict[str, Any], paths: dict[str, Path], version: str):
+    """Check that the files of a published record are identical to the local ones.
+
+    Parameters
+    ----------
+    record
+        The published record as returned by the Zenodo API.
+    paths
+        The files to upload to Zenodo, keyed by file name.
+    version
+        The version of the dataset, used in the messages.
+
+    Raises
+    ------
+    ZenodoError
+        When a file exists on only one side, or when two files with the same name differ.
+    """
     entries = _get_record_files(record)
-    for file in entries.values():
-        CONSOLE.print(f"[cyan]Checking MD5:[/cyan] {file['key']} ({version}, published)")
-        if file["key"] not in paths:
+    for name, entry in entries.items():
+        CONSOLE.print(f"[cyan]Checking MD5:[/cyan] {name} ({version}, published)")
+        if name not in paths:
             raise ZenodoError(
-                f"File {file['key']} exists online but not locally ({version}, published)"
+                f"File {name} exists online but not locally ({version}, published). "
+                f"{PUBLISHED_FILE_MISMATCH_HINT}"
             )
-        path = paths[file["key"]]
+        path = paths[name]
         local_md5 = _compute_md5(path)
-        if local_md5 != file["checksum"][4:]:
+        online_md5 = _entry_md5(entry)
+        if local_md5 != online_md5:
             raise ZenodoError(
-                f"MD5 Checksum mismatch for {path} ({version}, published), "
-                f"local: {local_md5}, online: {file['checksum'][4:]}"
+                f"MD5 checksum mismatch for {path} ({version}, published), "
+                f"local: {local_md5}, online: {online_md5}. {PUBLISHED_FILE_MISMATCH_HINT}"
             )
     for name in paths:
         if name not in entries:
-            raise ZenodoError(f"File {name} exists locally but not online ({version}, published)")
+            raise ZenodoError(
+                f"File {name} exists locally but not online ({version}, published). "
+                f"{PUBLISHED_FILE_MISMATCH_HINT}"
+            )
 
 
 def _republish_metadata(
-    zenodo: ZenodoWrapper, rid: int, config: Config, paths: list[Path], publication_date: str | None
+    zenodo: ZenodoWrapper, rid: str, config: Config, paths: list[Path], publication_date: str | None
 ):
     """Put a record in edit mode, update the metadata and publish again.
 
@@ -1725,47 +2070,56 @@ def _republish_metadata(
     zenodo.publish_record(rid)
 
 
-def _create_new_version(zenodo: ZenodoWrapper, rid: int, config: Config) -> dict[str]:
+def _create_new_version(zenodo: ZenodoWrapper, rid: str, config: Config) -> dict[str, Any]:
     """Create a new version of the dataset."""
     CONSOLE.print(f"Creating a new version ({config.metadata.version})")
     return zenodo.create_new_version(rid)
 
 
 def _refresh_files(
-    zenodo: ZenodoWrapper, record: dict[str], paths: dict[str, Path], version: str
-) -> bool:
+    zenodo: ZenodoWrapper,
+    rid: str,
+    record: dict[str, Any],
+    paths: dict[str, Path],
+    version: str,
+):
     """Refresh the online files.
 
-    This function only uploads files that do not exist online yet or have changed locally.
-    Files that are no longer listed locally are also removed online.
+    Only files that do not exist online yet or have changed locally are uploaded.
+    Files that are no longer listed locally are removed online.
+
+    Parameters
+    ----------
+    zenodo
+        The Zenodo wrapper.
+    rid
+        The id of the draft record.
+    record
+        The draft record as returned by the Zenodo API.
+    paths
+        The files to upload to Zenodo, keyed by file name.
+    version
+        The version of the dataset, used in the messages.
     """
-    changed = False
     entries = _get_record_files(record)
-    for file in entries.values():
-        if not file["checksum"].startswith("md5:"):
-            raise ZenodoError(f"Zenodo returned an unexpected checksum format: {file['checksum']}")
-        if file["key"] not in paths:
-            CONSOLE.print(f"[red]Deleting:[/red] {file['key']} ({version}, draft)")
-            zenodo.delete_file(record["id"], file["key"])
-            changed = True
+    for name, entry in entries.items():
+        if name not in paths:
+            CONSOLE.print(f"[red]Deleting:[/red] {name} ({version}, draft)")
+            zenodo.delete_file(rid, name)
         else:
-            path = paths[file["key"]]
-            local_md5 = _compute_md5(path)
-            if local_md5 != file["checksum"][4:]:
+            path = paths[name]
+            if _compute_md5(path) != _entry_md5(entry):
                 CONSOLE.print(f"[yellow]Replacing:[/yellow] {path} ({version}, draft)")
-                zenodo.delete_file(record["id"], file["key"])
-                zenodo.start_uploads(record["id"], [path])
-                zenodo.upload_file(record["id"], path)
-                changed = True
+                zenodo.delete_file(rid, name)
+                zenodo.start_uploads(rid, [path])
+                zenodo.upload_file(rid, path)
             else:
                 CONSOLE.print(f"[cyan]Same MD5:[/cyan] {path} ({version}, draft)")
     for name, path in paths.items():
         if name not in entries:
             CONSOLE.print(f"[green]Uploading:[/green] {path} ({version}, draft)")
-            zenodo.start_uploads(record["id"], [path])
-            zenodo.upload_file(record["id"], path)
-            changed = True
-    return changed
+            zenodo.start_uploads(rid, [path])
+            zenodo.upload_file(rid, path)
 
 
 if __name__ == "__main__":

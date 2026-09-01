@@ -193,6 +193,35 @@ If you run into either limitation,
 consider uploading a ZIP archive instead of separate files.
 `srr-sync-zenodo` rejects both cases before it contacts Zenodo.
 
+## Inspect and Reset a Dataset
+
+Add the `--verbose` option to print every request that `srr-sync-zenodo` sends to Zenodo
+and every response it receives.
+The token is never printed, so the output can be shared when reporting a problem.
+
+The `--clean` option is a blunt instrument to start over,
+which is mostly useful while you are still finding out what works on the sandbox instance.
+It deletes **every draft of the account that owns the token**,
+not only the drafts of the dataset at hand,
+and it also removes the file named by `path_record_id`.
+Published records are never deleted, because Zenodo does not allow that.
+
+```bash
+srr-sync-zenodo sync_zenodo.yaml file1 --clean
+```
+
+Two consequences are worth knowing before you use it:
+
+- Drafts of unrelated datasets on the same account are deleted as well,
+  including a new version of a published dataset that is not published yet.
+- When `path_record_id` names a record that is already published,
+  the file is removed while the record survives,
+  so the next run creates a new dataset instead of a new version of the existing one.
+  Restore the file from Git if this happens by accident.
+
+Because of the first point, use `--clean` on the sandbox instance,
+and think twice before using it on an account that holds work of other projects.
+
 ## Related Work
 
 [zenodraft](https://github.com/zenodraft/zenodraft) is a Node command line tool

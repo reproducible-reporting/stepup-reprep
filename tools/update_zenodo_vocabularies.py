@@ -3,14 +3,12 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Regenerate `stepup/reprep/zenodo_vocabularies.yaml` from the Zenodo API.
 
-Run this script from the root of the repository:
-
 ```bash
 python tools/update_zenodo_vocabularies.py
 ```
 
-It refreshes every vocabulary that the data file already holds.
-Extra names on the command line are added to the file.
+It refreshes every vocabulary listed in `CASES`,
+and also writes the tables of `docs/reference/zenodo_vocabularies.md`.
 The changes are printed as a per vocabulary summary of added and removed identifiers,
 so that a refresh can be reviewed before it is committed.
 """

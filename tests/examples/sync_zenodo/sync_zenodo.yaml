@@ -41,7 +41,8 @@ metadata:
         title: 'Title of the award'
         number: 'GN23549'
         identifiers:
-          - url: 'https://example.com/award/123456789'
+          # The scheme is optional, because Zenodo derives it from the identifier.
+          - identifier: 'https://example.com/award/123456789'
 custom_fields:
   code_repository: https://github.com/example/repo2
   development_status: active
@@ -56,6 +57,5 @@ custom_fields:
     place: 'Ghent, Belgium'
     url: https://example.org/icc24
     identifiers:
-      # The scheme is optional, because Zenodo derives it from the identifier.
       - scheme: doi
         identifier: '10.5281/zenodo.1234567'

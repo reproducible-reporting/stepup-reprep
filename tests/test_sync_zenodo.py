@@ -6,45 +6,63 @@ import datetime
 import hashlib
 import json
 from importlib import resources
+from urllib.parse import unquote
 
 import cattrs
 import pytest
+import requests
 import yaml
 from cattrs.errors import ClassValidationError
 from path import Path
 
 from stepup.reprep.sync_zenodo import (
+    DEFAULT_ENDPOINT,
     INVENIORDM_MIMETYPE,
+    MAX_SEARCH_PAGES,
+    REPLACED_CONFIG_KEYS,
+    REQUEST_TIMEOUT,
     SEARCH_PAGE_SIZE,
     VOCABULARIES_FILENAME,
+    Access,
+    Award,
     Config,
     Creator,
     CustomFields,
+    Funding,
+    Identifier,
     Imprint,
     Journal,
     Meeting,
-    MeetingIdentifier,
     Metadata,
+    Organization,
     Related,
     RESTError,
+    RESTWrapper,
     Thesis,
     ZenodoError,
     ZenodoWrapper,
+    _check_outdated_config,
     _check_record_md5,
     _check_version_chain,
     _clean_online,
     _describe_version,
+    _entry_md5,
+    _file_loc,
     _format_error,
     _get_record_files,
     _get_record_version,
+    _is_published,
     _load_config_data,
     _load_vocabularies,
     _make_converter,
     _parse_args,
+    _record_id,
     _record_publication_date,
+    _record_url,
     _refresh_existing_record,
     _refresh_files,
     _search_hits,
+    _update_online,
     _upload_new_record,
     main,
 )
@@ -225,8 +243,8 @@ def test_custom_fields_meeting_to_zenodo():
         session_part="1",
         url="https://example.org/icc24",
         identifiers=[
-            MeetingIdentifier("10.5281/zenodo.1234567", "doi"),
-            MeetingIdentifier("https://example.org/icc24/proceedings"),
+            Identifier("10.5281/zenodo.1234567", "doi"),
+            Identifier("https://example.org/icc24/proceedings"),
         ],
     )
     assert CustomFields(meeting=meeting).to_zenodo() == {
@@ -326,7 +344,7 @@ def test_custom_fields_structure_nested():
         meeting=Meeting(
             acronym="ICC24",
             url="https://example.org/icc24",
-            identifiers=[MeetingIdentifier("10.5281/zenodo.1234567", "doi")],
+            identifiers=[Identifier("10.5281/zenodo.1234567", "doi")],
         ),
         imprint=Imprint(title="Handbook of Coffee", isbn="978-3-16-148410-0"),
         thesis=Thesis(university="Ghent University", date_defended="2024-09-23"),
@@ -354,12 +372,12 @@ def test_custom_fields_meeting_url_invalid(url):
 @pytest.mark.parametrize("scheme", ["DOI", "orcid", "unknown", ""])
 def test_custom_fields_meeting_identifier_scheme_invalid(scheme):
     with pytest.raises(ValueError):
-        MeetingIdentifier("10.5281/zenodo.1234567", scheme)
+        Identifier("10.5281/zenodo.1234567", scheme)
 
 
 def test_custom_fields_meeting_identifier_scheme_mismatch():
     with pytest.raises(ValueError):
-        MeetingIdentifier("not a doi", "doi")
+        Identifier("not a doi", "doi")
 
 
 @pytest.mark.parametrize("date", ["2024-13-01", "2024-02-30", "2024-00", "0000"])
@@ -387,8 +405,31 @@ def test_custom_fields_nested_error_message():
     )
 
 
+@pytest.mark.parametrize(
+    "kwargs",
+    [{"id": "00k4n6c32::041117"}, {"title": "A title"}, {"number": "GN23549"}],
+)
+def test_award_known_or_free_text(kwargs):
+    """Zenodo takes an award it already knows, or a free text title, or a free text number."""
+    assert Funding(Organization(ror="00cv9y106"), Award(**kwargs)).to_zenodo()["award"] != {}
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
+        {"id": "00k4n6c32::041117", "title": "A title"},
+        {"id": "00k4n6c32::041117", "number": "1"},
+    ],
+)
+def test_award_neither_or_both(kwargs):
+    """An award without any description is refused, and so is free text next to an id."""
+    with pytest.raises(ValueError) as exc_info:
+        Award(**kwargs)
+    assert "either by 'id'" in str(exc_info.value)
+
+
 VOCABULARY_NAMES = [
-    "_date",
     "code:developmentStatus",
     "code:programmingLanguages",
     "languages",
@@ -404,7 +445,14 @@ def test_load_vocabularies():
     assert all(len(vocabularies[name]) > 0 for name in VOCABULARY_NAMES)
 
 
-@pytest.mark.parametrize("name", VOCABULARY_NAMES[1:])
+def test_load_vocabularies_without_bookkeeping():
+    """The date of the last refresh is not an identifier that Zenodo takes."""
+    text = resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text()
+    assert "_date" in yaml.safe_load(text)
+    assert "_date" not in _load_vocabularies()
+
+
+@pytest.mark.parametrize("name", VOCABULARY_NAMES)
 def test_vocabularies_data_file_sorted_and_unique(name):
     """Guard against a hand edit that the refresh script would have prevented."""
     text = resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text()
@@ -683,7 +731,7 @@ def test_load_config_data_empty(tmp_path):
 def test_config_endpoint_default(tmp_path):
     text = CONFIG_YAML.replace("endpoint: https://zenodo.org/api\n", "")
     config = _write_config(tmp_path, "sync_zenodo.yaml", text)
-    assert config.endpoint == "https://sandbox.zenodo.org/api"
+    assert config.endpoint == DEFAULT_ENDPOINT
 
 
 @pytest.mark.parametrize("endpoint", ["zenodo.org/api", "https://zenodo", ""])
@@ -691,6 +739,18 @@ def test_config_endpoint_invalid(tmp_path, endpoint):
     text = CONFIG_YAML.replace("endpoint: https://zenodo.org/api", f"endpoint: '{endpoint}'")
     with pytest.raises(ClassValidationError):
         _write_config(tmp_path, "sync_zenodo.yaml", text)
+
+
+@pytest.mark.parametrize("key", REPLACED_CONFIG_KEYS)
+def test_config_replaced_key(tmp_path, key):
+    """A key that an older release supported is reported with a hint, not as an unknown key."""
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(f"{key}: whatever\n{CONFIG_YAML}")
+    with pytest.raises(ZenodoError) as exc_info:
+        _check_outdated_config(_load_config_data(path), str(path))
+    message = str(exc_info.value)
+    assert f"The '{key}' key is no longer used." in message
+    assert REPLACED_CONFIG_KEYS[key] in message
 
 
 CONFIG_YAML_SCALARS = """\
@@ -814,6 +874,20 @@ def test_main_user_error(tmp_path, monkeypatch, capsys, args, expected):
     assert main([str(path), *args, "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert expected in captured.err
+    assert "Traceback" not in captured.err
+
+
+@pytest.mark.parametrize(("name", "content"), [("d.md", ""), ("d.md", "\n\n"), ("d.html", "x")])
+def test_main_short_description(tmp_path, monkeypatch, capsys, name, content):
+    """A description that Zenodo would refuse is reported as a message, not as a traceback."""
+    monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(CONFIG_YAML)
+    path_description = tmp_path / name
+    path_description.write_text(content)
+    assert main([str(path), f"--description={path_description}", "--dry-run"]) == 1
+    captured = capsys.readouterr()
+    assert "holds too little text" in captured.err
     assert "Traceback" not in captured.err
 
 
@@ -955,8 +1029,8 @@ class _FakeZenodo:
         self.versions = [record] if versions is None else versions
         self.calls = []
 
-    def create_new_record(self, config):
-        self.calls.append(("create_new_record",))
+    def create_new_record(self, config, paths):
+        self.calls.append(("create_new_record", [path.name for path in paths]))
         if self.record is None:
             self.record = {"id": 7, "links": {"self_html": "https://zenodo.org/record/7"}}
         return self.record
@@ -1007,6 +1081,84 @@ def test_search_hits_unexpected_shape(data):
     assert INVENIORDM_MIMETYPE in str(exc_info.value)
 
 
+class _FakeResponse:
+    """A `requests` response with a given status code and body."""
+
+    def __init__(self, status_code: int, text: str):
+        self.status_code = status_code
+        self.ok = status_code < 400
+        self.text = text
+
+    def json(self):
+        return json.loads(self.text)
+
+
+@pytest.mark.parametrize("body", ["<html>Bad Gateway</html>", '{"message": "Bad Gateway"}', ""])
+def test_rest_request_error(monkeypatch, body):
+    """An error is reported with its body, which Zenodo does not always describe in JSON.
+
+    A gateway between the client and Zenodo may answer with an HTML page instead.
+    """
+    monkeypatch.setattr(requests, "request", lambda *args, **kwargs: _FakeResponse(502, body))
+    with pytest.raises(RESTError) as exc_info:
+        RESTWrapper("https://zenodo.org/api", {}).get("records/7")
+    message = str(exc_info.value)
+    assert "GET https://zenodo.org/api/records/7: 502" in message
+    assert body in message
+    assert exc_info.value.status_code == 502
+
+
+def test_rest_request_json_response(monkeypatch):
+    monkeypatch.setattr(
+        requests, "request", lambda *args, **kwargs: _FakeResponse(200, '{"id": 7}')
+    )
+    assert RESTWrapper("https://zenodo.org/api", {}).get("records/7") == {"id": 7}
+
+
+def test_rest_request_empty_response(monkeypatch):
+    """A request that Zenodo answers without a body, such as a delete, returns nothing."""
+    monkeypatch.setattr(requests, "request", lambda *args, **kwargs: _FakeResponse(204, ""))
+    assert RESTWrapper("https://zenodo.org/api", {}).delete("records/7/draft") is None
+
+
+def test_rest_request_timeout_default(monkeypatch):
+    """Every request is bounded in time, so a stalled connection cannot hang a build."""
+    seen = {}
+
+    def request(method, url, **kwargs):
+        seen.update(kwargs)
+        return _FakeResponse(200, "{}")
+
+    monkeypatch.setattr(requests, "request", request)
+    RESTWrapper("https://zenodo.org/api", {}).get("records/7")
+    assert seen["timeout"] == REQUEST_TIMEOUT
+    RESTWrapper("https://zenodo.org/api", {}).get("records/7", timeout=1.0)
+    assert seen["timeout"] == 1.0
+
+
+def test_rest_request_unreachable(monkeypatch):
+    """A request that never reaches Zenodo is reported like a refused one."""
+
+    def request(*args, **kwargs):
+        raise requests.ConnectionError("Name or service not known")
+
+    monkeypatch.setattr(requests, "request", request)
+    with pytest.raises(RESTError) as exc_info:
+        RESTWrapper("https://zenodo.org/api", {}).get("records/7")
+    assert "Name or service not known" in str(exc_info.value)
+    assert exc_info.value.status_code is None
+
+
+@pytest.mark.parametrize("name", ["fig#1.png", "a b.txt", "100%.csv", "a?b.txt", "a/b.txt"])
+def test_file_loc_escapes_name(name):
+    """A file name becomes a single path segment, whatever characters it holds."""
+    loc = _file_loc("7", name)
+    assert loc.startswith("records/7/draft/files/")
+    segment = loc[len("records/7/draft/files/") :]
+    assert unquote(segment) == name
+    assert not any(char in segment for char in "#?/")
+
+
 class _FakeRest:
     """A `RESTWrapper` stub that serves a paginated search result."""
 
@@ -1036,7 +1188,7 @@ def test_get_versions_pagination(num):
     hits = [{"id": rid} for rid in range(num)]
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest(hits)
-    assert zenodo.get_versions(3) == hits
+    assert zenodo.get_versions("3") == hits
     num_pages = num // SEARCH_PAGE_SIZE + 1
     assert zenodo.rest.calls == [("records/3/versions", page) for page in range(1, num_pages + 1)]
 
@@ -1076,11 +1228,23 @@ def test_record_files_unexpected_shape():
     assert INVENIORDM_MIMETYPE in str(exc_info.value)
 
 
+def test_entry_md5():
+    assert _entry_md5({"checksum": f"md5:{_md5('hello')}"}) == _md5("hello")
+
+
+@pytest.mark.parametrize("checksum", ["sha256:abc", "abc", ""])
+def test_entry_md5_unexpected_format(checksum):
+    """A digest of another algorithm cannot be compared to a local MD5 sum."""
+    with pytest.raises(ZenodoError) as exc_info:
+        _entry_md5({"checksum": checksum})
+    assert "unexpected checksum format" in str(exc_info.value)
+
+
 def test_refresh_files_unchanged(tmp_path):
     path = _write_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {"one.txt": _md5("hello")})
     zenodo = _FakeZenodo()
-    assert not _refresh_files(zenodo, record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
     assert zenodo.calls == []
 
 
@@ -1088,7 +1252,7 @@ def test_refresh_files_upload_new(tmp_path):
     path = _write_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {})
     zenodo = _FakeZenodo()
-    assert _refresh_files(zenodo, record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
     assert zenodo.calls == [("start_uploads", ["one.txt"]), ("upload_file", "one.txt")]
 
 
@@ -1096,7 +1260,7 @@ def test_refresh_files_replace_changed(tmp_path):
     path = _write_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {"one.txt": _md5("bye")})
     zenodo = _FakeZenodo()
-    assert _refresh_files(zenodo, record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
     assert zenodo.calls == [
         ("delete_file", "one.txt"),
         ("start_uploads", ["one.txt"]),
@@ -1107,7 +1271,7 @@ def test_refresh_files_replace_changed(tmp_path):
 def test_refresh_files_delete_removed(tmp_path):
     record = _v1_record(1, {"gone.txt": _md5("hello")})
     zenodo = _FakeZenodo()
-    assert _refresh_files(zenodo, record, {}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {}, "1.0.0")
     assert zenodo.calls == [("delete_file", "gone.txt")]
 
 
@@ -1161,13 +1325,13 @@ def test_refresh_existing_record_published_same_version(tmp_path):
     """A published record is recognized through `is_published` and republished."""
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, 7, config, [])
+    _refresh_existing_record(zenodo, "7", config, [])
     assert zenodo.calls == [
-        ("get_record", 7),
-        ("get_versions", 7),
-        ("edit_record", 7),
-        ("update_metadata", 7, PUBLICATION_DATE),
-        ("publish_record", 7),
+        ("get_record", "7"),
+        ("get_versions", "7"),
+        ("edit_record", "7"),
+        ("update_metadata", "7", PUBLICATION_DATE),
+        ("publish_record", "7"),
     ]
 
 
@@ -1176,10 +1340,10 @@ def test_refresh_existing_record_published_unpublished_version(tmp_path, version
     """Any local version that was never published becomes a new version on Zenodo."""
     config = _config_with_version(tmp_path, version)
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, 7, config, [])
-    assert ("create_new_version", 7) in zenodo.calls
+    _refresh_existing_record(zenodo, "7", config, [])
+    assert ("create_new_version", "7") in zenodo.calls
     # A new version is published on the day it is created, not on the day the parent was.
-    assert ("update_metadata", 7, None) in zenodo.calls
+    assert ("update_metadata", "7", None) in zenodo.calls
     assert config.path_record_id.read_text().strip() == "7"
 
 
@@ -1189,7 +1353,7 @@ def test_refresh_existing_record_published_version_taken(tmp_path):
     versions = [_published(7, "1.0.0", is_latest=False), _published(8, "1.1.0")]
     zenodo = _FakeZenodo(versions[1], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, 8, config, [])
+        _refresh_existing_record(zenodo, "8", config, [])
     assert "already published as record 7" in str(exc_info.value)
 
 
@@ -1199,7 +1363,7 @@ def test_refresh_existing_record_published_stale_record_id(tmp_path):
     versions = [_published(7, "1.0.0", is_latest=False), _published(8, "1.1.0")]
     zenodo = _FakeZenodo(versions[0], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, 7, config, [])
+        _refresh_existing_record(zenodo, "7", config, [])
     assert "not the latest published version" in str(exc_info.value)
     assert str(config.path_record_id) in str(exc_info.value)
 
@@ -1221,18 +1385,57 @@ def test_check_version_chain_mixed_id_types(tmp_path):
 
 
 def test_refresh_existing_record_draft(tmp_path):
-    """A draft has no `is_published` flag and its metadata is updated in place."""
+    """A draft is recognized through `is_published` and its metadata is updated in place."""
     path = _write_file(tmp_path, "one.txt", "hello")
     config = _config_with_version(tmp_path, "1.0.0")
-    record = _v1_record(7, {}, metadata={"version": "1.0.0"})
+    record = _v1_record(7, {}, is_published=False, metadata={"version": "1.0.0"})
     zenodo = _FakeZenodo(record)
-    _refresh_existing_record(zenodo, 7, config, [path])
+    _refresh_existing_record(zenodo, "7", config, [path])
     assert zenodo.calls == [
-        ("get_record", 7),
+        ("get_record", "7"),
+        ("update_metadata", "7", None),
         ("start_uploads", ["one.txt"]),
         ("upload_file", "one.txt"),
-        ("update_metadata", 7, None),
+        ("update_metadata", "7", None),
     ]
+
+
+@pytest.mark.parametrize("record_is_published", [True, False])
+def test_is_published(record_is_published):
+    assert _is_published({"id": 7, "is_published": record_is_published}) is record_is_published
+
+
+@pytest.mark.parametrize("record", [{"id": 7}, {"id": 7, "is_published": None}])
+def test_is_published_unexpected_shape(record):
+    """A record that does not say whether it is published is reported as such.
+
+    Guessing would either delete a record or try to change the files of a published one.
+    """
+    with pytest.raises(ZenodoError) as exc_info:
+        _is_published(record)
+    assert INVENIORDM_MIMETYPE in str(exc_info.value)
+
+
+def test_refresh_existing_record_without_is_published(tmp_path):
+    """The status of a record is never guessed, not even to refresh an existing one."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    record = _v1_record(7, {}, metadata={"version": "1.0.0"})
+    with pytest.raises(ZenodoError) as exc_info:
+        _refresh_existing_record(_FakeZenodo(record), "7", config, [])
+    assert INVENIORDM_MIMETYPE in str(exc_info.value)
+
+
+def test_clean_online_without_is_published(tmp_path):
+    """`--clean` deletes nothing when it cannot tell a draft from a published record."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    config.path_record_id.write_text("7\n")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeRest([{"id": 7}])
+    with pytest.raises(ZenodoError) as exc_info:
+        _clean_online(zenodo, config)
+    assert INVENIORDM_MIMETYPE in str(exc_info.value)
+    assert zenodo.rest.deleted == []
+    assert config.path_record_id.exists()
 
 
 def test_clean_online_deletes_drafts_on_every_page(tmp_path):
@@ -1268,6 +1471,32 @@ def test_record_publication_date_absent(record):
     assert _record_publication_date(record) is None
 
 
+def test_metadata_omits_unset_fields():
+    """A field without a value is left out, instead of being sent as a null or an empty list."""
+    payload = _metadata(resource_type="dataset").to_zenodo()
+    assert sorted(payload) == [
+        "creators",
+        "publication_date",
+        "publisher",
+        "resource_type",
+        "title",
+        "version",
+    ]
+
+
+def test_metadata_keywords_are_subjects():
+    """Zenodo has no keyword field, so the keywords are deposited as free text subjects."""
+    payload = _metadata(resource_type="dataset", keywords=["coffee", "tea"]).to_zenodo()
+    assert payload["subjects"] == [{"subject": "coffee"}, {"subject": "tea"}]
+    assert "keywords" not in payload
+
+
+def test_creator_omits_unset_fields():
+    """A creator known by family name only is not sent with a null given name."""
+    payload = Creator("Verstraelen").to_zenodo()
+    assert payload == {"person_or_org": {"type": "personal", "family_name": "Verstraelen"}}
+
+
 def test_metadata_publication_date_today():
     """A record that is not published yet gets today's date, the only sensible guess."""
     metadata = _metadata(license=["mit"], resource_type="dataset")
@@ -1289,8 +1518,8 @@ def test_refresh_existing_record_published_without_publication_date(tmp_path):
     record = _published(7, "1.0.0")
     del record["metadata"]["publication_date"]
     zenodo = _FakeZenodo(record)
-    _refresh_existing_record(zenodo, 7, config, [])
-    assert ("update_metadata", 7, None) in zenodo.calls
+    _refresh_existing_record(zenodo, "7", config, [])
+    assert ("update_metadata", "7", None) in zenodo.calls
 
 
 def test_describe_version():
@@ -1313,8 +1542,8 @@ def test_refresh_existing_record_published_without_version(tmp_path):
     """
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_published_without_version(7))
-    _refresh_existing_record(zenodo, 7, config, [])
-    assert ("create_new_version", 7) in zenodo.calls
+    _refresh_existing_record(zenodo, "7", config, [])
+    assert ("create_new_version", "7") in zenodo.calls
 
 
 def test_check_version_chain_stale_record_without_version(tmp_path):
@@ -1323,7 +1552,7 @@ def test_check_version_chain_stale_record_without_version(tmp_path):
     versions = [_published_without_version(7, is_latest=False), _published_without_version(8)]
     zenodo = _FakeZenodo(versions[0], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, 7, config, [])
+        _refresh_existing_record(zenodo, "7", config, [])
     assert "Record 7 (no version)" in str(exc_info.value)
     assert "record 8 (no version)" in str(exc_info.value)
 
@@ -1332,7 +1561,7 @@ def test_start_uploads_declares_every_file(tmp_path):
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([])
     paths = [_write_file(tmp_path, "one.txt", "hello"), _write_file(tmp_path, "two.txt", "bye")]
-    zenodo.start_uploads(7, paths)
+    zenodo.start_uploads("7", paths)
     assert zenodo.rest.posted == [
         ("records/7/draft/files", [{"key": "one.txt"}, {"key": "two.txt"}])
     ]
@@ -1342,7 +1571,7 @@ def test_start_uploads_without_files():
     """Zenodo rejects a request that declares no files, so a record without files sends none."""
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([])
-    zenodo.start_uploads(7, [])
+    zenodo.start_uploads("7", [])
     assert zenodo.rest.posted == []
 
 
@@ -1353,11 +1582,30 @@ def test_create_new_record_with_files(tmp_path):
     zenodo = _FakeZenodo(_v1_record(7, {}))
     _upload_new_record(zenodo, config, [path])
     assert zenodo.calls == [
-        ("create_new_record",),
+        ("create_new_record", ["one.txt"]),
         ("start_uploads", ["one.txt"]),
         ("upload_file", "one.txt"),
-        ("update_metadata", 7, None),
+        ("update_metadata", "7", None),
     ]
+    assert config.path_record_id.read_text().strip() == "7"
+
+
+def test_create_new_record_failed_upload(tmp_path):
+    """A failed upload leaves a draft that the next run completes, not an orphan.
+
+    The record id is therefore stored before the first file is uploaded.
+    """
+    path = _write_file(tmp_path, "one.txt", "hello")
+    config = _config_with_version(tmp_path, "1.0.0")
+    zenodo = _FakeZenodo(_v1_record(7, {}))
+
+    def fail(rid, path):
+        raise RESTError("Failed PUT https://zenodo.org/api/records/7/draft/files: 500")
+
+    zenodo.upload_file = fail
+    with pytest.raises(RESTError):
+        _upload_new_record(zenodo, config, [path])
+    assert config.path_record_id.read_text().strip() == "7"
 
 
 def test_create_new_record_without_files(tmp_path):
@@ -1366,21 +1614,240 @@ def test_create_new_record_without_files(tmp_path):
     zenodo = _FakeZenodo(_v1_record(7, {}))
     _upload_new_record(zenodo, config, [])
     assert zenodo.calls == [
-        ("create_new_record",),
+        ("create_new_record", []),
     ]
+    assert config.path_record_id.read_text().strip() == "7"
+
+
+def test_create_new_record_enables_files(tmp_path):
+    """Zenodo refuses an upload to a record whose files it does not have enabled."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    path = _write_file(tmp_path, "one.txt", "hello")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeRest([])
+    zenodo.create_new_record(config, [path])
+    assert zenodo.rest.posted[0][0] == "records"
+    assert zenodo.rest.posted[0][1]["files"] == {
+        "enabled": True,
+        "order": ["one.txt"],
+        "default_preview": "one.txt",
+    }
+
+
+def test_create_new_record_metadata_only(tmp_path):
+    """A dataset without files becomes a metadata only record."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeRest([])
+    zenodo.create_new_record(config, [])
+    assert zenodo.rest.posted[0][1]["files"] == {"enabled": False, "order": []}
+
+
+class _FakeGetRest:
+    """A `RESTWrapper` stub that serves the records it holds and refuses every other address."""
+
+    def __init__(self, records: dict[str, dict], status_code: int | None = 404):
+        self.records = records
+        self.status_code = status_code
+        self.calls = []
+
+    def get(self, loc):
+        self.calls.append(loc)
+        if loc not in self.records:
+            raise RESTError(f"Failed GET {loc}: {self.status_code}", self.status_code)
+        return self.records[loc]
+
+
+def test_get_record_draft_first():
+    """The draft carries the changes that are not published yet, so it is preferred."""
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeGetRest({"records/7/draft": {"id": 7, "is_published": False}})
+    assert zenodo.get_record("7") == {"id": 7, "is_published": False}
+    assert zenodo.rest.calls == ["records/7/draft"]
+
+
+def test_get_record_published_without_draft():
+    """A record without a draft is read as a published one."""
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeGetRest({"records/7": {"id": 7, "is_published": True}})
+    assert zenodo.get_record("7") == {"id": 7, "is_published": True}
+    assert zenodo.rest.calls == ["records/7/draft", "records/7"]
+
+
+@pytest.mark.parametrize("status_code", [401, 403, 429, 500, 502, None])
+def test_get_record_other_error(status_code):
+    """A refused or lost request is not mistaken for a record without a draft."""
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeGetRest({}, status_code)
+    with pytest.raises(RESTError) as exc_info:
+        zenodo.get_record("7")
+    assert exc_info.value.status_code == status_code
+    assert zenodo.rest.calls == ["records/7/draft"]
 
 
 def test_refresh_existing_record_published_new_version_with_files(tmp_path):
-    """A new version created from a published record updates metadata after refreshing files."""
+    """A new version created from a published record gets the files and the metadata.
+
+    The metadata is sent before the files, because it enables them,
+    and again afterwards, because their order is only applied once they exist.
+    """
     path = _write_file(tmp_path, "two.txt", "world")
     config = _config_with_version(tmp_path, "1.1.0")
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, 7, config, [path])
+    _refresh_existing_record(zenodo, "7", config, [path])
     assert zenodo.calls == [
-        ("get_record", 7),
-        ("get_versions", 7),
-        ("create_new_version", 7),
+        ("get_record", "7"),
+        ("get_versions", "7"),
+        ("create_new_version", "7"),
+        ("update_metadata", "7", None),
         ("start_uploads", ["two.txt"]),
         ("upload_file", "two.txt"),
-        ("update_metadata", 7, None),
+        ("update_metadata", "7", None),
     ]
+
+
+def test_related_scheme_invalid_message():
+    """An unknown scheme is reported with the schemes Zenodo knows, not with their validators."""
+    with pytest.raises(ValueError) as exc_info:
+        Related(scheme="DOI", identifier="10.5281/zenodo.1", relation_type="cites")
+    message = _format_error(exc_info.value, str)
+    assert "Unknown identifier scheme for 'scheme': 'DOI'" in message
+    assert "doi" in message
+    assert "function" not in message
+
+
+def test_access_invalid_message():
+    """A value outside a fixed set is reported without the attrs internals of the validator."""
+    with pytest.raises(ValueError) as exc_info:
+        Access(record="hidden")
+    message = _format_error(exc_info.value, str)
+    assert message == "'record' must be in ['public', 'restricted'] (got 'hidden')"
+
+
+def test_config_string_where_a_list_of_sections_belongs(tmp_path):
+    """A string where a list of sections belongs is refused once, not once per character."""
+    text = CONFIG_YAML[: CONFIG_YAML.find("  creators:")] + "  creators: Toon Verstraelen\n"
+    with pytest.raises(ClassValidationError) as exc_info:
+        _write_config(tmp_path, "sync_zenodo.yaml", text)
+    messages = cattrs.transform_error(exc_info.value, format_exception=_format_error)
+    assert messages == [
+        "Expected a list of mappings, got str: 'Toon Verstraelen'. @ $.metadata.creators"
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("  creators:\n    - Toon Verstraelen\n", "got str: 'Toon Verstraelen'"),
+        ("  creators:\n    - null\n", "got NoneType: None"),
+    ],
+)
+def test_config_scalar_where_a_section_belongs(tmp_path, text, expected):
+    """A scalar where a section belongs names the type of the value, not a missing method."""
+    text = CONFIG_YAML[: CONFIG_YAML.find("  creators:")] + text
+    with pytest.raises(ClassValidationError) as exc_info:
+        _write_config(tmp_path, "sync_zenodo.yaml", text)
+    messages = cattrs.transform_error(exc_info.value, format_exception=_format_error)
+    assert any(
+        f"Expected a mapping of keys to values, {expected}" in message for message in messages
+    )
+
+
+def test_award_identifiers_to_zenodo():
+    """The identifiers of an award and of a meeting are written in the same way."""
+    award = Award(title="A title", identifiers=[Identifier("https://example.org/award/1")])
+    assert award.to_zenodo()["identifiers"] == [{"identifier": "https://example.org/award/1"}]
+
+
+def test_award_identifier_invalid():
+    with pytest.raises(ValueError):
+        Award(title="A title", identifiers=[Identifier("not a doi", "doi")])
+
+
+def test_config_endpoint_trailing_slash(tmp_path):
+    """A trailing slash on the endpoint does not end up in the middle of an address."""
+    text = CONFIG_YAML.replace(
+        "endpoint: https://zenodo.org/api", "endpoint: https://zenodo.org/api/"
+    )
+    config = _write_config(tmp_path, "sync_zenodo.yaml", text)
+    assert config.endpoint == "https://zenodo.org/api"
+
+
+def test_get_all_pages_endless():
+    """A search result that never ends is refused instead of collected forever."""
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakeRest([{"id": rid} for rid in range(SEARCH_PAGE_SIZE * MAX_SEARCH_PAGES + 1)])
+    with pytest.raises(ZenodoError) as exc_info:
+        zenodo.get_user_records()
+    assert f"{MAX_SEARCH_PAGES} full pages" in str(exc_info.value)
+    assert len(zenodo.rest.calls) == MAX_SEARCH_PAGES
+
+
+@pytest.mark.parametrize("entry", [{}, {"checksum": None}])
+def test_entry_md5_without_checksum(entry):
+    """A file entry without a checksum is reported as a message, not as a KeyError."""
+    with pytest.raises(ZenodoError) as exc_info:
+        _entry_md5(entry)
+    assert "unexpected checksum format" in str(exc_info.value)
+
+
+def test_upload_file_without_size(tmp_path):
+    """A commit response without a size is reported as a message, not as a KeyError."""
+    path = _write_file(tmp_path, "one.txt", "hello")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakePutRest({})
+    with pytest.raises(ZenodoError) as exc_info:
+        zenodo.upload_file("7", path)
+    assert "File size mismatch" in str(exc_info.value)
+
+
+class _FakePutRest:
+    """A `RESTWrapper` stub that accepts an upload and answers the commit with fixed data."""
+
+    def __init__(self, commit: dict):
+        self.commit = commit
+
+    def put(self, loc, data):
+        return None
+
+    def post(self, loc):
+        return self.commit
+
+
+def test_record_url_without_link():
+    """A record without a link to the website is shown with its address in the API."""
+    zenodo = ZenodoWrapper("token", "https://zenodo.org/api")
+    assert _record_url(zenodo, {"id": 7}) == "https://zenodo.org/api/records/7"
+
+
+def test_record_url_with_link():
+    zenodo = ZenodoWrapper("token")
+    record = {"id": 7, "links": {"self_html": "https://zenodo.org/records/7"}}
+    assert _record_url(zenodo, record) == "https://zenodo.org/records/7"
+
+
+def test_record_id_missing():
+    """A record without an id is reported as a message, not as a KeyError."""
+    with pytest.raises(ZenodoError) as exc_info:
+        _record_id({"metadata": {}})
+    assert INVENIORDM_MIMETYPE in str(exc_info.value)
+
+
+def test_update_online_empty_record_id(tmp_path):
+    """An empty record id file is reported as a message, instead of creating a second record."""
+    config = _config_with_version(tmp_path, "1.0.0")
+    config.path_record_id.write_text("\n")
+    with pytest.raises(ZenodoError) as exc_info:
+        _update_online(_FakeZenodo(), config, [])
+    assert "is empty" in str(exc_info.value)
+
+
+def test_main_missing_file(tmp_path, monkeypatch, capsys):
+    """A file that does not exist is reported before Zenodo is contacted."""
+    monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(CONFIG_YAML)
+    assert main([str(path), str(tmp_path / "nope.txt")]) == 1
+    captured = capsys.readouterr()
+    assert "do not exist" in captured.err
+    assert "Traceback" not in captured.err

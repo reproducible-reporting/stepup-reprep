@@ -4,13 +4,12 @@
 
 import os
 import shutil
+import subprocess
 
 import pytest
 from nbformat import read, v4, write
 from path import Path
 
-from stepup.reprep.convert_jupyter import main as convert_jupyter_main
-from stepup.reprep.execute_papermill import main as execute_papermill_main
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 TRANSPORT_SOURCE = """\
@@ -33,6 +32,20 @@ def test_ipc_kernel_config():
     assert not os.path.exists(path_dir)
 
 
+def run_tool(*args: str):
+    """Run one of the RepRep command-line tools in a subprocess, as StepUp does.
+
+    The `main` functions are deliberately not called in process.
+    The synchronous Jupyter API creates an asyncio event loop that it never closes
+    (observed with jupyter-core 5.9.1),
+    and the socket pair of such a loop makes Python emit a `ResourceWarning`
+    when the garbage collector eventually reclaims the loop.
+    That happens at an unpredictable moment,
+    so in process it would turn an arbitrary later test into a failure.
+    """
+    subprocess.run(args, stdin=subprocess.DEVNULL, check=True)
+
+
 def write_transport_notebook(path_nb: Path):
     """Write a notebook whose only cell prints the transport of its kernel."""
     notebook = v4.new_notebook(cells=[v4.new_code_cell(TRANSPORT_SOURCE)])
@@ -50,7 +63,7 @@ def test_convert_jupyter_ipc(path_tmp: Path):
     path_nb = path_tmp / "transport.ipynb"
     write_transport_notebook(path_nb)
     path_out = path_tmp / "transport.md"
-    convert_jupyter_main([path_nb, path_out, "--to", "markdown", "--execute"])
+    run_tool("srr-convert-jupyter", path_nb, path_out, "--to", "markdown", "--execute")
     assert "transport: ipc" in path_out.read_text()
 
 
@@ -59,7 +72,7 @@ def test_execute_papermill_ipc(path_tmp: Path):
     path_nb = path_tmp / "transport.ipynb"
     write_transport_notebook(path_nb)
     path_out = path_tmp / "transport_out.ipynb"
-    execute_papermill_main([path_nb, path_out])
+    run_tool("srr-execute-papermill", path_nb, path_out)
     notebook = read(path_out, as_version=4)
     (cell,) = [cell for cell in notebook.cells if cell.source == TRANSPORT_SOURCE]
     (output,) = cell.outputs

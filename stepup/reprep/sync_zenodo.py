@@ -53,7 +53,7 @@ import cattrs
 import idutils
 import requests
 import yaml
-from cattrs.cols import list_structure_factory
+from cattrs.errors import IterableValidationError, IterableValidationNote
 from cattrs.gen import make_dict_structure_fn
 from markdown_it import MarkdownIt
 from path import Path
@@ -1499,8 +1499,15 @@ def _make_converter() -> cattrs.Converter:
     converter = cattrs.Converter(forbid_extra_keys=True)
     converter.register_structure_hook(str, _structure_str)
     converter.register_structure_hook_func(lambda type_: type_ == list[str], _structure_list_str)
-    converter.register_structure_hook_factory(attrs.has, _make_section_hook)
-    converter.register_structure_hook_factory(_is_list_of_sections, _make_list_of_sections_hook)
+    # The hook factories take the converter as an argument,
+    # which is bound here instead of by cattrs,
+    # because cattrs only passes the converter to a factory as of version 24.1.
+    converter.register_structure_hook_factory(
+        attrs.has, lambda type_: _make_section_hook(type_, converter)
+    )
+    converter.register_structure_hook_factory(
+        _is_list_of_sections, lambda type_: _make_list_of_sections_hook(type_, converter)
+    )
     return converter
 
 
@@ -1553,13 +1560,29 @@ def _make_list_of_sections_hook(type_: type, converter: cattrs.Converter) -> Cal
         A cattrs structuring hook rejecting a value that is not a list.
         A string is rejected too, even though it is a sequence,
         because it would otherwise be structured item by item, one error per character.
+        The errors of all items are collected,
+        so that a single run reports every problem in the list.
     """
-    structure_list = list_structure_factory(type_, converter)
+    (item_type,) = get_args(type_)
 
     def structure(value: Any, type__: type) -> Any:
         if isinstance(value, str) or not isinstance(value, Sequence):
             raise TypeError(f"Expected a list of mappings, got {type(value).__name__}: {value!r}.")
-        return structure_list(value, type__)
+        items = []
+        excs = []
+        for index, item in enumerate(value):
+            try:
+                items.append(converter.structure(item, item_type))
+            except (cattrs.BaseValidationError, TypeError, ValueError) as exc:
+                # The note tells `cattrs.transform_error` where in the list the error occurred.
+                note = IterableValidationNote(
+                    f"Structuring {type__} @ index {index}", index, item_type
+                )
+                exc.__notes__ = [*getattr(exc, "__notes__", []), note]
+                excs.append(exc)
+        if len(excs) > 0:
+            raise IterableValidationError(f"While structuring {type__!r}", excs, type__)
+        return items
 
     return structure
 

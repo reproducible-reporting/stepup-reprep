@@ -52,7 +52,7 @@ The following screen cast shows StepUp RepRep in action:
   that are (indirectly) affected by the change in `generate.py`.
 - Finally, the user presses `q` to exit StepUp.
 
-<script src="https://asciinema.org/a/718835.js" id="asciicast-718835" async="true"></script>
+<script src="https://asciinema.org/a/1264479.js" id="asciicast-1264479" async="true"></script>
 
 ## Why Was StepUp RepRep Created?
 

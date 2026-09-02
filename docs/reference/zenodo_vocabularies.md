@@ -1,3 +1,9 @@
+---
+description: >-
+  Tables of the controlled vocabularies that Zenodo accepts for development status,
+  programming languages, languages, licenses, relation types and resource types.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

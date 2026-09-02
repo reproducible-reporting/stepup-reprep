@@ -1,3 +1,9 @@
+---
+description: >-
+  Work on a publication built from the template:
+  what plan.py does, how to keep the Git repository clean, and how to pin your dependencies.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

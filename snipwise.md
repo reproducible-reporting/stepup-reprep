@@ -34,6 +34,14 @@ patterns = ["stepup/reprep/__init__.py"]
 scanner = "regex"
 regex = '(?m)^"""(?P<content>[^"]*)"""$'
 snippets = ["tagline"]
+render = "{{ content | unwrap | suffix('.') }}"
+
+# The tagline in the social card, whose tspan carries the id that locates it.
+[[targets]]
+patterns = ["docs/social-card.svg"]
+scanner = "regex"
+regex = '<tspan\b[^>]*\bid="tagline"[^>]*>(?P<content>[^<]*)</tspan>'
+snippets = ["tagline"]
 render = "{{ content | unwrap }}"
 
 # The keywords array of the Python package metadata.
@@ -70,7 +78,7 @@ insert = [
 ## `tagline`
 
 ```text
-StepUp RepRep is the StepUp extension for Reproducible Reporting.
+StepUp extension for Reproducible Reporting
 ```
 
 ## `abstract`

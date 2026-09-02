@@ -9,7 +9,7 @@ name = "stepup-reprep"
 authors = [
   { name="Toon Verstraelen", email="toon.verstraelen@ugent.be" },
 ]
-description = "StepUp RepRep is the StepUp extension for Reproducible Reporting."
+description = "StepUp extension for Reproducible Reporting"
 readme = "README.md"
 license = "LGPL-3.0-or-later"
 requires-python = ">=3.11"
@@ -39,7 +39,7 @@ keywords = [
     # snipwise.md END keywords
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
@@ -75,7 +75,7 @@ dependencies = [
     "pyyaml>=6.0",
     "requests>=2.33.0",
     "scipy>=1.11.1",
-    "stepup>=4.0.0rc14,<5.0.0a1",
+    "stepup>=4.0.0,<5.0.0a1",
     "svg.path>=6.0",
     "traitlets>=5.14.0",
     "weasyprint>=69.0",

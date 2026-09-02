@@ -1,3 +1,9 @@
+---
+description: >-
+  A placeholder for a tutorial series on using StepUp RepRep from an empty Git repository,
+  without the publication template.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

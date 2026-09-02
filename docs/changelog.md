@@ -1,3 +1,9 @@
+---
+description: >-
+  Release notes for every version of StepUp RepRep,
+  following Keep a Changelog and effort-based versioning.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
@@ -13,23 +19,24 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-## [4.0.0rc10][] - 2026-09-01 {: #v4.0.0rc10 }
+## [4.0.0][] - 2026-09-02 {: #v4.0.0 }
 
-Compatibility with StepUp Core 4 and a few minor improvements.
+Compatibility with StepUp Core 4, a refactored Zenodo synchronization
+and more reliable concurrent notebook conversion.
 
-(This is release candidate 10 of the upcoming StepUp RepRep 4.0 release.
-Note that all changes of the release candidates are combined below.
-This section is treated as a draft of the changelog for the final 4.0.0 release,
-and will be updated with any further changes before the final release.)
+Note that all changes of the `4.0.0rc*` release candidates are combined below.
 
 ### Added
 
 - Support for `os.PathLike` objects in `stepup.reprep.api` functions.
+- The `resources` and `duration` arguments of `stepup.core.api.run()`
+  are accepted by all `stepup.reprep.api` functions.
 - An optional `inp` argument in `compile_typst()` to specify additional input files
   on which the typst source may depend.
   If not given, these dependencies are detected automatically after the typst compilation.
   When some of these additional inputs are the outputs of other steps,
   specifying them may improve scheduling efficiency.
+- A `shell` argument in `wrap_git()`, to run the wrapped git command through a shell.
 - The configuration file of `srr-sync-zenodo` may be written in YAML, JSON or TOML.
   The parser is selected by the suffix of the file name:
   `.yaml` and `.yml`, `.json` or `.toml`.
@@ -41,29 +48,45 @@ and will be updated with any further changes before the final release.)
   which validates the configuration, resolves the description,
   prints the metadata that would be sent to Zenodo and exits.
   Unlike an unset `REPREP_ZENODO_TOKEN`, this does not depend on the environment.
-- Five more custom fields in the `custom_fields` section of the configuration file of
-  `srr-sync-zenodo`, which Zenodo deploys as
+- A `custom_fields` section in the configuration file of `srr-sync-zenodo`,
+  holding the fields with which Zenodo extends the InvenioRDM record.
+  The former top level `code_repository` field moved into this section,
+  and seven fields are new:
+  `development_status`, `programming_languages`, `rights_holder`,
+  `journal`, `meeting`, `imprint` and `thesis`.
+  Zenodo deploys them as `code:developmentStatus`, `code:programmingLanguage`,
   `dc:rightsHolder`, `journal:journal`, `meeting:meeting`, `imprint:imprint`
   and `thesis:thesis`.
-  They are written as `rights_holder`, `journal`, `meeting`, `imprint` and `thesis`,
-  and everything that can be checked without contacting Zenodo is checked locally:
+  Everything that can be checked without contacting Zenodo is checked locally:
   the ISSN of a journal, the ISBN of an imprint,
   the URL and the identifiers of a meeting,
   and a thesis date that looks like a plain calendar date.
   There is no `creator` custom field,
   because it would repeat `metadata.creators` as free text,
   without ORCIDs or affiliations.
+- A `metadata.languages` field in the configuration file of `srr-sync-zenodo`,
+  which takes ISO 639-3 language codes, e.g. `eng` for English.
 
 ### Changed
 
-- Relicense the StepUp RepRep source code under `LGPL-3.0-or-later`.
+- The StepUp RepRep source code has been relicensed under `LGPL-3.0-or-later`.
   This clarifies that users of StepUp can assign any license of their choice
   to the workflows they create with StepUp (e.g., `plan.py` and related files).
   This has always been the intention, but with this change, it becomes legally explicit.
-- Compatibility with StepUp Core 4
-- Remove all actions and tools and converted them into standard console scripts,
+- Compatibility with StepUp Core 4.
+  This removes the `block` argument from every `stepup.reprep.api` function,
+  and replaces the `pool` argument of `convert_jupyter()` and `execute_papermill()`
+  by the more general `resources` argument.
+  Existing `plan.py` files must be updated accordingly.
+- Replace all `stepup.actions` and `stepup.tools` entry points by standard console scripts,
   all with the `srr-` prefix.
-- Refactored `convert_jupyter` to process parameters in the same way as papermill.
+  For example, `stepup make-inventory` became `srr-make-inventory`.
+- The `convert_jupyter()` function passes parameters to the notebook like papermill does:
+  the new `parameters` argument takes a dictionary
+  whose items are assigned in a cell inserted after the cell tagged `parameters`.
+  The `nbargs` argument and the `REPREP_NBARGS` environment variable are gone,
+  and so are the `jupyter` argument and the `REPREP_JUPYTER` environment variable,
+  because the conversion calls the `nbconvert` Python API instead of the `jupyter` executable.
 - Rename environment variables for consistency:
     - `REPREP_KEEP_TECTONIC_DEPS` -> `REPREP_TECTONIC_KEEP_DEPS`
     - `REPREP_KEEP_TYPST_DEPS` -> `REPREP_TYPST_KEEP_DEPS`
@@ -95,9 +118,6 @@ and will be updated with any further changes before the final release.)
     - Unsupported keys in `sync_zenodo.yaml` now raise an error instead of being ignored,
       and values that must be strings are no longer coerced silently.
       For example, an unquoted `version: 1.0` is rejected instead of becoming `"1.0"`.
-    - The `code_repository` field of `sync_zenodo.yaml` was replaced by a `custom_fields` section,
-      holding the fields with which Zenodo extends the InvenioRDM record.
-      It takes `code_repository` and the other fields listed under Added above.
     - The identifiers of an award in the `metadata.funding` section are written
       like those of a meeting, as entries with an `identifier` and an optional `scheme`.
       They used to be entries with the scheme as the only key and the identifier as its value,
@@ -133,6 +153,12 @@ and will be updated with any further changes before the final release.)
       which is usually a stale checkout or a revert instead of a new release.
       For the same reason, it refuses to synchronize a record
       that is no longer the latest published version of the dataset.
+    - Only the metadata keys that carry a value are sent to Zenodo.
+      The keywords are deposited as subjects only,
+      because the InvenioRDM metadata has no keyword field.
+      As observed on the sandbox on 2026-09-01,
+      Zenodo silently dropped the unknown `keywords` key and accepted the empty values,
+      so this does not change the records deposited with earlier versions.
     - When a value in `sync_zenodo.yaml` is rejected,
       the error message now explains what is wrong with it,
       instead of only stating that the value is invalid.
@@ -151,23 +177,19 @@ and will be updated with any further changes before the final release.)
       These names are only a convention:
       `srr-sync-zenodo` and `sync_zenodo()` accept any path.
     - The documentation of the Zenodo synchronization is split into three pages:
+
         1. A guide, which also explains how the legacy `.zenodo.json` file
            and the two Zenodo APIs relate to each other.
         2. A reference of the configuration file, with one section per top level key.
         3. A page with the relevant Zenodo vocabularies, which is generated from the Zenodo API.
-    - The `access` section, which decides who can see the record and download its files,
-      is documented for the first time.
-    - The `languages` field has been added.
-    - `srr-sync-zenodo` only sends the metadata keys that carry a value.
-      The keywords are deposited as subjects only,
-      because the InvenioRDM metadata has no keyword field.
-      As observed on the sandbox on 2026-09-01,
-      Zenodo silently dropped the unknown `keywords` key and accepted the empty values,
-      so this does not change the records deposited with earlier versions.
+
+        The `access` section, which decides who can see the record and download its files,
+        is documented for the first time.
 
 ### Removed
 
-- The `tile_pdf` action has been removed, as it is no longer needed.
+- The `stepup.reprep.tile_pdf` module, with its `Figure` and `Panel` classes,
+  has been removed, as it is no longer needed.
   This is easily replaced with a simple typst input.
 - The `compile_typst()` function no longer scans the `sysinp` dictionary for `Path` objects
   to automatically mark them as input dependencies.
@@ -178,82 +200,80 @@ and will be updated with any further changes before the final release.)
     - In `sync_zenodo.yaml`, a single value written where a list of strings belongs
       is read as a one element list.
       For example, `keywords: coffee` is the same as a list holding one keyword.
-      This already worked for `license` and now also works for `keywords`
-      and `programming_languages`,
-      which were previously split into a list of characters.
+      This works for every field that takes a list of strings:
+      `keywords`, `license`, `languages`, `programming_languages` and `rights_holder`.
+      It already worked for `license`,
+      whereas `keywords` was previously split into a list of characters.
       A value that is neither a string nor a list of strings is rejected
       with a message naming the expected type.
-    - `compile_tectonic()` only scans the `error:` lines of Tectonic's standard error stream
-      for missing input files.
-      As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
-      from which paths were picked up that are no files at all.
-    - `srr-sync-zenodo` reads a record that carries no version on Zenodo,
-      instead of failing with a `KeyError`.
+    - A record that carries no version on Zenodo is read
+      instead of causing a `KeyError`.
       Zenodo does not require a version,
       so a record deposited through its web interface before `srr-sync-zenodo` was adopted
       may well have none.
       Such a record never matches the local version, so a new version is created for it.
-    - `srr-sync-zenodo` now handles the case where a record has no version.
-      This prevents errors when syncing records that were created before the versioning system was implemented.
-    - The `--clean` option of `srr-sync-zenodo` removes the drafts
+    - The `--clean` option removes the drafts
       that Zenodo serves beyond the first page of the records of a user.
       As observed on 2026-08-30, that page holds at most 25 records,
       so the drafts of a user with more records than that were silently left behind.
-    - `srr-sync-zenodo` no longer fails when it is given no files to upload.
+    - A run that is given no files to upload no longer fails.
       It declared an empty list of uploads, which Zenodo rejects,
       after it had already created the record,
       so every run left another draft behind without recording its id.
       Note that Zenodo refuses to publish a record without files,
       as observed on the sandbox instance on 2026-08-30.
-    - `srr-sync-zenodo` keeps the publication date of a record that is already published.
-      It sent the date of the build with every metadata update,
+    - The publication date of a record that is already published is kept.
+      The date of the build was sent with every metadata update,
       which moved the publication date of a published version to the day of the last build.
       A record that is not published yet is still dated on the day it was last synchronized,
       and a new version still gets the date on which it is created.
-    - Every request that `srr-sync-zenodo` sends to Zenodo times out after 60 seconds,
+    - Every request sent to Zenodo times out after 60 seconds,
       instead of waiting forever for a connection that stalls.
       A request that cannot reach Zenodo at all is reported as a message,
       like a request that Zenodo refuses, instead of as a traceback.
-    - `srr-sync-zenodo` reads a record as published only when Zenodo answers
-      that its draft does not exist.
+    - A record is read as published only when Zenodo answers that its draft does not exist.
       Any other response, such as a refused token or an error of a gateway,
       is reported instead of being mistaken for a record without a draft.
-    - `srr-sync-zenodo` escapes the file name in the address of an upload,
+    - The file name in the address of an upload is escaped,
       so a name holding a character that delimits a URL, such as `#` or `?`,
       no longer truncates that address.
     - When the local files differ from those of a published version,
-      `srr-sync-zenodo` explains that the version in the configuration file has to be changed,
+      the message explains that the version in the configuration file has to be changed,
       instead of only reporting the difference.
-    - `srr-sync-zenodo` sends the metadata of a draft before it uploads the files,
+    - The metadata of a draft is sent before the files are uploaded,
       because Zenodo only accepts an upload to a record whose metadata has enabled its files.
       A draft that was created without files could therefore not be given any.
       The metadata is sent again after the upload,
       so that Zenodo also applies the order of the files and the default preview.
-    - A value that `srr-sync-zenodo` rejects is reported with the message of the validator alone.
+    - A rejected value is reported with the message of the validator alone.
       A value outside a fixed set, such as an unknown `access.record`,
       used to be followed by the internal representation of the attribute,
       and an unknown `related.scheme` by the validators of every scheme Zenodo knows.
-    - The run after a failed upload finishes the draft that `srr-sync-zenodo` left behind.
+    - The run after a failed upload finishes the draft that was left behind.
       A file is declared to Zenodo before its content is sent,
       so an upload that broke off halfway left a file name without content,
       which the next run compared to a checksum that Zenodo does not have yet.
       It reported an unexpected checksum format instead,
       which left `--clean` as the only way forward.
-    - `srr-sync-zenodo` creates the directory of the file named by `path_record_id`
-      when it does not exist, and reports the failure to write that file as a message.
+    - The directory of the file named by `path_record_id` is created when it does not exist,
+      and a failure to write that file is reported as a message.
       Because the file is not an output of the step, its directory is not prepared for it,
       so a `path_record_id` inside a directory that a build does not create
       ended in a traceback right after the record was created on Zenodo.
     - A string written where a list of sections belongs, such as `creators: Jane Doe`,
       is reported once instead of once per character,
       and a scalar written where a section belongs names the type of the value.
-    - `srr-sync-zenodo` checks that the files to upload exist before it contacts Zenodo.
-    - `srr-sync-zenodo` stops collecting a paginated search result after a hundred pages,
-      instead of requesting pages forever if Zenodo keeps sending full ones.
+    - The files to upload are checked for existence before Zenodo is contacted.
+    - A paginated search result is no longer collected beyond a hundred pages,
+      so a Zenodo instance that keeps sending full pages no longer causes an endless loop.
     - A record, a file entry or a commit response in which Zenodo leaves out
       the id, the checksum or the size is reported as a message instead of a `KeyError`.
     - A trailing slash on the `endpoint` in `sync_zenodo.yaml` is removed,
       so that it does not end up in the middle of every address.
+- `srr-compile-tectonic` only scans the `error:` lines of Tectonic's standard error stream
+  for missing input files.
+  As of Tectonic 0.17, a halted run also dumps the engine transcript to that stream,
+  from which paths were picked up that are no files at all.
 - The Jupyter kernels started by `convert_jupyter()` and `execute_papermill()`
   now communicate over ZeroMQ IPC sockets in a private temporary directory,
   instead of TCP sockets on localhost.
@@ -862,7 +882,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
-[4.0.0rc10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0rc10
+[4.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0
 [3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11
 [3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10
 [3.1.9]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.9

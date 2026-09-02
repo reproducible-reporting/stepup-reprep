@@ -11,6 +11,7 @@ when working with code in this repository.
 Guidance that applies to only part of the repo lives next to the code it governs:
 
 - `tests/CLAUDE.md`: test layout and regenerating expected outputs.
+- `docs/CLAUDE.md`: regenerating the social card.
 
 ## Project Overview
 

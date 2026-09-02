@@ -1,3 +1,9 @@
+---
+description: >-
+  Convert a plot back into data points by tracing its axes and curves in Inkscape
+  and running unplot() on the resulting SVG file.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

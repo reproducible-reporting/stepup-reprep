@@ -1,3 +1,9 @@
+---
+description: >-
+  Set up a StepUp RepRep development environment with uv, direnv and pre-commit,
+  and find out how to run the tests, build the documentation and make a release.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

@@ -1,3 +1,9 @@
+---
+description: >-
+  Every field of the srr-sync-zenodo configuration file,
+  from the record metadata and its creators to the custom fields Zenodo adds to InvenioRDM.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

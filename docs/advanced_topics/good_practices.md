@@ -1,3 +1,9 @@
+---
+description: >-
+  Recommendations for file names, LaTeX sources, figures, tables, datasets and software
+  that keep a StepUp RepRep project accurate, reusable and reproducible.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

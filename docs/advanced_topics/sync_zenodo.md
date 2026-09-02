@@ -1,3 +1,9 @@
+---
+description: >-
+  Create a Zenodo draft dataset with sync_zenodo()
+  and keep its metadata and files in sync with your StepUp project.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

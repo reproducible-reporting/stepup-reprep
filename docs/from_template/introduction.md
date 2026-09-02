@@ -1,3 +1,9 @@
+---
+description: >-
+  Get to know the publication template, whose dataset, results, LaTeX and upload directories
+  are tied together by a pre-configured StepUp workflow.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

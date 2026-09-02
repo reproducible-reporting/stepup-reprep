@@ -1,3 +1,9 @@
+---
+description: >-
+  The skills and the software you need before starting the Template Tutorial,
+  with installation instructions for Ubuntu, Fedora, Conda and Pip.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

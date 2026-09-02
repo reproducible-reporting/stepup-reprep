@@ -1,9 +1,19 @@
+---
+title: A Build Tool for Reproducible Publications
+description: >-
+  StepUp RepRep is a StepUp extension that builds a publication from raw research results,
+  covering the last mile from analysis scripts to the ZIP file for the publisher.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Welcome to StepUp RepRep
+<!-- The front matter sets the HTML title of the page, not a second heading. -->
+<!-- pyml disable-num-lines 3 single-title -->
+
+# StepUp RepRep: A Build Tool for Reproducible Publications
 
 <!-- snipwise.md BEGIN abstract -->
 StepUp RepRep is the publication build tool

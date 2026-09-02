@@ -1,3 +1,9 @@
+---
+description: >-
+  Install StepUp RepRep with pip on Linux, macOS or WSL, on Python 3.11 or later,
+  which also installs StepUp Core.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

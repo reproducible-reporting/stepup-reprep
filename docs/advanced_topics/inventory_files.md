@@ -1,3 +1,9 @@
+---
+description: >-
+  The inventory.txt and inventory.def file formats,
+  and the tools that create, validate and zip an inventory of files to be archived.
+---
+
 <!--
 SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0

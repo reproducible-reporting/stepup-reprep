@@ -281,7 +281,7 @@ Note that all changes of the `4.0.0rc*` release candidates are combined below.
   some conversions could fail with "Address already in use",
   because `jupyter_client` selects free TCP ports before the kernel binds them.
 
-## [3.1.11][] - 2026-06-16 {: v3.1.11 }
+## [3.1.11][] - 2026-06-16 {: #v3.1.11 }
 
 Switch to typst 0.15 and use its improved dependency tracking in `compile_typst`.
 
@@ -291,7 +291,7 @@ Switch to typst 0.15 and use its improved dependency tracking in `compile_typst`
   based on the new JSON deps format of typst 0.15.
   Older versions of typst are no longer supported.
 
-## [3.1.10][] - 2026-04-28 {: v3.1.10 }
+## [3.1.10][] - 2026-04-28 {: #v3.1.10 }
 
 This is a minor bugfix release.
 
@@ -299,7 +299,7 @@ This is a minor bugfix release.
 
 - Allow for HTML output files in `compile_typst`.
 
-## [3.1.9][] - 2026-03-22 {: v3.1.9 }
+## [3.1.9][] - 2026-03-22 {: #v3.1.9 }
 
 Refactor `wrap_git` to support more flexible specification of inputs and outputs.
 
@@ -323,7 +323,7 @@ Refactor `wrap_git` to support more flexible specification of inputs and outputs
 - Update nbconvert dependency to version 7.17.0 to address a security vulnerability in earlier versions.
   See <https://cwe.mitre.org/data/definitions/427.html>.
 
-## [3.1.8][] - 2025-12-28 {: v3.1.8 }
+## [3.1.8][] - 2025-12-28 {: #v3.1.8 }
 
 Bugfix release
 
@@ -339,7 +339,7 @@ Bugfix release
 
 - Gracefully handle missing pagination in `bibsane` when reformatting page ranges.
 
-## [3.1.7][] - 2025-12-20 {: v3.1.7 }
+## [3.1.7][] - 2025-12-20 {: #v3.1.7 }
 
 Bugfix release
 
@@ -359,7 +359,7 @@ Bugfix release
 - Fix handling of LaTeX encoding in bibsane
   and abbreviation of journal names with non-ASCII characters.
 
-## [3.1.6][] - 2025-11-21 {: v3.1.6 }
+## [3.1.6][] - 2025-11-21 {: #v3.1.6 }
 
 Preliminary Tectonic support and minor fixes.
 
@@ -371,7 +371,7 @@ Preliminary Tectonic support and minor fixes.
 
 - Minor cleanups.
 
-## [3.1.5][] - 2025-11-11 {: v3.1.5 }
+## [3.1.5][] - 2025-11-11 {: #v3.1.5 }
 
 Update for Typst 0.14, refactored bibsane using pybtex.
 
@@ -385,7 +385,7 @@ Update for Typst 0.14, refactored bibsane using pybtex.
 - Rename `wrap_git` action to `wrap-git` for consistency with other StepUp actions.
 - Update `compile_typst` to work with Typst 0.14.
 
-## [3.1.4][] - 2025-10-18 {: v3.1.4 }
+## [3.1.4][] - 2025-10-18 {: #v3.1.4 }
 
 Improved `sync_zenodo` function.
 
@@ -400,7 +400,7 @@ Improved `sync_zenodo` function.
 
 - Fix Zenodo draft publication REST API.
 
-## [3.1.3][] - 2025-09-28 {: v3.1.3 }
+## [3.1.3][] - 2025-09-28 {: #v3.1.3 }
 
 Minor API improvements.
 
@@ -416,7 +416,7 @@ Minor API improvements.
   [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex]
   to ensure that it is a `.bib` file.
 
-## [3.1.2][] - 2025-08-25 {: v3.1.2 }
+## [3.1.2][] - 2025-08-25 {: #v3.1.2 }
 
 This is a minor feature release.
 
@@ -426,7 +426,7 @@ This is a minor feature release.
   If it is used in a workflow, it will by default amend the current step with
   all scanned TeX sources as inputs.
 
-## [3.1.1][] - 2025-06-25 {: v3.1.1 }
+## [3.1.1][] - 2025-06-25 {: #v3.1.1 }
 
 Minor improvements (Zenodo synchronization, LaTeX dependencies).
 
@@ -439,7 +439,7 @@ Minor improvements (Zenodo synchronization, LaTeX dependencies).
 
 - Fix minor documentation inaccuracies.
 
-## [3.1.0][] - 2025-06-23 {: v3.1.0 }
+## [3.1.0][] - 2025-06-23 {: #v3.1.0 }
 
 More powerful `sync_zenodo` command that uses the Invenio RDM API.
 
@@ -455,7 +455,7 @@ More powerful `sync_zenodo` command that uses the Invenio RDM API.
   (Mainly useful for testing purposes.)
 - Human-readable output when the `zenodo.yaml` configuration file contains schema errors.
 
-## [3.0.5][] - 2025-06-22 {: v3.0.5 }
+## [3.0.5][] - 2025-06-22 {: #v3.0.5 }
 
 This is a bugfix release.
 
@@ -464,7 +464,7 @@ This is a bugfix release.
 - Ignore links returned by the Zenodo API that are not strings in `sync_zenodo`.
 - Amend a `make_inventory` step with all files in an inventory as inputs.
 
-## [3.0.4][] - 2025-06-21 {: v3.0.4 }
+## [3.0.4][] - 2025-06-21 {: #v3.0.4 }
 
 Support for ORCID field in `sync_zenodo`.
 
@@ -472,11 +472,11 @@ Support for ORCID field in `sync_zenodo`.
 
 - Added ORCID field to the author metadata in the `sync_zenodo` configuration file.
 
-## [3.0.3][] - 2025-06-14 {: v3.0.3 }
+## [3.0.3][] - 2025-06-14 {: #v3.0.3 }
 
 Replace a few more markdown imports.
 
-## [3.0.2][] - 2025-06-14 {: v3.0.2 }
+## [3.0.2][] - 2025-06-14 {: #v3.0.2 }
 
 Small improvements and a wrapper for git commands that depend on the commit id.
 
@@ -494,7 +494,7 @@ Small improvements and a wrapper for git commands that depend on the commit id.
 
 - Make `flatten_latex()` work with other file extensions.
 
-## [3.0.1][] - 2025-05-31 {: v3.0.1 }
+## [3.0.1][] - 2025-05-31 {: #v3.0.1 }
 
 Integration with papermill to execute notebooks, and a few bug fixes.
 
@@ -512,7 +512,7 @@ Integration with papermill to execute notebooks, and a few bug fixes.
   (It was not terribly useful in the first place.)
   For more details, see <https://artifex.com/blog/mupdf-removes-linearisation>.
 
-## [3.0.0][] - 2025-05-11 {: v3.0.0 }
+## [3.0.0][] - 2025-05-11 {: #v3.0.0 }
 
 Major release with breaking changes, compatible with StepUp Core 3.
 
@@ -522,7 +522,7 @@ Major release with breaking changes, compatible with StepUp Core 3.
     - Compatibility with StepUp Core 3.
     - Migrated `render_jinja()` to StepUp Core 3.
 
-## [2.3.6][] - 2025-04-24 {: v2.3.6 }
+## [2.3.6][] - 2025-04-24 {: #v2.3.6 }
 
 Make `sanitize_bibtex()` work without LaTeX and add support for TOML files in `render_jinja()`.
 
@@ -535,7 +535,7 @@ Make `sanitize_bibtex()` work without LaTeX and add support for TOML files in `r
 - Make [`sanitize_bibtex()`][stepup.reprep.api.sanitize_bibtex] usable without LaTeX.
 - New output files in the LaTeX fls file are treated as volatile outputs.
 
-## [2.3.5][] - 2025-03-13 {: v2.3.5 }
+## [2.3.5][] - 2025-03-13 {: #v2.3.5 }
 
 Bug fix in `rr-cat-pdf` and simplify journal abbreviation in `rr-bibsane`.
 This requires an update the `bibsane.yaml` configuration file.

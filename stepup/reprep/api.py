@@ -316,7 +316,8 @@ def compile_tectonic(
         The main LaTeX source file.
         This argument may contain environment variables.
     dest
-        Output destination: `None`, a directory or a file.
+        Output directory, with a trailing slash.
+        If `None`, the PDF is written in the directory of the LaTeX source.
     workdir
         The working directory where the LaTeX command must be executed.
     tectonic
@@ -356,12 +357,18 @@ def compile_tectonic(
         dest = subs(dest, su_workdir)
     if not path_tex.endswith(".tex"):
         raise ValueError(f"The input of the tectonic command must end with .tex, got {path_tex}.")
+    if not (dest is None or dest.endswith("/")):
+        raise ValueError(
+            f"The dest of the tectonic command must be a directory ending with /, got {dest}."
+        )
     path_out = make_path_out(path_tex, dest, ".pdf")
 
     stem = path_tex[:-4]
     parts = ["srr-compile-tectonic"]
     if tectonic is not None:
         parts.append(f"--tectonic={shq(tectonic)}")
+    if dest is not None:
+        parts.append(f"--outdir={shq(dest)}")
     paths_out = [path_out]
     if keep_deps is not None:
         if keep_deps:
@@ -371,8 +378,6 @@ def compile_tectonic(
             parts.append("--no-keep-deps")
     _process_inventory(inventory, "TECTONIC", stem, parts, paths_out)
     parts.append(shq(path_tex))
-    if path_tex[:-4] != path_out[:-4]:
-        parts.append(f"--out={shq(path_out)}")
     path_inp = [path_tex]
     if len(tectonic_args) > 0:
         parts.append("--")

@@ -122,6 +122,7 @@ def has_tectonic_0_17_x():
         "compile_tectonic_bbl",
         "compile_tectonic_bibtex",
         "compile_tectonic_input",
+        "compile_tectonic_outdir",
         "compile_tectonic_subdir",
     ],
 )

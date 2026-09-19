@@ -1,0 +1,46 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   file:sub/paper.tex
+             product   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+
+file:sub/paper.tex
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+
+step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+               state = SUCCEEDED
+                need = DEFAULT
+           using_env = REPREP_TECTONIC [dynamic]
+                     = REPREP_TECTONIC_ARGS [dynamic]
+                     = REPREP_TECTONIC_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
+             creator   step:./plan.py
+              source   file:sub/paper.tex
+             product   file:out/paper.pdf
+             product   file:sub/paper-inventory.txt
+                sink   file:out/paper.pdf
+                sink   file:sub/paper-inventory.txt
+
+file:out/paper.pdf
+               state = BUILT
+             creator   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+              source   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+
+file:sub/paper-inventory.txt
+               state = BUILT
+             creator   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+              source   step:srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex

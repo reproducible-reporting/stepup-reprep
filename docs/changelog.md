@@ -35,6 +35,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
   in a subdirectory of the step's working directory.
   Previously, the dependencies, the BibTeX output and the Tectonic command
   were only correct when the source file was in the step's working directory.
+- The `dest` argument of `compile_tectonic()` must be `None` or a directory with a trailing slash.
+  Tectonic only supports an output directory, which is passed with the new `--outdir` option
+  of `srr-compile-tectonic`.
+  Previously, any `dest` that changed the output path made the step fail.
 
 ## [4.0.0][] - 2026-09-02 {: #v4.0.0 }
 

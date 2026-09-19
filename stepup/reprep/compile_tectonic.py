@@ -47,6 +47,8 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     # Prepare the command to run Tectonic, which runs in `workdir`.
     tectonic_args = [args.tectonic, "-c", "minimal", fn_tex]
+    if args.outdir is not None:
+        tectonic_args.extend(["--outdir", args.outdir.relpath(workdir)])
     if len(args.tectonic_args) == 0:
         args.tectonic_args = shlex.split(getenv("REPREP_TECTONIC_ARGS", ""))
     tectonic_args.extend(args.tectonic_args)
@@ -121,6 +123,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--tectonic",
         help="The Tectonic executable. "
         "The default is ${REPREP_TECTONIC} or tectonic if the variable is not defined.",
+    )
+    parser.add_argument(
+        "--outdir",
+        type=Path,
+        help="The directory in which to write the PDF. "
+        "The default is the directory of the LaTeX source.",
     )
     parser.add_argument(
         "--keep-deps",

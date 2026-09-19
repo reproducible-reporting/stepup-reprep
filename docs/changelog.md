@@ -19,6 +19,17 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+(no changes yet)
+
+## [4.0.1][] - 2026-09-16 {: #v4.0.1 }
+
+This release fixes issues with relative paths in `convert_jupyter()`
+and with `${HERE}` and `${ROOT}` in `compile_latex()`, `compile_tectonic()` and `compile_typst()`.
+
+### Changed
+
+- StepUp Core 4.0.3 or newer is required.
+
 ### Fixed
 
 - When `convert_jupyter()` executes a notebook in a subdirectory,
@@ -903,6 +914,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1
 [4.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0
 [3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11
 [3.1.10]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.10

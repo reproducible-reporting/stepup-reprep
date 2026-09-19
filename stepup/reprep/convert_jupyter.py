@@ -4,7 +4,6 @@
 
 import argparse
 import json
-import os
 import sys
 from collections.abc import Sequence
 
@@ -13,6 +12,7 @@ from nbconvert import exporters
 from nbformat import read, v4
 from path import Path
 
+from stepup.core.extapi import child_env
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 __all__ = ("main",)
@@ -54,7 +54,7 @@ def main(argv: Sequence[str] | None = None):
                 kernel_name="python3",
                 extra_arguments=["--IPKernelApp.log_level=40"],
             )
-            client.execute(cwd=str(dir_nb), env=kernel_env(dir_nb))
+            client.execute(cwd=str(dir_nb), env=child_env(dir_nb))
 
     exporter_class = exporters.get_exporter(args.to)
 
@@ -65,35 +65,6 @@ def main(argv: Sequence[str] | None = None):
     Path(args.path_out).parent.normpath().makedirs_p()
     with open(args.path_out, "w", encoding="utf-8") as f:
         f.write(body)
-
-
-def kernel_env(dir_kernel: Path) -> dict[str, str]:
-    """Create the environment variables for a kernel running in another directory.
-
-    The kernel runs in the directory of the notebook, like an interactive session.
-    StepUp defines `HERE` and `ROOT` relative to the working directory of a process,
-    so they must be updated for the kernel.
-    Otherwise, relative paths passed to `amend()` in the notebook
-    would not be interpreted relative to the kernel's working directory.
-
-    Parameters
-    ----------
-    dir_kernel
-        The working directory of the kernel,
-        relative to the working directory of the current process.
-
-    Returns
-    -------
-    env
-        A copy of `os.environ` with `HERE` and `ROOT` updated, if they are defined.
-    """
-    env = dict(os.environ)
-    if "HERE" in env and "ROOT" in env:
-        path_root = (Path.cwd() / env["ROOT"]).normpath()
-        path_kernel = (Path.cwd() / dir_kernel).normpath()
-        env["HERE"] = str(path_kernel.relpath(path_root))
-        env["ROOT"] = str(path_root.relpath(path_kernel))
-    return env
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

@@ -257,7 +257,8 @@ def compile_latex(
     by adding `%REPREP ignore` at the end of a line.
     """
     with subs_env_vars() as subs:
-        path_tex = subs(path_tex)
+        su_workdir = subs(workdir)
+        path_tex = subs(path_tex, su_workdir)
     if not path_tex.endswith(".tex"):
         raise ValueError(f"The input of the latex command must end with .tex, got {path_tex}.")
 
@@ -350,8 +351,9 @@ def compile_tectonic(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
-        path_tex = subs(path_tex)
-        dest = subs(dest)
+        su_workdir = subs(workdir)
+        path_tex = subs(path_tex, su_workdir)
+        dest = subs(dest, su_workdir)
     if not path_tex.endswith(".tex"):
         raise ValueError(f"The input of the tectonic command must end with .tex, got {path_tex}.")
     path_out = make_path_out(path_tex, dest, ".pdf")
@@ -477,8 +479,9 @@ def compile_typst(
         Holds relevant information of the step, useful for defining follow-up steps.
     """
     with subs_env_vars() as subs:
-        path_typ = subs(path_typ)
-        dest = subs(dest)
+        su_workdir = subs(workdir)
+        path_typ = subs(path_typ, su_workdir)
+        dest = subs(dest, su_workdir)
     if not path_typ.endswith(".typ"):
         raise ValueError(f"The input of the typst command must end with .typ, got {path_typ}.")
     path_out = make_path_out(path_typ, dest, ".pdf", [".svg", ".png", ".html"])

@@ -26,6 +26,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
   are interpreted relative to the notebook's directory,
   consistent with how the notebook opens files.
   The `HERE` and `ROOT` variables in the kernel are updated accordingly.
+- In `compile_latex()`, `compile_tectonic()` and `compile_typst()`,
+  `${HERE}` and `${ROOT}` in the source and destination paths
+  refer to the `workdir` of the step, as in StepUp Core 4.0.3.
+  Previously, they referred to the working directory of the caller,
+  which gave wrong paths when `workdir` was not the current directory.
 
 ## [4.0.0][] - 2026-09-02 {: #v4.0.0 }
 

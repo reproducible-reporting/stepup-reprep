@@ -198,6 +198,7 @@ def has_typst_0_15():
         "compile_typst_sysinp",
         "compile_typst_sysinp_json",
         "compile_typst_tile",
+        "compile_typst_workdir_root",
     ],
 )
 @pytest.mark.asyncio

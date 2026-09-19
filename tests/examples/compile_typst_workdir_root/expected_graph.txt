@@ -1,0 +1,40 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = REPREP_TYPST_INVENTORY [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   file:sub/document.typ
+             product   step:srr-compile-typst ../sub/document.typ --out=../sub/out.pdf  # wd=sub
+
+file:sub/document.typ
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-typst ../sub/document.typ --out=../sub/out.pdf  # wd=sub
+
+step:srr-compile-typst ../sub/document.typ --out=../sub/out.pdf  # wd=sub
+               state = SUCCEEDED
+                need = DEFAULT
+           using_env = REPREP_TYPST [dynamic]
+                     = REPREP_TYPST_ARGS [dynamic]
+                     = REPREP_TYPST_KEEP_DEPS [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
+             creator   step:./plan.py
+              source   file:sub/document.typ
+             product   file:sub/out.pdf
+                sink   file:sub/out.pdf
+
+file:sub/out.pdf
+               state = BUILT
+             creator   step:srr-compile-typst ../sub/document.typ --out=../sub/out.pdf  # wd=sub
+              source   step:srr-compile-typst ../sub/document.typ --out=../sub/out.pdf  # wd=sub

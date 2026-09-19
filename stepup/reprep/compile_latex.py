@@ -3,7 +3,6 @@
 """RepRep Wrapper for LaTeX."""
 
 import argparse
-import contextlib
 import shlex
 import sys
 from collections.abc import Sequence
@@ -60,11 +59,11 @@ def main(argv: Sequence[str] | None = None) -> None:
         inventory_files = [*inp, *bib, f"{stem}.bbl", *out]
 
         # Run LaTeX once to generate the .aux file
-        with contextlib.chdir(workdir):
-            cp = run_subprocess(
-                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode -draftmode {stem}",
-                check=False,
-            )
+        cp = run_subprocess(
+            f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode -draftmode {stem}",
+            workdir=workdir,
+            check=False,
+        )
         if cp.returncode != 0:
             path_log = workdir / f"{stem}.log"
             error_info = parse_latex_log(path_log)
@@ -73,8 +72,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
         aux_digest_hist.append(compute_file_digest(path_aux))
 
-        with contextlib.chdir(workdir):
-            cp = run_subprocess(f"{shlex.quote(args.bibtex)} {stem}", check=False)
+        cp = run_subprocess(f"{shlex.quote(args.bibtex)} {stem}", workdir=workdir, check=False)
         if cp.returncode != 0:
             path_blg = workdir / f"{stem}.blg"
             error_info = parse_bibtex_log(path_blg)
@@ -86,11 +84,11 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     # Keep running LaTeX until the .aux file converges.
     for _ in range(args.maxrep):
-        with contextlib.chdir(workdir):
-            cp = run_subprocess(
-                f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode {stem}",
-                check=False,
-            )
+        cp = run_subprocess(
+            f"{shlex.quote(args.latex)} -recorder -interaction=errorstopmode {stem}",
+            workdir=workdir,
+            check=False,
+        )
         path_log = workdir / f"{stem}.log"
         error_info = parse_latex_log(path_log)
         if cp.returncode != 0:

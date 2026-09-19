@@ -71,8 +71,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         tectonic_args.extend(["--makefile-rules", path_dep])
 
         # Run Tectonic in the directory of the tex file
-        with contextlib.chdir(workdir):
-            cp = run_subprocess(shlex.join(tectonic_args), check=False)
+        cp = run_subprocess(shlex.join(tectonic_args), workdir=workdir, check=False)
         sys.stdout.write(cp.stdout)
         # Get existing input files from the dependency file and amend.
         # Note that the deps file does not escape colons in paths,

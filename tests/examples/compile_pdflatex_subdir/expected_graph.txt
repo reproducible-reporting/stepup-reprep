@@ -1,0 +1,102 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   file:sub/paper.tex
+             product   file:sub/references.bib
+             product   file:sub/smile.pdf
+             product   step:echo 'Hi there!' > generated.tex  # wd=sub
+             product   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.tex
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/references.bib
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/smile.pdf
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+               state = SUCCEEDED
+                need = DEFAULT
+           using_env = REPREP_BIBTEX [dynamic]
+                     = REPREP_LATEX [dynamic]
+                     = STEPUP_PATH_FILTER [dynamic]
+             creator   step:./plan.py
+              source   file:sub/generated.tex [dynamic]
+              source   file:sub/paper.tex
+              source   file:sub/references.bib [dynamic]
+              source   file:sub/smile.pdf [dynamic]
+             product   file:sub/paper-inventory.txt
+             product   file:sub/paper.aux
+             product   file:sub/paper.bbl
+             product   file:sub/paper.fls
+             product   file:sub/paper.log
+             product   file:sub/paper.pdf
+                sink   file:sub/paper-inventory.txt
+                sink   file:sub/paper.aux
+                sink   file:sub/paper.bbl [dynamic]
+                sink   file:sub/paper.fls
+                sink   file:sub/paper.log [dynamic]
+                sink   file:sub/paper.pdf
+
+file:sub/paper-inventory.txt
+               state = BUILT
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.aux
+               state = BUILT
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.fls
+               state = BUILT
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.pdf
+               state = BUILT
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+step:echo 'Hi there!' > generated.tex  # wd=sub
+               state = SUCCEEDED
+                need = DEFAULT
+             creator   step:./plan.py
+             product   file:sub/generated.tex
+                sink   file:sub/generated.tex
+
+file:sub/generated.tex
+               state = BUILT
+             creator   step:echo 'Hi there!' > generated.tex  # wd=sub
+              source   step:echo 'Hi there!' > generated.tex  # wd=sub
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.bbl
+               state = BUILT
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+
+file:sub/paper.log
+               state = VOLATILE
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt

@@ -31,6 +31,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
   refer to the `workdir` of the step, as in StepUp Core 4.0.3.
   Previously, they referred to the working directory of the caller,
   which gave wrong paths when `workdir` was not the current directory.
+- `compile_latex()` and `compile_tectonic()` support a source file
+  in a subdirectory of the step's working directory.
+  Previously, the dependencies, the BibTeX output and the Tectonic command
+  were only correct when the source file was in the step's working directory.
 
 ## [4.0.0][] - 2026-09-02 {: #v4.0.0 }
 

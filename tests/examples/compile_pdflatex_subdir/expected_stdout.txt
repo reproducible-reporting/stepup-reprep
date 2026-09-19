@@ -1,0 +1,18 @@
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+DEFERRED │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+────────────────────────── Unavailable dynamic inputs ──────────────────────────
+sub/generated.tex
+────────────────────────────────────────────────────────────────────────────────
+   START │ echo 'Hi there!' > generated.tex  # wd=sub
+ SUCCESS │ echo 'Hi there!' > generated.tex  # wd=sub
+   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+ SUCCESS │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+DIRECTOR │ Ran 4 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+DIRECTOR │ See you!

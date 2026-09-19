@@ -92,6 +92,7 @@ def has_texlive_2026():
         "compile_pdflatex_bbl",
         "compile_pdflatex_bibtex",
         "compile_pdflatex_input",
+        "compile_pdflatex_subdir",
         "compile_xelatex_input",
     ],
 )
@@ -121,6 +122,7 @@ def has_tectonic_0_17_x():
         "compile_tectonic_bbl",
         "compile_tectonic_bibtex",
         "compile_tectonic_input",
+        "compile_tectonic_subdir",
     ],
 )
 @pytest.mark.asyncio

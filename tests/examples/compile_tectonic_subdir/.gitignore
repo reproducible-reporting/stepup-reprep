@@ -1,0 +1,6 @@
+.stepup
+current_*
+sub/generated.tex
+sub/paper.pdf
+sub/paper.dep
+sub/paper-inventory.txt

@@ -45,8 +45,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.tectonic is None:
         args.tectonic = getenv("REPREP_TECTONIC", "tectonic")
 
-    # Prepare the command to run Tectonic
-    tectonic_args = [args.tectonic, "-c", "minimal", args.path_tex]
+    # Prepare the command to run Tectonic, which runs in `workdir`.
+    tectonic_args = [args.tectonic, "-c", "minimal", fn_tex]
     if len(args.tectonic_args) == 0:
         args.tectonic_args = shlex.split(getenv("REPREP_TECTONIC_ARGS", ""))
     tectonic_args.extend(args.tectonic_args)
@@ -61,14 +61,16 @@ def main(argv: Sequence[str] | None = None) -> None:
     with contextlib.ExitStack() as stack:
         if args.keep_deps:
             # Remove any existing make-deps output from a previous run.
-            path_dep = Path(args.path_tex.with_suffix(".dep"))
+            path_dep = Path(args.path_tex.with_suffix(".dep")).normpath()
             path_dep.remove_p()
             if do_amend_deps:
                 amend(out=path_dep)
+            arg_dep = Path(fn_tex).with_suffix(".dep")
         else:
             # Use a temporary file for the make-deps output.
             path_dep = stack.enter_context(TempDir()) / "tectonic.dep"
-        tectonic_args.extend(["--makefile-rules", path_dep])
+            arg_dep = path_dep
+        tectonic_args.extend(["--makefile-rules", arg_dep])
 
         # Run Tectonic in the directory of the tex file
         cp = run_subprocess(shlex.join(tectonic_args), workdir=workdir, check=False)

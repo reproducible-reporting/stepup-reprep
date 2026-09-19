@@ -29,8 +29,12 @@ def main(argv: Sequence[str] | None = None) -> None:
     workdir = workdir.normpath()
     if not fn_tex.endswith(".tex"):
         raise ValueError("The LaTeX source must have extension .tex")
+    # LaTeX runs in `workdir`, where it only needs `stem`.
+    # Paths in this process are relative to the current directory and use `path_stem`.
     stem = fn_tex[:-4]
-    path_aux = workdir / f"{stem}.aux"
+    path_stem = (workdir / stem).normpath()
+    path_aux = Path(f"{path_stem}.aux")
+    path_bbl = Path(f"{path_stem}.bbl")
 
     # Remove existing outputs from a previous run,
     # which could potentially conflict with the new tex source files.
@@ -40,9 +44,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.run_bibtex:
         exts_to_remove.append("bbl")
     for ext in exts_to_remove:
-        (workdir / f"{stem}.{ext}").remove_p()
+        Path(f"{path_stem}.{ext}").remove_p()
 
-    inp, bib, out, vol = scan_latex_deps(fn_tex, do_amend=False)
+    inp, bib, out, vol = scan_latex_deps(args.path_tex, do_amend=False)
 
     if args.latex is None:
         args.latex = getenv("REPREP_LATEX", "pdflatex")
@@ -55,8 +59,8 @@ def main(argv: Sequence[str] | None = None) -> None:
         if args.bibtex is None:
             args.bibtex = getenv("REPREP_BIBTEX", "bibtex")
 
-        amend(inp=inp + bib, out=[f"{stem}.bbl", *out], vol=vol)
-        inventory_files = [*inp, *bib, f"{stem}.bbl", *out]
+        amend(inp=inp + bib, out=[path_bbl, *out], vol=vol)
+        inventory_files = [*inp, *bib, path_bbl, *out]
 
         # Run LaTeX once to generate the .aux file
         cp = run_subprocess(
@@ -65,7 +69,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             check=False,
         )
         if cp.returncode != 0:
-            path_log = workdir / f"{stem}.log"
+            path_log = Path(f"{path_stem}.log")
             error_info = parse_latex_log(path_log)
             error_info.print(path_log)
             sys.exit(1)
@@ -74,13 +78,13 @@ def main(argv: Sequence[str] | None = None) -> None:
 
         cp = run_subprocess(f"{shlex.quote(args.bibtex)} {stem}", workdir=workdir, check=False)
         if cp.returncode != 0:
-            path_blg = workdir / f"{stem}.blg"
+            path_blg = Path(f"{path_stem}.blg")
             error_info = parse_bibtex_log(path_blg)
             error_info.print(path_blg)
             sys.exit(1)
     else:
-        amend(inp=[*inp, f"{stem}.bbl"], out=out, vol=vol)
-        inventory_files = [*inp, f"{stem}.bbl", *out]
+        amend(inp=[*inp, path_bbl], out=out, vol=vol)
+        inventory_files = [*inp, path_bbl, *out]
 
     # Keep running LaTeX until the .aux file converges.
     for _ in range(args.maxrep):
@@ -89,7 +93,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             workdir=workdir,
             check=False,
         )
-        path_log = workdir / f"{stem}.log"
+        path_log = Path(f"{path_stem}.log")
         error_info = parse_latex_log(path_log)
         if cp.returncode != 0:
             error_info.print(path_log)
@@ -107,22 +111,23 @@ def main(argv: Sequence[str] | None = None) -> None:
             print(digest.hex(), file=sys.stderr)
         sys.exit(1)
 
-    inventory_files.extend([f"{stem}.tex", f"{stem}.aux", f"{stem}.pdf"])
+    inventory_files.extend([f"{path_stem}.tex", path_aux, f"{path_stem}.pdf"])
     if args.inventory is not None:
         write_inventory(args.inventory, inventory_files, do_amend=False)
 
     # Look for input files and output files from the fls file.
     # These are usually worth tracking, but are not needed for the inventory file.
+    # Relative paths in the fls file are relative to `workdir`.
     fls_inp = set()
     fls_vol = set()
-    with open(f"{stem}.fls") as fh:
+    with open(f"{path_stem}.fls") as fh:
         for line in fh:
             if line.startswith("INPUT "):
-                path = Path(line[6:].strip()).normpath()
+                path = (workdir / line[6:].strip()).normpath()
                 if not (path in inventory_files or path == args.inventory):
                     fls_inp.add(path)
             elif line.startswith("OUTPUT "):
-                path = Path(line[7:].strip()).normpath()
+                path = (workdir / line[7:].strip()).normpath()
                 if not (path in inventory_files or path == args.inventory):
                     fls_vol.add(path)
     fls_inp.difference_update(fls_vol)

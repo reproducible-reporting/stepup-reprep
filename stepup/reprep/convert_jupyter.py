@@ -4,13 +4,14 @@
 
 import argparse
 import json
+import os
 import sys
 from collections.abc import Sequence
-from pathlib import Path
 
+from nbclient import NotebookClient
 from nbconvert import exporters
-from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat import read, v4
+from path import Path
 
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
@@ -44,16 +45,16 @@ def main(argv: Sequence[str] | None = None):
             raise RuntimeError("No cell with tag 'parameters' found in the notebook.")
 
     if args.execute:
+        dir_nb = Path(args.path_nb).parent.normpath()
         with ipc_kernel_config() as config:
-            ep = ExecutePreprocessor(
+            client = NotebookClient(
+                notebook,
                 config=config,
                 timeout=600,
                 kernel_name="python3",
                 extra_arguments=["--IPKernelApp.log_level=40"],
             )
-            notebook, _resources = ep.preprocess(
-                notebook, {"metadata": {"path": str(Path(args.path_nb).parent)}}
-            )
+            client.execute(cwd=str(dir_nb), env=kernel_env(dir_nb))
 
     exporter_class = exporters.get_exporter(args.to)
 
@@ -61,9 +62,38 @@ def main(argv: Sequence[str] | None = None):
 
     body, _resources = exporter.from_notebook_node(notebook)
 
-    Path(args.path_out).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.path_out).parent.normpath().makedirs_p()
     with open(args.path_out, "w", encoding="utf-8") as f:
         f.write(body)
+
+
+def kernel_env(dir_kernel: Path) -> dict[str, str]:
+    """Create the environment variables for a kernel running in another directory.
+
+    The kernel runs in the directory of the notebook, like an interactive session.
+    StepUp defines `HERE` and `ROOT` relative to the working directory of a process,
+    so they must be updated for the kernel.
+    Otherwise, relative paths passed to `amend()` in the notebook
+    would not be interpreted relative to the kernel's working directory.
+
+    Parameters
+    ----------
+    dir_kernel
+        The working directory of the kernel,
+        relative to the working directory of the current process.
+
+    Returns
+    -------
+    env
+        A copy of `os.environ` with `HERE` and `ROOT` updated, if they are defined.
+    """
+    env = dict(os.environ)
+    if "HERE" in env and "ROOT" in env:
+        path_root = (Path.cwd() / env["ROOT"]).normpath()
+        path_kernel = (Path.cwd() / dir_kernel).normpath()
+        env["HERE"] = str(path_kernel.relpath(path_root))
+        env["ROOT"] = str(path_root.relpath(path_kernel))
+    return env
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

@@ -19,6 +19,14 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+### Fixed
+
+- When `convert_jupyter()` executes a notebook in a subdirectory,
+  relative paths passed to `amend()` in the notebook
+  are interpreted relative to the notebook's directory,
+  consistent with how the notebook opens files.
+  The `HERE` and `ROOT` variables in the kernel are updated accordingly.
+
 ## [4.0.0][] - 2026-09-02 {: #v4.0.0 }
 
 Compatibility with StepUp Core 4, a refactored Zenodo synchronization

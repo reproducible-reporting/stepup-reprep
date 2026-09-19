@@ -1,0 +1,49 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   file:sub/data.json
+             product   file:sub/demo.ipynb
+             product   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+
+file:sub/data.json
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+
+file:sub/demo.ipynb
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+
+step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+               state = SUCCEEDED
+                need = DEFAULT
+             creator   step:./plan.py
+              source   file:sub/data.json [dynamic]
+              source   file:sub/demo.ipynb
+             product   file:sub/demo.html
+             product   file:sub/result.txt
+                sink   file:sub/demo.html
+                sink   file:sub/result.txt [dynamic]
+
+file:sub/demo.html
+               state = BUILT
+             creator   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+              source   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+
+file:sub/result.txt
+               state = BUILT
+             creator   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute
+              source   step:srr-convert-jupyter sub/demo.ipynb sub/demo.html --to html --execute

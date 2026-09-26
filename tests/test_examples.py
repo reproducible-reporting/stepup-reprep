@@ -215,6 +215,7 @@ async def test_typst_example(path_tmp: Path, name: str):
     [
         "convert_jupyter",
         "convert_jupyter_subdir",
+        "convert_jupyter_timeout",
         pytest.param("convert_jupyter_concurrency", marks=pytest.mark.heavy),
     ],
 )

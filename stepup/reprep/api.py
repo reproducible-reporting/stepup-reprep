@@ -679,6 +679,7 @@ def convert_jupyter(
     execute: bool = True,
     to: str | None = None,
     parameters: dict | None = None,
+    timeout: int | None = None,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,
@@ -717,6 +718,14 @@ def convert_jupyter(
         in a new cell after then one tagged with `parameters`.
         The `parameters` cell should contain the defaults,
         which may then be overriden by the values in `parameters`.
+    timeout
+        The timeout in seconds for the execution of a single cell.
+        `0` disables the timeout.
+        Defaults to `${REPREP_JUPYTER_TIMEOUT}` or no timeout if the variable is unset.
+        Unlike most `REPREP_*` variables, changing `REPREP_JUPYTER_TIMEOUT`
+        does not cause notebooks to be executed again.
+        Cells tagged `stepup-no-timeout` never time out.
+        Ignored when `execute` is `False`.
     optional
         If `True`, the step is only executed when needed by other steps.
     resources
@@ -725,12 +734,17 @@ def convert_jupyter(
     duration
         An initial estimate of the step's wall time in seconds.
         See `stepup.core.api.step()` for details.
+        This estimate is only used for scheduling and is unrelated to `timeout`.
 
     Returns
     -------
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
+    if timeout is not None and (
+        not isinstance(timeout, int) or isinstance(timeout, bool) or timeout < 0
+    ):
+        raise ValueError(f"timeout must be a non-negative integer or None, got {timeout!r}")
     with subs_env_vars() as subs:
         path_nb = subs(path_nb)
         dest = subs(dest)
@@ -764,6 +778,8 @@ def convert_jupyter(
     parts = ["srr-convert-jupyter", shq(path_nb), shq(path_out), "--to", to]
     if execute:
         parts.append("--execute")
+        if timeout is not None:
+            parts.append(f"--timeout={timeout}")
     if parameters is not None:
         if isinstance(parameters, dict):
             if not all(isinstance(key, str) and key.isidentifier() for key in parameters):

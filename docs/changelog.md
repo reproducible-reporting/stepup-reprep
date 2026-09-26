@@ -19,7 +19,19 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+### Added
+
+- The `timeout` argument of `convert_jupyter()` sets the timeout in seconds
+  for the execution of a single cell.
+- The `REPREP_JUPYTER_TIMEOUT` environment variable sets the default timeout
+  for all `convert_jupyter()` steps.
+  Changing it does not cause notebooks to be executed again.
+- Cells tagged `stepup-no-timeout` never time out in `convert_jupyter()`.
+
+### Changed
+
+- `convert_jupyter()` no longer limits the execution time of cells by default.
+  The previous fixed limit was 600 s.
 
 ## [4.0.1][] - 2026-09-16 {: #v4.0.1 }
 

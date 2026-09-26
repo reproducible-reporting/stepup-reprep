@@ -1,0 +1,42 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   file:slow.ipynb
+             product   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+
+file:slow.ipynb
+               state = CONFIRMED
+             creator   step:./plan.py
+                sink   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+
+step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+               state = SUCCEEDED
+                need = DEFAULT
+             creator   step:./plan.py
+              source   file:slow.ipynb
+             product   file:result.txt
+             product   file:slow.html
+                sink   file:result.txt
+                sink   file:slow.html
+
+file:result.txt
+               state = BUILT
+             creator   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+              source   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+
+file:slow.html
+               state = BUILT
+             creator   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+              source   step:srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1

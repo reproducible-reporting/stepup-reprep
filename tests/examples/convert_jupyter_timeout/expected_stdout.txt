@@ -1,0 +1,11 @@
+ STARTUP │ (Re)initialized boot script
+   PHASE │ build
+   START │ ./plan.py
+ SUCCESS │ ./plan.py
+   START │ srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+ SUCCESS │ srr-convert-jupyter slow.ipynb slow.html --to html --execute --timeout=1
+DIRECTOR │ Ran 2 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+DIRECTOR │ See you!

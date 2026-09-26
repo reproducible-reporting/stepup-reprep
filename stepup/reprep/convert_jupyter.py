@@ -4,18 +4,22 @@
 
 import argparse
 import json
+import os
 import sys
 from collections.abc import Sequence
 
 from nbclient import NotebookClient
+from nbclient.exceptions import CellTimeoutError
 from nbconvert import exporters
-from nbformat import read, v4
+from nbformat import NotebookNode, read, v4
 from path import Path
 
 from stepup.core.extapi import child_env
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 __all__ = ("main",)
+
+NO_TIMEOUT_TAG = "stepup-no-timeout"
 
 
 def main(argv: Sequence[str] | None = None):
@@ -46,15 +50,25 @@ def main(argv: Sequence[str] | None = None):
 
     if args.execute:
         dir_nb = Path(args.path_nb).parent.normpath()
+        default_timeout = resolve_timeout(args.timeout)
         with ipc_kernel_config() as config:
             client = NotebookClient(
                 notebook,
                 config=config,
-                timeout=600,
+                timeout=default_timeout,
+                timeout_func=lambda cell: get_cell_timeout(cell, default_timeout),
                 kernel_name="python3",
                 extra_arguments=["--IPKernelApp.log_level=40"],
             )
-            client.execute(cwd=str(dir_nb), env=child_env(dir_nb))
+            try:
+                client.execute(cwd=str(dir_nb), env=child_env(dir_nb))
+            except CellTimeoutError as exc:
+                raise RuntimeError(
+                    f"A cell in {args.path_nb} exceeded the timeout of {default_timeout} s. "
+                    f"Tag the cell with '{NO_TIMEOUT_TAG}' to disable its timeout, "
+                    "or change the timeout with the 'timeout' argument of convert_jupyter() "
+                    "or the REPREP_JUPYTER_TIMEOUT environment variable."
+                ) from exc
 
     exporter_class = exporters.get_exporter(args.to)
 
@@ -90,7 +104,63 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         type=str,
         help="Arguments to pass to the notebook as a literal JSON string.",
     )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help="The timeout in seconds for executing a single cell. "
+        "0 disables the timeout. "
+        "The default is ${REPREP_JUPYTER_TIMEOUT} or no timeout if the variable is unset. "
+        f"Cells tagged {NO_TIMEOUT_TAG} never time out.",
+    )
     return parser.parse_args(argv)
+
+
+def resolve_timeout(timeout: int | None) -> int | None:
+    """Combine the `--timeout` option with the `REPREP_JUPYTER_TIMEOUT` environment variable.
+
+    Parameters
+    ----------
+    timeout
+        The value of the `--timeout` option, or `None` if it was not given.
+
+    Returns
+    -------
+    timeout
+        The timeout in seconds, or `None` when no timeout applies.
+
+    Raises
+    ------
+    ValueError
+        When the option or the environment variable is negative or not an integer.
+    """
+    if timeout is None:
+        # Not read with getenv from StepUp Core, which would make it a step dependency.
+        # A timeout never changes the result of a successful run,
+        # so changing it should not cause notebooks to be executed again.
+        value = os.environ.get("REPREP_JUPYTER_TIMEOUT", "").strip()
+        if value == "":
+            return None
+        try:
+            timeout = int(value)
+        except ValueError as exc:
+            raise ValueError(
+                f"REPREP_JUPYTER_TIMEOUT must be a non-negative integer, got {value!r}"
+            ) from exc
+        if timeout < 0:
+            raise ValueError(
+                f"REPREP_JUPYTER_TIMEOUT must be a non-negative integer, got {value!r}"
+            )
+    elif timeout < 0:
+        raise ValueError(f"The timeout must be a non-negative integer, got {timeout}")
+    return None if timeout == 0 else timeout
+
+
+def get_cell_timeout(cell: NotebookNode, default_timeout: int | None) -> int | None:
+    """Return the timeout of a cell, which is `None` for cells tagged `stepup-no-timeout`."""
+    if NO_TIMEOUT_TAG in cell.get("metadata", {}).get("tags", []):
+        return None
+    return default_timeout
 
 
 if __name__ == "__main__":

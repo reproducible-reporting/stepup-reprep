@@ -19,6 +19,13 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+(no changes yet)
+
+## [4.0.2][] - 2026-09-26 {: #v4.0.2 }
+
+This release makes the timeout of `convert_jupyter()` configurable,
+and adds a tag to disable timeouts for specific cells.
+
 ### Added
 
 - The `timeout` argument of `convert_jupyter()` sets the timeout in seconds
@@ -926,6 +933,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
 [4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1
 [4.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0
 [3.1.11]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v3.1.11

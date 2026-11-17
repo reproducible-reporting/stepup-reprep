@@ -3,8 +3,8 @@
 """Unit tests for stepup.reprep.utils."""
 
 import pytest
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.utils import MAX_NUM_ZENODO_FILES, check_zenodo_paths
 
 

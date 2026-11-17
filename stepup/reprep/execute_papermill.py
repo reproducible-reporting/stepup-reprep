@@ -15,8 +15,8 @@ import sys
 from collections.abc import Sequence
 
 from papermill import execute_notebook
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 __all__ = ("main",)

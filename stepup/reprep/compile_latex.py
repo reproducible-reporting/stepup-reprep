@@ -7,11 +7,10 @@ import shlex
 import sys
 from collections.abc import Sequence
 
-from path import Path
-
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
 from stepup.core.hash import compute_file_digest
+from stepup.core.path import Path
 
 from .bibtex_log import parse_bibtex_log
 from .latex_deps import scan_latex_deps

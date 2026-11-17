@@ -5,7 +5,8 @@
 import subprocess
 
 import pytest
-from path import Path
+
+from stepup.core.path import Path
 
 pytest.register_assert_rewrite("stepup.reprep.pytest")
 

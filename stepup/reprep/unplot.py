@@ -12,8 +12,9 @@ import attrs
 import numpy as np
 from defusedxml.ElementTree import iterparse
 from numpy.typing import NDArray
-from path import Path
 from svg.path import parse_path
+
+from stepup.core.path import Path
 
 __all__ = ("main",)
 

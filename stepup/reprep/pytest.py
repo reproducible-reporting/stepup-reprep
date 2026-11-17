@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Utilities for testing with pytest."""
 
-from path import Path
-
+from stepup.core.path import Path
 from stepup.core.pytest import run_example as run_example_core
 from stepup.reprep.check_inventory import iter_inventory
 

@@ -6,7 +6,7 @@ import argparse
 import sys
 from collections.abc import Iterator, Sequence
 
-from path import Path
+from stepup.core.path import Path
 
 from .inventory import FileSummary, check_summary, get_summary, parse_summary
 

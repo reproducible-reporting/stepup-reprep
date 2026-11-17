@@ -2,7 +2,12 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Unit tests for stepup.reprep.latex_flat"""
 
-from stepup.reprep.flatten_latex import flatten_latex
+import sys
+
+import pytest
+
+from stepup.core.path import Path
+from stepup.reprep.flatten_latex import flatten_latex, rewrite_line
 
 MAIN_TEX = r"""
 \begin{document}
@@ -74,3 +79,14 @@ def test_latex_flat_empty(path_tmp):
     with open(path_tmp / "flat.tex") as fh:
         result = fh.read()
     assert result.strip() == ""
+
+
+ABSOLUTE_PATHS = ["/data/smile.pdf"]
+if sys.platform == "win32":
+    ABSOLUTE_PATHS.append("D:/data/smile.pdf")
+
+
+@pytest.mark.parametrize("path", ABSOLUTE_PATHS)
+def test_rewrite_line_absolute(path):
+    line = rf"\includegraphics[width=5cm]{{{path}}}"
+    assert rewrite_line(line, Path("sub"), "flat") == line

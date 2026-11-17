@@ -12,9 +12,9 @@ from nbclient import NotebookClient
 from nbclient.exceptions import CellTimeoutError
 from nbconvert import exporters
 from nbformat import NotebookNode, read, v4
-from path import Path
 
 from stepup.core.extapi import child_env
+from stepup.core.path import Path
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 __all__ = ("main",)

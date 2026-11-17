@@ -16,12 +16,11 @@ import sqlite3
 import sys
 from collections.abc import Collection, Sequence
 
-from path import Path
-
 from stepup.core.api import amend
 from stepup.core.enums import FileState
 from stepup.core.extapi import run_subprocess
 from stepup.core.nglob import NamedGlob
+from stepup.core.path import Path
 
 from .inventory import format_summary, get_summary
 

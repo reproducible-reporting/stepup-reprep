@@ -6,8 +6,8 @@ import contextlib
 import os
 
 import pytest
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.check_inventory import main as check_main
 from stepup.reprep.inventory import get_summary
 from stepup.reprep.make_inventory import main as make_main

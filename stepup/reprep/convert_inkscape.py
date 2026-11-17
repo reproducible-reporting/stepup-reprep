@@ -8,10 +8,10 @@ import sys
 from collections.abc import Iterator, Sequence
 
 from defusedxml import ElementTree
-from path import Path
 
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
+from stepup.core.path import Path
 
 __all__ = ("main",)
 

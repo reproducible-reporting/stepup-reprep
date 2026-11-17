@@ -13,12 +13,12 @@ import contextlib
 import json
 import shlex
 import sys
+import tempfile
 from collections.abc import Sequence
-
-from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
+from stepup.core.path import Path
 from stepup.core.utils import to_bool
 
 from .make_inventory import write_inventory
@@ -70,7 +70,7 @@ def main(argv: Sequence[str] | None = None):
                 amend(out=path_deps)
         else:
             # Use a temporary file for the make-deps output.
-            path_deps = stack.enter_context(TempDir()) / "typst.deps.json"
+            path_deps = Path(stack.enter_context(tempfile.TemporaryDirectory())) / "typst.deps.json"
         typst_args.extend(["--deps", path_deps, "--deps-format", "json"])
 
         cp = run_subprocess(shlex.join(typst_args), check=False)

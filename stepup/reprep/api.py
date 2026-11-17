@@ -8,10 +8,8 @@ import shlex
 from collections.abc import Collection
 from typing import Any
 
-from path import Path
-
 from stepup.core.api import getenv, run, shq, subs_env_vars
-from stepup.core.path import StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
+from stepup.core.path import Path, StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
 from stepup.core.stepinfo import StepInfo
 from stepup.core.utils import to_bool
 from stepup.reprep.utils import check_zenodo_paths

@@ -56,10 +56,10 @@ import yaml
 from cattrs.errors import IterableValidationError, IterableValidationNote
 from cattrs.gen import make_dict_structure_fn
 from markdown_it import MarkdownIt
-from path import Path
 from rich.console import Console
 from rich.json import JSON
 
+from stepup.core.path import Path
 from stepup.reprep.utils import MAX_NUM_ZENODO_FILES, check_zenodo_paths
 
 __all__ = ("main",)

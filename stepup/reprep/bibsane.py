@@ -4,7 +4,6 @@
 
 import argparse
 import enum
-import os
 import re
 import shutil
 import sys
@@ -14,10 +13,10 @@ from collections.abc import Collection, Sequence
 import attrs
 import cattrs
 import yaml
-from path import Path
 from pyiso4.ltwa import Abbreviate
 
 from stepup.core.hash import compute_file_digest
+from stepup.core.path import Path
 
 from .bibparser import format_bib, parse_bib
 
@@ -99,7 +98,7 @@ class BibsaneConfig:
     def from_file(cls, fn_yaml: str):
         """Instantiate a configuration from a YAML config file."""
         if fn_yaml is None:
-            config = cls(os.getcwd())
+            config = cls(Path.cwd())
         else:
             with open(fn_yaml) as f:
                 data = yaml.safe_load(f)
@@ -109,7 +108,7 @@ class BibsaneConfig:
                     raise ValueError(
                         f"Invalid BibSane config file: expected a mapping at top level.({fn_yaml})"
                     )
-                data.setdefault("root", os.path.dirname(fn_yaml))
+                data.setdefault("root", Path(fn_yaml).parent)
                 config = cattrs.structure(data, cls)
         return config
 
@@ -539,12 +538,12 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
     if retcode == RETURN_CODE_CHANGED:
         # Write out a single BibTeX database.
         with tempfile.TemporaryDirectory("srr-bibsane") as dn_tmp:
-            fn_tmp = os.path.join(dn_tmp, "tmp.bib")
+            fn_tmp = Path(dn_tmp) / "tmp.bib"
             with open(fn_tmp, "w") as f:
                 f.write(format_bib(entries))
 
             # Check if the file has changed.
-            if os.path.isfile(fn_out):
+            if Path(fn_out).is_file():
                 old_hash = compute_file_digest(fn_out)
                 new_hash = compute_file_digest(fn_tmp)
                 if old_hash == new_hash:

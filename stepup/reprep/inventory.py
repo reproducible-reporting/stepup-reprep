@@ -5,9 +5,9 @@
 import stat
 
 import attrs
-from path import Path
 
 from stepup.core.hash import compute_file_digest
+from stepup.core.path import Path
 
 __all__ = ("FileSummary", "check_summary", "format_summary", "get_summary", "parse_summary")
 

@@ -9,7 +9,8 @@ import tempfile
 from collections.abc import Sequence
 
 import pymupdf
-from path import Path
+
+from stepup.core.path import Path
 
 __all__ = ("main", "pdf_normalize")
 

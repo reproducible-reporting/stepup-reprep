@@ -10,4 +10,3 @@ from stepup.core.pytest import ConventionTests
 
 class TestConventions(ConventionTests):
     package = "stepup.reprep"
-    native_path_modules = None

@@ -10,9 +10,9 @@ import yaml
 from markdown_it import MarkdownIt
 from mdit_py_plugins.anchors import anchors_plugin
 from mdit_py_plugins.front_matter import front_matter_plugin
-from path import Path
 
 from stepup.core.api import amend, getenv
+from stepup.core.path import Path
 from stepup.core.render_jinja import render_jinja_str
 
 __all__ = ("convert_markdown", "main")
@@ -103,7 +103,7 @@ def convert_markdown(
     amend(inp=[parent_html / path_css for path_css in paths_doc_css if "://" not in path_css])
 
     if isinstance(paths_css, str):
-        paths_css = paths_css.split(":")
+        paths_css = [paths_css]
     paths_css = [
         Path(path_css).relpath(parent_html) for path_css in paths_css if "://" not in path_css
     ]

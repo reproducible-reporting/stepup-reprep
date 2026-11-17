@@ -13,9 +13,9 @@ import pymupdf
 import yaml
 from bs4 import BeautifulSoup
 from markdown_it import MarkdownIt
-from path import Path
 
 from stepup.core.api import amend, getenv
+from stepup.core.path import Path
 
 __all__ = ("main",)
 

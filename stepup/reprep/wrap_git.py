@@ -7,10 +7,9 @@ import shlex
 import sys
 from collections.abc import Sequence
 
-from path import Path
-
 from stepup.core.api import amend
 from stepup.core.extapi import run_subprocess
+from stepup.core.path import Path
 
 __all__ = ("main",)
 

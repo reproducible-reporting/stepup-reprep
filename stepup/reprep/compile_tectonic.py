@@ -11,12 +11,12 @@ import contextlib
 import re
 import shlex
 import sys
+import tempfile
 from collections.abc import Sequence
-
-from path import Path, TempDir
 
 from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
+from stepup.core.path import Path
 from stepup.core.utils import to_bool
 
 from .make_inventory import write_inventory
@@ -48,7 +48,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     # Prepare the command to run Tectonic, which runs in `workdir`.
     tectonic_args = [args.tectonic, "-c", "minimal", fn_tex]
     if args.outdir is not None:
-        tectonic_args.extend(["--outdir", args.outdir.relpath(workdir)])
+        # An absolute path is kept, because it may lie on another drive than `workdir` on Windows.
+        outdir = args.outdir if args.outdir.isabs() else args.outdir.relpath(workdir)
+        tectonic_args.extend(["--outdir", outdir])
     if len(args.tectonic_args) == 0:
         args.tectonic_args = shlex.split(getenv("REPREP_TECTONIC_ARGS", ""))
     tectonic_args.extend(args.tectonic_args)
@@ -70,7 +72,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             arg_dep = Path(fn_tex).with_suffix(".dep")
         else:
             # Use a temporary file for the make-deps output.
-            path_dep = stack.enter_context(TempDir()) / "tectonic.dep"
+            path_dep = Path(stack.enter_context(tempfile.TemporaryDirectory())) / "tectonic.dep"
             arg_dep = path_dep
         tectonic_args.extend(["--makefile-rules", arg_dep])
 

@@ -13,8 +13,8 @@ import pytest
 import requests
 import yaml
 from cattrs.errors import ClassValidationError
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.sync_zenodo import (
     DEFAULT_ENDPOINT,
     INVENIORDM_MIMETYPE,

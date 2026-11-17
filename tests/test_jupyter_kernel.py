@@ -17,8 +17,8 @@ import shutil
 import pytest
 from conftest import run_tool
 from nbformat import read, v4, write
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.jupyter_kernel import ipc_kernel_config
 
 TRANSPORT_SOURCE = """\

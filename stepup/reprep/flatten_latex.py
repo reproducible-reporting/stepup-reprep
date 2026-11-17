@@ -29,9 +29,8 @@ import tempfile
 from collections.abc import Sequence
 from typing import TextIO
 
-from path import Path
-
 from stepup.core.api import amend
+from stepup.core.path import Path
 
 __all__ = ("main",)
 
@@ -182,9 +181,15 @@ def rewrite_line(line: str, tex_root: Path, out_root: str) -> str:
     """
 
     def repl(m):
-        old_path = m.group("path")
+        old_path = Path(m.group("path"))
+        # An absolute path does not depend on the location of the file that contains it,
+        # and on Windows, it may lie on a drive from which no relative path to `out_root` exists.
+        if old_path.isabs():
+            return m.group(0)
         new_path = (tex_root / old_path).relpath(out_root).normpath()
-        return m.group("comopt") + "{" + new_path + "}"
+        # Concatenation with a `Path` would pass the LaTeX command through the `Path` constructor,
+        # which replaces its backslash on Windows.
+        return f"{m.group('comopt')}{{{new_path}}}"
 
     return RE_REWRITE.sub(repl, line)
 

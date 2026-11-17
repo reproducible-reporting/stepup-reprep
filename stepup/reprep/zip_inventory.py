@@ -9,7 +9,7 @@ import tempfile
 import zipfile
 from collections.abc import Sequence
 
-from path import Path
+from stepup.core.path import Path
 
 from .check_inventory import iter_inventory
 from .inventory import check_summary, get_summary

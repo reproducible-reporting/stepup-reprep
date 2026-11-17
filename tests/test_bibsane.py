@@ -6,8 +6,8 @@ import contextlib
 import os
 
 import pytest
-from path import Path
 
+from stepup.core.path import Path
 from stepup.reprep.bibsane import brace_words
 from stepup.reprep.bibsane import main as bibsane_main
 

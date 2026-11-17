@@ -4,9 +4,7 @@
 
 from collections.abc import Collection
 
-from path import Path
-
-from stepup.core.path import StrPath, coerce_paths
+from stepup.core.path import Path, StrPath, coerce_paths
 
 __all__ = ("MAX_NUM_ZENODO_FILES", "check_zenodo_paths")
 

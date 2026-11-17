@@ -4,10 +4,9 @@ r"""Identification of dependencies from LaTeX sources."""
 
 import re
 
-from path import Path
-
 from stepup.core.api import amend
 from stepup.core.extapi import filter_dependencies
+from stepup.core.path import Path
 
 __all__ = ("scan_latex_deps",)
 

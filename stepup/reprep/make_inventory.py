@@ -67,7 +67,7 @@ def make_inventory(args: argparse.Namespace):
     if args.inventory_def is None:
         paths = set()
     else:
-        with open(args.inventory_def) as fh:
+        with open(args.inventory_def, encoding="utf-8") as fh:
             lines = fh.readlines()
         with contextlib.chdir(root):
             paths = {root / path for path in parse_inventory_def(lines)}
@@ -203,7 +203,7 @@ def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True
 
     path_txt = Path(path_txt)
     root = path_txt.parent.normpath()
-    with open(path_txt, "w") as fh:
+    with open(path_txt, "w", encoding="utf-8", newline="\n") as fh:
         for path in paths:
             print(format_summary(get_summary(path, root)), file=fh)
 

@@ -50,33 +50,33 @@ def test_latex_flat(path_tmp):
     for filename, contents in CREATE_FILES.items():
         path_dst = path_tmp / filename
         path_dst.parent.makedirs_p()
-        with open(path_dst, "w") as fh:
+        with open(path_dst, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(contents)
     flatdir = path_tmp / "flat"
     flatdir.makedirs_p()
-    with open(flatdir / "main.tex", "w") as fh:
+    with open(flatdir / "main.tex", "w", encoding="utf-8", newline="\n") as fh:
         flatten_latex(path_tmp / "main.tex", fh, flatdir)
-    with open(flatdir / "main.tex") as fh:
+    with open(flatdir / "main.tex", encoding="utf-8") as fh:
         result = fh.read()
     assert result.strip() == EXPECTED.strip()
 
 
 def test_latex_flat_simple(path_tmp):
-    with open(path_tmp / "main.tex", "w") as fh:
+    with open(path_tmp / "main.tex", "w", encoding="utf-8", newline="\n") as fh:
         fh.write("Not so much to see here.")
-    with open(path_tmp / "flat.tex", "w") as fh:
+    with open(path_tmp / "flat.tex", "w", encoding="utf-8", newline="\n") as fh:
         flatten_latex(path_tmp / "main.tex", fh, path_tmp)
-    with open(path_tmp / "flat.tex") as fh:
+    with open(path_tmp / "flat.tex", encoding="utf-8") as fh:
         result = fh.read()
     assert result.strip() == "Not so much to see here."
 
 
 def test_latex_flat_empty(path_tmp):
-    with open(path_tmp / "main.tex", "w") as fh:
+    with open(path_tmp / "main.tex", "w", encoding="utf-8", newline="\n") as fh:
         pass
-    with open(path_tmp / "flat.tex", "w") as fh:
+    with open(path_tmp / "flat.tex", "w", encoding="utf-8", newline="\n") as fh:
         flatten_latex(path_tmp / "main.tex", fh, path_tmp)
-    with open(path_tmp / "flat.tex") as fh:
+    with open(path_tmp / "flat.tex", encoding="utf-8") as fh:
         result = fh.read()
     assert result.strip() == ""
 

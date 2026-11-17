@@ -56,7 +56,7 @@ class Config:
 
 def load_config(path_config) -> Config:
     converter = cattrs.preconf.pyyaml.PyyamlConverter(forbid_extra_keys=True)
-    with open(path_config) as fh:
+    with open(path_config, encoding="utf-8") as fh:
         state = yaml.safe_load(fh)
         return converter.structure(state, Config)
 
@@ -86,7 +86,7 @@ def collect_hrefs(path_src: str) -> list[HRef]:
 def collect_hrefs_md(fn_md: str) -> list[HRef]:
     """Find all hyper references in a Markdown file."""
     md = MarkdownIt()
-    with open(fn_md) as fh:
+    with open(fn_md, encoding="utf-8") as fh:
         html = md.render(fh.read())
     soup = BeautifulSoup(html, "html.parser")
     return [HRef(link.attrs["href"]) for link in soup.find_all("a")]
@@ -94,7 +94,7 @@ def collect_hrefs_md(fn_md: str) -> list[HRef]:
 
 def collect_hrefs_html(fn_html: str) -> list[HRef]:
     """Find all hyper references in a HTML file."""
-    with open(fn_html) as fh:
+    with open(fn_html, encoding="utf-8") as fh:
         soup = BeautifulSoup(fh.read(), "html.parser")
     return [HRef(link.attrs["href"]) for link in soup.find_all("a")]
 

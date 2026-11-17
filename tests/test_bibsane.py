@@ -56,7 +56,10 @@ def test_example(name):
             args += ["--aux", str(path_aux)]
 
         Path("current.bib").remove_p()
-        with open("current.out", "w") as f_out, contextlib.redirect_stdout(f_out):
+        with (
+            open("current.out", "w", encoding="utf-8", newline="\n") as f_out,
+            contextlib.redirect_stdout(f_out),
+        ):
             bibsane_main(args)
 
         for suffix in ["out", "bib"]:
@@ -67,9 +70,9 @@ def test_example(name):
                     path_current.copy(path_expected)
             elif path_expected.exists():
                 assert path_current.exists()
-                with open(path_current) as f:
+                with open(path_current, encoding="utf-8") as f:
                     current = f.read()
-                with open(path_expected) as f:
+                with open(path_expected, encoding="utf-8") as f:
                     expected = f.read()
                 assert current == expected
             else:

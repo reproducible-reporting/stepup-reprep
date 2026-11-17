@@ -49,7 +49,7 @@ def write_transport_notebook(path_nb: Path):
         "language": "python",
         "display_name": "Python 3",
     }
-    with open(path_nb, "w") as fh:
+    with open(path_nb, "w", encoding="utf-8", newline="\n") as fh:
         write(notebook, fh)
 
 
@@ -59,7 +59,7 @@ def test_convert_jupyter_ipc(path_tmp: Path):
     write_transport_notebook(path_nb)
     path_out = path_tmp / "transport.md"
     run_tool("srr-convert-jupyter", path_nb, path_out, "--to", "markdown", "--execute")
-    assert "transport: ipc" in path_out.read_text()
+    assert "transport: ipc" in path_out.read_text(encoding="utf-8")
 
 
 @needs_jupyter

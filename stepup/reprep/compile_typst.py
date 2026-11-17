@@ -76,7 +76,7 @@ def main(argv: Sequence[str] | None = None):
         cp = run_subprocess(shlex.join(typst_args), check=False)
         sys.stdout.write(cp.stdout)
         if path_deps.is_file():
-            with open(path_deps) as fh:
+            with open(path_deps, encoding="utf-8") as fh:
                 depinfo = json.load(fh)
             inp_paths = depinfo["inputs"]
             out_paths = depinfo.get("outputs") or []

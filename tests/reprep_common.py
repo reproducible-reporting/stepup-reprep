@@ -9,6 +9,6 @@ import contextlib
 def local_file(contents, filename, tmpdir):
     """Change to a temporary directory and create a file with given contents."""
     with contextlib.chdir(tmpdir):
-        with open(filename, "w") as fh:
+        with open(filename, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(contents)
         yield

@@ -119,7 +119,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     # Relative paths in the fls file are relative to `workdir`.
     fls_inp = set()
     fls_vol = set()
-    with open(f"{path_stem}.fls") as fh:
+    with open(f"{path_stem}.fls", encoding="utf-8") as fh:
         for line in fh:
             if line.startswith("INPUT "):
                 path = (workdir / line[6:].strip()).normpath()

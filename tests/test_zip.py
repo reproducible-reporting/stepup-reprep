@@ -11,9 +11,9 @@ from stepup.reprep.zip_inventory import zip_inventory
 
 def test_simple_chdir(path_tmp):
     with contextlib.chdir(path_tmp):
-        with open("a.txt", "w") as fh:
+        with open("a.txt", "w", encoding="utf-8", newline="\n") as fh:
             fh.write("Aaa")
-        with open("b.txt", "w") as fh:
+        with open("b.txt", "w", encoding="utf-8", newline="\n") as fh:
             fh.write("Bbb")
         write_inventory("inventory.txt", ["a.txt", "b.txt"])
         zip_inventory("inventory.txt", "test.zip")
@@ -27,9 +27,9 @@ def test_simple_chdir(path_tmp):
 
 
 def test_simple(path_tmp):
-    with open(path_tmp / "a.txt", "w") as fh:
+    with open(path_tmp / "a.txt", "w", encoding="utf-8", newline="\n") as fh:
         fh.write("Aaa")
-    with open(path_tmp / "b.txt", "w") as fh:
+    with open(path_tmp / "b.txt", "w", encoding="utf-8", newline="\n") as fh:
         fh.write("Bbb")
     write_inventory(path_tmp / "inventory.txt", [path_tmp / "a.txt", path_tmp / "b.txt"])
     zip_inventory(path_tmp / "inventory.txt")

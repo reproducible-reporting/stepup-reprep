@@ -3,7 +3,7 @@
 """Create ZIP with all files listed in an inventory.txt file."""
 
 import argparse
-import datetime
+import datetime as dt
 import sys
 import tempfile
 import zipfile
@@ -17,7 +17,7 @@ from .inventory import check_summary, get_summary
 __all__ = ("main", "zip_inventory")
 
 
-TIMESTAMP = datetime.datetime(1980, 1, 1).timestamp()
+TIMESTAMP = dt.datetime(1980, 1, 1).timestamp()
 
 
 def main(argv: Sequence[str] | None = None):

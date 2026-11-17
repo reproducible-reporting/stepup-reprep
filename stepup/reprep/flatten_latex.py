@@ -41,7 +41,7 @@ def main(argv: Sequence[str] | None = None):
     with tempfile.TemporaryDirectory("srr-latex-flat") as tmpdir:
         tmpdir = Path(tmpdir)
         path_flat_tmp = tmpdir / "flat.tex"
-        with open(path_flat_tmp, "w") as fh_out:
+        with open(path_flat_tmp, "w", encoding="utf-8", newline="\n") as fh_out:
             out_root = Path(args.path_flat).parent
             status, inp_paths = flatten_latex(args.path_tex, fh_out, out_root)
         amend(inp=inp_paths)
@@ -96,7 +96,7 @@ def flatten_latex(
     path_tex = Path(path_tex)
     tex_root = path_tex.parent.normpath() if tex_root is None else Path(tex_root)
     status = FlattenStatus.SUCCESS
-    with open(path_tex) as fh:
+    with open(path_tex, encoding="utf-8") as fh:
         for iline, line in enumerate(fh):
             # Reduce line to standard form
             stripped = line[: line.find("%")].strip()

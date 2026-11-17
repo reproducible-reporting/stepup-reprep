@@ -45,6 +45,7 @@ TEXT_SNIPPETS = [
 def main():
     """Write a randomized markdown file."""
     random.seed(int(sys.argv[1]))
+    sys.stdout.reconfigure(newline="\n")
     print(" ".join(random.choice(TEXT_SNIPPETS) for _ in range(100)))
 
 

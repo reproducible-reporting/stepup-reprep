@@ -19,7 +19,7 @@ def test_bearing_speed_effect(path_tmp):
     # https://en.m.wikipedia.org/wiki/File:Measured_Bearing_Speed_Effect_data_and_curve.jpg
     path_out = path_tmp / "out.json"
     run_tool("srr-unplot", "docs/advanced_topics/unplot/plot.svg", path_out)
-    with open(path_out) as fh:
+    with open(path_out, encoding="utf-8") as fh:
         data = json.load(fh)
     assert data["units"]["mill speed"] == "mpm"
     assert data["units"]["screw movement"] == "micron"
@@ -38,7 +38,7 @@ def test_allosteric_modulator(path_tmp):
     # https://en.m.wikipedia.org/wiki/File:Negative_allosteric_modulator_plot.svg
     path_out = path_tmp / "out.json"
     run_tool("srr-unplot", "tests/examples/unplot/plot1.svg", path_out)
-    with open(path_out) as fh:
+    with open(path_out, encoding="utf-8") as fh:
         data = json.load(fh)
     xl = "agonist concentration"
     yl = "response"
@@ -76,7 +76,7 @@ def test_allosteric_modulator(path_tmp):
 def test_simple(path_tmp):
     path_out = path_tmp / "out.json"
     run_tool("srr-unplot", "tests/examples/unplot/plot2.svg", path_out)
-    with open(path_out) as fh:
+    with open(path_out, encoding="utf-8") as fh:
         data = json.load(fh)
     assert data["units"]["h"] == "1"
     assert data["units"]["v"] == "1"

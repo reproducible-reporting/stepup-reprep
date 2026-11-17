@@ -43,7 +43,7 @@ SCAN_LATEX_DEPS_EXAMPLE = r"""
 
 def test_scan_latex_deps(monkeypatch, path_tmp):
     monkeypatch.chdir(path_tmp)
-    with open("main.tex", "w") as fh:
+    with open("main.tex", "w", encoding="utf-8", newline="\n") as fh:
         fh.write(SCAN_LATEX_DEPS_EXAMPLE)
     inp, bib, out, vol = scan_latex_deps("main.tex", "./", do_amend=False)
     inp_ref = {

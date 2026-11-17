@@ -77,7 +77,7 @@ def main(argv: Sequence[str] | None = None):
     body, _resources = exporter.from_notebook_node(notebook)
 
     Path(args.path_out).parent.normpath().makedirs_p()
-    with open(args.path_out, "w", encoding="utf-8") as f:
+    with open(args.path_out, "w", encoding="utf-8", newline="\n") as f:
         f.write(body)
 
 

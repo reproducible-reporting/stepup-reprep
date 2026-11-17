@@ -34,7 +34,7 @@ and some of the features implemented in this module were deduced from the Zenodo
 """
 
 import argparse
-import datetime
+import datetime as dt
 import functools
 import hashlib
 import ipaddress
@@ -658,7 +658,7 @@ class Metadata:
             which is the only sensible guess for a record that is not published yet.
         """
         if publication_date is None:
-            publication_date = datetime.date.today().isoformat()
+            publication_date = dt.date.today().isoformat()
         return _to_zenodo_object(
             title=self.title,
             version=self.version,
@@ -874,7 +874,7 @@ def _validate_edtf_date(instance, attribute, value):
     parts = [int(part) for part in value.split("-")]
     parts.extend([1] * (3 - len(parts)))
     try:
-        datetime.date(*parts)
+        dt.date(*parts)
     except ValueError as exc:
         raise ValueError(
             f"Impossible date for '{attribute.name}': {value!r}. {exc}. "
@@ -1402,13 +1402,13 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 def _load_yaml(path: Path) -> Any:
     """Parse a YAML config file."""
-    with open(path) as fh:
+    with open(path, encoding="utf-8") as fh:
         return yaml.safe_load(fh)
 
 
 def _load_json(path: Path) -> Any:
     """Parse a JSON config file."""
-    with open(path) as fh:
+    with open(path, encoding="utf-8") as fh:
         return json.load(fh)
 
 
@@ -1648,7 +1648,7 @@ def _load_description(path: str | Path) -> str:
         raise ZenodoError("The description file must be a Markdown (.md) or HTML (.html) file.")
     if not path.is_file():
         raise ZenodoError(f"Description file {path} does not exist.")
-    with open(path) as fh:
+    with open(path, encoding="utf-8") as fh:
         description = fh.read()
     if suffix == ".md":
         description = MarkdownIt().render(description)
@@ -1689,7 +1689,7 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
     """
     rid = None
     if config.path_record_id.exists():
-        rid = config.path_record_id.read_text().strip()
+        rid = config.path_record_id.read_text(encoding="utf-8").strip()
         if len(rid) == 0:
             raise ZenodoError(f"The record ID file {config.path_record_id} is empty.")
     if rid is None:
@@ -1716,7 +1716,7 @@ def _write_record_id(path: Path, rid: str):
         # A bare file name has no parent directory to create.
         if path.parent != "":
             path.parent.makedirs_p()
-        with open(path, "w") as fh:
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(f"{rid}\n")
     except OSError as exc:
         raise ZenodoError(

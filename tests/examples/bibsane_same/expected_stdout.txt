@@ -5,7 +5,7 @@
    START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
     FAIL │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ──────────────────────────────── Failed command ────────────────────────────────
-srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
+srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml  # exit=1
 ──────────────────────────────── Invalid inputs ────────────────────────────────
 Input changed unexpectedly: references.bib (digest 240c3a42 ➜ 5d12dcdd, size 1644 ➜ 1585)
 ─────────────────────────────── Standard output ────────────────────────────────

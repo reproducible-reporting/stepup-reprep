@@ -17,7 +17,7 @@ from stepup.reprep.zip_inventory import main as zip_main
 
 def test_get_summary(path_tmp):
     (path_tmp / "sub").mkdir()
-    with open(path_tmp / "sub/a.txt", "w") as fh:
+    with open(path_tmp / "sub/a.txt", "w", encoding="utf-8", newline="\n") as fh:
         print("aaa", file=fh)
     summary = get_summary(path_tmp / "sub/a.txt", path_tmp / "other")
     assert summary.size == 4
@@ -36,17 +36,17 @@ BASIC_INVENTORY = """\
 
 def test_basic(path_tmp):
     with contextlib.chdir(path_tmp):
-        with open("a.txt", "w") as fh:
+        with open("a.txt", "w", encoding="utf-8", newline="\n") as fh:
             print("aaa", file=fh)
-        with open("b.txt", "w") as fh:
+        with open("b.txt", "w", encoding="utf-8", newline="\n") as fh:
             print("bbb", file=fh)
-        with open("inventory.def", "w") as fh:
+        with open("inventory.def", "w", encoding="utf-8", newline="\n") as fh:
             print("include *.txt", file=fh)
         make_main(["-i", "inventory.def"])
-        with open("inventory.txt") as fh:
+        with open("inventory.txt", encoding="utf-8") as fh:
             assert fh.read() == BASIC_INVENTORY
         make_main(["-o", "inventory2.txt", "a.txt", "b.txt"])
-        with open("inventory2.txt") as fh:
+        with open("inventory2.txt", encoding="utf-8") as fh:
             assert fh.read() == BASIC_INVENTORY
         check_main(["inventory.txt"])
 
@@ -59,11 +59,11 @@ SYMLINK_INVENTORY = """\
 
 def test_symbolic_link(path_tmp):
     with contextlib.chdir(path_tmp):
-        with open("dest.txt", "w") as fh:
+        with open("dest.txt", "w", encoding="utf-8", newline="\n") as fh:
             fh.write("Hello")
         Path("link.txt").symlink_to("dest.txt")
         make_main(["-o", "inventory.txt", "dest.txt", "link.txt"])
-        with open("inventory.txt") as fh:
+        with open("inventory.txt", encoding="utf-8") as fh:
             assert fh.read() == SYMLINK_INVENTORY
         check_main(["inventory.txt"])
 
@@ -117,7 +117,7 @@ def test_git2():
 def test_zip_inventory(path_tmp):
     with contextlib.chdir(path_tmp):
         Path("sub").mkdir()
-        with open("sub/dest.txt", "w") as fh:
+        with open("sub/dest.txt", "w", encoding="utf-8", newline="\n") as fh:
             fh.write("Hello")
         Path("link.txt").symlink_to("sub/dest.txt")
         make_main(["-o", "inventory2.txt", "sub/dest.txt", "link.txt"])

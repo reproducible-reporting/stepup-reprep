@@ -29,7 +29,7 @@ def main(argv: Sequence[str] | None = None):
             label: transform_pixel_data(axes, px_curve) for label, px_curve in px_curves.items()
         },
     }
-    with open(args.out, "w") as fh:
+    with open(args.out, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(data, fh, indent=2)
         fh.write("\n")
 

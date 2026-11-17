@@ -25,7 +25,10 @@ def main(argv: Sequence[str] | None = None):
         raise ValueError("The markdown file must end with the .md extension.")
     if len(args.css) == 0:
         args.css = getenv("REPREP_MARKDOWN_CSS", multi=True, back=True)
-    with open(args.markdown) as fm, open(args.html, "w") as fh:
+    with (
+        open(args.markdown, encoding="utf-8") as fm,
+        open(args.html, "w", encoding="utf-8", newline="\n") as fh,
+    ):
         fh.write(convert_markdown(fm.read(), args.css, args.html.parent))
 
 

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Unit tests for stepup.reprep.sync_zenodo."""
 
-import datetime
+import datetime as dt
 import hashlib
 import json
 from importlib import resources
@@ -475,7 +475,9 @@ def test_load_vocabularies():
 
 def test_load_vocabularies_without_bookkeeping():
     """The date of the last refresh is not an identifier that Zenodo takes."""
-    text = resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text()
+    text = (
+        resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text(encoding="utf-8")
+    )
     assert "_date" in yaml.safe_load(text)
     assert "_date" not in _load_vocabularies()
 
@@ -483,7 +485,9 @@ def test_load_vocabularies_without_bookkeeping():
 @pytest.mark.parametrize("name", VOCABULARY_NAMES)
 def test_vocabularies_data_file_sorted_and_unique(name):
     """Guard against a hand edit that the refresh script would have prevented."""
-    text = resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text()
+    text = (
+        resources.files("stepup.reprep").joinpath(VOCABULARIES_FILENAME).read_text(encoding="utf-8")
+    )
     identifiers = yaml.safe_load(text)[name]
     assert all(isinstance(identifier, str) for identifier in identifiers)
     assert identifiers == sorted(set(identifiers))
@@ -670,7 +674,7 @@ programming_languages = ["python", "jupyter_notebook"]
 def _write_config(tmp_path, name: str, text: str) -> Config:
     """Write a config file in `tmp_path` and load it into a `Config`."""
     path = tmp_path / name
-    path.write_text(text)
+    path.write_text(text, encoding="utf-8", newline="\n")
     return _make_converter().structure(_load_config_data(path), Config)
 
 
@@ -701,7 +705,7 @@ def test_config_toml_unquoted_date(tmp_path):
     """A bare TOML date is rejected just like an unquoted YAML version number."""
     text = CONFIG_TOML.replace('version = "1.0.0"', "version = 2024-01-01")
     path = tmp_path / "sync_zenodo.toml"
-    path.write_text(text)
+    path.write_text(text, encoding="utf-8", newline="\n")
     with pytest.raises(ClassValidationError) as exc_info:
         _make_converter().structure(_load_config_data(path), Config)
     messages = cattrs.transform_error(exc_info.value, format_exception=_format_error)
@@ -710,7 +714,7 @@ def test_config_toml_unquoted_date(tmp_path):
 
 def test_load_config_data_unknown_suffix(tmp_path):
     path = tmp_path / "sync_zenodo.ini"
-    path.write_text("[metadata]\n")
+    path.write_text("[metadata]\n", encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _load_config_data(path)
     assert "suffix" in str(exc_info.value)
@@ -719,7 +723,7 @@ def test_load_config_data_unknown_suffix(tmp_path):
 
 def test_load_config_data_legacy_zenodo_json(tmp_path):
     path = tmp_path / ".zenodo.json"
-    path.write_text('{"title": "A title"}\n')
+    path.write_text('{"title": "A title"}\n', encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _load_config_data(path)
     assert "GitHub release" in str(exc_info.value)
@@ -727,7 +731,7 @@ def test_load_config_data_legacy_zenodo_json(tmp_path):
 
 def test_load_config_data_not_a_mapping(tmp_path):
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text("- one\n- two\n")
+    path.write_text("- one\n- two\n", encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _load_config_data(path)
     assert "mapping" in str(exc_info.value)
@@ -736,7 +740,7 @@ def test_load_config_data_not_a_mapping(tmp_path):
 def test_load_config_data_syntax_error(tmp_path):
     """A config file the parser chokes on is reported without the traceback of the parser."""
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text("metadata: [unclosed\n")
+    path.write_text("metadata: [unclosed\n", encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _load_config_data(path)
     assert "Cannot read the config file" in str(exc_info.value)
@@ -750,7 +754,7 @@ def test_load_config_data_missing(tmp_path):
 
 def test_load_config_data_empty(tmp_path):
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text("")
+    path.write_text("", encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _load_config_data(path)
     assert "empty" in str(exc_info.value)
@@ -773,7 +777,7 @@ def test_config_endpoint_invalid(tmp_path, endpoint):
 def test_config_replaced_key(tmp_path, key):
     """A key that an older release supported is reported with a hint, not as an unknown key."""
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(f"{key}: whatever\n{CONFIG_YAML}")
+    path.write_text(f"{key}: whatever\n{CONFIG_YAML}", encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _check_outdated_config(_load_config_data(path), str(path))
     message = str(exc_info.value)
@@ -856,7 +860,7 @@ def test_config_scalar_where_a_list_belongs_invalid(tmp_path, text, expected):
 def test_main_dry_run(tmp_path, monkeypatch, capsys):
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(CONFIG_YAML)
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
     assert main([str(path), "--dry-run"]) == 0
     out = capsys.readouterr().out
     # Pop the first line, which is just a message explaining the output below.
@@ -875,7 +879,11 @@ def test_main_invalid_config(tmp_path, monkeypatch, capsys):
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
     path = tmp_path / "sync_zenodo.yaml"
     path.write_text(
-        CONFIG_YAML.replace("version: '1.0.0'", "version: 1.0").replace("  publisher: Zenodo\n", "")
+        CONFIG_YAML.replace("version: '1.0.0'", "version: 1.0").replace(
+            "  publisher: Zenodo\n", ""
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     assert main([str(path), "--dry-run"]) == 1
     captured = capsys.readouterr()
@@ -898,7 +906,7 @@ def test_main_user_error(tmp_path, monkeypatch, capsys, args, expected):
     """Everything the user can get wrong is reported as a message, not as a traceback."""
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(CONFIG_YAML)
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
     assert main([str(path), *args, "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert expected in captured.err
@@ -910,9 +918,9 @@ def test_main_short_description(tmp_path, monkeypatch, capsys, name, content):
     """A description that Zenodo would refuse is reported as a message, not as a traceback."""
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(CONFIG_YAML)
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
     path_description = tmp_path / name
-    path_description.write_text(content)
+    path_description.write_text(content, encoding="utf-8", newline="\n")
     assert main([str(path), f"--description={path_description}", "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert "holds too little text" in captured.err
@@ -925,7 +933,7 @@ def test_main_rest_error(tmp_path, monkeypatch, capsys):
     # The record id file of the config is a relative path, so it must not land in the repository.
     monkeypatch.chdir(tmp_path)
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(CONFIG_YAML)
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
 
     def fail(*args, **kwargs):
         raise RESTError("Failed POST https://zenodo.org/api/records: 400")
@@ -1047,7 +1055,7 @@ def _v1_record(rid: int, checksums: dict[str, str | None], **kwargs) -> dict:
 def _write_file(tmp_path, name: str, content: str) -> Path:
     """Write a local file and return its path."""
     path = Path(tmp_path) / name
-    path.write_text(content)
+    path.write_text(content, encoding="utf-8")
     return path
 
 
@@ -1348,7 +1356,7 @@ def test_refresh_draft_completes_failed_upload(tmp_path):
     zenodo.upload_file = fail
     with pytest.raises(RESTError):
         _upload_new_record(zenodo, config, [path_one, path_two])
-    assert config.path_record_id.read_text().strip() == "7"
+    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
     # Zenodo now holds the names of both files without their content.
     draft = _v1_record(7, {"one.txt": None, "two.txt": None}, is_published=False)
@@ -1438,7 +1446,7 @@ def test_refresh_existing_record_published_unpublished_version(tmp_path, version
     assert ("create_new_version", "7") in zenodo.calls
     # A new version is published on the day it is created, not on the day the parent was.
     assert ("update_metadata", "7", None) in zenodo.calls
-    assert config.path_record_id.read_text().strip() == "7"
+    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
 
 def test_refresh_existing_record_published_version_taken(tmp_path):
@@ -1522,7 +1530,7 @@ def test_refresh_existing_record_without_is_published(tmp_path):
 def test_clean_online_without_is_published(tmp_path):
     """`--clean` deletes nothing when it cannot tell a draft from a published record."""
     config = _config_with_version(tmp_path, "1.0.0")
-    config.path_record_id.write_text("7\n")
+    config.path_record_id.write_text("7\n", encoding="utf-8")
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([{"id": 7}])
     with pytest.raises(ZenodoError) as exc_info:
@@ -1535,7 +1543,7 @@ def test_clean_online_without_is_published(tmp_path):
 def test_clean_online_deletes_drafts_on_every_page(tmp_path):
     """`--clean` removes the drafts that Zenodo serves beyond the first page."""
     config = _config_with_version(tmp_path, "1.0.0")
-    config.path_record_id.write_text("7\n")
+    config.path_record_id.write_text("7\n", encoding="utf-8")
     hits = [{"id": rid, "is_published": rid % 2 == 0} for rid in range(2 * SEARCH_PAGE_SIZE + 1)]
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest(hits)
@@ -1594,7 +1602,7 @@ def test_creator_omits_unset_fields():
 def test_metadata_publication_date_today():
     """A record that is not published yet gets today's date, the only sensible guess."""
     metadata = _metadata(license=["mit"], resource_type="dataset")
-    today = datetime.date.today().isoformat()
+    today = dt.date.today().isoformat()
     assert metadata.to_zenodo()["publication_date"] == today
     assert metadata.to_zenodo(None)["publication_date"] == today
 
@@ -1681,7 +1689,7 @@ def test_create_new_record_with_files(tmp_path):
         ("upload_file", "one.txt"),
         ("update_metadata", "7", None),
     ]
-    assert config.path_record_id.read_text().strip() == "7"
+    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
 
 def test_create_new_record_failed_upload(tmp_path):
@@ -1699,7 +1707,7 @@ def test_create_new_record_failed_upload(tmp_path):
     zenodo.upload_file = fail
     with pytest.raises(RESTError):
         _upload_new_record(zenodo, config, [path])
-    assert config.path_record_id.read_text().strip() == "7"
+    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
 
 def test_create_new_record_without_files(tmp_path):
@@ -1710,7 +1718,7 @@ def test_create_new_record_without_files(tmp_path):
     assert zenodo.calls == [
         ("create_new_record", []),
     ]
-    assert config.path_record_id.read_text().strip() == "7"
+    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
 
 def test_create_new_record_enables_files(tmp_path):
@@ -1930,14 +1938,14 @@ def test_record_id_missing():
 def test_write_record_id_creates_parent(tmp_path):
     path = Path(tmp_path) / "sub" / "dir" / "record_id.txt"
     _write_record_id(path, "7")
-    assert path.read_text() == "7\n"
+    assert path.read_text(encoding="utf-8") == "7\n"
 
 
 def test_write_record_id_without_parent(tmp_path, monkeypatch):
     """A bare file name has no parent directory to create."""
     monkeypatch.chdir(tmp_path)
     _write_record_id(Path("record_id.txt"), "7")
-    assert Path("record_id.txt").read_text() == "7\n"
+    assert Path("record_id.txt").read_text(encoding="utf-8") == "7\n"
 
 
 def test_write_record_id_unwritable(tmp_path):
@@ -1950,7 +1958,7 @@ def test_write_record_id_unwritable(tmp_path):
 
 def test_write_record_id_unwritable_parent(tmp_path):
     path = Path(tmp_path) / "blocked"
-    path.write_text("not a directory")
+    path.write_text("not a directory", encoding="utf-8")
     with pytest.raises(ZenodoError, match="Cannot write the record ID file"):
         _write_record_id(path / "record_id.txt", "7")
 
@@ -1958,7 +1966,7 @@ def test_write_record_id_unwritable_parent(tmp_path):
 def test_update_online_empty_record_id(tmp_path):
     """An empty record id file is reported as a message, instead of creating a second record."""
     config = _config_with_version(tmp_path, "1.0.0")
-    config.path_record_id.write_text("\n")
+    config.path_record_id.write_text("\n", encoding="utf-8")
     with pytest.raises(ZenodoError) as exc_info:
         _update_online(_FakeZenodo(), config, [])
     assert "is empty" in str(exc_info.value)
@@ -1968,7 +1976,7 @@ def test_main_missing_file(tmp_path, monkeypatch, capsys):
     """A file that does not exist is reported before Zenodo is contacted."""
     monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(CONFIG_YAML)
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
     assert main([str(path), str(tmp_path / "nope.txt")]) == 1
     captured = capsys.readouterr()
     assert "do not exist" in captured.err

@@ -4,6 +4,7 @@
 
 import argparse
 import enum
+import inspect
 import re
 import shutil
 import sys
@@ -13,7 +14,8 @@ from collections.abc import Collection, Sequence
 import attrs
 import cattrs
 import yaml
-from pyiso4.ltwa import Abbreviate
+from pyiso4.ltwa import Abbreviate, Pattern
+from pyiso4.prefix_tree import PrefixTree
 
 from stepup.core.hash import compute_file_digest
 from stepup.core.path import Path
@@ -100,7 +102,7 @@ class BibsaneConfig:
         if fn_yaml is None:
             config = cls(Path.cwd())
         else:
-            with open(fn_yaml) as f:
+            with open(fn_yaml, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
                 if data is None:
                     data = {}
@@ -123,7 +125,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
 
     print("📂 Load", args.bib)
-    with open(args.bib) as f:
+    with open(args.bib, encoding="utf-8") as f:
         entries = parse_bib(f.read())
     print(f"    Found {len(entries)} BibTeX entries")
 
@@ -281,7 +283,7 @@ IGNORED_CITATIONS = {"REVTEX41Control", "achemso-control"}
 def parse_aux(fn_aux: str) -> list[str]:
     """Parse the relevant parts of a LaTeX aux file."""
     citations = []
-    with open(fn_aux) as f:
+    with open(fn_aux, encoding="utf-8") as f:
         for line in f:
             parse_aux_line("citation", line, citations)
     # Filter out bogus citations
@@ -434,9 +436,38 @@ def fix_page_double_hyphen(entries: list[dict]) -> bool:
     return valid
 
 
+def create_abbreviator() -> Abbreviate:
+    """Create a journal abbreviator from the LTWA and the stopwords of `pyiso4`.
+
+    This does the same as `Abbreviate.create()`, except that it reads the data files as UTF-8.
+    As of pyiso4 0.1.6, `Abbreviate.create()` reads them in the locale encoding,
+    which fails on Windows with Python 3.14 and older, where that is the ANSI code page.
+    """
+    # The data files are taken from the defaults of `Abbreviate.create()`,
+    # because their names change when pyiso4 updates the LTWA.
+    defaults = inspect.signature(Abbreviate.create).parameters
+    with open(defaults["ltwa_file"].default, encoding="utf-8") as fh:
+        lines = fh.readlines()
+    ltwa_prefix = PrefixTree()
+    ltwa_suffix = PrefixTree()
+    # The first line is the header of the CSV file.
+    for line in lines[1:]:
+        if line == "\n":
+            continue
+        pattern = Pattern.from_line(line)
+        key = pattern.to_key()
+        if pattern.start_with_dash:
+            ltwa_suffix.insert(key[::-1], pattern)
+        else:
+            ltwa_prefix.insert(key, pattern)
+    with open(defaults["stopwords"].default, encoding="utf-8") as fh:
+        stopwords = [word.strip() for word in fh.readlines()]
+    return Abbreviate(ltwa_prefix, ltwa_suffix, stopwords)
+
+
 def abbreviate_journal_iso(entries: list[dict], custom: dict[str, str]):
     """Replace journal names by their ISO abbreviation."""
-    abbreviator = Abbreviate.create()
+    abbreviator = create_abbreviator()
     for entry in entries:
         journal = entry.get("journal")
         if journal is not None and "." not in journal:
@@ -539,7 +570,7 @@ def write_output(entries: list[dict], fn_out: str, retcode: int) -> int:
         # Write out a single BibTeX database.
         with tempfile.TemporaryDirectory("srr-bibsane") as dn_tmp:
             fn_tmp = Path(dn_tmp) / "tmp.bib"
-            with open(fn_tmp, "w") as f:
+            with open(fn_tmp, "w", encoding="utf-8", newline="\n") as f:
                 f.write(format_bib(entries))
 
             # Check if the file has changed.

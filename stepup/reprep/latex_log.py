@@ -117,7 +117,7 @@ def parse_latex_log(path_log: str) -> ErrorInfo | None:
     recorded = []
 
     # LaTeX log files may have encoding errors, so such errors must be ignored.
-    with open(path_log, errors="ignore") as fh:
+    with open(path_log, encoding="utf-8", errors="ignore") as fh:
         for line in fh.readlines():
             if record:
                 recorded.append(line.rstrip())

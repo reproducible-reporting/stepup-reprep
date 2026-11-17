@@ -14,7 +14,7 @@ so that a refresh can be reviewed before it is committed.
 """
 
 import argparse
-import datetime
+import datetime as dt
 import sys
 
 import attrs
@@ -131,7 +131,7 @@ def main():
     else:
         print(f"Downloading vocabularies from {API_URL} ...")
         new = {case.name: download_vocabulary(case.name) for case in CASES}
-        new["_date"] = datetime.date.today().isoformat()
+        new["_date"] = dt.date.today().isoformat()
         changed = report(old, new)
         if changed:
             print(f"Writing updated {YAML_PATH} ...")

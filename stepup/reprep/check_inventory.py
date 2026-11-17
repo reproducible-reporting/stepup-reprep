@@ -26,7 +26,7 @@ def main(argv: Sequence[str] | None = None):
 
 
 def iter_inventory(path_inventory: str) -> Iterator[FileSummary]:
-    with open(path_inventory) as fh:
+    with open(path_inventory, encoding="utf-8") as fh:
         for iline, line in enumerate(fh):
             try:
                 fs = parse_summary(line)

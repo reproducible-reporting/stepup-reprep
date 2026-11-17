@@ -108,7 +108,7 @@ def scan_latex_deps(path_tex, tex_root=None, do_amend=True):
     path_tex = Path(path_tex)
     if path_tex.is_file():
         tex_root = path_tex.parent.normpath() if tex_root is None else Path(tex_root)
-        with open(path_tex) as fh:
+        with open(path_tex, encoding="utf-8") as fh:
             stripped = []
             for line in fh:
                 if "%REPREP ignore" in line:

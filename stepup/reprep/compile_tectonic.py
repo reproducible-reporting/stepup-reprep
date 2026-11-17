@@ -85,7 +85,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         inp_paths = []
         out_paths = []
         if path_dep.is_file():
-            with open(path_dep) as fh:
+            with open(path_dep, encoding="utf-8") as fh:
                 dep_out, dep_inp = fh.read().replace("\\\n", " ").split(":", 1)
                 out_paths.extend(workdir / path for path in shlex.split(dep_out))
                 inp_paths.extend(workdir / path for path in shlex.split(dep_inp))

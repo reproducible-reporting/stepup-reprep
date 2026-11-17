@@ -20,10 +20,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main():
     args = parse_args()
 
-    with open(args.reference) as ref_file:
+    with open(args.reference, encoding="utf-8") as ref_file:
         reference = json.load(ref_file)
 
-    with open(args.current) as curr_file:
+    with open(args.current, encoding="utf-8") as curr_file:
         current = json.load(curr_file)
 
     if reference["units"] != current["units"]:

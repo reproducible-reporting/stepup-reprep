@@ -23,7 +23,7 @@ def parse_bibtex_log(path_blg: str) -> ErrorInfo | None:
     last_src = "(could not detect source file)"
     error = False
     recorded = []
-    with open(path_blg, errors="ignore") as fh:
+    with open(path_blg, encoding="utf-8", errors="ignore") as fh:
         for line in fh.readlines():
             if "---" in line and "file " in line:
                 last_src = line.rsplit(maxsplit=1)[-1]

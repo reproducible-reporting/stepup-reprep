@@ -50,7 +50,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     # so both are inputs of this step.
     head_path = git_root / ".git" / "HEAD"
     amend(inp=head_path)
-    with open(head_path) as fh:
+    with open(head_path, encoding="utf-8") as fh:
         head_content = fh.read().strip()
         if not head_content.startswith("ref: "):
             raise ValueError("HEAD is not a symbolic reference, cannot determine commit id.")
@@ -63,7 +63,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.stdout is None:
         sys.stdout.write(cp.stdout)
     else:
-        with open(args.stdout, "w") as fh:
+        with open(args.stdout, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(cp.stdout)
     sys.stderr.write(cp.stderr)
     if cp.returncode != 0:

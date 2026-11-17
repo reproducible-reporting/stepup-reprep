@@ -13,12 +13,12 @@ step:./plan.py
            using_env = STEPUP_PATH_FILTER [dynamic]
              creator   root:
               source   file:plan.py
-             product   file:source/aux/productivity.csv
+             product   file:source/data/productivity.csv
              product   file:source/document.typ
              product   file:source/tada.svg
              product   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
 
-file:source/aux/productivity.csv
+file:source/data/productivity.csv
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
@@ -40,7 +40,7 @@ step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt sou
                      = REPREP_TYPST_ARGS [dynamic]
                      = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
-              source   file:source/aux/productivity.csv [dynamic]
+              source   file:source/data/productivity.csv [dynamic]
               source   file:source/document.typ
               source   file:source/tada.svg [dynamic]
              product   file:out.pdf

@@ -1,9 +1,5 @@
 #!/usr/bin/env -S bash -x
-# Exit on first error and cleanup.
-set -e
-trap 'kill $(pgrep -g $$ | grep -v $$) > /dev/null 2> /dev/null || :' EXIT
-rm -rf .git
-rm -rvf $(cat .gitignore)
+source ../example.rc
 
 # Prepare a git repo
 git init --initial-branch=main

@@ -7,7 +7,10 @@ import subprocess
 import pytest
 from path import Path
 
-pytest.register_assert_rewrite("stepup.core.pytest", "stepup.reprep.pytest")
+pytest.register_assert_rewrite("stepup.reprep.pytest")
+
+# As a plugin, `stepup.core.pytest` also gets its assertions rewritten.
+pytest_plugins = ("stepup.core.pytest",)
 
 
 @pytest.fixture

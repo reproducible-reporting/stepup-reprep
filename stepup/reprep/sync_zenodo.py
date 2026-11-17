@@ -380,6 +380,8 @@ class Creator:
                     f"Unknown identifier scheme for '{attribute.name}': {scheme!r}. "
                     f"Zenodo reads one of: {', '.join(CREATOR_IDENTIFIER_SCHEMES)}."
                 )
+        # `idutils` accepts both identifiers with a URL prefix, as observed with `idutils` 1.7.2,
+        # so the prefix is rejected explicitly.
         orcid = value.get("orcid")
         if orcid is not None and not (idutils.is_orcid(orcid) and not orcid.startswith("http")):
             raise ValueError(
@@ -389,7 +391,7 @@ class Creator:
                 "e.g. '0000-0001-9288-5608'."
             )
         isni = value.get("isni")
-        if isni is not None and not idutils.is_isni(isni):
+        if isni is not None and not (idutils.is_isni(isni) and not isni.startswith("http")):
             raise ValueError(
                 f"Invalid ISNI for '{attribute.name}': {isni!r}. "
                 "Zenodo reads sixteen characters ending in a check character "

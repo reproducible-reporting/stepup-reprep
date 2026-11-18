@@ -17,7 +17,7 @@ from collections.abc import Sequence
 from papermill import execute_notebook
 
 from stepup.core.path import Path
-from stepup.reprep.jupyter_kernel import ipc_kernel_config
+from stepup.reprep.jupyter_kernel import kernel_config
 
 __all__ = ("main",)
 
@@ -29,7 +29,7 @@ def main(argv: Sequence[str] | None = None):
         raise ValueError("The input must have a .ipynb extension.")
     if not args.path_out.endswith(".ipynb"):
         raise ValueError("The output must have a .ipynb extension.")
-    with ipc_kernel_config() as config:
+    with kernel_config() as config:
         execute_notebook(
             input_path=args.path_inp,
             output_path=args.path_out,

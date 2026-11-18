@@ -15,11 +15,12 @@ import os
 import shutil
 
 import pytest
+import zmq
 from conftest import run_tool
 from nbformat import read, v4, write
 
 from stepup.core.path import Path
-from stepup.reprep.jupyter_kernel import ipc_kernel_config
+from stepup.reprep.jupyter_kernel import kernel_config
 
 TRANSPORT_SOURCE = """\
 from ipykernel.kernelapp import IPKernelApp
@@ -28,16 +29,22 @@ print("transport:", IPKernelApp.instance().transport)
 """
 """Source of a notebook cell that prints the transport of the kernel it runs in."""
 
+TRANSPORT = "ipc" if zmq.has("ipc") else "tcp"
+"""The transport that `kernel_config` should select."""
+
 needs_jupyter = pytest.mark.skipif(not shutil.which("jupyter"), reason="No Jupyter")
 
 
-def test_ipc_kernel_config():
-    with ipc_kernel_config() as config:
-        assert config.KernelManager.transport == "ipc"
-        assert os.path.isabs(config.KernelManager.ip)
-        path_dir = os.path.dirname(config.KernelManager.ip)
+def test_kernel_config():
+    with kernel_config() as config:
+        assert config.KernelManager.transport == TRANSPORT
+        path_dir = os.path.dirname(config.KernelManager.connection_file)
+        assert os.path.isabs(path_dir)
         assert os.path.isdir(path_dir)
-        assert os.path.dirname(config.KernelManager.connection_file) == path_dir
+        if TRANSPORT == "ipc":
+            assert os.path.dirname(config.KernelManager.ip) == path_dir
+        else:
+            assert "ip" not in config.KernelManager
     assert not os.path.exists(path_dir)
 
 
@@ -54,16 +61,16 @@ def write_transport_notebook(path_nb: Path):
 
 
 @needs_jupyter
-def test_convert_jupyter_ipc(path_tmp: Path):
+def test_convert_jupyter_transport(path_tmp: Path):
     path_nb = path_tmp / "transport.ipynb"
     write_transport_notebook(path_nb)
     path_out = path_tmp / "transport.md"
     run_tool("srr-convert-jupyter", path_nb, path_out, "--to", "markdown", "--execute")
-    assert "transport: ipc" in path_out.read_text(encoding="utf-8")
+    assert f"transport: {TRANSPORT}" in path_out.read_text(encoding="utf-8")
 
 
 @needs_jupyter
-def test_execute_papermill_ipc(path_tmp: Path):
+def test_execute_papermill_transport(path_tmp: Path):
     path_nb = path_tmp / "transport.ipynb"
     write_transport_notebook(path_nb)
     path_out = path_tmp / "transport_out.ipynb"
@@ -71,4 +78,4 @@ def test_execute_papermill_ipc(path_tmp: Path):
     notebook = read(path_out, as_version=4)
     (cell,) = [cell for cell in notebook.cells if cell.source == TRANSPORT_SOURCE]
     (output,) = cell.outputs
-    assert output.text.strip() == "transport: ipc"
+    assert output.text.strip() == f"transport: {TRANSPORT}"

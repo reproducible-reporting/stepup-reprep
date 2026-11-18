@@ -3,6 +3,7 @@
 """Wrapper for Jupyter notebook conversion using nbconvert Python API."""
 
 import argparse
+import asyncio
 import json
 import os
 import sys
@@ -15,7 +16,7 @@ from nbformat import NotebookNode, read, v4
 
 from stepup.core.extapi import child_env
 from stepup.core.path import Path
-from stepup.reprep.jupyter_kernel import ipc_kernel_config
+from stepup.reprep.jupyter_kernel import kernel_config
 
 __all__ = ("main",)
 
@@ -51,7 +52,7 @@ def main(argv: Sequence[str] | None = None):
     if args.execute:
         dir_nb = Path(args.path_nb).parent.normpath()
         default_timeout = resolve_timeout(args.timeout)
-        with ipc_kernel_config() as config:
+        with kernel_config() as config:
             client = NotebookClient(
                 notebook,
                 config=config,
@@ -60,8 +61,12 @@ def main(argv: Sequence[str] | None = None):
                 kernel_name="python3",
                 extra_arguments=["--IPKernelApp.log_level=40"],
             )
+            # pyzmq needs the `add_reader` methods of a selector event loop.
+            # The default event loop on Windows lacks them,
+            # and pyzmq then warns on standard error (as of pyzmq 27.3).
             try:
-                client.execute(cwd=str(dir_nb), env=child_env(dir_nb))
+                with asyncio.Runner(loop_factory=asyncio.SelectorEventLoop) as runner:
+                    runner.run(client.async_execute(cwd=str(dir_nb), env=child_env(dir_nb)))
             except CellTimeoutError as exc:
                 raise RuntimeError(
                     f"A cell in {args.path_nb} exceeded the timeout of {default_timeout} s. "

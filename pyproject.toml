@@ -73,6 +73,7 @@ dependencies = [
     "pyiso4>=0.1.6",
     "pymupdf>=1.24.3",
     "pyyaml>=6.0",
+    "pyzmq>=25.0",
     "requests>=2.33.0",
     "scipy>=1.11.1",
     "stepup>=4.1.0rc3,<5.0.0a1",

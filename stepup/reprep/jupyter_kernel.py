@@ -7,21 +7,26 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
+import zmq
 from traitlets.config import Config
 
-__all__ = ("ipc_kernel_config",)
+__all__ = ("kernel_config",)
 
 
 @contextmanager
-def ipc_kernel_config() -> Iterator[Config]:
-    """Configure a Jupyter kernel to use ZeroMQ IPC sockets in a private temporary directory.
+def kernel_config() -> Iterator[Config]:
+    """Configure a Jupyter kernel to communicate through a private temporary directory.
 
+    The kernel uses ZeroMQ IPC sockets where ZeroMQ supports them.
     With the default TCP transport, `jupyter_client` selects free ports
     by binding sockets to port zero and releasing them again,
     so two kernels starting at the same time may select the same port
     and one of them fails with "Address already in use".
     IPC sockets are files in a directory used by a single process only,
     which cannot collide.
+
+    Where ZeroMQ has no IPC transport, the kernel keeps the default TCP transport.
+    This was observed with the Windows wheels of pyzmq 27.3.0.
 
     Yields
     ------
@@ -32,11 +37,14 @@ def ipc_kernel_config() -> Iterator[Config]:
     """
     with tempfile.TemporaryDirectory(prefix="srr-jupyter-") as tmpdir:
         config = Config()
-        config.KernelManager.transport = "ipc"
-        # With the IPC transport, ip is a path prefix:
-        # the five channels become {ip}-1 up to {ip}-5.
-        # It must be absolute, because the kernel runs in the directory of the notebook,
-        # while the kernel manager searches for unused socket names in its own directory.
-        config.KernelManager.ip = str(Path(tmpdir) / "socket")
         config.KernelManager.connection_file = str(Path(tmpdir) / "connection.json")
+        if zmq.has("ipc"):
+            config.KernelManager.transport = "ipc"
+            # With the IPC transport, ip is a path prefix:
+            # the five channels become {ip}-1 up to {ip}-5.
+            # It must be absolute, because the kernel runs in the directory of the notebook,
+            # while the kernel manager searches for unused socket names in its own directory.
+            config.KernelManager.ip = str(Path(tmpdir) / "socket")
+        else:
+            config.KernelManager.transport = "tcp"
         yield config

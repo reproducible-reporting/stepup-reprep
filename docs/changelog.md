@@ -19,7 +19,11 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-This release ports StepUp RepRep to Windows, on top of StepUp Core 4.1.
+(no changes yet)
+
+## [4.1.0rc1][] - 2026-09-26 {: #v4.1.0rc1 }
+
+This release ports StepUp RepRep to macOS and Windows, on top of StepUp Core 4.1.
 
 ### Added
 
@@ -1006,6 +1010,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.1.0rc1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0rc1
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
 [4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1
 [4.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0

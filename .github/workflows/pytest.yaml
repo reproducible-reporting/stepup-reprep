@@ -56,13 +56,19 @@ jobs:
             python-version: '3.14'
             resolution: highest
           - runner: ubuntu-26.04
-            python-version: '3.15-dev'
+            python-version: '3.15'
+            resolution: highest
+          - runner: macos-26
+            python-version: '3.11'
+            resolution: lowest-direct
+          - runner: macos-26
+            python-version: '3.15'
             resolution: highest
           - runner: windows-2022
             python-version: '3.11'
             resolution: lowest-direct
           - runner: windows-2025
-            python-version: '3.14'
+            python-version: '3.15'
             resolution: highest
     runs-on: ${{ matrix.runner }}
     steps:
@@ -95,11 +101,16 @@ jobs:
         timeout-minutes: 3
         uses: actions/cache@v6
         with:
-          # The parent of `tectonic -X show user-cache-dir`, as observed with Tectonic 0.17.
+          # The parent of `tectonic -X show user-cache-dir`,
+          # as observed with Tectonic 0.17 on Linux and Windows.
           # Tectonic 0.16 used `~/.cache/Tectonic` on Linux instead.
+          # The macOS directory is not observed but derived from the source of Tectonic 0.17,
+          # which places its cache in the `ProjectDirs` of the Rust crate `directories`.
           path: >-
             ${{ runner.os == 'Windows'
             && '~/AppData/Local/TectonicProject/Tectonic/cache'
+            || runner.os == 'macOS'
+            && '~/Library/Caches/TectonicProject.Tectonic'
             || '~/.cache/tectonic' }}
           key: tectonic-${{ matrix.runner }}-${{ env.TECTONIC_VERSION }}
       - name: Warm up the Tectonic cache
@@ -123,10 +134,16 @@ jobs:
         # which brought `convert_jupyter` close to its deadline on Windows,
         # as observed in a Windows 11 VM with Python 3.14.
         timeout-minutes: 3
+        env:
+          # As of November 2026, PyYAML has no wheels for Python 3.15,
+          # so it is built from source without its C extension, which StepUp does not use.
+          # With the extension enabled, the build failed on Windows without a C compiler
+          # instead of falling back to pure Python (PyYAML 6.0.3, setuptools 84.2.1),
+          # as observed in the CI of StepUp Core.
+          PYYAML_FORCE_LIBYAML: '0'
         run: >-
           uv pip install --system --compile-bytecode
           --resolution ${{ matrix.resolution }} -e .[tests]
       - name: Run pytest
         timeout-minutes: 15
-        continue-on-error: ${{ matrix.python-version == '3.15-dev' }}
         run: pytest -vv

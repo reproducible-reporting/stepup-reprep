@@ -18,7 +18,7 @@ stepup join
 srr-make-inventory -o reproducibility_inventory.txt demo.html demo1.html
 
 # Wait for background processes, if any.
-set +e; wait -fn $PID; RETURNCODE=$?; set -e
+set +e; wait $PID; RETURNCODE=$?; set -e
 [[ "${RETURNCODE}" -eq 0 ]] || exit 1
 
 # Check files that are expected to be present and/or missing.

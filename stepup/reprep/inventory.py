@@ -8,6 +8,7 @@ import attrs
 
 from stepup.core.hash import compute_file_digest
 from stepup.core.path import Path
+from stepup.core.platform.oscompat import file_modes_available
 
 __all__ = ("FileSummary", "check_summary", "format_summary", "get_summary", "parse_summary")
 
@@ -20,7 +21,7 @@ class FileSummary:
 
     - Directories are never included.
     - The properties of ordinary files are just computed.
-      The digest is a 64-bit BLAKE2B hash.
+      The digest is a SHA-256 hash.
     - Symbolic links are not followed.
       Their size is None and the digest is derived from the link destination path,
       not the file contents.
@@ -76,10 +77,21 @@ def parse_summary(line: str) -> FileSummary:
 
 
 def check_summary(new: FileSummary, ref: FileSummary):
-    """Verify that the new digest is consistent with the reference."""
+    """Verify that the new summary is consistent with the reference.
+
+    The file modes are only compared on a platform where files have permission bits,
+    see `file_modes_available()` in `stepup.core.platform.oscompat`.
+    Elsewhere, the mode of a file says little more than whether it is a symbolic link,
+    which the size already tells.
+
+    Raises
+    ------
+    ValueError
+        When the size, the mode or the digest differs from the reference.
+    """
     if new.size != ref.size:
         raise ValueError(f"File size should be {ref.size} but got {new.size}: {new.path}")
-    if new.mode != ref.mode:
+    if file_modes_available() and new.mode != ref.mode:
         raise ValueError(f"File mode should be {ref.mode} but got {new.mode}: {new.path}")
     if new.digest != ref.digest:
         raise ValueError(f"File digest mismatch: {new.path}")

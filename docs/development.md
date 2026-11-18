@@ -61,6 +61,40 @@ We use pytest, so you can run the tests as follows:
 pytest -vv
 ```
 
+### Tests on Windows
+
+The test suite also runs on Windows.
+The examples that need a program which is not installed are skipped,
+see `tests/examples/README.md`.
+
+The examples that use Typst and Tectonic need two settings on Windows:
+
+- Typst 0.15 and Tectonic 0.17 must be on the `PATH`.
+- `FONTCONFIG_FILE` must name a fontconfig configuration.
+  Without it, Tectonic prints `Fontconfig error: Cannot load default config file`
+  to the standard error on every run, as observed with Tectonic 0.17 on Windows.
+  The Tectonic examples then fail, because their expected output has no standard error.
+  A configuration that only lists the fonts of Windows suffices,
+  such as `tools/fonts.conf` in this repository.
+
+The PowerShell script `tools/winvm-tools.ps1` makes both settings for the whole machine,
+for which it needs to run as administrator.
+It was written for the Windows test VM of StepUp Core,
+which `tools/winvm/winvm.sh` in the
+[StepUp Core repository](https://github.com/reproducible-reporting/stepup-core/blob/main/tools/winvm/README.md)
+manages.
+With a checkout of StepUp Core next to this repository and an existing VM,
+install the programs once and run the tests as follows:
+
+```bash
+W=../stepup-core/tools/winvm/winvm.sh
+$W start
+$W sync
+$W run "powershell -ExecutionPolicy Bypass -File tools\winvm-tools.ps1"
+$W test
+$W stop
+```
+
 ## Documentation
 
 The documentation is created with [MkDocs](https://www.mkdocs.org/).

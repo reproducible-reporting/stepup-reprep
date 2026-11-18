@@ -80,15 +80,13 @@ def main(argv: Sequence[str] | None = None) -> None:
         cp = run_subprocess(shlex.join(tectonic_args), workdir=workdir, check=False)
         sys.stdout.write(cp.stdout)
         # Get existing input files from the dependency file and amend.
-        # Note that the deps file does not escape colons in paths,
-        # so the code below assumes one never uses colons in paths.
         inp_paths = []
         out_paths = []
         if path_dep.is_file():
             with open(path_dep, encoding="utf-8") as fh:
-                dep_out, dep_inp = fh.read().replace("\\\n", " ").split(":", 1)
-                out_paths.extend(workdir / path for path in shlex.split(dep_out))
-                inp_paths.extend(workdir / path for path in shlex.split(dep_inp))
+                dep_out, dep_inp = parse_makefile_rules(fh.read())
+            out_paths.extend(workdir / path for path in dep_out)
+            inp_paths.extend(workdir / path for path in dep_inp)
         else:
             print(f"Dependency file not created: {path_dep}.", file=sys.stderr)
 
@@ -105,6 +103,31 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     if cp.returncode != 0:
         sys.exit(cp.returncode)
+
+
+def parse_makefile_rules(text: str) -> tuple[list[str], list[str]]:
+    """Parse the Makefile rules written by Tectonic with `--makefile-rules`.
+
+    As of Tectonic 0.17, the file names in these rules are neither quoted nor escaped,
+    and they contain the native path separator, which is a backslash on Windows.
+    Hence, file names with spaces are not supported.
+    Outputs and inputs are separated by a colon followed by whitespace,
+    so that the colon of a drive letter on Windows is not mistaken for the separator.
+
+    Parameters
+    ----------
+    text
+        The contents of the file with Makefile rules.
+
+    Returns
+    -------
+    out_paths
+        The outputs written by Tectonic.
+    inp_paths
+        The inputs read by Tectonic.
+    """
+    dep_out, dep_inp = re.split(r":\s", text.replace("\\\n", " "), maxsplit=1)
+    return dep_out.split(), dep_inp.split()
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

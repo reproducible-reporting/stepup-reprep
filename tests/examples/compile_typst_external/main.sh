@@ -4,7 +4,7 @@ source ../example.rc
 # Run the example
 export REPREP_TYPST_INVENTORY="1"
 cd stepup
-export STEPUP_PATH_FILTER="+../doc:"
+export STEPUP_PATH_FILTER="+../doc"
 sb -w -j 1 & # > ../current_stdout.txt &
 
 # Get the graph after completion of the pending steps.

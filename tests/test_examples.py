@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 """Run examples."""
 
+import importlib
 import os
 import re
 import shutil
@@ -36,7 +37,6 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "convert_markdown",
         pytest.param("convert_markdown_concurrency", marks=pytest.mark.heavy),
         "convert_markdown_env",
-        "convert_weasyprint",
         "copy_latex_with_deps",
         "execute_papermill",
         "flatten_latex",
@@ -54,6 +54,22 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
 )
 @pytest.mark.asyncio
 async def test_example(path_tmp, name: str):
+    await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
+
+
+def has_weasyprint_libraries():
+    """Check that WeasyPrint can load the libraries of Pango and GLib, which it does on import."""
+    try:
+        importlib.import_module("weasyprint")
+    except OSError:
+        return False
+    return True
+
+
+@pytest.mark.skipif(not has_weasyprint_libraries(), reason="No libraries for WeasyPrint")
+@pytest.mark.parametrize("name", ["convert_weasyprint"])
+@pytest.mark.asyncio
+async def test_weasyprint_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 

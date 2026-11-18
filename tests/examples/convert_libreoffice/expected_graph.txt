@@ -15,14 +15,14 @@ step:./plan.py
              creator   root:
               source   file:plan.py
              product   file:slide.odp
-             product   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+             product   step:WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && soffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
 file:slide.odp
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+                sink   step:WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && soffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
 
-step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+step:WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && soffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
@@ -32,5 +32,5 @@ step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file:
 
 file:slide.pdf
                state = BUILT
-             creator   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
-              source   step:WORK=`mktemp -d --suffix=reprep` && libreoffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+             creator   step:WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && soffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}
+              source   step:WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && soffice -env:UserInstallation=file://${WORK} --convert-to pdf slide.odp --outdir ${WORK} > /dev/null && cp ${WORK}/*.pdf slide.pdf && rm -r ${WORK}

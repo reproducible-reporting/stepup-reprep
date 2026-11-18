@@ -1009,8 +1009,8 @@ def convert_odf_pdf(
     dest
         None, output directory or path. See `make_path_out`.
     libreoffice
-        The libreoffice executable.
-        Defaults to `${REPREP_LIBREOFFICE}` variable or `libreoffice` if the variable is unset.
+        The LibreOffice executable.
+        Defaults to `${REPREP_LIBREOFFICE}` variable or `soffice` if the variable is unset.
     optional
         If `True`, the step is only executed when needed by other steps.
     resources
@@ -1034,14 +1034,15 @@ def convert_odf_pdf(
         path_odf = subs(path_odf)
         dest = subs(dest)
     if libreoffice is None:
-        libreoffice = getenv("REPREP_LIBREOFFICE", "libreoffice")
+        libreoffice = getenv("REPREP_LIBREOFFICE", "soffice")
     path_pdf = make_path_out(path_odf, dest, ".pdf")
     command = (
         # Simple things should be simple! ;) See:
         # https://bugs.documentfoundation.org/show_bug.cgi?id=106134
         # https://bugs.documentfoundation.org/show_bug.cgi?id=152192
         # https://bugs.documentfoundation.org/show_bug.cgi?id=160033
-        "WORK=`mktemp -d --suffix=reprep` && "
+        # The template is the only form of `mktemp` that GNU and BSD (macOS) both support.
+        'WORK=`mktemp -d "${TMPDIR:-/tmp}/reprep.XXXXXXXX"` && '
         f"{shq(libreoffice)} -env:UserInstallation=file://${{WORK}} --convert-to pdf "
         f"{shq(path_odf)} --outdir ${{WORK}} > /dev/null && "
         f"cp ${{WORK}}/*.pdf {shq(path_pdf)} && rm -r ${{WORK}}"

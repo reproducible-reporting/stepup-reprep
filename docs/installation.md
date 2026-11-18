@@ -152,6 +152,7 @@ Windows has no permission bits.
 An inventory made on Windows therefore records other file modes
 than one made of the same files on Linux or macOS,
 e.g. `-rw-rw-rw-` instead of `-rw-r--r--`.
+Symbolic links are the exception: their mode is always recorded as `lrwxrwxrwx`.
 [`zip_inventory()`][stepup.reprep.api.zip_inventory] stores these modes in the ZIP file,
 so a ZIP file made on Windows also differs from one made on Linux or macOS.
 

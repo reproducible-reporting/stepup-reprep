@@ -170,7 +170,7 @@ async def test_mutool_example(path_tmp: Path, name: str):
     await run_example(Path("tests/examples") / name, path_tmp, OVERWRITE_EXPECTED)
 
 
-@pytest.mark.skipif(not shutil.which("libreoffice"), reason="No LibreOffice")
+@pytest.mark.skipif(not shutil.which("soffice"), reason="No LibreOffice")
 @pytest.mark.parametrize(
     "name",
     [

@@ -74,8 +74,19 @@ This release ports StepUp RepRep to Windows, on top of StepUp Core 4.1.
 - [`flatten_latex()`][stepup.reprep.api.flatten_latex] keeps an absolute path
   in `\includegraphics`, `\thebibliography` and `\verbatiminput` as it is.
   Previously, it was rewritten as a path relative to the flattened file.
+- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] runs `soffice` by default,
+  instead of `libreoffice`.
+  The executable of LibreOffice is named `soffice` on every platform,
+  while `libreoffice` is a launcher added by Linux distributions.
+  `REPREP_LIBREOFFICE` still overrides the default.
+- Inventories and ZIP files record the mode of a symbolic link as `lrwxrwxrwx` on every platform.
+  Previously, they recorded the mode on disk,
+  which depends on the umask on macOS and on the read-only attribute on Windows.
 
 ### Fixed
+
+- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] works on macOS,
+  where `mktemp` has no `--suffix` option.
 
 - `srr-sync-zenodo` rejects an ISNI written as a URL also with `idutils` 1.7,
   which accepts this form, as observed with `idutils` 1.7.2.

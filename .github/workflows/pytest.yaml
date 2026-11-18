@@ -138,6 +138,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libharfbuzz-subset0
+      - name: Install Pango for WeasyPrint
+        # Pango depends on GLib and HarfBuzz, whose Homebrew formula includes HarfBuzz-Subset.
+        # WeasyPrint loads these libraries by name,
+        # and the Homebrew prefix on Apple Silicon is not searched by default.
+        if: runner.os == 'macOS'
+        timeout-minutes: 5
+        run: |
+          brew install pango
+          echo "DYLD_FALLBACK_LIBRARY_PATH=$(brew --prefix)/lib" >> "$GITHUB_ENV"
       - name: Install with the test dependencies
         # Without precompiled bytecode, the examples that start a Jupyter kernel compile it,
         # which brought `convert_jupyter` close to its deadline on Windows,

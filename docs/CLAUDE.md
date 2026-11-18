@@ -8,12 +8,21 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 Note that docstrings are written in Markdown, not reStructuredText!
 The docstring conventions themselves are in the top-level `CLAUDE.md`.
 
+## Included Files
+
+Pages include files with the block form of `pymdownx.snippets`, as described in
+`docs/development.md`, never with the single-line form `--8<-- "path"`.
+Ruff formats the Python code blocks in Markdown files
+and turns that single line into `--8 < --"path"`,
+which Snippets no longer recognizes,
+so the page then shows the mangled line instead of the file, without any build error.
+
 ## Social Card
 
 `docs/social-card.svg` is the editable source of the link preview image
 referenced by the Open Graph and Twitter meta tags in `overrides/main.html`.
 Only the exported `docs/social-card.jpg` is published,
-because `mkdocs.yaml` excludes the SVG from the site.
+because `zensical.toml` excludes the SVG from the site.
 Regenerate the JPEG after editing the SVG:
 
 ```bash

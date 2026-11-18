@@ -5,7 +5,7 @@
 # The Pages source of the repository must be set to "GitHub Actions",
 # not to a branch, for the deploy job to have any effect.
 
-name: mkdocs
+name: docs
 on:
   push:
     branches:
@@ -19,9 +19,9 @@ on:
       - stepup/**
       - docs/**
       - overrides/**
-      - mkdocs.yaml
+      - zensical.toml
       - pyproject.toml
-      - .github/workflows/mkdocs.yaml
+      - .github/workflows/docs.yaml
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -51,8 +51,8 @@ jobs:
           cache-dependency-glob: pyproject.toml
       - name: Install development version
         run: uv pip install --system -e .[dev]
-      - name: Build mkdocs site
-        run: mkdocs build --strict
+      - name: Build the site with Zensical
+        run: zensical build --clean
       - name: Upload the site as a Pages artifact
         uses: actions/upload-pages-artifact@v5.0.0
         with:

@@ -18,7 +18,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 Unplot converts plots back into data points.
 (It is a sanitized version of [Depix](https://github.com/tovrstra/depix).)
 
-## How to prepare an input SVG file
+## How to Prepare an Input SVG File
 
 1. If the plot is embedded in a PDF, use `pdfimages`
    to extract the figures from the PDF as PBM files.
@@ -109,7 +109,9 @@ Hollow node markers can be easily aligned with data points in the original image
 To convert these paths into data, you can use the `unplot` function of StepUp RepRep as follows:
 
 ```python
-{% include 'advanced_topics/unplot/plan.py' %}
+--8<--
+advanced_topics/unplot/plan.py
+--8<--
 ```
 
 To run the example, make the scripts executable and run StepUp:
@@ -122,19 +124,23 @@ stepup -n -w1
 You should see the following terminal output:
 
 ```text
-{% include 'advanced_topics/unplot/stdout.txt' %}
+--8<--
+advanced_topics/unplot/stdout.txt
+--8<--
 ```
 
 The output is a JSON file containing the extracted data points:
 
 ```json
-{% include 'advanced_topics/unplot/plot.json' %}
+--8<--
+advanced_topics/unplot/plot.json
+--8<--
 ```
 
 Each curve is an item in the dictionary
 and the corresponding value is a list with two lists (x- and y-coordinates).
 
-## Tips and tricks
+## Tips and Tricks
 
 **Q.**
 The data points are flipped horizontally or vertically.

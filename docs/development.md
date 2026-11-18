@@ -9,11 +9,11 @@ SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Developer Notes
+# Developer Guide
 
 If you would like to contribute, please read [CONTRIBUTING.md](https://github.com/reproducible-reporting/.github/blob/main/CONTRIBUTING.md).
 
-## Development environment
+## Development Environment
 
 If you break your development environment, you can discard it
 by running `git clean -dfX` in the project root and repeating the instructions below.
@@ -98,21 +98,42 @@ $W stop
 
 ## Documentation
 
-The documentation is created with [MkDocs](https://www.mkdocs.org/).
+The documentation is created using [Zensical](https://zensical.org/),
+configured in `zensical.toml`.
 Only the current version is published:
 every commit on the main branch republishes the site with GitHub Pages.
 
-Edit the documentation markdown files with a live preview by running:
+Edit the documentation Markdown files with a live preview by running:
 
 ```bash
-mkdocs serve
+zensical serve
 ```
 
 (Keep this running.)
-Then open the live preview in your browser: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+Then open the live preview in your browser at
+[http://localhost:8000/stepup-reprep/](http://localhost:8000/stepup-reprep/)
 and edit Markdown files in your IDE.
 
-Please, use [Semantic Line Breaks](https://sembr.org/)
+Pages that walk through an example include its sources and outputs
+with the block form of the [Snippets](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/)
+extension, using paths relative to `docs/`:
+
+<!-- The leading semicolons escape the snippet markers and do not appear on the page. -->
+
+````markdown
+```python
+;--8<--
+advanced_topics/unplot/plan.py
+;--8<--
+```
+````
+
+Do not use the single-line form `--8<-- "path"` in a Python code block,
+because Ruff formats the code blocks in Markdown files and rewrites that line
+as if it were a Python expression.
+The block form is not valid Python, so Ruff leaves it alone.
+
+Please use [Semantic Line Breaks](https://sembr.org/)
 because it results in cleaner file diffs when editing documentation.
 
 ## How to Make a Release

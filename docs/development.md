@@ -77,6 +77,7 @@ The examples that use Typst and Tectonic need two settings on Windows:
   A configuration that only lists the fonts of Windows suffices,
   such as `tools/fonts.conf` in this repository.
 
+The workflow `.github/workflows/pytest.yaml` makes both settings on the Windows runners of GitHub.
 The PowerShell script `tools/winvm-tools.ps1` makes both settings for the whole machine,
 for which it needs to run as administrator.
 It was written for the Windows test VM of StepUp Core,

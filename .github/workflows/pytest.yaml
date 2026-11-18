@@ -14,6 +14,7 @@ on:
       - stepup/**
       - tests/**
       - pyproject.toml
+      - .gitattributes
       - .github/workflows/pytest.yaml
   pull_request:
     # Run tests on pull requests ...
@@ -22,7 +23,13 @@ on:
       - stepup/**
       - tests/**
       - pyproject.toml
+      - .gitattributes
       - .github/workflows/pytest.yaml
+
+# The steps are written for bash, which is the bash of Git for Windows on the Windows runners.
+defaults:
+  run:
+    shell: bash
 
 jobs:
   tests:
@@ -38,6 +45,8 @@ jobs:
       # The Tectonic version is also part of the cache key of its downloads.
       TECTONIC_VERSION: 0.17.0
     strategy:
+      # A failure on one platform should not hide the results of the other platforms.
+      fail-fast: false
       matrix:
         include:
           - runner: ubuntu-24.04
@@ -48,6 +57,12 @@ jobs:
             resolution: highest
           - runner: ubuntu-26.04
             python-version: '3.15-dev'
+            resolution: highest
+          - runner: windows-2022
+            python-version: '3.11'
+            resolution: lowest-direct
+          - runner: windows-2025
+            python-version: '3.14'
             resolution: highest
     runs-on: ${{ matrix.runner }}
     steps:
@@ -69,12 +84,23 @@ jobs:
         uses: wtfjoke/setup-tectonic@v4
         with:
           tectonic-version: ${{ env.TECTONIC_VERSION }}
+      - name: Configure fontconfig for Tectonic
+        # The reason is explained under "Tests on Windows" in docs/development.md.
+        # This comes before the warm-up, so that the font cache is also built there.
+        if: runner.os == 'Windows'
+        run: |
+          FONTCONFIG_FILE=$(cygpath -w "${GITHUB_WORKSPACE}/tools/fonts.conf")
+          echo "FONTCONFIG_FILE=${FONTCONFIG_FILE}" >> "$GITHUB_ENV"
       - name: Cache the Tectonic downloads
         timeout-minutes: 3
         uses: actions/cache@v6
         with:
-          # Tectonic 0.16 used `~/.cache/Tectonic` for this instead.
-          path: ~/.cache/tectonic
+          # The parent of `tectonic -X show user-cache-dir`, as observed with Tectonic 0.17.
+          # Tectonic 0.16 used `~/.cache/Tectonic` on Linux instead.
+          path: >-
+            ${{ runner.os == 'Windows'
+            && '~/AppData/Local/TectonicProject/Tectonic/cache'
+            || '~/.cache/tectonic' }}
           key: tectonic-${{ matrix.runner }}-${{ env.TECTONIC_VERSION }}
       - name: Warm up the Tectonic cache
         # On a cache miss, Tectonic downloads its bundle and builds a LaTeX format
@@ -93,8 +119,13 @@ jobs:
         with:
           typst-version: v0.15.0
       - name: Install with the test dependencies
+        # Without precompiled bytecode, the examples that start a Jupyter kernel compile it,
+        # which brought `convert_jupyter` close to its deadline on Windows,
+        # as observed in a Windows 11 VM with Python 3.14.
         timeout-minutes: 3
-        run: uv pip install --system --resolution ${{ matrix.resolution }} -e .[tests]
+        run: >-
+          uv pip install --system --compile-bytecode
+          --resolution ${{ matrix.resolution }} -e .[tests]
       - name: Run pytest
         timeout-minutes: 15
         continue-on-error: ${{ matrix.python-version == '3.15-dev' }}

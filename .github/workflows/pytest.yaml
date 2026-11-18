@@ -162,6 +162,14 @@ jobs:
         run: >-
           uv pip install --system --compile-bytecode
           --resolution ${{ matrix.resolution }} -e .[tests]
+      - name: Warm up the Matplotlib font cache
+        # Matplotlib builds its font cache on first import.
+        # With Matplotlib 3.11.2 on the macos-26 runner, this took 20 seconds,
+        # which made the first notebook examples importing it exceed their deadline
+        # (November 2026).
+        # The `time` output shows whether this cost is still paid here.
+        timeout-minutes: 3
+        run: time python -c 'import matplotlib.pyplot'
       - name: Run pytest
         timeout-minutes: 15
         run: pytest -vv

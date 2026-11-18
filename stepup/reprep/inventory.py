@@ -10,7 +10,24 @@ from stepup.core.hash import compute_file_digest
 from stepup.core.path import Path
 from stepup.core.platform.oscompat import file_modes_available
 
-__all__ = ("FileSummary", "check_summary", "format_summary", "get_summary", "parse_summary")
+__all__ = (
+    "SYMLINK_MODE",
+    "FileSummary",
+    "check_summary",
+    "format_summary",
+    "get_summary",
+    "parse_summary",
+)
+
+
+SYMLINK_MODE = stat.S_IFLNK | 0o777
+"""The mode recorded for every symbolic link, whatever its mode on disk.
+
+Linux always gives a link these permission bits,
+macOS derives them from the umask and Windows from the read-only attribute.
+None of them uses the permission bits of a link for access checks,
+so recording one fixed mode makes an inventory independent of the platform.
+"""
 
 
 @attrs.define
@@ -25,6 +42,7 @@ class FileSummary:
     - Symbolic links are not followed.
       Their size is None and the digest is derived from the link destination path,
       not the file contents.
+      Their mode is always `SYMLINK_MODE`, i.e. `lrwxrwxrwx`.
       Links to directories are supported.
     """
 
@@ -51,8 +69,12 @@ def get_summary(path: str, root: str) -> FileSummary:
     """
     path = Path(path)
     st = path.stat(follow_symlinks=False)
-    size = None if stat.S_ISLNK(st.st_mode) else st.st_size
-    mode = stat.filemode(st.st_mode)
+    if stat.S_ISLNK(st.st_mode):
+        size = None
+        mode = stat.filemode(SYMLINK_MODE)
+    else:
+        size = st.st_size
+        mode = stat.filemode(st.st_mode)
     digest = compute_file_digest(path, follow_symlinks=False)
     relpath = path.relpath(root).normpath()
     return FileSummary(size, mode, digest, relpath)

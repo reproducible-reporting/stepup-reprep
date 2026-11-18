@@ -12,7 +12,7 @@ from collections.abc import Sequence
 from stepup.core.path import Path
 
 from .check_inventory import iter_inventory
-from .inventory import check_summary, get_summary
+from .inventory import SYMLINK_MODE, check_summary, get_summary
 
 __all__ = ("main", "zip_inventory")
 
@@ -79,7 +79,7 @@ def zip_inventory(path_inventory: str, path_zip: str | None = None):
                     # Symbolic link
                     zipinfo = zipfile.ZipInfo(src[nskip:])
                     zipinfo.create_system = 3  # 3 means Unix
-                    zipinfo.external_attr |= dst.stat(follow_symlinks=False).st_mode << 16
+                    zipinfo.external_attr |= SYMLINK_MODE << 16
                     fz.writestr(zipinfo, dst.readlink())
                 else:
                     # Actual file

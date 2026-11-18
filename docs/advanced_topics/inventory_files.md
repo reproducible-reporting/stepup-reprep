@@ -23,7 +23,8 @@ The `inventory.txt` file contains one line per file to be archived.
 Each line has four fields:
 
 - the file size,
-- the file mode,
+- the file mode, which is always `lrwxrwxrwx` for a symbolic link,
+  so that the inventory does not depend on the platform,
 - the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash
   of the file contents (regular file) or link destination (symbolic link), and
 - the relative path to the file, starting from the parent of the inventory file.

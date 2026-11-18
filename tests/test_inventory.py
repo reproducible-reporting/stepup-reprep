@@ -14,7 +14,7 @@ import pytest
 from stepup.core.path import Path
 from stepup.core.platform.oscompat import file_modes_available
 from stepup.reprep.check_inventory import main as check_main
-from stepup.reprep.inventory import FileSummary, check_summary, get_summary
+from stepup.reprep.inventory import SYMLINK_MODE, FileSummary, check_summary, get_summary
 from stepup.reprep.make_inventory import main as make_main
 from stepup.reprep.make_inventory import parse_inventory_def
 from stepup.reprep.pytest import mask_inventory_modes
@@ -194,6 +194,7 @@ def test_zip_inventory(path_tmp):
         zip_main(["inventory2.txt", "archive.zip"])
         with zipfile.ZipFile("archive.zip") as fz:
             assert fz.read("link.txt") == b"sub/dest.txt"
+            assert fz.getinfo("link.txt").external_attr >> 16 == SYMLINK_MODE
         Path("sub/dest.txt").remove()
         Path("sub/").rmdir()
         Path("link.txt").remove()

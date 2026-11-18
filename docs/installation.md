@@ -113,8 +113,11 @@ so this URL may reach LibreOffice in a form that it cannot use.
 ### WeasyPrint
 
 [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint] uses WeasyPrint,
-which loads the Pango and GLib libraries of GTK.
+which loads the Pango and GLib libraries of GTK, and the HarfBuzz-Subset library.
 Pip does not install these libraries.
+As of WeasyPrint 70.0, a missing HarfBuzz-Subset library only causes a `DeprecationWarning`,
+but future versions of WeasyPrint will require it.
+On Debian and Ubuntu, it is provided by the package `libharfbuzz-subset0`.
 Install them as explained in the [documentation of WeasyPrint][weasyprint-windows].
 
 ### Jupyter Kernels

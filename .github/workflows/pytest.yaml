@@ -129,6 +129,15 @@ jobs:
         uses: typst-community/setup-typst@v5
         with:
           typst-version: v0.15.0
+      - name: Install HarfBuzz-Subset for WeasyPrint
+        # WeasyPrint 70.0 warns on import when this library is missing,
+        # which pytest turns into an error.
+        # As of November 2026, the ubuntu-26.04 runner image does not include it.
+        if: runner.os == 'Linux'
+        timeout-minutes: 3
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libharfbuzz-subset0
       - name: Install with the test dependencies
         # Without precompiled bytecode, the examples that start a Jupyter kernel compile it,
         # which brought `convert_jupyter` close to its deadline on Windows,

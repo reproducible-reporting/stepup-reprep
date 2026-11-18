@@ -98,13 +98,13 @@ the creation of a publication from raw research results.
 ```text
 build automation
 build tool
+cross-platform
 extension
 Inkscape
 Jupyter notebook
 LaTeX
 Markdown
 open science
-POSIX
 publication repository
 Python
 reproducibility

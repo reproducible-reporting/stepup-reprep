@@ -818,7 +818,7 @@ def convert_markdown(
         to be included in the HTML header.
         Note that one may also specify CSS file in the markdown header.
         Defaults to `${REPREP_MARKDOWN_CSS}` if the variable is set,
-        which is interpreted as a colon-separated list of files.
+        which is interpreted as a list of files separated by `:`, or by `;` on Windows.
     optional
         If `True`, the step is only executed when needed by other steps.
     resources

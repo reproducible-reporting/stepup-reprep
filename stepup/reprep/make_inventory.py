@@ -6,7 +6,7 @@ There are two kinds of inventory files:
 
 - ``inventory.def`` defines rules to include and exclude files to be archived.
 - ``inventory.txt`` is the result of a processing a ``inventory.def`` file with this script.
-  It contains every individual file, together with its size in bytes and its blake2b hexdigest.
+  It contains every individual file, together with its size in bytes and its SHA-256 hexdigest.
 """
 
 import argparse

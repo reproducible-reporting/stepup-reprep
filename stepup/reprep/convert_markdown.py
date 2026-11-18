@@ -46,7 +46,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=(),
         help="Local CSS files to link to in the HTML header. "
         "The default value is ${REPREP_MARKDOWN_CSS} (if defined) "
-        "and it is interpreted as a colon-separated list.",
+        "and it is interpreted as a list separated by `:`, or by `;` on Windows.",
     )
     return parser.parse_args(argv)
 

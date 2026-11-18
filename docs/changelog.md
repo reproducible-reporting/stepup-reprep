@@ -19,7 +19,69 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+This release ports StepUp RepRep to Windows, on top of StepUp Core 4.1.
+
+### Added
+
+- StepUp RepRep runs natively on Windows, without WSL.
+  [Windows](installation.md#windows) in the installation instructions
+  lists the functions that are tested on Windows, and what the other functions need there.
+  The main points for Windows are:
+
+    - The tests cover [`compile_tectonic()`][stepup.reprep.api.compile_tectonic]
+      and [`compile_typst()`][stepup.reprep.api.compile_typst] on Windows,
+      but no function that needs TeX Live, Inkscape, `mutool`, LibreOffice or WeasyPrint.
+    - [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf],
+      [`diff_latex()`][stepup.reprep.api.diff_latex],
+      and [`wrap_git()`][stepup.reprep.api.wrap_git] with `shell=True`
+      need a POSIX shell, such as the one of Git for Windows.
+    - [`convert_jupyter()`][stepup.reprep.api.convert_jupyter]
+      and [`execute_papermill()`][stepup.reprep.api.execute_papermill]
+      connect to their Jupyter kernel through TCP ports on `127.0.0.1`,
+      because the Windows wheels of pyzmq have no IPC transport.
+      On Linux and macOS, they still use IPC sockets.
+    - `srr-check-inventory` does not compare file modes on Windows,
+      which has no permission bits.
+      Inventories and ZIP files made on Windows record other file modes
+      than those made of the same files on Linux and macOS.
+    - The items of `REPREP_MARKDOWN_CSS` are separated by `;` on Windows, as in `PATH`.
+
+- `run_example()` in `stepup.reprep.pytest` accepts the keyword argument `rules`
+  of `run_example()` in `stepup.core.pytest`.
+  Its default, `OUTPUT_RULES` in `stepup.reprep.pytest`,
+  extends the rules of StepUp Core with `INVENTORY_OUTPUT`,
+  which hides the permission bits in the expected inventories of an example
+  on a platform without them.
+
+### Changed
+
+- StepUp Core 4.1.0rc4 or newer is required.
+- `pyzmq` is a new direct dependency,
+  because StepUp RepRep checks whether ZeroMQ has an IPC transport.
+  It was already installed as a dependency of `jupyter_client`.
+- The `path` library is no longer a direct dependency.
+  StepUp RepRep uses `Path` from `stepup.core.path` instead,
+  which has `/` as its only separator on every platform.
+- `ipc_kernel_config()` in `stepup.reprep.jupyter_kernel` is renamed to `kernel_config()`,
+  because it only selects the IPC transport where ZeroMQ supports it.
+- The tools of StepUp RepRep read text files as UTF-8,
+  and write them as UTF-8 with `\n` line endings, on every platform.
+  Previously, they used the encoding and the line endings of the platform.
+- Importing a module of `stepup.reprep` makes the standard output and error
+  write UTF-8 with `\n` line endings, unless they are a terminal,
+  because StepUp decodes the output of every step as UTF-8.
+  This also applies to a `plan.py` that imports `stepup.reprep.api`.
+- [`flatten_latex()`][stepup.reprep.api.flatten_latex] keeps an absolute path
+  in `\includegraphics`, `\thebibliography` and `\verbatiminput` as it is.
+  Previously, it was rewritten as a path relative to the flattened file.
+
+### Fixed
+
+- `srr-sync-zenodo` rejects an ISNI written as a URL also with `idutils` 1.7,
+  which accepts this form, as observed with `idutils` 1.7.2.
+- `convert_markdown()` in `stepup.reprep.convert_markdown` treats a string `paths_css`
+  as a single path, as documented.
+  It used to split the string at colons.
 
 ## [4.0.2][] - 2026-09-26 {: #v4.0.2 }
 

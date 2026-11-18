@@ -24,7 +24,7 @@ Each line has four fields:
 
 - the file size,
 - the file mode,
-- the [BLAKE2b](https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2) hash
+- the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash
   of the file contents (regular file) or link destination (symbolic link), and
 - the relative path to the file, starting from the parent of the inventory file.
 
@@ -69,15 +69,15 @@ An exception is raised when no matching paths are found.
 
 ## Creating `inventory.txt` Files
 
-### Command-line Tool `stepup make-inventory`
+### Command-line Tool `srr-make-inventory`
 
 One can create an inventory file on the command-line as follows:
 
 ```bash
-stepup make-inventory -i inventory.def -o inventory.txt
+srr-make-inventory -i inventory.def -o inventory.txt
 ```
 
-See `stepup make-inventory --help` for more details.
+See `srr-make-inventory --help` for more details.
 This tool is suitable for creating inventory files of external datasets.
 
 ### StepUp RepRep Function `make_inventory`
@@ -102,12 +102,12 @@ make_inventory("inventory.txt", path_def="inventory.def")
 
 ## Creating a ZIP Archive From a `inventory.txt` File
 
-### Command-line Tool `stepup zip-inventory`
+### Command-line Tool `srr-zip-inventory`
 
 Given an `inventory.txt` file, the corresponding ZIP file is created with:
 
 ```bash
-stepup zip-inventory inventory.txt
+srr-zip-inventory inventory.txt
 ```
 
 This is a command-line wrapper around the `zip_inventory` function discussed below.
@@ -142,11 +142,11 @@ for more details on Python's (lacking) support for symbolic links in ZIP files.
 If you just want to check the file sizes, modes and hashes of an inventory, run:
 
 ```bash
-stepup check-inventory inventory.txt
+srr-check-inventory inventory.txt
 ```
 
 This can be useful in the following cases:
 
 - When you work with a remote dataset, you can check if the files in the inventory have changed.
-- When you unpack a ZIP file created `stepup zip-inventory` or `zip_inventory()`,
+- When you unpack a ZIP file created `srr-zip-inventory` or `zip_inventory()`,
   you can check if the files are not affected by bit rot or other data integrity issues.

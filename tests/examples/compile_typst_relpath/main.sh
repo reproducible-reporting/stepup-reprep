@@ -18,4 +18,4 @@ wait
 [[ -f source/document.deps.json ]] || exit 1
 [[ -f source/document-inventory.txt ]] || exit 1
 grep '../out.pdf' source/document-inventory.txt
-[[ $(wc -l source/document-inventory.txt | cut -d' ' -f1) = 4 ]] || exit 1
+[[ $(wc -l < source/document-inventory.txt) -eq 4 ]] || exit 1

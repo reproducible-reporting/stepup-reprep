@@ -24,4 +24,4 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f inventory.txt ]] || exit 1
 [[ -f upload.zip ]] || exit 1
-[[ $(wc -l inventory.txt | cut -d' ' -f1) -eq 5 ]] || exit 1
+[[ $(wc -l < inventory.txt) -eq 5 ]] || exit 1

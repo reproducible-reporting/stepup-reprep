@@ -611,12 +611,12 @@ Small improvements and a wrapper for git commands that depend on the commit id.
 
 Integration with papermill to execute notebooks, and a few bug fixes.
 
-## Added
+### Added
 
 - Execution of notebooks with [papermill](https://papermill.readthedocs.io),
   using the [`execute_papermill()`][stepup.reprep.api.execute_papermill] API function.
 
-## Fixed
+### Fixed
 
 - Fixed outdated information in the Zenodo synchronization documentation,
   and fixed corresponding outdated code.

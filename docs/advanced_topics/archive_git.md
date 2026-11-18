@@ -9,9 +9,9 @@ SPDX-FileCopyrightText: 2024 Toon Verstraelen <Toon.Verstraelen@UGent.be>
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Archive a Git Repository (of a StepUp project)
+# Archive a Git Repository (of a StepUp Project)
 
-## Git Repositories Versus Long-term Archival
+## Git Repositories versus Long-Term Archival
 
 You may consider your online Git provider (GitHub, GitLab, ...) as an archival solution,
 for example, for datasets and publication source files.
@@ -78,7 +78,7 @@ To replace these pointers with the actual files, run:
 git lfs checkout
 ```
 
-### Migrate from an LFS-enabled Git Repository
+### Migrate from an LFS-Enabled Git Repository
 
 If you want to archive the entire history including the large files,
 you will need to migrate your Git repository back to a normal one without LFS.

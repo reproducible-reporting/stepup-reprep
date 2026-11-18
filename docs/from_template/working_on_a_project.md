@@ -60,7 +60,7 @@ To remove all stale files (defined in `.gitignore`), run `git clean -dfX`.
 However, do not use this command until you have committed all important files,
 as it may inadvertently remove work in progress.
 
-### Managing software
+### Managing Software
 
 It is recommended to *pin* the versions of software dependencies,
 so everyone is working with a consistent software environment.

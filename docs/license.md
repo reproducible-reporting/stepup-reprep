@@ -11,7 +11,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # License
 
-## Source code license
+## Source Code License
 
 StepUp RepRep is free software: you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License
@@ -25,7 +25,7 @@ See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with this program.
 If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
 
-## Documentation license
+## Documentation License
 
 StepUp RepRep's documentation is distributed
 under the [Creative Commons CC BY-SA 4.0 license][CCBYSA4].

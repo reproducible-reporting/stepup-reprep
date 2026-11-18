@@ -69,7 +69,7 @@ An exception is raised when no matching paths are found.
 
 ## Creating `inventory.txt` Files
 
-### Command-line Tool `srr-make-inventory`
+### Command-Line Tool `srr-make-inventory`
 
 One can create an inventory file on the command-line as follows:
 
@@ -100,9 +100,9 @@ from stepup.reprep.api import make_inventory
 make_inventory("inventory.txt", path_def="inventory.def")
 ```
 
-## Creating a ZIP Archive From a `inventory.txt` File
+## Creating a ZIP Archive from a `inventory.txt` File
 
-### Command-line Tool `srr-zip-inventory`
+### Command-Line Tool `srr-zip-inventory`
 
 Given an `inventory.txt` file, the corresponding ZIP file is created with:
 
@@ -124,7 +124,7 @@ It differs from the conventional `zip` program in the following ways:
 - The ZIP file is reproducible: all time stamps in the ZIP file are set to January 1st, 1980.
 - By default, symbolic links are added as links, instead of the contents they point to.
 
-### Unpacking the ZIP file
+### Unpacking the ZIP File
 
 To unpack the ZIP file, use the following command:
 

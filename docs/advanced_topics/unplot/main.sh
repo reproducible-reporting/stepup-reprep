@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-git clean -dfX .
+git clean -qdfX .
+export COLUMNS=80
 unset STEPUP_ROOT
-stepup -n -w1 | sed -f ../../clean_stdout.sed > stdout.txt
+unset STEPUP_DEBUG
+sb --no-progress -j 1 | sed -f ../../clean_stdout.sed > stdout.txt

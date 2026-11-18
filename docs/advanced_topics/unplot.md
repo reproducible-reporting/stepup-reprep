@@ -114,11 +114,11 @@ advanced_topics/unplot/plan.py
 --8<--
 ```
 
-To run the example, make the scripts executable and run StepUp:
+To run the example, make the plan executable and run StepUp:
 
 ```bash
-chmod +x plan.py tile.py
-stepup -n -w1
+chmod +x plan.py
+sb -j 1
 ```
 
 You should see the following terminal output:

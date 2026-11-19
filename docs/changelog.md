@@ -19,6 +19,10 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+(no changes yet)
+
+## [4.1.0rc2][] - 2026-11-19 {: #v4.1.0rc2 }
+
 ### Fixed
 
 - [`wrap_git()`][stepup.reprep.api.wrap_git] works with a detached HEAD,
@@ -30,7 +34,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 - [`wrap_git()`][stepup.reprep.api.wrap_git] locates the files of the git directory
   with `git rev-parse --git-path`, so that it works in worktrees and submodules.
 
-## [4.1.0rc1][] - 2026-09-26 {: #v4.1.0rc1 }
+## [4.1.0rc1][] - 2026-11-18 {: #v4.1.0rc1 }
 
 This release ports StepUp RepRep to macOS and Windows, on top of StepUp Core 4.1.
 
@@ -1019,6 +1023,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.1.0rc2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0rc2
 [4.1.0rc1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0rc1
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
 [4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1

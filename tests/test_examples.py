@@ -47,6 +47,8 @@ OVERWRITE_EXPECTED = "STEPUP_OVERWRITE_EXPECTED" in os.environ
         "sync_zenodo",
         "unplot",
         "wrap_git",
+        "wrap_git_detached",
+        "wrap_git_packed",
         "zip_def",
         "zip_inventory",
         "zip_tree",

@@ -1,0 +1,11 @@
+ STARTUP │ Watching 3 directories
+ STARTUP │ Checking 5 file(s) for changes
+ UPDATED │ .git/logs/HEAD (digest c7f1fba8 ➜ 08be1bf7, size 159 ➜ 309)
+   PHASE │ build
+   START │ srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+ SUCCESS │ srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+DIRECTOR │ Ran 1 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Wrote graph to current_graph_2.txt, current_graph_2_provenance.dot and current_graph_2_dependency.dot
+DIRECTOR │ See you!

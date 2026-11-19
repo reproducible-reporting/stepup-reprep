@@ -34,30 +34,74 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def git_paths(*names: str) -> list[Path]:
+    """Locate files in the git directory, as `git rev-parse --git-path` does.
+
+    This takes worktrees and submodules into account,
+    in which `.git` is a file and some files are found in a common git directory.
+
+    Parameters
+    ----------
+    names
+        Paths relative to the git directory, e.g. `HEAD` or `refs/heads/main`.
+
+    Returns
+    -------
+    paths
+        The corresponding paths, relative to the current directory unless git returns them absolute.
+    """
+    git_args = ["git", "rev-parse"]
+    for name in names:
+        git_args.extend(["--git-path", name])
+    cp = run_subprocess(shlex.join(git_args), check=False)
+    if cp.returncode != 0:
+        raise RuntimeError(f"Failed to locate files in the git directory:\n{cp.stderr}")
+    return [Path(line) for line in cp.stdout.splitlines()]
+
+
+def amend_head_inputs() -> None:
+    """Amend the step with the files in the git directory that determine the commit of HEAD.
+
+    These are:
+
+    - `HEAD` itself, which contains the commit id when HEAD is detached.
+    - When HEAD is a symbolic reference, the loose ref file of the branch it points to.
+    - When that branch has no loose ref file (e.g. after `git gc`),
+      `packed-refs` and the reflog `logs/HEAD`, if present.
+      The reflog is needed because a new commit creates a loose ref
+      without changing `packed-refs`.
+
+    Raises
+    ------
+    RuntimeError
+        When HEAD points to a branch that has no loose ref file and there is no `packed-refs`.
+        This happens on a branch without commits,
+        and in repositories with the `reftable` ref storage format, which is not supported.
+    """
+    (path_head,) = git_paths("HEAD")
+    amend(inp=path_head)
+    with open(path_head, encoding="utf-8") as fh:
+        head_content = fh.read().strip()
+    if not head_content.startswith("ref: "):
+        return
+    ref = head_content.removeprefix("ref: ").strip()
+    path_ref, path_packed, path_log = git_paths(ref, "packed-refs", "logs/HEAD")
+    if path_ref.is_file():
+        amend(inp=path_ref)
+    elif path_packed.is_file():
+        amend(inp=[path_packed, path_log] if path_log.is_file() else path_packed)
+    else:
+        raise RuntimeError(
+            f"Cannot find {ref} in {path_ref} or {path_packed}. "
+            "Either the branch has no commits yet, "
+            "or the repository uses the reftable ref storage format, which is not supported."
+        )
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     """Main program."""
     args = parse_args(argv)
-
-    cp = run_subprocess(
-        "git rev-parse --show-toplevel",
-        check=False,
-    )
-    if cp.returncode != 0:
-        raise RuntimeError("Failed to determine git root directory.")
-    git_root = Path(cp.stdout.strip()).relpath()
-
-    # The commit that git reports depends on HEAD and on the branch file it points to,
-    # so both are inputs of this step.
-    head_path = git_root / ".git" / "HEAD"
-    amend(inp=head_path)
-    with open(head_path, encoding="utf-8") as fh:
-        head_content = fh.read().strip()
-        if not head_content.startswith("ref: "):
-            raise ValueError("HEAD is not a symbolic reference, cannot determine commit id.")
-    ref_path = head_content[5:].strip()
-
-    amend(inp=git_root / ".git" / ref_path)
-
+    amend_head_inputs()
     command = "GIT_PAGER=cat " + shlex.join(args.git_args)
     cp = run_subprocess(command, check=False)
     if args.stdout is None:

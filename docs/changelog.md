@@ -19,7 +19,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+### Fixed
+
+- [`wrap_git()`][stepup.reprep.api.wrap_git] works with a detached HEAD,
+  e.g. after `git checkout v1.2.0` or in a pull request checkout on GitHub Actions.
+  The step then depends on `.git/HEAD` only.
+- [`wrap_git()`][stepup.reprep.api.wrap_git] works when the current branch
+  is only stored in `.git/packed-refs`, e.g. after `git gc`.
+  The step then depends on `.git/packed-refs` and `.git/logs/HEAD`.
+- [`wrap_git()`][stepup.reprep.api.wrap_git] locates the files of the git directory
+  with `git rev-parse --git-path`, so that it works in worktrees and submodules.
 
 ## [4.1.0rc1][] - 2026-09-26 {: #v4.1.0rc1 }
 

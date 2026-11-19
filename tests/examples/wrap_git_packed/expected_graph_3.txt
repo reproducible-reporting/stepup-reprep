@@ -1,0 +1,53 @@
+root:
+             product   file:plan.py
+             product   step:./plan.py
+
+file:plan.py
+               state = CONFIRMED
+             creator   root:
+                sink   step:./plan.py
+
+step:./plan.py
+               state = SUCCEEDED
+                need = PLAN
+           using_env = STEPUP_PATH_FILTER [dynamic]
+             creator   root:
+              source   file:plan.py
+             product   st:.git/
+             product   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+
+st:.git/
+             creator   step:./plan.py
+             product   file:.git/HEAD
+             product   file:.git/logs/HEAD
+             product   file:.git/packed-refs
+
+step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+               state = SUCCEEDED
+                need = DEFAULT
+             creator   step:./plan.py
+              source   file:.git/HEAD [dynamic]
+              source   file:.git/logs/HEAD [dynamic]
+              source   file:.git/packed-refs [dynamic]
+             product   file:head.txt
+                sink   file:head.txt
+
+file:head.txt
+               state = BUILT
+             creator   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+              source   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+
+file:.git/HEAD
+               state = CONFIRMED
+             creator   st:.git/
+                sink   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+
+file:.git/logs/HEAD
+               state = CONFIRMED
+             creator   st:.git/
+                sink   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD
+
+file:.git/packed-refs
+               state = CONFIRMED
+             creator   st:.git/
+                sink   step:srr-wrap-git --stdout=head.txt -- git rev-parse HEAD

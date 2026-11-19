@@ -1600,20 +1600,29 @@ def wrap_git(
 ) -> StepInfo:
     """Create a step to run a git command.
 
-    The provide the necessary input for StepUp, git is called through a wrapper script.
-    This wrapper first infers the git root directory with `git rev-parse --show-toplevel`.
-    It then amends the input dependencies with the following two files:
+    To provide the necessary input for StepUp, git is called through a wrapper script.
+    This wrapper amends the input dependencies with the files in the git directory
+    that determine the current commit:
 
-      - gitroot / '.git/HEAD'
-      - gitroot / '.git/refs/branches/<branch>'
+    - `.git/HEAD`, which is the only input when HEAD is detached.
+    - `.git/refs/heads/<branch>`, when HEAD points to a branch.
+    - `.git/packed-refs` and `.git/logs/HEAD`,
+      when HEAD points to a branch that is only stored in `.git/packed-refs`,
+      e.g. after `git gc`.
 
     As a result, the step will be rescheduled when the current commit id or branch changes.
+    Repositories with the `reftable` ref storage format are not supported.
 
-    It is recommended to make gitroot / '.git/' and all of its contents static as follows:
+    The git directory and all of its contents must be static.
+    When the git root is the StepUp root, this is done as follows:
 
     ```python
     static(".git/")
     ```
+
+    In a worktree or a submodule, `.git` is a file instead of a directory.
+    The directory to declare static is then the one shown by
+    `git rev-parse --path-format=absolute --git-common-dir`.
 
     Parameters
     ----------

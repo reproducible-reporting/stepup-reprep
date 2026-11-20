@@ -19,43 +19,20 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-### Changed
-
-- StepUp Core 4.1.0 or newer is required.
-- The `pymupdf` dependency is replaced by `pymupdf-lite` 2.0 or newer.
-  Since version 2.0, `pymupdf` depends on `pymupdf-layout`, `pymupdf4llm` and `onnxruntime`,
-  which StepUp RepRep does not use.
-  `pymupdf-lite` provides the same `pymupdf` module without these dependencies.
-  It conflicts with `pymupdf` because both install the `pymupdf` module,
-  so they should not be installed in the same environment.
-
-## [4.1.0rc2][] - 2026-11-19 {: #v4.1.0rc2 }
-
-### Fixed
-
-- [`wrap_git()`][stepup.reprep.api.wrap_git] works with a detached HEAD,
-  e.g. after `git checkout v1.2.0` or in a pull request checkout on GitHub Actions.
-  The step then depends on `.git/HEAD` only.
-- [`wrap_git()`][stepup.reprep.api.wrap_git] works when the current branch
-  is only stored in `.git/packed-refs`, e.g. after `git gc`.
-  The step then depends on `.git/packed-refs` and `.git/logs/HEAD`.
-- [`wrap_git()`][stepup.reprep.api.wrap_git] locates the files of the git directory
-  with `git rev-parse --git-path`, so that it works in worktrees and submodules.
-
-## [4.1.0rc1][] - 2026-11-18 {: #v4.1.0rc1 }
+## [4.1.0][] - 2026-11-20 {: #v4.1.0 }
 
 This release ports StepUp RepRep to macOS and Windows, on top of StepUp Core 4.1.
 
 ### Added
 
+- StepUp RepRep runs on macOS, and its test suite runs there in CI.
+  [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] no longer uses
+  the `--suffix` option of `mktemp`, which macOS lacks.
 - StepUp RepRep runs natively on Windows, without WSL.
   [Windows](installation.md#windows) in the installation instructions
   lists the functions that are tested on Windows, and what the other functions need there.
-  The main points for Windows are:
+  The main differences with Linux and macOS are:
 
-    - The tests cover [`compile_tectonic()`][stepup.reprep.api.compile_tectonic]
-      and [`compile_typst()`][stepup.reprep.api.compile_typst] on Windows,
-      but no function that needs TeX Live, Inkscape, `mutool`, LibreOffice or WeasyPrint.
     - [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf],
       [`diff_latex()`][stepup.reprep.api.diff_latex],
       and [`wrap_git()`][stepup.reprep.api.wrap_git] with `shell=True`
@@ -64,60 +41,47 @@ This release ports StepUp RepRep to macOS and Windows, on top of StepUp Core 4.1
       and [`execute_papermill()`][stepup.reprep.api.execute_papermill]
       connect to their Jupyter kernel through TCP ports on `127.0.0.1`,
       because the Windows wheels of pyzmq have no IPC transport.
-      On Linux and macOS, they still use IPC sockets.
     - `srr-check-inventory` does not compare file modes on Windows,
       which has no permission bits.
-      Inventories and ZIP files made on Windows record other file modes
-      than those made of the same files on Linux and macOS.
     - The items of `REPREP_MARKDOWN_CSS` are separated by `;` on Windows, as in `PATH`.
 
-- `run_example()` in `stepup.reprep.pytest` accepts the keyword argument `rules`
-  of `run_example()` in `stepup.core.pytest`.
-  Its default, `OUTPUT_RULES` in `stepup.reprep.pytest`,
-  extends the rules of StepUp Core with `INVENTORY_OUTPUT`,
-  which hides the permission bits in the expected inventories of an example
-  on a platform without them.
+- `run_example()` in `stepup.reprep.pytest` accepts the keyword argument `rules`,
+  as in StepUp Core.
+  Its default, `OUTPUT_RULES`, hides the permission bits in expected inventories
+  on platforms without them.
 
 ### Changed
 
-- StepUp Core 4.1.0rc4 or newer is required.
-- `pyzmq` is a new direct dependency,
-  because StepUp RepRep checks whether ZeroMQ has an IPC transport.
-  It was already installed as a dependency of `jupyter_client`.
+- StepUp Core 4.1.0 or newer is required.
+- The `pymupdf` dependency is replaced by `pymupdf-lite` 2.0 or newer,
+  which provides the same module without the unused dependencies of `pymupdf` 2.0
+  (`pymupdf-layout`, `pymupdf4llm` and `onnxruntime`).
+  Both install the `pymupdf` module, so they should not be installed in the same environment.
 - The `path` library is no longer a direct dependency.
-  StepUp RepRep uses `Path` from `stepup.core.path` instead,
-  which has `/` as its only separator on every platform.
 - `ipc_kernel_config()` in `stepup.reprep.jupyter_kernel` is renamed to `kernel_config()`,
   because it only selects the IPC transport where ZeroMQ supports it.
-- The tools of StepUp RepRep read text files as UTF-8,
-  and write them as UTF-8 with `\n` line endings, on every platform.
-  Previously, they used the encoding and the line endings of the platform.
-- Importing a module of `stepup.reprep` makes the standard output and error
-  write UTF-8 with `\n` line endings, unless they are a terminal,
-  because StepUp decodes the output of every step as UTF-8.
-  This also applies to a `plan.py` that imports `stepup.reprep.api`.
+- The tools of StepUp RepRep read and write text files as UTF-8 with `\n` line endings
+  on every platform, instead of using the encoding and line endings of the platform.
+  Importing a module of `stepup.reprep` does the same for the standard output and error,
+  unless they are a terminal.
 - [`flatten_latex()`][stepup.reprep.api.flatten_latex] keeps an absolute path
-  in `\includegraphics`, `\thebibliography` and `\verbatiminput` as it is.
-  Previously, it was rewritten as a path relative to the flattened file.
+  in `\includegraphics`, `\thebibliography` and `\verbatiminput` as it is,
+  instead of making it relative to the flattened file.
 - [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] runs `soffice` by default,
-  instead of `libreoffice`.
-  The executable of LibreOffice is named `soffice` on every platform,
-  while `libreoffice` is a launcher added by Linux distributions.
+  the name of the LibreOffice executable on every platform, instead of `libreoffice`.
   `REPREP_LIBREOFFICE` still overrides the default.
-- Inventories and ZIP files record the mode of a symbolic link as `lrwxrwxrwx` on every platform.
-  Previously, they recorded the mode on disk,
-  which depends on the umask on macOS and on the read-only attribute on Windows.
+- Inventories and ZIP files record the mode of a symbolic link as `lrwxrwxrwx` on every platform,
+  instead of the platform-dependent mode on disk.
 
 ### Fixed
 
-- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] works on macOS,
-  where `mktemp` has no `--suffix` option.
-
-- `srr-sync-zenodo` rejects an ISNI written as a URL also with `idutils` 1.7,
-  which accepts this form, as observed with `idutils` 1.7.2.
+- `srr-sync-zenodo` rejects an ISNI written as a URL,
+  which `idutils` 1.7 accepts, as observed with 1.7.2.
 - `convert_markdown()` in `stepup.reprep.convert_markdown` treats a string `paths_css`
-  as a single path, as documented.
-  It used to split the string at colons.
+  as a single path, as documented, instead of splitting it at colons.
+- [`wrap_git()`][stepup.reprep.api.wrap_git] works with a detached HEAD,
+  with a branch stored only in `.git/packed-refs` (e.g. after `git gc`),
+  and in worktrees and submodules.
 
 ## [4.0.2][] - 2026-09-26 {: #v4.0.2 }
 
@@ -1031,8 +995,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
-[4.1.0rc2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0rc2
-[4.1.0rc1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0rc1
+[4.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
 [4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1
 [4.0.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.0

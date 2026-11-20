@@ -186,6 +186,11 @@ known-first-party = ["stepup"]
 [tool.setuptools]
 packages = ["stepup.reprep"]
 
+[tool.setuptools.package-data]
+# Data files are listed explicitly instead of relying on the file list of setuptools-scm,
+# because setuptools-scm 10.3.4 omits them when building a wheel from the sdist on Windows.
+"stepup.reprep" = ["*.lark", "*.yaml"]
+
 [tool.setuptools_scm]
 version_scheme = "post-release"
 local_scheme = "no-local-version"

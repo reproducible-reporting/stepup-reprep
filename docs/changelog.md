@@ -19,6 +19,16 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
+(no changes yet)
+
+## [4.1.1][] - 2026-11-20 {: #v4.1.1 }
+
+### Fixed
+
+- Wheels built from the sdist on Windows include the data files
+  `bibtex.lark` and `zenodo_vocabularies.yaml`,
+  which setuptools-scm 10.3.4 left out.
+
 ## [4.1.0][] - 2026-11-20 {: #v4.1.0 }
 
 This release ports StepUp RepRep to macOS and Windows, on top of StepUp Core 4.1.
@@ -995,6 +1005,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.1.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.1
 [4.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
 [4.0.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.1

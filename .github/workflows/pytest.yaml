@@ -73,14 +73,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v6
-        timeout-minutes: 1
+        timeout-minutes: 3
       - name: Set up Python ${{ matrix.python-version }}
-        timeout-minutes: 1
+        timeout-minutes: 3
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Set up uv
-        timeout-minutes: 1
+        timeout-minutes: 3
         uses: astral-sh/setup-uv@v10.0.1
         with:
           enable-cache: true

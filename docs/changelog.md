@@ -19,7 +19,15 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+### Changed
+
+- StepUp Core 4.1.0 or newer is required.
+- The `pymupdf` dependency is replaced by `pymupdf-lite` 2.0 or newer.
+  Since version 2.0, `pymupdf` depends on `pymupdf-layout`, `pymupdf4llm` and `onnxruntime`,
+  which StepUp RepRep does not use.
+  `pymupdf-lite` provides the same `pymupdf` module without these dependencies.
+  It conflicts with `pymupdf` because both install the `pymupdf` module,
+  so they should not be installed in the same environment.
 
 ## [4.1.0rc2][] - 2026-11-19 {: #v4.1.0rc2 }
 

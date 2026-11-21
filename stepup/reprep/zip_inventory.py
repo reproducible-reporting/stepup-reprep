@@ -37,8 +37,7 @@ def main(argv: Sequence[str] | None = None):
     parser.add_argument(
         "inventory",
         help="The inventory file with all files to be zipped, with suffix .jsonl. "
-        "The files will be checked against the inventory before archiving. "
-        "The inventory file itself is not included in the ZIP.",
+        "The files will be checked against the inventory before archiving.",
     )
     parser.add_argument("output_zip", nargs="?", help="Destination zip file.")
     args = parser.parse_args(argv)
@@ -55,7 +54,6 @@ def zip_inventory(path_inventory: StrPath, path_zip: StrPath | None = None):
         All files listed in the inventory are checked and then zipped.
         The paths in the ZIP file are those of the records,
         so they must not start with `../`.
-        The inventory itself is not included in the ZIP file.
     path_zip
         The ZIP file to be created.
         When not given, the `.zip` suffix is added to the prefix of `path_inventory`.

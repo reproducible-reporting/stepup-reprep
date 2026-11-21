@@ -206,12 +206,12 @@ It differs from the conventional `zip` program in the following ways:
 - The paths in the ZIP file are those in the inventory.
   A file outside the directory of the inventory, with a path starting with `../`,
   cannot be archived, so such an inventory is refused.
-- The ZIP file contains only the files listed in the inventory, not the inventory itself,
-  which suits a ZIP file for arXiv or a publisher.
-  For archival, keep the inventory as a separate file next to the ZIP file,
-  e.g. by uploading both to Zenodo, so that the unpacked files can be checked.
 - The ZIP file is reproducible: all time stamps in the ZIP file are set to January 1st, 1980.
 - Symbolic links are added as links, instead of the contents they point to.
+
+For archival, keep the inventory as a separate file next to the ZIP file,
+e.g. by uploading both to Zenodo,
+so that the unpacked files can be checked with `srr-check-inventory`.
 
 ### Unpacking the ZIP File
 

@@ -49,7 +49,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
       and the configuration file no longer has a `description` field.
     - `stepup build --offline` skips the synchronization.
     - The `endpoint` field of the configuration file is required.
-      It used to default to the Zenodo Sandbox, which Zenodo meant for testing.
+      It used to default to the Zenodo Sandbox.
 
 StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
@@ -134,8 +134,7 @@ To create the token, go to the settings of your
 Enable the `deposit:actions` and `deposit:write` scopes when creating a new token.
 Save the token immediately, as it cannot be retrieved later.
 
-For a trial run, e.g. to try out `srr-sync-zenodo`, you can use the Zenodo Sandbox instead,
-which Zenodo meant for testing.
+For a trial run, e.g. to try out `srr-sync-zenodo`, you can use the Zenodo Sandbox instead.
 It has accounts and tokens of its own,
 so create the token in the settings of your
 [Zenodo Sandbox account](https://sandbox.zenodo.org/account/settings/applications/tokens/new/),
@@ -181,8 +180,8 @@ The command `srr-sync-zenodo` will create or synchronize the online dataset
 and store the record ID in the file named by the `path_record_id` field.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.
 
-The files to be uploaded are not listed in the configuration file,
-but in an [inventory](inventory_files.md), which also holds the MD5 checksum of each file.
+The files to upload are listed in an [inventory](inventory_files.md),
+which also holds the MD5 checksum of each file.
 `srr-sync-zenodo` compares these checksums with the ones that Zenodo reports,
 and uploads only the files that differ.
 In a StepUp workflow, the inventory is written and kept up to date by a separate step.
@@ -280,7 +279,7 @@ If you run into either limitation,
 consider uploading a ZIP archive made with [`zip_inventory()`][stepup.reprep.api.zip_inventory]
 instead of separate files.
 Upload the inventory of the ZIP archive as well,
-because the ZIP archive does not contain it and it is needed to check the unpacked files.
+because `srr-check-inventory` needs it to check the unpacked files.
 `srr-sync-zenodo` rejects both cases before Zenodo is contacted.
 
 ### Files to Commit

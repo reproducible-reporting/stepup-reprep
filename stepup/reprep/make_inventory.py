@@ -209,8 +209,6 @@ def write_inventory(
 ):
     """Write an inventory file.
 
-    The files are hashed and written one at a time, so only the list of paths is kept in memory.
-
     Parameters
     ----------
     path_out

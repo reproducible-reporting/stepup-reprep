@@ -1034,7 +1034,7 @@ PRODUCTION_ENDPOINT = "https://zenodo.org/api"
 """The endpoint of the Zenodo instance on which datasets are published."""
 
 SANDBOX_ENDPOINT = "https://sandbox.zenodo.org/api"
-"""The endpoint of the Zenodo instance meant for testing.
+"""The endpoint of the Zenodo sandbox, which Zenodo provides for testing.
 
 As stated in the Testing section of https://developers.zenodo.org/ in November 2026,
 it issues test DOIs, its records may be deleted at any time,
@@ -1063,11 +1063,6 @@ class Config:
     ) -> dict[str, Any]:
         """Convert the configuration to a dictionary suitable for Zenodo.
 
-        No order of the files is sent.
-        As of 2026-11-21, observed on the Zenodo sandbox,
-        Zenodo accepts `files.order` in a metadata update and silently drops it.
-        Its landing page then lists the files alphabetically.
-
         Parameters
         ----------
         description
@@ -1087,6 +1082,10 @@ class Config:
         -----
         The files are always enabled, because Zenodo has no metadata only records.
         """
+        # As of 2026-11-21, observed on the Zenodo sandbox,
+        # Zenodo silently drops `files.order` from a metadata update
+        # and lists the files alphabetically on the landing page,
+        # so sending an order would have no effect.
         files_options: dict[str, Any] = {"enabled": True}
         if len(files) > 0:
             files_options["default_preview"] = files[0].name
@@ -1571,8 +1570,8 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=False,
         action="store_true",
         help="Trust the MD5 checksums in the inventory without computing them again. "
-        "A StepUp workflow that builds the inventory passes this option, "
-        "because it keeps the inventory up to date.",
+        "Use this when the inventory is known to be up to date, "
+        "e.g. when StepUp builds it.",
     )
     return parser.parse_args(argv)
 
@@ -1693,9 +1692,7 @@ def _check_endpoint_present(data: dict[str, Any], config_path: str):
             f"Set it to {PRODUCTION_ENDPOINT} for a dataset to publish, "
             f"or to {SANDBOX_ENDPOINT} for a trial on the Zenodo sandbox, "
             "which issues test DOIs and may delete its records at any time. "
-            "The token in REPREP_ZENODO_TOKEN must be created on the same instance. "
-            "Before StepUp RepRep 4.2, a missing endpoint meant the sandbox, "
-            "so an existing record ID file then refers to a record on the sandbox."
+            "The token in REPREP_ZENODO_TOKEN must be created on the same instance."
         )
 
 

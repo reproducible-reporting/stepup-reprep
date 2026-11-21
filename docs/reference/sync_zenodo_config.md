@@ -182,7 +182,7 @@ The API endpoint of the Zenodo instance to interact with:
 
 - `https://zenodo.org/api` for a dataset that you intend to publish.
 - `https://sandbox.zenodo.org/api` for a trial run, e.g. to try out `srr-sync-zenodo`.
-  Zenodo meant its sandbox for testing.
+  Zenodo provides the sandbox for testing.
   As stated in the [Testing](https://developers.zenodo.org/#testing) section
   of its developer documentation in November 2026,
   the sandbox issues test DOIs instead of real ones,
@@ -203,8 +203,7 @@ and a published record keeps the date Zenodo recorded when it was published,
 also when its metadata is updated afterwards.
 Each new version gets its own publication date this way.
 
-The description is not a field of this file either.
-It is written in a Markdown or HTML file of its own, as explained in
+The description is written in a Markdown or HTML file of its own, as explained in
 [Configure a Zenodo Dataset](../advanced_topics/sync_zenodo.md#configure-a-zenodo-dataset).
 
 - `title` *(required)*:

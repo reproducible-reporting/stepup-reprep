@@ -14,7 +14,7 @@ import re
 import stat
 from collections.abc import Iterator
 from pathlib import PureWindowsPath
-from typing import Any, TextIO
+from typing import Any, BinaryIO
 
 import attrs
 
@@ -58,7 +58,7 @@ The `shake_*` algorithms are left out, because their digests have no fixed lengt
 """
 
 MAX_LINE_LENGTH = 65536
-"""The length in characters of the longest line that is read from an inventory.
+"""The length in bytes of the longest line that is read from an inventory.
 
 A record is much shorter, so a longer line means that the file is not an inventory,
 e.g. a data file given where the inventory belongs, which is then rejected without loading it.
@@ -115,7 +115,7 @@ class LinkRecord:
     """The link, relative to the parent of the inventory, with `/` separators."""
 
     target: str = attrs.field()
-    """The target as stored in the link, which may be a directory."""
+    """The target as stored in the link."""
 
 
 Record = FileRecord | LinkRecord
@@ -235,8 +235,8 @@ class InventoryReader:
     header: InventoryHeader = attrs.field()
     """The header on the first line of the inventory."""
 
-    _fh: TextIO = attrs.field()
-    """The open inventory file, of which the header has been read."""
+    _fh: BinaryIO = attrs.field()
+    """The inventory file, open in binary mode, of which the header has been read."""
 
     def __iter__(self) -> Iterator[Record]:
         """Read and validate the remaining lines, one record at a time.
@@ -297,22 +297,25 @@ def open_inventory(path_inventory: StrPath) -> Iterator[InventoryReader]:
         raise ValueError(
             f"The inventory {path_inventory} does not exist. Write it with `srr-make-inventory`."
         )
-    with open(path_inventory, encoding="utf-8") as fh:
+    with open(path_inventory, "rb") as fh:
         data = _read_line(path_inventory, fh, 1)
         if data is None:
             raise _not_an_inventory(path_inventory, "it is empty")
         yield InventoryReader(path_inventory, _load_header(path_inventory, data), fh)
 
 
-def _read_line(path_inventory: Path, fh: TextIO, iline: int) -> Any:
+def _read_line(path_inventory: Path, fh: BinaryIO, iline: int) -> Any:
     """Read the next line of an inventory as JSON.
+
+    Every line is decoded on its own,
+    so that invalid UTF-8 is reported on the line where it occurs.
 
     Parameters
     ----------
     path_inventory
         The inventory file, used in the messages.
     fh
-        The open inventory file.
+        The inventory file, open in binary mode.
     iline
         The 1-based number of the line to read, used in the messages.
 
@@ -321,20 +324,21 @@ def _read_line(path_inventory: Path, fh: TextIO, iline: int) -> Any:
     data
         The JSON data on the line, or `None` at the end of the file.
     """
-    try:
-        line = fh.readline(MAX_LINE_LENGTH)
-    except ValueError as exc:
-        raise _not_an_inventory(path_inventory, f"line {iline} is not valid UTF-8") from exc
-    if line == "":
+    line = fh.readline(MAX_LINE_LENGTH)
+    if line == b"":
         return None
-    if not line.endswith("\n"):
+    if not line.endswith(b"\n"):
         if len(line) == MAX_LINE_LENGTH:
-            reason = f"line {iline} is longer than {MAX_LINE_LENGTH} characters"
+            reason = f"line {iline} is longer than {MAX_LINE_LENGTH} bytes"
         else:
             reason = f"line {iline} does not end with a newline"
         raise _not_an_inventory(path_inventory, reason)
     try:
-        return json.loads(line)
+        text = line.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise _not_an_inventory(path_inventory, f"line {iline} is not valid UTF-8") from exc
+    try:
+        return json.loads(text)
     except ValueError as exc:
         raise _not_an_inventory(path_inventory, f"line {iline} is not valid JSON") from exc
 

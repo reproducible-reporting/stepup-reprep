@@ -23,6 +23,7 @@ from stepup.reprep.make_inventory import write_inventory
 from stepup.reprep.sync_zenodo import (
     DEFAULT_ENDPOINT,
     INVENIORDM_MIMETYPE,
+    MAX_NUM_ZENODO_FILES,
     MAX_SEARCH_PAGES,
     REPLACED_CONFIG_KEYS,
     REQUEST_TIMEOUT,
@@ -52,6 +53,7 @@ from stepup.reprep.sync_zenodo import (
     _check_outdated_config,
     _check_record_md5,
     _check_version_chain,
+    _check_zenodo_limits,
     _describe_version,
     _diff_files,
     _entry_md5,
@@ -787,13 +789,27 @@ def test_config_endpoint_invalid(tmp_path, endpoint):
 @pytest.mark.parametrize("key", REPLACED_CONFIG_KEYS)
 def test_config_replaced_key(tmp_path, key):
     """A key that an older release supported is reported with a hint, not as an unknown key."""
+    data = yaml.safe_load(CONFIG_YAML)
+    *sections, name = key.split(".")
+    section = data
+    for section_name in sections:
+        section = section.setdefault(section_name, {})
+    section[name] = "whatever"
     path = tmp_path / "sync_zenodo.yaml"
-    path.write_text(f"{key}: whatever\n{CONFIG_YAML}", encoding="utf-8", newline="\n")
+    path.write_text(yaml.safe_dump(data), encoding="utf-8", newline="\n")
     with pytest.raises(ZenodoError) as exc_info:
         _check_outdated_config(_load_config_data(path), str(path))
     message = str(exc_info.value)
     assert f"The '{key}' key is no longer used." in message
     assert REPLACED_CONFIG_KEYS[key] in message
+
+
+def test_config_replaced_key_other_section():
+    """A nested key is only recognized in its own section, which may be of the wrong type.
+
+    Such mistakes are left to the validation of the config file.
+    """
+    _check_outdated_config({"description": "x", "metadata": "x", "access": None}, "c.yaml")
 
 
 CONFIG_YAML_SCALARS = """\
@@ -2651,6 +2667,25 @@ def test_sequence_same_name(monkeypatch, capsys):
     err = capsys.readouterr().err
     assert "The inventory zenodo_inventory.jsonl cannot be used" in err
     assert "files must have different names" in err
+
+
+def test_check_zenodo_limits_ok():
+    files = [UploadFile("one.txt", "0" * 32), UploadFile("sub/two.txt", "0" * 32)]
+    _check_zenodo_limits(files, Path("inventory.jsonl"))
+
+
+def test_check_zenodo_limits_same_name_other_directory():
+    files = [UploadFile("sub1/one.txt", "0" * 32), UploadFile("sub2/one.txt", "0" * 32)]
+    with pytest.raises(ZenodoError) as exc_info:
+        _check_zenodo_limits(files, Path("inventory.jsonl"))
+    assert "The name one.txt is used by sub1/one.txt and sub2/one.txt." in str(exc_info.value)
+
+
+def test_check_zenodo_limits_too_many():
+    files = [UploadFile(f"file{i}.txt", "0" * 32) for i in range(MAX_NUM_ZENODO_FILES)]
+    _check_zenodo_limits(files, Path("inventory.jsonl"))
+    with pytest.raises(ZenodoError, match=f"at most {MAX_NUM_ZENODO_FILES} files"):
+        _check_zenodo_limits([*files, UploadFile("extra.txt", "0" * 32)], Path("inventory.jsonl"))
 
 
 @pytest.mark.usefixtures("project")

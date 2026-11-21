@@ -56,20 +56,21 @@ For a regular file, the keys are exactly those listed in `fields`:
 A symbolic link is never followed.
 Its line has exactly two keys, whatever `fields` says:
 `path` is the location of the link, and `link` is the target as stored in the link.
-The target may be a directory.
 
 A path is relative to the parent directory of the inventory file,
 it is normalized and it uses `/` as separator on every platform.
 It may start with `../` for a file outside that directory.
-Directories themselves are never listed.
+Directories are never listed, and neither are symbolic links to directories,
+because StepUp cannot track a directory as an input.
+`srr-make-inventory` refuses them when they are given explicitly,
+and leaves them out when an inventory definition matches them.
 
 Files appear in the order in which they were given:
 first the paths given explicitly, in the given order,
 then the matches of the inventory definition, sorted.
 When a path occurs twice, only its first occurrence is kept.
 This order matters for [`sync_zenodo()`](sync_zenodo.md),
-which uploads the files in the order of the inventory
-and selects the first one for the preview on Zenodo.
+which selects the first file for the preview on Zenodo.
 
 The contents of an inventory only depend on the files it lists.
 It contains no time stamps, so StepUp does not rerun the steps that use it
@@ -164,8 +165,8 @@ can be used, except the `shake_*` algorithms, whose digests have no fixed length
 
 The default is MD5, because Zenodo reports MD5 checksums,
 so an inventory with the default algorithm can be passed to [`sync_zenodo()`](sync_zenodo.md).
-MD5 reliably detects accidental changes, such as a damaged transfer or bit rot:
-for accidental changes, a collision is equally unlikely with MD5 and SHA-256.
+MD5 reliably detects accidental changes, such as a damaged transfer or bit rot,
+because the chance of an accidental collision is negligible with MD5 as well as with SHA-256.
 Use `--hash sha256` when deliberate tampering with the files must be detected,
 because files with the same MD5 digest can be crafted on purpose.
 

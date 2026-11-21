@@ -66,7 +66,6 @@ from stepup.core.exceptions import PathError
 from stepup.core.path import Path
 from stepup.core.utils import open_regular_file
 from stepup.reprep.inventory import LinkRecord, open_inventory
-from stepup.reprep.utils import check_zenodo_paths
 
 __all__ = ("main",)
 
@@ -1358,6 +1357,8 @@ def _run(args: argparse.Namespace):
     Everything that can be checked locally is checked before the early exits,
     so that every run reports a configuration that cannot be synchronized,
     also offline, without a token and with `--dry-run`.
+    The only exception is the MD5 checksums of the files,
+    which are computed right before Zenodo is contacted.
     """
     data = _load_config_data(args.config)
     _check_outdated_config(data, args.config)
@@ -1434,10 +1435,7 @@ def _load_files(path_inventory: str) -> list[UploadFile]:
             "Zenodo publishes no record without files, "
             "and it does not offer metadata only records."
         )
-    try:
-        check_zenodo_paths([file.path for file in files])
-    except ValueError as exc:
-        raise ZenodoError(f"The inventory {path_inventory} cannot be used. {exc}") from exc
+    _check_zenodo_limits(files, path_inventory)
     # A missing file is reported below, together with all other missing files.
     with contextlib.suppress(PathError):
         amend(inp=[file.path for file in files])
@@ -1445,6 +1443,43 @@ def _load_files(path_inventory: str) -> list[UploadFile]:
     if len(missing) > 0:
         raise ZenodoError(f"The following files to upload do not exist: {', '.join(missing)}.")
     return files
+
+
+MAX_NUM_ZENODO_FILES = 100
+"""The maximum number of files that Zenodo accepts in a single record."""
+
+
+def _check_zenodo_limits(files: Sequence[UploadFile], path_inventory: Path):
+    """Check that Zenodo can hold the files in a single record.
+
+    Parameters
+    ----------
+    files
+        The files to upload.
+    path_inventory
+        The inventory that lists the files, used in the messages.
+
+    Raises
+    ------
+    ZenodoError
+        When there are too many files or when two files have the same name.
+    """
+    prefix = f"The inventory {path_inventory} cannot be used."
+    if len(files) > MAX_NUM_ZENODO_FILES:
+        raise ZenodoError(
+            f"{prefix} Zenodo accepts at most {MAX_NUM_ZENODO_FILES} files in one record, "
+            f"got {len(files)}."
+        )
+    seen_paths = {}
+    for file in files:
+        other = seen_paths.get(file.name)
+        if other is not None:
+            raise ZenodoError(
+                f"{prefix} Zenodo does not support directory layouts, "
+                "so files must have different names. "
+                f"The name {file.name} is used by {other} and {file.path}."
+            )
+        seen_paths[file.name] = file.path
 
 
 def _compute_md5(path: Path) -> str:
@@ -1597,16 +1632,28 @@ def _load_config_data(path: str | Path) -> dict[str, Any]:
 REPLACED_CONFIG_KEYS = {
     "paths": "List the files to upload in an inventory, written by srr-make-inventory.",
     "path_token": "Set the REPREP_ZENODO_TOKEN environment variable instead.",
-    "path_readme": "Pass the description file as the second argument of srr-sync-zenodo instead.",
+    "path_readme": "Pass the description file as the second argument "
+    "of sync_zenodo() or srr-sync-zenodo instead.",
     "code_repository": "Move it into the 'custom_fields' section.",
+    "metadata.description": "Write the description in a Markdown or HTML file instead, "
+    "and pass it as the second argument of sync_zenodo() or srr-sync-zenodo.",
+    "access.record": "Remove it, because Zenodo does not allow restricted records. "
+    "Use 'files: restricted' in the 'access' section to restrict only the files.",
 }
-"""Keys that older config files may still contain, with a hint on how to replace them."""
+"""Keys that older config files may still contain, with a hint on how to replace them.
+
+A dotted key is nested in the sections named by the parts before the last dot.
+"""
 
 
 def _check_outdated_config(data: dict[str, Any], config_path: str):
     """Raise an informative error when the config file still uses a key that was replaced."""
     for key, hint in REPLACED_CONFIG_KEYS.items():
-        if key in data:
+        *sections, name = key.split(".")
+        section = data
+        for section_name in sections:
+            section = section.get(section_name) if isinstance(section, dict) else None
+        if isinstance(section, dict) and name in section:
             raise ZenodoError(
                 f"The config file {config_path} is outdated. "
                 f"The '{key}' key is no longer used. {hint}"

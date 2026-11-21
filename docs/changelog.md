@@ -106,8 +106,7 @@ which also lists the files that `srr-sync-zenodo` uploads.
 - Breaking change: the files to upload are listed in an inventory,
   written by [`make_inventory()`][stepup.reprep.api.make_inventory] or `srr-make-inventory`
   with MD5 digests, which is the default.
-  The order of the inventory is the order of the upload,
-  and its first file is shown in the preview on Zenodo.
+  The first file of the inventory is shown in the preview on Zenodo.
   Its paths are relative to its parent directory.
   An inventory with other digests or with symbolic links is refused.
     - `sync_zenodo()` takes the description file and the inventory,
@@ -137,6 +136,8 @@ which also lists the files that `srr-sync-zenodo` uploads.
   and after deleting a new version that was not published yet,
   the same run created a new dataset instead of a new version.
   Discard a draft in the web interface of Zenodo instead.
+- Breaking change: the module `stepup.reprep.utils` is removed.
+  Its function `check_zenodo_paths()` is now internal to `srr-sync-zenodo`.
 
 ### Fixed
 

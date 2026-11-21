@@ -135,9 +135,9 @@ Save the token immediately, as it cannot be retrieved later.
 
 Because the token is a secret, it is not tracked by StepUp,
 so it never ends up in the workflow graph.
-Keep it out of your repository, for example by exporting it from a file that Git ignores.
 Instead, the synchronization step looks at the token at every start of StepUp,
 so it notices when you set or unset the token between two runs of `stepup build`.
+Keep the token out of your repository, for example by exporting it from a file that Git ignores.
 
 When `REPREP_ZENODO_TOKEN` is unset or empty,
 `srr-sync-zenodo` validates the configuration file, prints a warning

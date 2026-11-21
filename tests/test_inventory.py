@@ -439,16 +439,31 @@ def test_read_not_an_inventory(path_tmp, text):
 
 
 def test_read_binary(path_tmp):
+    """A binary file, here with the signature of a PNG file, is not an inventory."""
     path = path_tmp / "inventory.jsonl"
-    path.write_bytes(bytes(range(256)) * 4)
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + bytes(range(256)) * 4)
     with pytest.raises(ValueError, match="line 1 is not valid UTF-8"):
+        read_records(path)
+
+
+def test_read_invalid_utf8_later_line(path_tmp):
+    """Invalid UTF-8 is reported on its own line, also when the file is small."""
+    path = path_tmp / "inventory.jsonl"
+    lines = [
+        MD5_HEADER.encode(),
+        f'{{"md5":"{MD5_AAA}","path":"a.txt","size":4}}\n'.encode(),
+        f'{{"md5":"{MD5_AAA}","path":"b.txt","size":4}}\n'.encode(),
+        f'{{"md5":"{MD5_AAA}","path":"c\xff.txt","size":4}}\n'.encode("latin-1"),
+    ]
+    path.write_bytes(b"".join(lines))
+    with pytest.raises(ValueError, match="line 4 is not valid UTF-8"):
         read_records(path)
 
 
 def test_read_long_line(path_tmp):
     """A large file without line breaks is refused without loading it."""
     path = write_inventory_text(path_tmp, "x" * (10 * MAX_LINE_LENGTH))
-    with pytest.raises(ValueError, match=f"line 1 is longer than {MAX_LINE_LENGTH} characters"):
+    with pytest.raises(ValueError, match=f"line 1 is longer than {MAX_LINE_LENGTH} bytes"):
         read_records(path)
     long_path = "a" * MAX_LINE_LENGTH
     path = write_inventory_text(

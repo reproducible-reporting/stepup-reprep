@@ -24,6 +24,10 @@ using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
+## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
+
+Release candidate 1 of StepUp RepRep 4.2.
+
 ### Added
 
 - `srr-make-inventory` has a new option `--hash` to select the hash algorithm,
@@ -1148,6 +1152,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
+[4.2.0rc1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.2.0rc1
 [4.1.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.1
 [4.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2

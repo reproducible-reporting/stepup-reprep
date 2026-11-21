@@ -4,10 +4,10 @@
  SUCCESS │ ./plan.py
    START │ echo hello > built.txt
  SUCCESS │ echo hello > built.txt
-   START │ srr-make-inventory static.txt built.txt -o inventory.txt
- SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.txt
-   START │ srr-zip-inventory inventory.txt upload.zip
- SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+   START │ srr-make-inventory static.txt built.txt -o inventory.jsonl
+ SUCCESS │ srr-make-inventory static.txt built.txt -o inventory.jsonl
+   START │ srr-zip-inventory inventory.jsonl upload.zip
+ SUCCESS │ srr-zip-inventory inventory.jsonl upload.zip
 DIRECTOR │ Ran 4 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch
@@ -17,9 +17,9 @@ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and 
    PHASE │ build
    START │ echo hello > built.txt
  SUCCESS │ echo hello > built.txt
-    SKIP │ srr-make-inventory static.txt built.txt -o inventory.txt
-   START │ srr-zip-inventory inventory.txt upload.zip
- SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+    SKIP │ srr-make-inventory static.txt built.txt -o inventory.jsonl
+   START │ srr-zip-inventory inventory.jsonl upload.zip
+ SUCCESS │ srr-zip-inventory inventory.jsonl upload.zip
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

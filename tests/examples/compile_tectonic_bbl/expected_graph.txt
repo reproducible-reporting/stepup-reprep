@@ -15,19 +15,19 @@ step:./plan.py
               source   file:plan.py
              product   file:paper.bbl
              product   file:paper.tex
-             product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             product   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.bbl
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.tex
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
-step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TECTONIC [dynamic]
@@ -37,17 +37,17 @@ step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
              creator   step:./plan.py
               source   file:paper.bbl [dynamic]
               source   file:paper.tex
-             product   file:paper-inventory.txt
+             product   file:paper-inventory.jsonl
              product   file:paper.pdf
-                sink   file:paper-inventory.txt
+                sink   file:paper-inventory.jsonl
                 sink   file:paper.pdf
 
-file:paper-inventory.txt
+file:paper-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.pdf
                state = BUILT
-             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex

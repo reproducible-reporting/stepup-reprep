@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
- SUCCESS │ srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+   START │ srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
+ SUCCESS │ srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

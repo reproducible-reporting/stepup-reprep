@@ -16,5 +16,5 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f out/paper.pdf ]] || exit 1
 [[ ! -e sub/paper.pdf ]] || exit 1
-grep '../out/paper.pdf' sub/paper-inventory.txt
-srr-check-inventory sub/paper-inventory.txt
+grep '../out/paper.pdf' sub/paper-inventory.jsonl
+srr-check-inventory sub/paper-inventory.jsonl

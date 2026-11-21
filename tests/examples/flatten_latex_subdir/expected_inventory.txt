@@ -1,5 +1,0 @@
-            237 -rwxr-xr-x b6faad25d0b5e90c840df3a31921a294bb8b8ff550832cc7a4aac423b52610f5 plan.py
-            165 -rw-r--r-- 42771b0ee8b3ba5b71cc9af9e34c91ed55fd9adfe713a17d29a874dd73965a91 sub/article.tex
-            168 -rw-r--r-- b44d222fd92c61a4a7bf131c2c641193e9e1ad47f247e5759e42528bedafa8e0 sub/article_structured.tex
-             16 -rw-r--r-- a9c7b7f73215167740cc6d9e90284ae5081cb5b9ddd1de894a27655e9a170ae9 sub/part1.tex
-             17 -rw-r--r-- 3e3408677d41c6452e7b8d1ab6ef87d55eaa6feee6351142f66b0aba30e62acc sub/part2.tex

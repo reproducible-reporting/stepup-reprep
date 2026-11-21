@@ -16,24 +16,24 @@ step:./plan.py
              product   file:source/data/productivity.csv
              product   file:source/document.typ
              product   file:source/tada.svg
-             product   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+             product   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
 file:source/data/productivity.csv
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
 file:source/document.typ
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
 file:source/tada.svg
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+                sink   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
-step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TYPST [dynamic]
@@ -44,23 +44,23 @@ step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt sou
               source   file:source/document.typ
               source   file:source/tada.svg [dynamic]
              product   file:out.pdf
-             product   file:source/document-inventory.txt
+             product   file:source/document-inventory.jsonl
              product   file:source/document.deps.json
                 sink   file:out.pdf
-                sink   file:source/document-inventory.txt
+                sink   file:source/document-inventory.jsonl
                 sink   file:source/document.deps.json
 
 file:out.pdf
                state = BUILT
-             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
+              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
-file:source/document-inventory.txt
+file:source/document-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
+              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
 
 file:source/document.deps.json
                state = BUILT
-             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
-              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.txt source/document.typ --out=out.pdf
+             creator   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf
+              source   step:srr-compile-typst --keep-deps --inventory=source/document-inventory.jsonl source/document.typ --out=out.pdf

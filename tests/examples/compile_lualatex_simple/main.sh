@@ -15,7 +15,7 @@ mv paper.pdf paper1.pdf
 stepup wait -d paper.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt paper.pdf paper1.pdf
+srr-make-inventory -o reproducibility_inventory.jsonl paper.pdf paper1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -26,5 +26,5 @@ wait
 [[ -f paper.log ]] || exit 1
 [[ -f paper.aux ]] || exit 1
 [[ -f paper1.pdf ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
-srr-check-inventory paper-inventory.txt
+[[ -f reproducibility_inventory.jsonl ]] || exit 1
+srr-check-inventory paper-inventory.jsonl

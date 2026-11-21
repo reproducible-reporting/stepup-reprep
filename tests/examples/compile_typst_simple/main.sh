@@ -16,7 +16,7 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f document.typ ]] || exit 1
 [[ -f out.pdf ]] || exit 1
-[[ -f document-inventory.txt ]] || exit 1
-grep document.typ document-inventory.txt
-grep out.pdf document-inventory.txt
-srr-check-inventory document-inventory.txt
+[[ -f document-inventory.jsonl ]] || exit 1
+grep document.typ document-inventory.jsonl
+grep out.pdf document-inventory.jsonl
+srr-check-inventory document-inventory.jsonl

@@ -1,0 +1,15 @@
+ STARTUP │ Watching 1 directory
+ UPDATED │ STEPUP_DIRECTOR_I ='2' ➜ ='3'
+ STARTUP │ Checking 5 file(s) for changes
+   PHASE │ build
+   START │ srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --no-check-md5
+ SUCCESS │ srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --no-check-md5
+─────────────────────────────── Standard output ────────────────────────────────
+The REPREP_ZENODO_TOKEN environment variable is not set.
+Exiting early without interacting with the Zenodo endpoint.
+Use --dry-run to validate the config file offline on purpose.
+────────────────────────────────────────────────────────────────────────────────
+DIRECTOR │ Ran 1 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ See you!

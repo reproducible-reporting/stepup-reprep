@@ -17,8 +17,8 @@ stepup wait -d paper.pdf
 stepup wait -d paper.bbl
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_pdf_inventory.txt paper.pdf paper1.pdf
-srr-make-inventory -o reproducibility_bbl_inventory.txt paper.bbl paper1.bbl
+srr-make-inventory -o reproducibility_pdf_inventory.jsonl paper.pdf paper1.pdf
+srr-make-inventory -o reproducibility_bbl_inventory.jsonl paper.bbl paper1.bbl
 
 # Wait for background processes, if any.
 wait
@@ -31,6 +31,6 @@ wait
 [[ -f paper.bbl ]] || exit 1
 [[ -f paper1.pdf ]] || exit 1
 [[ -f paper1.bbl ]] || exit 1
-[[ -f reproducibility_pdf_inventory.txt ]] || exit 1
-[[ -f reproducibility_bbl_inventory.txt ]] || exit 1
-srr-check-inventory paper-inventory.txt
+[[ -f reproducibility_pdf_inventory.jsonl ]] || exit 1
+[[ -f reproducibility_bbl_inventory.jsonl ]] || exit 1
+srr-check-inventory paper-inventory.jsonl

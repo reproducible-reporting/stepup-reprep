@@ -14,7 +14,7 @@ mv figure.pdf figure1.pdf
 stepup wait -d figure.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt figure.pdf figure1.pdf
+srr-make-inventory -o reproducibility_inventory.jsonl figure.pdf figure1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -23,4 +23,4 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f figure.pdf ]] || exit 1
 [[ -f figure1.pdf ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

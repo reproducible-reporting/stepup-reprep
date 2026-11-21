@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
    START │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
  SUCCESS │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 ─────────────────────────────── Standard output ────────────────────────────────
@@ -33,8 +33,8 @@ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and 
  DELETED │ paper.pdf
  DELETED │ paper.bbl
    PHASE │ build
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
     SKIP │ srr-bibsane references.bib --aux=paper.aux --config=bibsane.yaml
 DIRECTOR │ Ran 1 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)

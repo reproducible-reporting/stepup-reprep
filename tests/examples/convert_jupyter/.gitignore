@@ -3,5 +3,5 @@ current*
 *.html
 result.txt
 plot.png
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl
 .ipynb_checkpoints

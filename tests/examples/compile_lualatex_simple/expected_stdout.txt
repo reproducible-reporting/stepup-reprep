@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch
@@ -11,8 +11,8 @@ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and 
  DELETED │ paper.aux
  DELETED │ paper.pdf
    PHASE │ build
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
 DIRECTOR │ Ran 1 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

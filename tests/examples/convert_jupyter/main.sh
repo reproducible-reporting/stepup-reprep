@@ -15,7 +15,7 @@ mv demo.html demo1.html
 stepup wait -d demo.html
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt demo.html demo1.html
+srr-make-inventory -o reproducibility_inventory.jsonl demo.html demo1.html
 
 # Wait for background processes, if any.
 set +e; wait $PID; RETURNCODE=$?; set -e
@@ -27,4 +27,4 @@ set +e; wait $PID; RETURNCODE=$?; set -e
 [[ -f demo1.html ]] || exit 1
 [[ -f result.txt ]] || exit 1
 grep "dpi: 50" result.txt
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

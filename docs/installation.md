@@ -149,16 +149,20 @@ Save your sources, e.g. LaTeX, Markdown and BibTeX files, as UTF-8.
 ### Inventories and ZIP Files
 
 Windows has no permission bits.
-An inventory made on Windows therefore records other file modes
+An inventory only records the permission bits of files when it is made with `--mode`,
+see [Inventory Files](advanced_topics/inventory_files.md#permission-bits).
+An inventory made on Windows with `--mode` records other permission bits
 than one made of the same files on Linux or macOS,
-e.g. `-rw-rw-rw-` instead of `-rw-r--r--`.
-Symbolic links are the exception: their mode is always recorded as `lrwxrwxrwx`.
-[`zip_inventory()`][stepup.reprep.api.zip_inventory] stores these modes in the ZIP file,
+e.g. `rw-rw-rw-` instead of `rw-r--r--`,
+and `srr-make-inventory` then prints a warning.
+Symbolic links have no recorded permission bits, only their target.
+[`zip_inventory()`][stepup.reprep.api.zip_inventory] stores the file modes on disk in the ZIP file,
 so a ZIP file made on Windows also differs from one made on Linux or macOS.
 
-`srr-check-inventory` only compares file modes on Linux and macOS.
+`srr-check-inventory` and `srr-zip-inventory` only compare permission bits on Linux and macOS.
 An inventory made on Linux or macOS can be checked on Windows,
-but one made on Windows fails the check on Linux and macOS as soon as a file mode differs.
+but one made on Windows with `--mode` fails the check on Linux and macOS
+as soon as the permission bits of a file differ.
 
 [core-platforms]: https://reproducible-reporting.github.io/stepup-core/platforms/
 [core-windows]: https://reproducible-reporting.github.io/stepup-core/platforms/#windows

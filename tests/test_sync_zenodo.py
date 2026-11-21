@@ -13,8 +13,13 @@ import pytest
 import requests
 import yaml
 from cattrs.errors import ClassValidationError
+from reprep_common import needs_symlinks
 
+import stepup.core.api
+from stepup.core.exceptions import InputNotFoundError
 from stepup.core.path import Path
+from stepup.reprep.inventory import FileRecord, InventoryHeader, format_header, format_record
+from stepup.reprep.make_inventory import write_inventory
 from stepup.reprep.sync_zenodo import (
     DEFAULT_ENDPOINT,
     INVENIORDM_MIMETYPE,
@@ -28,6 +33,7 @@ from stepup.reprep.sync_zenodo import (
     Config,
     Creator,
     CustomFields,
+    FileDiff,
     Funding,
     Identifier,
     Imprint,
@@ -39,13 +45,15 @@ from stepup.reprep.sync_zenodo import (
     RESTError,
     RESTWrapper,
     Thesis,
+    UploadFile,
     ZenodoError,
     ZenodoWrapper,
+    _check_draft_errors,
     _check_outdated_config,
     _check_record_md5,
     _check_version_chain,
-    _clean_online,
     _describe_version,
+    _diff_files,
     _entry_md5,
     _file_loc,
     _format_error,
@@ -435,7 +443,7 @@ def test_custom_fields_nested_error_message():
 
 @pytest.mark.parametrize(
     "kwargs",
-    [{"id": "00k4n6c32::041117"}, {"title": "A title"}, {"number": "GN23549"}],
+    [{"id": "00k4n6c32::101052382"}, {"title": "A title"}, {"number": "GN23549"}],
 )
 def test_award_known_or_free_text(kwargs):
     """Zenodo takes an award it already knows, or a free text title, or a free text number."""
@@ -446,8 +454,8 @@ def test_award_known_or_free_text(kwargs):
     "kwargs",
     [
         {},
-        {"id": "00k4n6c32::041117", "title": "A title"},
-        {"id": "00k4n6c32::041117", "number": "1"},
+        {"id": "00k4n6c32::101052382", "title": "A title"},
+        {"id": "00k4n6c32::101052382", "number": "1"},
     ],
 )
 def test_award_neither_or_both(kwargs):
@@ -493,6 +501,10 @@ def test_vocabularies_data_file_sorted_and_unique(name):
     assert identifiers == sorted(set(identifiers))
 
 
+DESCRIPTION = "<p>A dataset.</p>\n"
+"""A description in HTML, as `srr-sync-zenodo` sends it to Zenodo."""
+
+
 def _metadata(**kwargs) -> Metadata:
     kwargs.setdefault("title", "A title")
     kwargs.setdefault("version", "1.0.0")
@@ -504,7 +516,7 @@ def _metadata(**kwargs) -> Metadata:
 @pytest.mark.parametrize("identifier", ["dataset", "software", "publication-article"])
 def test_metadata_resource_type_valid(identifier):
     metadata = _metadata(license=["cc-by-4.0"], resource_type=identifier)
-    assert metadata.to_zenodo()["resource_type"] == {"id": identifier}
+    assert metadata.to_zenodo(DESCRIPTION)["resource_type"] == {"id": identifier}
 
 
 @pytest.mark.parametrize("identifier", ["Dataset", "DATASET", "datasets", "audio", ""])
@@ -517,7 +529,7 @@ def test_metadata_resource_type_invalid(identifier):
 def test_metadata_license_valid(identifier):
     """The license is lowercased before it is validated."""
     metadata = _metadata(license=[identifier], resource_type="dataset")
-    assert metadata.to_zenodo()["rights"] == [{"id": identifier.lower()}]
+    assert metadata.to_zenodo(DESCRIPTION)["rights"] == [{"id": identifier.lower()}]
 
 
 @pytest.mark.parametrize("identifier", ["cc-by-4", "cc by 4.0", "gfdl", ""])
@@ -551,33 +563,32 @@ def test_related_resource_type_invalid(identifier):
 
 
 def test_parse_args_minimal():
-    args = _parse_args(["sync_zenodo.yaml"])
+    args = _parse_args(["sync_zenodo.yaml", "zenodo_description.md", "zenodo_inventory.jsonl"])
     assert args.config == "sync_zenodo.yaml"
-    assert args.paths == []
-    assert args.description is None
+    assert args.description == "zenodo_description.md"
+    assert args.inventory == "zenodo_inventory.jsonl"
     assert args.verbose is False
-    assert args.clean is False
     assert args.dry_run is False
+    assert args.no_check_md5 is False
 
 
 def test_parse_args_all():
     args = _parse_args(
         [
             "sync_zenodo.toml",
-            "one.txt",
-            "sub/two.txt",
-            "--description=zenodo_description.md",
+            "zenodo_description.html",
+            "zenodo_inventory.jsonl",
             "--verbose",
-            "--clean",
             "--dry-run",
+            "--no-check-md5",
         ]
     )
     assert args.config == "sync_zenodo.toml"
-    assert args.paths == ["one.txt", "sub/two.txt"]
-    assert args.description == "zenodo_description.md"
+    assert args.description == "zenodo_description.html"
+    assert args.inventory == "zenodo_inventory.jsonl"
     assert args.verbose is True
-    assert args.clean is True
     assert args.dry_run is True
+    assert args.no_check_md5 is True
 
 
 CONFIG_YAML = """\
@@ -685,7 +696,7 @@ def test_config_formats_equivalent(tmp_path):
         _write_config(tmp_path, "sync_zenodo.json", CONFIG_JSON),
         _write_config(tmp_path, "sync_zenodo.toml", CONFIG_TOML),
     ]
-    payloads = [config.to_zenodo([]) for config in configs]
+    payloads = [config.to_zenodo(DESCRIPTION, []) for config in configs]
     assert payloads[0] == payloads[1]
     assert payloads[0] == payloads[2]
     assert payloads[0]["metadata"]["version"] == "1.0.0"
@@ -828,7 +839,7 @@ def test_config_scalar_where_a_list_belongs(tmp_path):
     assert config.metadata.keywords == ["coffee"]
     assert config.custom_fields.programming_languages == ["python"]
     listed = _write_config(tmp_path, "lists.yaml", CONFIG_YAML_LISTS)
-    assert config.to_zenodo([]) == listed.to_zenodo([])
+    assert config.to_zenodo(DESCRIPTION, []) == listed.to_zenodo(DESCRIPTION, [])
 
 
 @pytest.mark.parametrize(
@@ -857,18 +868,115 @@ def test_config_scalar_where_a_list_belongs_invalid(tmp_path, text, expected):
     assert any(expected in message for message in messages)
 
 
+@pytest.fixture(autouse=True)
+def online(monkeypatch):
+    """Run every test as in a build that is not offline, also when pytest runs in a StepUp step."""
+    monkeypatch.delenv("STEPUP_BUILD_OFFLINE", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def amended(monkeypatch) -> list[list[Path]]:
+    """Record the inputs amended by `srr-sync-zenodo` instead of sending them to StepUp.
+
+    Outside a StepUp step, `amend()` prints the call to the standard output,
+    which would get mixed with the output of `--dry-run`.
+
+    Returns
+    -------
+    amended
+        The input paths of every call of `amend()`, in the order of the calls.
+    """
+    calls = []
+
+    def amend(inp=()):
+        calls.append(list(inp))
+
+    monkeypatch.setattr("stepup.reprep.sync_zenodo.amend", amend)
+    return calls
+
+
+def _write_inventory(tmp_path, files: list[UploadFile] | None = None) -> str:
+    """Write an inventory in `tmp_path` and return its path.
+
+    Without `files`, the inventory lists one file, because an empty inventory is refused.
+    """
+    path = Path(tmp_path) / "zenodo_inventory.jsonl"
+    if files is None:
+        files = [_local_file(tmp_path, "one.txt", "hello")]
+    _write_inventory_file(path, files)
+    return str(path)
+
+
+def _write_inventory_file(path_inventory: str, files: list[UploadFile]):
+    """Write an inventory with the given MD5 checksums, which need not match the files."""
+    root = Path(path_inventory).parent
+    header = InventoryHeader("md5")
+    with open(path_inventory, "w", encoding="utf-8", newline="\n") as fh:
+        print(format_header(header), file=fh)
+        for file in files:
+            size = file.path.size if file.path.is_file() else 0
+            record = FileRecord(str(file.path.relpath(root).normpath()), file.md5, size)
+            print(format_record(record, header), file=fh)
+
+
+def _write_description(tmp_path) -> str:
+    """Write a description in Markdown in `tmp_path` and return its path."""
+    path = tmp_path / "zenodo_description.md"
+    path.write_text("A *dataset*.\n", encoding="utf-8", newline="\n")
+    return str(path)
+
+
 def test_main_dry_run(tmp_path, monkeypatch, capsys):
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
     path = tmp_path / "sync_zenodo.yaml"
     path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
-    assert main([str(path), "--dry-run"]) == 0
+    args = [str(path), _write_description(tmp_path), _write_inventory(tmp_path)]
+    assert main([*args, "--dry-run"]) == 0
     out = capsys.readouterr().out
     # Pop the first line, which is just a message explaining the output below.
     out = out[out.find("{") :]
     payload = json.loads(out)
     assert payload["metadata"]["title"] == "A title"
-    assert payload["files"] == {"enabled": False, "order": []}
+    assert payload["metadata"]["description"] == "<p>A <em>dataset</em>.</p>\n"
+    assert payload["files"] == {"enabled": True, "default_preview": "one.txt"}
     assert "endpoint" not in payload
+
+
+@pytest.mark.parametrize("args", [[], ["--dry-run"]])
+def test_main_empty_inventory(tmp_path, monkeypatch, capsys, args):
+    """An empty inventory is refused before any request is sent, also with `--dry-run`."""
+    monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
+    monkeypatch.chdir(tmp_path)
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
+
+    def fail(*args, **kwargs):
+        raise AssertionError("No request may be sent.")
+
+    monkeypatch.setattr(ZenodoWrapper, "__init__", fail)
+    inventory = _write_inventory(tmp_path, [])
+    assert main([str(path), _write_description(tmp_path), inventory, *args]) == 1
+    captured = capsys.readouterr()
+    assert "lists no files" in captured.err
+    assert "metadata only" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_main_dry_run_files(tmp_path, monkeypatch, capsys):
+    """The first file of the inventory is the preview, also when another one sorts first."""
+    monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
+    (tmp_path / "sub").mkdir()
+    files = [_local_file(tmp_path, "sub/two.txt", "bye"), _local_file(tmp_path, "one.txt", "hi")]
+    args = [str(path), _write_description(tmp_path), _write_inventory(tmp_path, files)]
+    assert main([*args, "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    payload = json.loads(out[out.find("{") :])
+    assert payload["files"] == {
+        "enabled": True,
+        "default_preview": "two.txt",
+    }
 
 
 def test_main_invalid_config(tmp_path, monkeypatch, capsys):
@@ -885,7 +993,8 @@ def test_main_invalid_config(tmp_path, monkeypatch, capsys):
         encoding="utf-8",
         newline="\n",
     )
-    assert main([str(path), "--dry-run"]) == 1
+    args = [str(path), _write_description(tmp_path), _write_inventory(tmp_path)]
+    assert main([*args, "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert captured.out == ""
     # The message is reproduced verbatim, so `rich` does not wrap it at eighty columns.
@@ -895,19 +1004,19 @@ def test_main_invalid_config(tmp_path, monkeypatch, capsys):
 
 
 @pytest.mark.parametrize(
-    ("args", "expected"),
+    ("description", "expected"),
     [
-        (["one.txt", "one.txt"], "Duplicate paths are not allowed"),
-        (["--description=missing.md"], "Description file missing.md does not exist"),
-        (["--description=notes.txt"], "must be a Markdown (.md) or HTML (.html) file"),
+        ("missing.md", "Description file missing.md does not exist"),
+        ("notes.txt", "must be a Markdown (.md) or HTML (.html) file"),
     ],
 )
-def test_main_user_error(tmp_path, monkeypatch, capsys, args, expected):
+def test_main_user_error(tmp_path, monkeypatch, capsys, description, expected):
     """Everything the user can get wrong is reported as a message, not as a traceback."""
     monkeypatch.delenv("REPREP_ZENODO_TOKEN", raising=False)
+    monkeypatch.chdir(tmp_path)
     path = tmp_path / "sync_zenodo.yaml"
     path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
-    assert main([str(path), *args, "--dry-run"]) == 1
+    assert main([str(path), description, _write_inventory(tmp_path), "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert expected in captured.err
     assert "Traceback" not in captured.err
@@ -921,7 +1030,8 @@ def test_main_short_description(tmp_path, monkeypatch, capsys, name, content):
     path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
     path_description = tmp_path / name
     path_description.write_text(content, encoding="utf-8", newline="\n")
-    assert main([str(path), f"--description={path_description}", "--dry-run"]) == 1
+    args = [str(path), str(path_description), _write_inventory(tmp_path)]
+    assert main([*args, "--dry-run"]) == 1
     captured = capsys.readouterr()
     assert "holds too little text" in captured.err
     assert "Traceback" not in captured.err
@@ -939,7 +1049,7 @@ def test_main_rest_error(tmp_path, monkeypatch, capsys):
         raise RESTError("Failed POST https://zenodo.org/api/records: 400")
 
     monkeypatch.setattr(ZenodoWrapper, "create_new_record", fail)
-    assert main([str(path)]) == 1
+    assert main([str(path), _write_description(tmp_path), _write_inventory(tmp_path)]) == 1
     assert "Failed POST" in capsys.readouterr().err
 
 
@@ -975,7 +1085,7 @@ def test_metadata_publisher_empty():
 
 def test_metadata_publisher_in_payload():
     metadata = _metadata(license=["mit"], resource_type="dataset", publisher="Ghent University")
-    assert metadata.to_zenodo()["publisher"] == "Ghent University"
+    assert metadata.to_zenodo(DESCRIPTION)["publisher"] == "Ghent University"
 
 
 def test_config_publisher_missing(tmp_path):
@@ -996,7 +1106,7 @@ def test_metadata_title_too_short(title):
 
 @pytest.mark.parametrize(
     ("field", "value"),
-    [("version", "1" * 192), ("version", ""), ("copyright", ""), ("description", "ab")],
+    [("version", "1" * 192), ("version", ""), ("copyright", "")],
 )
 def test_metadata_length_bounds(field, value):
     """The length bounds Zenodo enforces are checked locally."""
@@ -1052,11 +1162,11 @@ def _v1_record(rid: int, checksums: dict[str, str | None], **kwargs) -> dict:
     }
 
 
-def _write_file(tmp_path, name: str, content: str) -> Path:
-    """Write a local file and return its path."""
+def _local_file(tmp_path, name: str, content: str) -> UploadFile:
+    """Write a local file and return its entry in an up-to-date inventory."""
     path = Path(tmp_path) / name
     path.write_text(content, encoding="utf-8")
-    return path
+    return UploadFile(path, _md5(content))
 
 
 def _md5(content: str) -> str:
@@ -1066,15 +1176,19 @@ def _md5(content: str) -> str:
 class _FakeZenodo:
     """A `ZenodoWrapper` stub that records the calls made on it."""
 
-    def __init__(self, record=None, versions=None):
+    def __init__(self, record=None, versions=None, metadata_errors=()):
         self.record = record
         self.versions = [record] if versions is None else versions
+        self.metadata_errors = list(metadata_errors)
+        """The soft errors in the response to every metadata update."""
         self.calls = []
+        self.files_options = []
+        """The files options of every metadata update, as they are sent to Zenodo."""
 
-    def create_new_record(self, config, paths):
-        self.calls.append(("create_new_record", [path.name for path in paths]))
+    def create_new_record(self, config, description):
+        self.calls.append(("create_new_record",))
         if self.record is None:
-            self.record = {"id": 7, "links": {"self_html": "https://zenodo.org/record/7"}}
+            self.record = _v1_record(7, {})
         return self.record
 
     def get_record(self, rid):
@@ -1088,16 +1202,18 @@ class _FakeZenodo:
     def delete_file(self, rid, name):
         self.calls.append(("delete_file", name))
 
-    def start_uploads(self, rid, paths):
-        if len(paths) == 0:
-            return
-        self.calls.append(("start_uploads", [path.name for path in paths]))
+    def start_uploads(self, rid, files):
+        self.calls.append(("start_uploads", [file.name for file in files]))
 
-    def upload_file(self, rid, path):
-        self.calls.append(("upload_file", path.name))
+    def upload_file(self, rid, file):
+        self.calls.append(("upload_file", file.name))
 
-    def update_metadata(self, rid, config, paths, publication_date=None):
+    def update_metadata(self, rid, config, description, files, publication_date=None):
         self.calls.append(("update_metadata", rid, publication_date))
+        data = config.to_zenodo(description, files, publication_date)
+        self.files_options.append(data["files"])
+        if len(self.metadata_errors) > 0:
+            return self.record | {"errors": self.metadata_errors}
         return self.record
 
     def edit_record(self, rid):
@@ -1207,7 +1323,6 @@ class _FakeRest:
     def __init__(self, hits):
         self.hits = hits
         self.calls = []
-        self.deleted = []
         self.posted = []
 
     def get(self, loc, params):
@@ -1216,9 +1331,6 @@ class _FakeRest:
         return {
             "hits": {"hits": self.hits[(page - 1) * size : page * size], "total": len(self.hits)}
         }
-
-    def delete(self, loc):
-        self.deleted.append(loc)
 
     def post(self, loc, json):
         self.posted.append((loc, json))
@@ -1233,21 +1345,6 @@ def test_get_versions_pagination(num):
     assert zenodo.get_versions("3") == hits
     num_pages = num // SEARCH_PAGE_SIZE + 1
     assert zenodo.rest.calls == [("records/3/versions", page) for page in range(1, num_pages + 1)]
-
-
-@pytest.mark.parametrize("num", [0, 1, SEARCH_PAGE_SIZE, SEARCH_PAGE_SIZE + 1])
-def test_get_user_records_pagination(num):
-    """The records of the user are collected from all pages of the search result.
-
-    Zenodo serves this search result in pages of at most `SEARCH_PAGE_SIZE` records,
-    so a user with more records than that has drafts beyond the first page.
-    """
-    hits = [{"id": rid} for rid in range(num)]
-    zenodo = ZenodoWrapper("token")
-    zenodo.rest = _FakeRest(hits)
-    assert zenodo.get_user_records() == hits
-    num_pages = num // SEARCH_PAGE_SIZE + 1
-    assert zenodo.rest.calls == [("user/records", page) for page in range(1, num_pages + 1)]
 
 
 def test_record_files_entries():
@@ -1283,26 +1380,41 @@ def test_entry_md5_unexpected_format(checksum):
 
 
 def test_refresh_files_unchanged(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {"one.txt": _md5("hello")})
     zenodo = _FakeZenodo()
-    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": file}, "1.0.0")
     assert zenodo.calls == []
 
 
 def test_refresh_files_upload_new(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {})
     zenodo = _FakeZenodo()
-    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": file}, "1.0.0")
     assert zenodo.calls == [("start_uploads", ["one.txt"]), ("upload_file", "one.txt")]
 
 
+def test_refresh_files_declare_together(tmp_path):
+    """A replaced and a new file are declared in one request, after the deletion."""
+    file_one = _local_file(tmp_path, "one.txt", "hello")
+    file_two = _local_file(tmp_path, "two.txt", "bye")
+    record = _v1_record(1, {"one.txt": _md5("old")})
+    zenodo = _FakeZenodo()
+    _refresh_files(zenodo, "1", record, {"one.txt": file_one, "two.txt": file_two}, "1.0.0")
+    assert zenodo.calls == [
+        ("delete_file", "one.txt"),
+        ("start_uploads", ["one.txt", "two.txt"]),
+        ("upload_file", "one.txt"),
+        ("upload_file", "two.txt"),
+    ]
+
+
 def test_refresh_files_replace_changed(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {"one.txt": _md5("bye")})
     zenodo = _FakeZenodo()
-    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": file}, "1.0.0")
     assert zenodo.calls == [
         ("delete_file", "one.txt"),
         ("start_uploads", ["one.txt"]),
@@ -1312,22 +1424,22 @@ def test_refresh_files_replace_changed(tmp_path):
 
 def test_refresh_files_complete_pending(tmp_path):
     """A file that was declared but never uploaded is completed, not compared to a checksum."""
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     record = _v1_record(1, {"one.txt": None})
     zenodo = _FakeZenodo()
-    _refresh_files(zenodo, "1", record, {"one.txt": path}, "1.0.0")
+    _refresh_files(zenodo, "1", record, {"one.txt": file}, "1.0.0")
     # The file is declared already, so it is neither deleted nor declared again.
     assert zenodo.calls == [("upload_file", "one.txt")]
 
 
 def test_refresh_files_pending_next_to_uploaded(tmp_path):
     """Only the pending file of a half finished upload is sent again."""
-    path_one = _write_file(tmp_path, "one.txt", "hello")
-    path_two = _write_file(tmp_path, "two.txt", "bye")
+    file_one = _local_file(tmp_path, "one.txt", "hello")
+    file_two = _local_file(tmp_path, "two.txt", "bye")
     record = _v1_record(1, {"one.txt": _md5("hello"), "two.txt": None})
     zenodo = _FakeZenodo()
-    paths = {"one.txt": path_one, "two.txt": path_two}
-    _refresh_files(zenodo, "1", record, paths, "1.0.0")
+    files = {"one.txt": file_one, "two.txt": file_two}
+    _refresh_files(zenodo, "1", record, files, "1.0.0")
     assert zenodo.calls == [("upload_file", "two.txt")]
 
 
@@ -1345,29 +1457,60 @@ def test_refresh_draft_completes_failed_upload(tmp_path):
     The first run declares both files and fails while sending the content of the first one.
     The second run finds one pending entry and no uploaded entry, and sends both.
     """
-    path_one = _write_file(tmp_path, "one.txt", "hello")
-    path_two = _write_file(tmp_path, "two.txt", "bye")
+    file_one = _local_file(tmp_path, "one.txt", "hello")
+    file_two = _local_file(tmp_path, "two.txt", "bye")
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_v1_record(7, {}))
 
-    def fail(rid, path):
+    def fail(rid, file):
         raise RESTError("Failed PUT https://zenodo.org/api/records/7/draft/files: 500")
 
     zenodo.upload_file = fail
     with pytest.raises(RESTError):
-        _upload_new_record(zenodo, config, [path_one, path_two])
+        _upload_new_record(zenodo, config, DESCRIPTION, [file_one, file_two])
     assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
     # Zenodo now holds the names of both files without their content.
     draft = _v1_record(7, {"one.txt": None, "two.txt": None}, is_published=False)
     zenodo = _FakeZenodo(draft)
-    _refresh_draft(zenodo, "7", draft, config, [path_one, path_two])
+    _refresh_draft(zenodo, "7", draft, config, DESCRIPTION, [file_one, file_two])
     assert zenodo.calls == [
-        ("update_metadata", "7", None),
         ("upload_file", "one.txt"),
         ("upload_file", "two.txt"),
         ("update_metadata", "7", None),
     ]
+
+
+def test_refresh_draft_replace_preview(tmp_path):
+    """A draft whose preview file is replaced by a new one selects it after the upload."""
+    file = _local_file(tmp_path, "new.txt", "hello")
+    config = _config_with_version(tmp_path, "1.0.0")
+    draft = _v1_record(7, {"old.txt": _md5("bye")}, is_published=False)
+    zenodo = _FakeZenodo(draft)
+    _refresh_draft(zenodo, "7", draft, config, DESCRIPTION, [file])
+    assert zenodo.calls == [
+        ("delete_file", "old.txt"),
+        ("start_uploads", ["new.txt"]),
+        ("upload_file", "new.txt"),
+        ("update_metadata", "7", None),
+    ]
+    assert zenodo.files_options == [{"enabled": True, "default_preview": "new.txt"}]
+
+
+def test_refresh_draft_delete_preview(tmp_path):
+    """Deleting the preview file of a draft selects the file that is now first.
+
+    Zenodo clears the preview of a deleted file itself,
+    so the preview needs no update before the file is deleted.
+    """
+    file_two = _local_file(tmp_path, "two.txt", "bye")
+    config = _config_with_version(tmp_path, "1.0.0")
+    draft = _v1_record(7, {"one.txt": _md5("hello"), "two.txt": _md5("bye")}, is_published=False)
+    draft["files"]["default_preview"] = "one.txt"
+    zenodo = _FakeZenodo(draft)
+    _refresh_draft(zenodo, "7", draft, config, DESCRIPTION, [file_two])
+    assert zenodo.calls == [("delete_file", "one.txt"), ("update_metadata", "7", None)]
+    assert zenodo.files_options == [{"enabled": True, "default_preview": "two.txt"}]
 
 
 def test_refresh_files_delete_removed(tmp_path):
@@ -1377,15 +1520,57 @@ def test_refresh_files_delete_removed(tmp_path):
     assert zenodo.calls == [("delete_file", "gone.txt")]
 
 
+def test_diff_files_classifies_every_name(tmp_path):
+    files = {
+        name: _local_file(tmp_path, name, text)
+        for name, text in [("same", "a"), ("changed", "b"), ("pending", "c"), ("missing", "d")]
+    }
+    record = _v1_record(
+        1,
+        {
+            "extra": _md5("e"),
+            "same": _md5("a"),
+            "changed": _md5("old"),
+            "pending": None,
+        },
+    )
+    assert _diff_files(record, files) == FileDiff(
+        missing=["missing"],
+        extra=["extra"],
+        changed=["changed"],
+        same=["same"],
+        incomplete=["pending"],
+    )
+
+
+def test_diff_files_empty():
+    assert _diff_files(_v1_record(1, {}), {}) == FileDiff([], [], [], [], [])
+
+
+def test_diff_files_has_no_side_effects(tmp_path):
+    files = {"one.txt": _local_file(tmp_path, "one.txt", "hello")}
+    record = _v1_record(1, {"one.txt": _md5("bye")})
+    _diff_files(record, files)
+    assert record == _v1_record(1, {"one.txt": _md5("bye")})
+
+
+def test_diff_files_unexpected_checksum(tmp_path):
+    files = {"one.txt": _local_file(tmp_path, "one.txt", "hello")}
+    record = _v1_record(1, {"one.txt": None})
+    record["files"]["entries"]["one.txt"]["checksum"] = "sha256:abc"
+    with pytest.raises(ZenodoError):
+        _diff_files(record, files)
+
+
 def test_check_record_md5_ok(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
-    _check_record_md5(_v1_record(1, {"one.txt": _md5("hello")}), {"one.txt": path}, "1.0.0")
+    file = _local_file(tmp_path, "one.txt", "hello")
+    _check_record_md5(_v1_record(1, {"one.txt": _md5("hello")}), {"one.txt": file}, "1.0.0")
 
 
 def test_check_record_md5_mismatch(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     with pytest.raises(ZenodoError):
-        _check_record_md5(_v1_record(1, {"one.txt": _md5("bye")}), {"one.txt": path}, "1.0.0")
+        _check_record_md5(_v1_record(1, {"one.txt": _md5("bye")}), {"one.txt": file}, "1.0.0")
 
 
 def test_check_record_md5_missing_locally(tmp_path):
@@ -1394,9 +1579,16 @@ def test_check_record_md5_missing_locally(tmp_path):
 
 
 def test_check_record_md5_missing_online(tmp_path):
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     with pytest.raises(ZenodoError):
-        _check_record_md5(_v1_record(1, {}), {"one.txt": path}, "1.0.0")
+        _check_record_md5(_v1_record(1, {}), {"one.txt": file}, "1.0.0")
+
+
+def test_check_record_md5_incomplete(tmp_path):
+    file = _local_file(tmp_path, "one.txt", "hello")
+    with pytest.raises(ZenodoError) as exc_info:
+        _check_record_md5(_v1_record(1, {"one.txt": None}), {"one.txt": file}, "1.0.0")
+    assert "no checksum" in str(exc_info.value)
 
 
 def _config_with_version(tmp_path, version: str) -> Config:
@@ -1427,7 +1619,7 @@ def test_refresh_existing_record_published_same_version(tmp_path):
     """A published record is recognized through `is_published` and republished."""
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, "7", config, [])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert zenodo.calls == [
         ("get_record", "7"),
         ("get_versions", "7"),
@@ -1442,7 +1634,7 @@ def test_refresh_existing_record_published_unpublished_version(tmp_path, version
     """Any local version that was never published becomes a new version on Zenodo."""
     config = _config_with_version(tmp_path, version)
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, "7", config, [])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert ("create_new_version", "7") in zenodo.calls
     # A new version is published on the day it is created, not on the day the parent was.
     assert ("update_metadata", "7", None) in zenodo.calls
@@ -1455,7 +1647,7 @@ def test_refresh_existing_record_published_version_taken(tmp_path):
     versions = [_published(7, "1.0.0", is_latest=False), _published(8, "1.1.0")]
     zenodo = _FakeZenodo(versions[1], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, "8", config, [])
+        _refresh_existing_record(zenodo, "8", config, DESCRIPTION, [])
     assert "already published as record 7" in str(exc_info.value)
 
 
@@ -1465,7 +1657,7 @@ def test_refresh_existing_record_published_stale_record_id(tmp_path):
     versions = [_published(7, "1.0.0", is_latest=False), _published(8, "1.1.0")]
     zenodo = _FakeZenodo(versions[0], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, "7", config, [])
+        _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert "not the latest published version" in str(exc_info.value)
     assert str(config.path_record_id) in str(exc_info.value)
 
@@ -1488,18 +1680,87 @@ def test_check_version_chain_mixed_id_types(tmp_path):
 
 def test_refresh_existing_record_draft(tmp_path):
     """A draft is recognized through `is_published` and its metadata is updated in place."""
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     config = _config_with_version(tmp_path, "1.0.0")
     record = _v1_record(7, {}, is_published=False, metadata={"version": "1.0.0"})
     zenodo = _FakeZenodo(record)
-    _refresh_existing_record(zenodo, "7", config, [path])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [file])
     assert zenodo.calls == [
         ("get_record", "7"),
-        ("update_metadata", "7", None),
         ("start_uploads", ["one.txt"]),
         ("upload_file", "one.txt"),
         ("update_metadata", "7", None),
     ]
+
+
+SOFT_ERRORS = [
+    {"field": "metadata.title", "messages": ["Shorter than minimum length 3."]},
+    {
+        "field": "metadata.publisher",
+        "messages": ["Missing publisher field required for DOI registration."],
+    },
+]
+"""Soft errors as Zenodo lists them in a successful response to a metadata update."""
+
+
+def _main_with_fake_zenodo(tmp_path, monkeypatch, zenodo: _FakeZenodo) -> int:
+    """Run `main` with `CONFIG_YAML` in `tmp_path`, sending the requests to `zenodo`."""
+    monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("stepup.reprep.sync_zenodo.ZenodoWrapper", lambda *a, **kw: zenodo)
+    path = tmp_path / "sync_zenodo.yaml"
+    path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
+    return main([str(path), _write_description(tmp_path), _write_inventory(tmp_path)])
+
+
+def _assert_soft_errors_reported(stderr: str, rid: str):
+    for error in SOFT_ERRORS:
+        assert f"{error['field']}: {error['messages'][0]}" in stderr
+    assert f"record {rid}" in stderr
+    assert "draft is kept" in stderr
+    assert "Traceback" not in stderr
+
+
+def test_main_soft_errors_new_draft(tmp_path, monkeypatch, capsys):
+    """Soft errors in the metadata update of a new draft fail the run.
+
+    The missing files reported on creation are expected, so they are not reported,
+    and the record id is kept, so the next run repairs the draft.
+    """
+    record = _v1_record(7, {}, is_published=False)
+    record["errors"] = [{"field": "files.enabled", "messages": ["Missing uploaded files."]}]
+    zenodo = _FakeZenodo(record, metadata_errors=SOFT_ERRORS)
+    assert _main_with_fake_zenodo(tmp_path, monkeypatch, zenodo) == 1
+    assert ("update_metadata", "7", None) in zenodo.calls
+    assert not any(call[0] == "publish_record" for call in zenodo.calls)
+    stderr = capsys.readouterr().err
+    _assert_soft_errors_reported(stderr, "7")
+    assert "Missing uploaded files" not in stderr
+    assert (tmp_path / ".zenodo-record-id.txt").read_text(encoding="utf-8") == "7\n"
+
+
+def test_main_soft_errors_republish(tmp_path, monkeypatch, capsys):
+    """Soft errors in the metadata update of a published record prevent its publication."""
+    (tmp_path / ".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    record = _published(7, "1.0.0", {"one.txt": _md5("hello")})
+    zenodo = _FakeZenodo(record, metadata_errors=SOFT_ERRORS)
+    assert _main_with_fake_zenodo(tmp_path, monkeypatch, zenodo) == 1
+    assert ("update_metadata", "7", PUBLICATION_DATE) in zenodo.calls
+    assert not any(call[0] == "publish_record" for call in zenodo.calls)
+    _assert_soft_errors_reported(capsys.readouterr().err, "7")
+
+
+@pytest.mark.parametrize("errors", [None, []])
+def test_check_draft_errors_none(errors):
+    _check_draft_errors({"id": 7, "errors": errors}, "7")
+    _check_draft_errors({"id": 7}, "7")
+
+
+def test_check_draft_errors_unexpected_shape():
+    """An error that Zenodo formats differently is still reported, as it arrived."""
+    with pytest.raises(ZenodoError) as exc_info:
+        _check_draft_errors({"errors": ["something odd"]}, "7")
+    assert "'something odd'" in str(exc_info.value)
 
 
 @pytest.mark.parametrize("record_is_published", [True, False])
@@ -1511,7 +1772,7 @@ def test_is_published(record_is_published):
 def test_is_published_unexpected_shape(record):
     """A record that does not say whether it is published is reported as such.
 
-    Guessing would either delete a record or try to change the files of a published one.
+    Guessing would send the requests meant for a draft to a published record, or vice versa.
     """
     with pytest.raises(ZenodoError) as exc_info:
         _is_published(record)
@@ -1523,35 +1784,8 @@ def test_refresh_existing_record_without_is_published(tmp_path):
     config = _config_with_version(tmp_path, "1.0.0")
     record = _v1_record(7, {}, metadata={"version": "1.0.0"})
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(_FakeZenodo(record), "7", config, [])
+        _refresh_existing_record(_FakeZenodo(record), "7", config, DESCRIPTION, [])
     assert INVENIORDM_MIMETYPE in str(exc_info.value)
-
-
-def test_clean_online_without_is_published(tmp_path):
-    """`--clean` deletes nothing when it cannot tell a draft from a published record."""
-    config = _config_with_version(tmp_path, "1.0.0")
-    config.path_record_id.write_text("7\n", encoding="utf-8")
-    zenodo = ZenodoWrapper("token")
-    zenodo.rest = _FakeRest([{"id": 7}])
-    with pytest.raises(ZenodoError) as exc_info:
-        _clean_online(zenodo, config)
-    assert INVENIORDM_MIMETYPE in str(exc_info.value)
-    assert zenodo.rest.deleted == []
-    assert config.path_record_id.exists()
-
-
-def test_clean_online_deletes_drafts_on_every_page(tmp_path):
-    """`--clean` removes the drafts that Zenodo serves beyond the first page."""
-    config = _config_with_version(tmp_path, "1.0.0")
-    config.path_record_id.write_text("7\n", encoding="utf-8")
-    hits = [{"id": rid, "is_published": rid % 2 == 0} for rid in range(2 * SEARCH_PAGE_SIZE + 1)]
-    zenodo = ZenodoWrapper("token")
-    zenodo.rest = _FakeRest(hits)
-    _clean_online(zenodo, config)
-    assert zenodo.rest.deleted == [
-        f"records/{hit['id']}/draft" for hit in hits if not hit["is_published"]
-    ]
-    assert not config.path_record_id.exists()
 
 
 def test_record_version_present():
@@ -1575,9 +1809,10 @@ def test_record_publication_date_absent(record):
 
 def test_metadata_omits_unset_fields():
     """A field without a value is left out, instead of being sent as a null or an empty list."""
-    payload = _metadata(resource_type="dataset").to_zenodo()
+    payload = _metadata(resource_type="dataset").to_zenodo(DESCRIPTION)
     assert sorted(payload) == [
         "creators",
+        "description",
         "publication_date",
         "publisher",
         "resource_type",
@@ -1588,7 +1823,8 @@ def test_metadata_omits_unset_fields():
 
 def test_metadata_keywords_are_subjects():
     """Zenodo has no keyword field, so the keywords are deposited as free text subjects."""
-    payload = _metadata(resource_type="dataset", keywords=["coffee", "tea"]).to_zenodo()
+    metadata = _metadata(resource_type="dataset", keywords=["coffee", "tea"])
+    payload = metadata.to_zenodo(DESCRIPTION)
     assert payload["subjects"] == [{"subject": "coffee"}, {"subject": "tea"}]
     assert "keywords" not in payload
 
@@ -1603,14 +1839,14 @@ def test_metadata_publication_date_today():
     """A record that is not published yet gets today's date, the only sensible guess."""
     metadata = _metadata(license=["mit"], resource_type="dataset")
     today = dt.date.today().isoformat()
-    assert metadata.to_zenodo()["publication_date"] == today
-    assert metadata.to_zenodo(None)["publication_date"] == today
+    assert metadata.to_zenodo(DESCRIPTION)["publication_date"] == today
+    assert metadata.to_zenodo(DESCRIPTION, None)["publication_date"] == today
 
 
 def test_metadata_publication_date_given():
     """The publication date of a published record is sent back unchanged."""
     metadata = _metadata(license=["mit"], resource_type="dataset")
-    payload = metadata.to_zenodo(PUBLICATION_DATE)
+    payload = metadata.to_zenodo(DESCRIPTION, PUBLICATION_DATE)
     assert payload["publication_date"] == PUBLICATION_DATE
 
 
@@ -1620,7 +1856,7 @@ def test_refresh_existing_record_published_without_publication_date(tmp_path):
     record = _published(7, "1.0.0")
     del record["metadata"]["publication_date"]
     zenodo = _FakeZenodo(record)
-    _refresh_existing_record(zenodo, "7", config, [])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert ("update_metadata", "7", None) in zenodo.calls
 
 
@@ -1644,7 +1880,7 @@ def test_refresh_existing_record_published_without_version(tmp_path):
     """
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_published_without_version(7))
-    _refresh_existing_record(zenodo, "7", config, [])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert ("create_new_version", "7") in zenodo.calls
 
 
@@ -1654,7 +1890,7 @@ def test_check_version_chain_stale_record_without_version(tmp_path):
     versions = [_published_without_version(7, is_latest=False), _published_without_version(8)]
     zenodo = _FakeZenodo(versions[0], versions)
     with pytest.raises(ZenodoError) as exc_info:
-        _refresh_existing_record(zenodo, "7", config, [])
+        _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [])
     assert "Record 7 (no version)" in str(exc_info.value)
     assert "record 8 (no version)" in str(exc_info.value)
 
@@ -1662,29 +1898,21 @@ def test_check_version_chain_stale_record_without_version(tmp_path):
 def test_start_uploads_declares_every_file(tmp_path):
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([])
-    paths = [_write_file(tmp_path, "one.txt", "hello"), _write_file(tmp_path, "two.txt", "bye")]
-    zenodo.start_uploads("7", paths)
+    files = [_local_file(tmp_path, "one.txt", "hello"), _local_file(tmp_path, "two.txt", "bye")]
+    zenodo.start_uploads("7", files)
     assert zenodo.rest.posted == [
         ("records/7/draft/files", [{"key": "one.txt"}, {"key": "two.txt"}])
     ]
 
 
-def test_start_uploads_without_files():
-    """Zenodo rejects a request that declares no files, so a record without files sends none."""
-    zenodo = ZenodoWrapper("token")
-    zenodo.rest = _FakeRest([])
-    zenodo.start_uploads("7", [])
-    assert zenodo.rest.posted == []
-
-
 def test_create_new_record_with_files(tmp_path):
-    """A new record with files creates the record, uploads files, and updates metadata."""
-    path = _write_file(tmp_path, "one.txt", "hello")
+    """A new record is created without files, which are then uploaded before the metadata."""
+    file = _local_file(tmp_path, "one.txt", "hello")
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_v1_record(7, {}))
-    _upload_new_record(zenodo, config, [path])
+    _upload_new_record(zenodo, config, DESCRIPTION, [file])
     assert zenodo.calls == [
-        ("create_new_record", ["one.txt"]),
+        ("create_new_record",),
         ("start_uploads", ["one.txt"]),
         ("upload_file", "one.txt"),
         ("update_metadata", "7", None),
@@ -1697,52 +1925,39 @@ def test_create_new_record_failed_upload(tmp_path):
 
     The record id is therefore stored before the first file is uploaded.
     """
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     config = _config_with_version(tmp_path, "1.0.0")
     zenodo = _FakeZenodo(_v1_record(7, {}))
 
-    def fail(rid, path):
+    def fail(rid, file):
         raise RESTError("Failed PUT https://zenodo.org/api/records/7/draft/files: 500")
 
     zenodo.upload_file = fail
     with pytest.raises(RESTError):
-        _upload_new_record(zenodo, config, [path])
+        _upload_new_record(zenodo, config, DESCRIPTION, [file])
     assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
 
 
-def test_create_new_record_without_files(tmp_path):
-    """A new record without files creates the record without starting uploads or extra updates."""
+def test_create_new_record_without_preview(tmp_path):
+    """A new record has no files yet, so it is created without a default preview."""
     config = _config_with_version(tmp_path, "1.0.0")
-    zenodo = _FakeZenodo(_v1_record(7, {}))
-    _upload_new_record(zenodo, config, [])
-    assert zenodo.calls == [
-        ("create_new_record", []),
-    ]
-    assert config.path_record_id.read_text(encoding="utf-8").strip() == "7"
-
-
-def test_create_new_record_enables_files(tmp_path):
-    """Zenodo refuses an upload to a record whose files it does not have enabled."""
-    config = _config_with_version(tmp_path, "1.0.0")
-    path = _write_file(tmp_path, "one.txt", "hello")
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([])
-    zenodo.create_new_record(config, [path])
+    zenodo.create_new_record(config, DESCRIPTION)
     assert zenodo.rest.posted[0][0] == "records"
-    assert zenodo.rest.posted[0][1]["files"] == {
-        "enabled": True,
-        "order": ["one.txt"],
-        "default_preview": "one.txt",
-    }
+    assert zenodo.rest.posted[0][1]["files"] == {"enabled": True}
 
 
-def test_create_new_record_metadata_only(tmp_path):
-    """A dataset without files becomes a metadata only record."""
+@pytest.mark.parametrize(("names", "expected"), [(["two.txt", "one.txt"], "two.txt"), ([], None)])
+def test_config_to_zenodo_preview(tmp_path, names, expected):
+    """No file order is sent, because Zenodo drops it, and the first file is the preview."""
     config = _config_with_version(tmp_path, "1.0.0")
-    zenodo = ZenodoWrapper("token")
-    zenodo.rest = _FakeRest([])
-    zenodo.create_new_record(config, [])
-    assert zenodo.rest.posted[0][1]["files"] == {"enabled": False, "order": []}
+    files = [_local_file(tmp_path, name, name) for name in names]
+    payload = config.to_zenodo(DESCRIPTION, files)
+    files_options = {"enabled": True}
+    if expected is not None:
+        files_options["default_preview"] = expected
+    assert payload["files"] == files_options
 
 
 class _FakeGetRest:
@@ -1788,20 +2003,15 @@ def test_get_record_other_error(status_code):
 
 
 def test_refresh_existing_record_published_new_version_with_files(tmp_path):
-    """A new version created from a published record gets the files and the metadata.
-
-    The metadata is sent before the files, because it enables them,
-    and again afterwards, because their order is only applied once they exist.
-    """
-    path = _write_file(tmp_path, "two.txt", "world")
+    """A new version created from a published record gets the files and then the metadata."""
+    file = _local_file(tmp_path, "two.txt", "world")
     config = _config_with_version(tmp_path, "1.1.0")
     zenodo = _FakeZenodo(_published(7, "1.0.0"))
-    _refresh_existing_record(zenodo, "7", config, [path])
+    _refresh_existing_record(zenodo, "7", config, DESCRIPTION, [file])
     assert zenodo.calls == [
         ("get_record", "7"),
         ("get_versions", "7"),
         ("create_new_version", "7"),
-        ("update_metadata", "7", None),
         ("start_uploads", ["two.txt"]),
         ("upload_file", "two.txt"),
         ("update_metadata", "7", None),
@@ -1821,9 +2031,16 @@ def test_related_scheme_invalid_message():
 def test_access_invalid_message():
     """A value outside a fixed set is reported without the attrs internals of the validator."""
     with pytest.raises(ValueError) as exc_info:
-        Access(record="hidden")
+        Access(files="hidden")
     message = _format_error(exc_info.value, str)
-    assert message == "'record' must be in ['public', 'restricted'] (got 'hidden')"
+    assert message == "'files' must be in ['public', 'restricted'] (got 'hidden')"
+
+
+def test_access_record_removed():
+    """Zenodo refuses restricted records, so the record access level is not configurable."""
+    with pytest.raises(TypeError):
+        Access(record="public")
+    assert Access(files="restricted").to_zenodo() == {"record": "public", "files": "restricted"}
 
 
 def test_config_string_where_a_list_of_sections_belongs(tmp_path):
@@ -1880,7 +2097,7 @@ def test_get_all_pages_endless():
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakeRest([{"id": rid} for rid in range(SEARCH_PAGE_SIZE * MAX_SEARCH_PAGES + 1)])
     with pytest.raises(ZenodoError) as exc_info:
-        zenodo.get_user_records()
+        zenodo.get_versions("3")
     assert f"{MAX_SEARCH_PAGES} full pages" in str(exc_info.value)
     assert len(zenodo.rest.calls) == MAX_SEARCH_PAGES
 
@@ -1895,11 +2112,11 @@ def test_entry_md5_without_checksum(entry):
 
 def test_upload_file_without_size(tmp_path):
     """A commit response without a size is reported as a message, not as a KeyError."""
-    path = _write_file(tmp_path, "one.txt", "hello")
+    file = _local_file(tmp_path, "one.txt", "hello")
     zenodo = ZenodoWrapper("token")
     zenodo.rest = _FakePutRest({})
     with pytest.raises(ZenodoError) as exc_info:
-        zenodo.upload_file("7", path)
+        zenodo.upload_file("7", file)
     assert "File size mismatch" in str(exc_info.value)
 
 
@@ -1968,16 +2185,478 @@ def test_update_online_empty_record_id(tmp_path):
     config = _config_with_version(tmp_path, "1.0.0")
     config.path_record_id.write_text("\n", encoding="utf-8")
     with pytest.raises(ZenodoError) as exc_info:
-        _update_online(_FakeZenodo(), config, [])
+        _update_online(_FakeZenodo(), config, DESCRIPTION, [])
     assert "is empty" in str(exc_info.value)
 
 
-def test_main_missing_file(tmp_path, monkeypatch, capsys):
-    """A file that does not exist is reported before Zenodo is contacted."""
+@pytest.mark.parametrize("extra", [[], ["--dry-run"]])
+def test_main_missing_file(tmp_path, monkeypatch, capsys, extra):
+    """A file that does not exist is reported before Zenodo is contacted.
+
+    The real `amend()` is used, which refuses a missing input outside a StepUp step.
+    """
+    monkeypatch.setattr("stepup.reprep.sync_zenodo.amend", stepup.core.api.amend)
     monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
     path = tmp_path / "sync_zenodo.yaml"
     path.write_text(CONFIG_YAML, encoding="utf-8", newline="\n")
-    assert main([str(path), str(tmp_path / "nope.txt")]) == 1
+    path_inventory = _write_inventory(tmp_path, [UploadFile(tmp_path / "nope.txt", "0" * 32)])
+    assert main([str(path), _write_description(tmp_path), path_inventory, *extra]) == 1
     captured = capsys.readouterr()
     assert "do not exist" in captured.err
     assert "Traceback" not in captured.err
+
+
+@pytest.fixture
+def project(tmp_path, monkeypatch):
+    """A project in the current directory, with one file to upload and an up-to-date inventory.
+
+    The config file names a relative record id file, as in a real project,
+    and `REPREP_ZENODO_TOKEN` is set, so that every test chooses what it unsets.
+    """
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("REPREP_ZENODO_TOKEN", "token")
+    Path("sync_zenodo.yaml").write_text(CONFIG_YAML, encoding="utf-8")
+    Path("zenodo_description.md").write_text("A *dataset*.\n", encoding="utf-8")
+    Path("README.txt").write_text("hello", encoding="utf-8")
+    _write_inventory_file("zenodo_inventory.jsonl", [UploadFile("README.txt", _md5("hello"))])
+
+
+SYNC_ARGS = [
+    "sync_zenodo.yaml",
+    "zenodo_description.md",
+    "zenodo_inventory.jsonl",
+    "--no-check-md5",
+]
+"""The arguments of `srr-sync-zenodo` in a workflow, for the `project` fixture."""
+
+BY_HAND_ARGS = ["sync_zenodo.yaml", "zenodo_description.md", "zenodo_inventory.jsonl"]
+"""The arguments of `srr-sync-zenodo` when run by hand, for the `project` fixture."""
+
+
+def _use_fake_zenodo(monkeypatch, zenodo: _FakeZenodo) -> list[str]:
+    """Let `main` talk to a fake Zenodo.
+
+    Returns
+    -------
+    endpoints
+        The endpoint of every connection to Zenodo that `main` made, in the order of creation.
+    """
+    endpoints = []
+
+    def connect(token, endpoint, verbose=False):
+        endpoints.append(endpoint)
+        return zenodo
+
+    monkeypatch.setattr("stepup.reprep.sync_zenodo.ZenodoWrapper", connect)
+    return endpoints
+
+
+@pytest.fixture
+def no_hashing(monkeypatch):
+    """Make every computation of an MD5 checksum in `srr-sync-zenodo` fail."""
+
+    def fail(path):
+        raise AssertionError(f"Unexpected MD5 computation of {path}")
+
+    monkeypatch.setattr("stepup.reprep.sync_zenodo._compute_md5", fail)
+
+
+def _draft(checksums: dict[str, str | None]) -> dict:
+    """Build the draft record of the `project` fixture, with the given files on Zenodo."""
+    return _v1_record(7, checksums, is_published=False, metadata={"version": "1.0.0"})
+
+
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_first_build(monkeypatch):
+    zenodo = _FakeZenodo()
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls == [
+        ("create_new_record",),
+        ("start_uploads", ["README.txt"]),
+        ("upload_file", "README.txt"),
+        ("update_metadata", "7", None),
+    ]
+    assert Path(".zenodo-record-id.txt").read_text(encoding="utf-8") == "7\n"
+
+
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_nothing_changed(monkeypatch):
+    """Nothing is uploaded or hashed, and the metadata is sent again."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo(_draft({"README.txt": _md5("hello")}))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls == [
+        ("get_record", "7"),
+        ("update_metadata", "7", None),
+    ]
+
+
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_local_file_changed(monkeypatch):
+    """The inventory step wrote a new checksum, so the sync replaces the file."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    Path("README.txt").write_text("changed", encoding="utf-8")
+    _write_inventory_file("zenodo_inventory.jsonl", [UploadFile("README.txt", _md5("changed"))])
+    zenodo = _FakeZenodo(_draft({"README.txt": _md5("hello")}))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls == [
+        ("get_record", "7"),
+        ("delete_file", "README.txt"),
+        ("start_uploads", ["README.txt"]),
+        ("upload_file", "README.txt"),
+        ("update_metadata", "7", None),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("checksums", "uploads"),
+    [
+        ({}, [("start_uploads", ["README.txt"]), ("upload_file", "README.txt")]),
+        (
+            {"README.txt": _md5("edited online")},
+            [
+                ("delete_file", "README.txt"),
+                ("start_uploads", ["README.txt"]),
+                ("upload_file", "README.txt"),
+            ],
+        ),
+    ],
+)
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_draft_changed_by_hand(monkeypatch, checksums, uploads):
+    """A file deleted or changed in the draft by hand is uploaded again without a local change."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo(_draft(checksums))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls == [
+        ("get_record", "7"),
+        *uploads,
+        ("update_metadata", "7", None),
+    ]
+
+
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_published_in_web_interface(monkeypatch):
+    """The files are compared with the inventory and the metadata is published again."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo(_published(7, "1.0.0", {"README.txt": _md5("hello")}))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls == [
+        ("get_record", "7"),
+        ("get_versions", "7"),
+        ("edit_record", "7"),
+        ("update_metadata", "7", PUBLICATION_DATE),
+        ("publish_record", "7"),
+    ]
+
+
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_published_changed_locally(monkeypatch, capsys):
+    """A published file that differs from the inventory asks for a new version."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo(_published(7, "1.0.0", {"README.txt": _md5("bye")}))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 1
+    assert "MD5 checksum mismatch for README.txt (1.0.0, published)" in capsys.readouterr().err
+    assert ("publish_record", "7") not in zenodo.calls
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_unreachable(monkeypatch, capsys):
+    """A sync with a token fails when Zenodo cannot be reached."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo()
+
+    def fail(rid):
+        raise RESTError("Failed GET https://zenodo.org/api/records/7/draft: Connection refused")
+
+    zenodo.get_record = fail
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 1
+    assert "Connection refused" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    ("token", "expected"),
+    [(None, "is not set"), ("", "is empty")],
+)
+@pytest.mark.usefixtures("project")
+def test_sequence_without_token(monkeypatch, capsys, token, expected):
+    """Without a token, or with an empty one, the sync warns and sends nothing."""
+    if token is None:
+        monkeypatch.delenv("REPREP_ZENODO_TOKEN")
+    else:
+        monkeypatch.setenv("REPREP_ZENODO_TOKEN", token)
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main(SYNC_ARGS) == 0
+    assert f"The REPREP_ZENODO_TOKEN environment variable {expected}." in capsys.readouterr().out
+    assert endpoints == []
+
+
+@pytest.mark.parametrize("token", [None, "token"])
+@pytest.mark.usefixtures("project")
+def test_sequence_offline(monkeypatch, capsys, token):
+    """An offline build sends nothing, with or without a token, and does not warn about it."""
+    monkeypatch.setenv("STEPUP_BUILD_OFFLINE", "1")
+    if token is None:
+        monkeypatch.delenv("REPREP_ZENODO_TOKEN")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main(SYNC_ARGS) == 0
+    out = capsys.readouterr().out
+    assert "The build is offline (STEPUP_BUILD_OFFLINE=1)." in out
+    assert "REPREP_ZENODO_TOKEN" not in out
+    assert endpoints == []
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_online_explicitly(monkeypatch):
+    """Any other value of `STEPUP_BUILD_OFFLINE` than `1` is online."""
+    monkeypatch.setenv("STEPUP_BUILD_OFFLINE", "0")
+    zenodo = _FakeZenodo()
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 0
+    assert zenodo.calls[0] == ("create_new_record",)
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_offline_description_in_config(monkeypatch, capsys):
+    """The configuration is validated before the sync finds that it is offline.
+
+    The description has its own file, so the config file cannot hold one.
+    """
+    monkeypatch.setenv("STEPUP_BUILD_OFFLINE", "1")
+    text = CONFIG_YAML.replace(
+        "  title: 'A title'\n", "  title: 'A title'\n  description: 'Text'\n"
+    )
+    Path("sync_zenodo.yaml").write_text(text, encoding="utf-8")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main(SYNC_ARGS) == 1
+    err = capsys.readouterr().err
+    assert "metadata" in err
+    assert "description" in err
+    assert endpoints == []
+
+
+@pytest.mark.parametrize("env", [{"STEPUP_BUILD_OFFLINE": "1"}, {"REPREP_ZENODO_TOKEN": ""}])
+@pytest.mark.usefixtures("project")
+def test_sequence_invalid_inventory_before_early_exit(monkeypatch, capsys, env):
+    """Every run reports an inventory that cannot be used, also when it would exit early."""
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+    Path("zenodo_inventory.jsonl").write_text("{}", encoding="utf-8")
+    assert main(SYNC_ARGS) == 1
+    assert "is not an inventory written by" in capsys.readouterr().err
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_by_hand_stale_inventory(monkeypatch, capsys):
+    """A run by hand after a local change without a new inventory stops before contacting Zenodo."""
+    Path("README.txt").write_text("changed", encoding="utf-8")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main(BY_HAND_ARGS) == 1
+    err = capsys.readouterr().err
+    assert "The file README.txt has changed after the inventory zenodo_inventory.jsonl" in err
+    assert "`stepup build`" in err
+    assert "`srr-make-inventory`" in err
+    assert endpoints == []
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_by_hand_up_to_date(monkeypatch):
+    """A run by hand with an up-to-date inventory syncs as in the workflow."""
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    zenodo = _FakeZenodo(_draft({"README.txt": _md5("hello")}))
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(BY_HAND_ARGS) == 0
+    assert zenodo.calls == [
+        ("get_record", "7"),
+        ("update_metadata", "7", None),
+    ]
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_dry_run_skips_md5_check(monkeypatch, capsys):
+    """A dry run reads the inventory but checks no MD5 checksums."""
+    Path("README.txt").write_text("changed", encoding="utf-8")
+    assert main([*BY_HAND_ARGS, "--dry-run"]) == 0
+    assert '"default_preview": "README.txt"' in capsys.readouterr().out
+
+
+OLD_DESCRIPTION_OPTION = "--description=zenodo_description.md"
+"""The option of StepUp RepRep 4.1 for the description, which is now a positional argument."""
+
+
+@pytest.mark.parametrize(
+    ("args", "expected"),
+    [
+        ([], "the following arguments are required: description, inventory"),
+        ([OLD_DESCRIPTION_OPTION], "the following arguments are required: description, inventory"),
+        (["README.txt"], "the following arguments are required: inventory"),
+        (["README.txt", OLD_DESCRIPTION_OPTION], "the following arguments are required: inventory"),
+        (["README.txt", "data.json", OLD_DESCRIPTION_OPTION], "unrecognized arguments"),
+    ],
+)
+@pytest.mark.usefixtures("project")
+def test_old_command_line_argparse(monkeypatch, capsys, args, expected):
+    """The command line of StepUp RepRep 4.1, `srr-sync-zenodo CONFIG PATHS...`, is refused.
+
+    Most variants are refused by `argparse`, before Zenodo is contacted.
+    """
+    Path("data.json").write_text('{"temperature": 300}\n', encoding="utf-8")
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    with pytest.raises(SystemExit) as exc_info:
+        main(["sync_zenodo.yaml", *args])
+    assert exc_info.value.code == 2
+    assert expected in capsys.readouterr().err
+    assert endpoints == []
+
+
+@pytest.mark.parametrize(
+    ("paths", "expected"),
+    [
+        (["README.txt", "data.json"], "must be a Markdown (.md) or HTML (.html) file"),
+        (["README.md", "data.json"], "The file data.json is not an inventory written by"),
+    ],
+)
+@pytest.mark.usefixtures("project")
+def test_old_command_line_two_files(monkeypatch, capsys, paths, expected):
+    """The command line of StepUp RepRep 4.1 with two files reads them as description and inventory.
+
+    Neither is accepted, which is found before Zenodo is contacted.
+    """
+    Path("README.md").write_text("A *dataset*.\n", encoding="utf-8")
+    Path("data.json").write_text('{"temperature": 300}\n', encoding="utf-8")
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main(["sync_zenodo.yaml", *paths]) == 1
+    err = capsys.readouterr().err
+    assert expected in err
+    # The message must not suggest writing an inventory over the data file.
+    assert "Write it again" not in err
+    assert "Traceback" not in err
+    assert endpoints == []
+
+
+def test_upload_file_inventory_md5(tmp_path, no_hashing):
+    """An upload is checked against the inventory, without hashing the local file."""
+    file = _local_file(tmp_path, "one.txt", "hello")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakePutRest({"size": 5, "checksum": f"md5:{_md5('hello')}"})
+    zenodo.upload_file("7", file)
+
+
+def test_upload_file_stale_inventory(tmp_path):
+    """A file that changed after the inventory was written is caught when it is uploaded."""
+    path = Path(tmp_path) / "one.txt"
+    path.write_text("bye!!", encoding="utf-8")
+    zenodo = ZenodoWrapper("token")
+    zenodo.rest = _FakePutRest({"size": 5, "checksum": f"md5:{_md5('bye!!')}"})
+    with pytest.raises(ZenodoError) as exc_info:
+        zenodo.upload_file("7", UploadFile(path, _md5("hello")))
+    assert f"MD5 checksum mismatch for {path}, inventory {_md5('hello')}" in str(exc_info.value)
+
+
+@pytest.mark.parametrize(
+    "env",
+    [{}, {"STEPUP_BUILD_OFFLINE": "1"}, {"REPREP_ZENODO_TOKEN": ""}, {"REPREP_ZENODO_TOKEN": None}],
+)
+@pytest.mark.parametrize("extra", [[], ["--dry-run"]])
+@pytest.mark.usefixtures("project")
+def test_sequence_amend_before_early_exit(monkeypatch, amended, env, extra):
+    """The files are amended as inputs in every run, so the workflow graph is always the same."""
+    for name, value in env.items():
+        if value is None:
+            monkeypatch.delenv(name)
+        else:
+            monkeypatch.setenv(name, value)
+    Path(".zenodo-record-id.txt").write_text("7\n", encoding="utf-8")
+    _use_fake_zenodo(monkeypatch, _FakeZenodo(_draft({"README.txt": _md5("hello")})))
+    assert main([*SYNC_ARGS, *extra]) == 0
+    assert amended == [[Path("README.txt")]]
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_input_not_found(monkeypatch):
+    """A file that StepUp still has to build defers the step instead of failing it."""
+
+    def amend(inp=()):
+        raise InputNotFoundError("Dynamic inputs are not available yet.")
+
+    monkeypatch.setattr("stepup.reprep.sync_zenodo.amend", amend)
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    with pytest.raises(InputNotFoundError):
+        main(SYNC_ARGS)
+    assert endpoints == []
+
+
+@pytest.mark.parametrize("algorithm", ["sha256", "sha1"])
+@pytest.mark.usefixtures("project")
+def test_sequence_md5_required(monkeypatch, capsys, algorithm):
+    """An inventory with other digests is refused, because Zenodo reports MD5 checksums."""
+    write_inventory(
+        "zenodo_inventory.jsonl", ["README.txt"], hash_algorithm=algorithm, do_amend=False
+    )
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main([*SYNC_ARGS, "--dry-run"]) == 1
+    err = capsys.readouterr().err
+    assert f"has {algorithm} digests" in err
+    assert "`srr-make-inventory --hash md5`" in err
+    assert endpoints == []
+
+
+@needs_symlinks
+@pytest.mark.usefixtures("project")
+def test_sequence_link_refused(monkeypatch, capsys):
+    """A symbolic link cannot be uploaded, because Zenodo has no links."""
+    Path("README.md").symlink_to("README.txt")
+    write_inventory("zenodo_inventory.jsonl", ["README.txt", "README.md"], do_amend=False)
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main([*SYNC_ARGS, "--dry-run"]) == 1
+    err = capsys.readouterr().err
+    assert "lists the symbolic link README.md" in err
+    assert endpoints == []
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_paths_relative_to_inventory(monkeypatch, capsys, amended):
+    """The paths in the inventory are relative to its parent directory."""
+    Path("data").mkdir()
+    Path("data/one.txt").write_text("one", encoding="utf-8")
+    write_inventory("data/zenodo_inventory.jsonl", ["data/one.txt", "README.txt"], do_amend=False)
+    args = ["sync_zenodo.yaml", "zenodo_description.md", "data/zenodo_inventory.jsonl"]
+    Path("README.txt").write_text("changed", encoding="utf-8")
+    assert main(args) == 1
+    assert "The file README.txt has changed" in capsys.readouterr().err
+    assert amended == [[Path("data/one.txt"), Path("README.txt")]]
+    write_inventory("data/zenodo_inventory.jsonl", ["data/one.txt", "README.txt"], do_amend=False)
+    assert main([*args, "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    payload = json.loads(out[out.find("{") :])
+    assert payload["files"]["default_preview"] == "one.txt"
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_same_name(monkeypatch, capsys):
+    """Two files with the same name cannot be uploaded to one record."""
+    Path("data").mkdir()
+    Path("data/README.txt").write_text("other", encoding="utf-8")
+    write_inventory("zenodo_inventory.jsonl", ["README.txt", "data/README.txt"], do_amend=False)
+    assert main([*SYNC_ARGS, "--dry-run"]) == 1
+    err = capsys.readouterr().err
+    assert "The inventory zenodo_inventory.jsonl cannot be used" in err
+    assert "files must have different names" in err
+
+
+@pytest.mark.usefixtures("project")
+def test_sequence_inventory_missing(monkeypatch, capsys):
+    Path("zenodo_inventory.jsonl").remove()
+    assert main([*SYNC_ARGS, "--dry-run"]) == 1
+    err = capsys.readouterr().err
+    assert "The inventory zenodo_inventory.jsonl does not exist" in err
+    assert "`srr-make-inventory`" in err

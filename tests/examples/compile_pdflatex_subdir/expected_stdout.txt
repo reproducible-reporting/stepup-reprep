@@ -2,15 +2,15 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-DEFERRED │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+DEFERRED │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 ────────────────────────── Unavailable dynamic inputs ──────────────────────────
 sub/generated.tex
 ────────────────────────────────────────────────────────────────────────────────
    START │ echo 'Hi there!' > generated.tex  # wd=sub
  SUCCESS │ echo 'Hi there!' > generated.tex  # wd=sub
-   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
- SUCCESS │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+   START │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 DIRECTOR │ Ran 4 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

@@ -14,7 +14,7 @@ mv upload.zip upload1.zip
 stepup wait -d upload.zip
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt upload.zip upload1.zip
+srr-make-inventory -o reproducibility_inventory.jsonl upload.zip upload1.zip
 
 # Wait for background processes, if any.
 wait
@@ -22,7 +22,7 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f built.txt ]] || exit 1
-[[ -f inventory.txt ]] || exit 1
+[[ -f inventory.jsonl ]] || exit 1
 [[ -f upload.zip ]] || exit 1
 [[ -f upload1.zip ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

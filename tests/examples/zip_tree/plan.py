@@ -7,5 +7,5 @@ from stepup.reprep.api import make_inventory, zip_inventory
 out_files = static("data/**/*.out")
 
 # Create an inventory file with all .out files and zip it.
-make_inventory(*out_files, "inventory.txt")
-zip_inventory("inventory.txt", "upload.zip")
+make_inventory(*out_files, "inventory.jsonl")
+zip_inventory("inventory.jsonl", "upload.zip")

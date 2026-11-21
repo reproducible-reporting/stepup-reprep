@@ -6,9 +6,9 @@ paper.aux
 paper.blg
 paper.bbl
 paper.fls
-paper-inventory.txt
+paper-inventory.jsonl
 paper1.pdf
 paper1.bbl
 journal_abbreviation_cache.json
-reproducibility_pdf_inventory.txt
-reproducibility_bbl_inventory.txt
+reproducibility_pdf_inventory.jsonl
+reproducibility_bbl_inventory.jsonl

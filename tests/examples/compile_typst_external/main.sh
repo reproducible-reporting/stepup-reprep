@@ -20,5 +20,5 @@ set +e; wait $PID; RETURNCODE=$?; set -e
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f ../doc/main.pdf ]] || exit 1
-grep ' other.typ$' ../doc/main-inventory.txt
-grep ' generated.typ$' ../doc/main-inventory.txt
+grep '"path":"other.typ"' ../doc/main-inventory.jsonl
+grep '"path":"generated.typ"' ../doc/main-inventory.jsonl

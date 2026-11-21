@@ -13,7 +13,7 @@ mv dst.pdf dst1.pdf
 stepup wait -d dst.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt dst.pdf dst1.pdf
+srr-make-inventory -o reproducibility_inventory.jsonl dst.pdf dst1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -23,4 +23,4 @@ wait
 [[ -f src.pdf ]] || exit 1
 [[ -f dst.pdf ]] || exit 1
 [[ -f dst1.pdf ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

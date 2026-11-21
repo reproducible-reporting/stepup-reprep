@@ -72,15 +72,11 @@ metadata:
     - keyword1
     - keyword2
   license:
-    - cc-by-nc-4.0  # Zenodo's default
+    - cc-by-nc-4.0
   copyright: 'Copyright statement'
   languages:
     - eng
     - fra
-  description: >-
-    A short description of the dataset, in plain text or HTML.
-    Anything longer is better passed in with the --description option,
-    which takes a Markdown or HTML file.
   related:
     - scheme: doi
       identifier: 10.1234/zenodo.1234567
@@ -92,7 +88,7 @@ metadata:
     - funder:
         ror: ROR_CODE  # See https://ror.org/
       award:
-        id: '00k4n6c32::041117'  # See https://zenodo.org/api/awards
+        id: '00k4n6c32::101052382'  # See https://zenodo.org/api/awards
     # Describe any other award with free text, never in combination with an id.
     - funder:
         name: 'Full name of the funder'
@@ -144,7 +140,6 @@ custom_fields:
     date_submitted: '2024-06-15'
     date_defended: '2024-09-23'
 access:
-  record: public
   files: public
 ```
 
@@ -176,8 +171,10 @@ A TXT file containing the record ID of the most recent version of the resource o
 This file is updated by the `srr-sync-zenodo` command.
 You should not need to modify its contents
 unless you created or discarded new records manually through the Zenodo web interface.
-It is recommended to commit this file to the Git history.
-Changes to this file are not tracked by StepUp.
+Commit this file to Git as soon as `srr-sync-zenodo` has written it,
+because a clone without it creates a second record at its first synchronization with the token.
+Changes to this file are not tracked by StepUp,
+but the synchronization step reads it again at every start of StepUp.
 
 ## `endpoint` *(optional)*
 
@@ -197,6 +194,10 @@ A record that is not published yet is dated on the day `srr-sync-zenodo` last to
 and a published record keeps the date Zenodo recorded when it was published,
 also when its metadata is updated afterwards.
 Each new version gets its own publication date this way.
+
+The description is not a field of this file either.
+It is written in a Markdown or HTML file of its own, as explained in
+[Configure a Zenodo Dataset](../advanced_topics/sync_zenodo.md#configure-a-zenodo-dataset).
 
 - `title` *(required)*:
 
@@ -271,12 +272,14 @@ Each new version gets its own publication date this way.
      > The InvenioRDM metadata has no keyword field,
      > so Zenodo stores these as free text subjects.
 
-- `license` *(required)*:
+- `license` *(optional)*:
 
     > A list of license SPDX identifiers (will be converted to lowercase).
     > A single license may be written without the list markup.
     > The identifiers are taken from the `licenses` vocabulary,
     > described in [Controlled Vocabularies](#controlled-vocabularies) below.
+    > When no license is given, Zenodo publishes the record without one,
+    > so setting a license is recommended.
     >
     > When specifying multiple licenses, it is recommended to clarify in the Zenodo readme
     > how the different licenses apply to different parts of the dataset.
@@ -290,14 +293,6 @@ Each new version gets its own publication date this way.
     > A list of ISO 639-3 language codes, e.g. `eng` for English or `fra` for French.
     > A single language may be written without the list markup.
     > Zenodo uses these codes to describe the languages in which the dataset is written.
-
-- `description` *(optional)*:
-
-    > A description of the dataset, in plain text or HTML.
-    >
-    > For anything longer than a few lines, use the
-    > [`--description` option](../advanced_topics/sync_zenodo.md#synchronize-your-dataset) instead.
-    > The two cannot be combined.
 
 - `related` *(optional)*:
 
@@ -352,7 +347,7 @@ Each new version gets its own publication date this way.
         - `id` *(optional)*:
 
             > The identifier of an award that Zenodo already knows,
-            > e.g. `00k4n6c32::041117`.
+            > e.g. `00k4n6c32::101052382`.
             > These are listed at <https://zenodo.org/api/awards>.
             > Zenodo fills in the title and the number of the award itself,
             > so neither may be given alongside an `id`.
@@ -597,24 +592,19 @@ List the authors in `metadata.creators` and nowhere else.
 
 ## `access` *(optional)*
 
-Who can see the record and who can download its files.
-Both keys are optional and default to `public`.
-
-- `record` *(optional)*:
-
-    > Either `public` or `restricted`.
-    > The metadata of the record and its landing page are visible to everyone
-    > when this is `public`,
-    > and only to you and the people you share the record with when it is `restricted`.
+Who can download the files of the record.
+The record itself is always public, because Zenodo does not allow restricted records.
 
 - `files` *(optional)*:
 
     > Either `public` or `restricted`.
-    > The files can be downloaded by everyone when this is `public`.
+    > The files can be downloaded by everyone when this is `public`,
+    > and only by you and the people you share the record with when it is `restricted`.
+    > The default is `public`.
 
-A restricted record can be shared with others through the sharing links of Zenodo.
-These are created in the Zenodo web interface and are outside the scope of `srr-sync-zenodo`.
-Embargoes, which make a record public on a future date,
+Sharing links are created in the Zenodo web interface
+and are outside the scope of `srr-sync-zenodo`.
+Embargoes, which make files public on a future date,
 cannot be set through the configuration file.
 
 ## Controlled Vocabularies

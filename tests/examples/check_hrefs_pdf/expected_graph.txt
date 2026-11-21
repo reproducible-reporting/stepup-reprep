@@ -17,7 +17,7 @@ step:./plan.py
              product   file:check_hrefs.yaml
              product   file:main.tex
              product   step:srr-check-hrefs main.pdf
-             product   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             product   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 file:README.txt
                state = CONFIRMED
@@ -32,47 +32,47 @@ file:check_hrefs.yaml
 file:main.tex
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+                sink   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
-step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_LATEX [dynamic]
                      = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:main.tex
-             product   file:main-inventory.txt
+             product   file:main-inventory.jsonl
              product   file:main.aux
              product   file:main.fls
              product   file:main.log
              product   file:main.out
              product   file:main.pdf
-                sink   file:main-inventory.txt
+                sink   file:main-inventory.jsonl
                 sink   file:main.aux
                 sink   file:main.fls
                 sink   file:main.log [dynamic]
                 sink   file:main.out [dynamic]
                 sink   file:main.pdf
 
-file:main-inventory.txt
+file:main-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 file:main.aux
                state = BUILT
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 file:main.fls
                state = BUILT
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 file:main.pdf
                state = BUILT
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
                 sink   step:srr-check-hrefs main.pdf
 
 step:srr-check-hrefs main.pdf
@@ -87,13 +87,13 @@ step:srr-check-hrefs main.pdf
 
 file:main.log
                state = VOLATILE
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 file:main.out
                state = VOLATILE
-             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
-              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.txt
+             creator   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
+              source   step:srr-compile-latex main.tex --run-bibtex --inventory=main-inventory.jsonl
 
 (file:BROKEN.md)
                state = UNDECLARED

@@ -15,8 +15,8 @@ stepup wait -d final.pdf
 stepup wait -d glasses.png
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_png_inventory.txt glasses.png glasses1.png
-srr-make-inventory -o reproducibility_pdf_inventory.txt final.pdf final1.pdf
+srr-make-inventory -o reproducibility_png_inventory.jsonl glasses.png glasses1.png
+srr-make-inventory -o reproducibility_pdf_inventory.jsonl final.pdf final1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -26,5 +26,5 @@ wait
 [[ -f smile.svg ]] || exit 1
 [[ -f final.pdf ]] || exit 1
 [[ -f final1.pdf ]] || exit 1
-[[ -f reproducibility_pdf_inventory.txt ]] || exit 1
-[[ -f reproducibility_png_inventory.txt ]] || exit 1
+[[ -f reproducibility_pdf_inventory.jsonl ]] || exit 1
+[[ -f reproducibility_png_inventory.jsonl ]] || exit 1

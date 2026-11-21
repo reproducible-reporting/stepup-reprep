@@ -1,5 +1,5 @@
 stepup/.stepup
 current*
 doc/main.pdf
-doc/main-inventory.txt
+doc/main-inventory.jsonl
 doc/generated.typ

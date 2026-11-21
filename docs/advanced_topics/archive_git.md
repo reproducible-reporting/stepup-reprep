@@ -163,27 +163,27 @@ There are two options, the latter of which is preferable:
     - Make sure that the working tree is clean.
       The `git status` command should print `nothing to commit, working tree clean`.
 
-    - Write an `inventory-main.def` file with the following line,
+    - Write an `inventory-main-latest.def` file with the following line,
       to include all files recorded by Git:
 
         ```text
         include-git
         ```
 
-    - Create an `inventory-main.txt` file of the entire source tree,
+    - Create an `inventory-main-latest.jsonl` file of the entire source tree,
       using the following command in the terminal:
 
         ```bash
         srr-make-inventory -i inventory-main-latest.def
         ```
 
-        This will write a complete listing to `inventory-main.txt`
+        This will write a complete listing to `inventory-main-latest.jsonl`.
 
-    - Then create a (reproducible) ZIP file from the `.txt` file
+    - Then create a (reproducible) ZIP file from the `.jsonl` file
       by running the following command:
 
         ```bash
-        srr-zip-inventory inventory-main-latest.txt main-latest.zip
+        srr-zip-inventory inventory-main-latest.jsonl main-latest.zip
         ```
 
 ### Archiving Source and Output Files from the Last Commit

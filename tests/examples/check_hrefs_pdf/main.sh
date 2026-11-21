@@ -18,4 +18,4 @@ wait
 [[ -f main.log ]] || exit 1
 [[ -f main.aux ]] || exit 1
 [[ -f README.txt ]] || exit 1
-srr-check-inventory main-inventory.txt
+srr-check-inventory main-inventory.jsonl

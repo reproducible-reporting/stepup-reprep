@@ -18,7 +18,7 @@ step:./plan.py
              product   file:paper.tex
              product   file:references.bib
              product   step:srr-bibsane references.bib --config=bibsane.yaml
-             product   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             product   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:bibsane.yaml
                state = CONFIRMED
@@ -28,15 +28,15 @@ file:bibsane.yaml
 file:paper.tex
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:references.bib
                state = CONFIRMED
              creator   step:./plan.py
                 sink   step:srr-bibsane references.bib --config=bibsane.yaml
-                sink   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
-step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TECTONIC [dynamic]
@@ -46,20 +46,20 @@ step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
              creator   step:./plan.py
               source   file:paper.tex
               source   file:references.bib [dynamic]
-             product   file:paper-inventory.txt
+             product   file:paper-inventory.jsonl
              product   file:paper.pdf
-                sink   file:paper-inventory.txt
+                sink   file:paper-inventory.jsonl
                 sink   file:paper.pdf
 
-file:paper-inventory.txt
+file:paper-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.pdf
                state = BUILT
-             creator   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 
 step:srr-bibsane references.bib --config=bibsane.yaml
                state = SUCCEEDED

@@ -3,6 +3,6 @@ generated.tex
 current_*
 paper.pdf
 paper.dep
-paper-inventory.txt
+paper-inventory.jsonl
 paper1.pdf
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

@@ -18,7 +18,7 @@ wait
 [[ -f sub/paper.dep ]] || exit 1
 [[ ! -e paper.pdf ]] || exit 1
 [[ ! -e sub/sub ]] || exit 1
-grep smile.pdf sub/paper-inventory.txt
-grep generated.tex sub/paper-inventory.txt
-grep references.bib sub/paper-inventory.txt
-srr-check-inventory sub/paper-inventory.txt
+grep smile.pdf sub/paper-inventory.jsonl
+grep generated.tex sub/paper-inventory.jsonl
+grep references.bib sub/paper-inventory.jsonl
+srr-check-inventory sub/paper-inventory.jsonl

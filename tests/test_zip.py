@@ -15,15 +15,15 @@ def test_simple_chdir(path_tmp):
             fh.write("Aaa")
         with open("b.txt", "w", encoding="utf-8", newline="\n") as fh:
             fh.write("Bbb")
-        write_inventory("inventory.txt", ["a.txt", "b.txt"])
-        zip_inventory("inventory.txt", "test.zip")
+        write_inventory("inventory.jsonl", ["a.txt", "b.txt"])
+        zip_inventory("inventory.jsonl", "test.zip")
         contents = {}
         with zipfile.ZipFile("test.zip", "r") as fz:
             for name in fz.namelist():
                 contents[name] = fz.read(name).decode("utf-8")
         assert contents["a.txt"] == "Aaa"
         assert contents["b.txt"] == "Bbb"
-        assert "inventory.txt" in contents
+        assert "inventory.jsonl" in contents
 
 
 def test_simple(path_tmp):
@@ -31,12 +31,12 @@ def test_simple(path_tmp):
         fh.write("Aaa")
     with open(path_tmp / "b.txt", "w", encoding="utf-8", newline="\n") as fh:
         fh.write("Bbb")
-    write_inventory(path_tmp / "inventory.txt", [path_tmp / "a.txt", path_tmp / "b.txt"])
-    zip_inventory(path_tmp / "inventory.txt")
+    write_inventory(path_tmp / "inventory.jsonl", [path_tmp / "a.txt", path_tmp / "b.txt"])
+    zip_inventory(path_tmp / "inventory.jsonl")
     contents = {}
     with zipfile.ZipFile(path_tmp / "inventory.zip", "r") as fz:
         for name in fz.namelist():
             contents[name] = fz.read(name).decode("utf-8")
     assert contents["a.txt"] == "Aaa"
     assert contents["b.txt"] == "Bbb"
-    assert "inventory.txt" in contents
+    assert "inventory.jsonl" in contents

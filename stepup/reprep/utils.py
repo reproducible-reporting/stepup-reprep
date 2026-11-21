@@ -6,7 +6,7 @@ from collections.abc import Collection
 
 from stepup.core.path import Path, StrPath, coerce_paths
 
-__all__ = ("MAX_NUM_ZENODO_FILES", "check_zenodo_paths")
+__all__ = ("check_zenodo_paths",)
 
 MAX_NUM_ZENODO_FILES = 100
 """The maximum number of files that Zenodo accepts in a single record."""

@@ -13,7 +13,7 @@ mv cat.pdf cat1.pdf
 stepup wait -d cat.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt cat.pdf cat1.pdf
+srr-make-inventory -o reproducibility_inventory.jsonl cat.pdf cat1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -24,4 +24,4 @@ wait
 [[ -f doc2.pdf ]] || exit 1
 [[ -f cat.pdf ]] || exit 1
 [[ -f cat1.pdf ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

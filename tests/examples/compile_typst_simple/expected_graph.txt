@@ -14,14 +14,14 @@ step:./plan.py
              creator   root:
               source   file:plan.py
              product   file:document.typ
-             product   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             product   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
 
 file:document.typ
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+                sink   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
 
-step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TYPST [dynamic]
@@ -30,17 +30,17 @@ step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out
                      = STEPUP_PATH_FILTER [dynamic]
              creator   step:./plan.py
               source   file:document.typ
-             product   file:document-inventory.txt
+             product   file:document-inventory.jsonl
              product   file:out.pdf
-                sink   file:document-inventory.txt
+                sink   file:document-inventory.jsonl
                 sink   file:out.pdf
 
-file:document-inventory.txt
+file:document-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-              source   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
+              source   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
 
 file:out.pdf
                state = BUILT
-             creator   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
-              source   step:srr-compile-typst --inventory=document-inventory.txt document.typ --out=out.pdf
+             creator   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf
+              source   step:srr-compile-typst --inventory=document-inventory.jsonl document.typ --out=out.pdf

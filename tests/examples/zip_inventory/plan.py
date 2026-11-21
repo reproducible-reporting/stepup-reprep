@@ -4,5 +4,5 @@ from stepup.reprep.api import make_inventory, zip_inventory
 
 static("static.txt")
 run("echo hello > built.txt", out="built.txt", shell=True)
-make_inventory("static.txt", "built.txt", "inventory.txt")
-zip_inventory("inventory.txt", "upload.zip")
+make_inventory("static.txt", "built.txt", "inventory.jsonl")
+zip_inventory("inventory.jsonl", "upload.zip")

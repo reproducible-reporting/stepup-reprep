@@ -18,7 +18,7 @@ stepup join
 cp sub/article.tex current_article.tex
 
 # Create an inventory file
-srr-make-inventory -i inventory.def -o current_inventory.txt
+srr-make-inventory -i inventory.def -o current_inventory.jsonl
 
 # Wait for background processes, if any.
 wait

@@ -4,4 +4,4 @@ document.pdf
 document.deps.json
 image.jpg
 document1.pdf
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

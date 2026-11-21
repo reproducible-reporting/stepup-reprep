@@ -13,7 +13,7 @@ mv rastered/smile.pdf rastered/smile1.pdf
 stepup wait -d rastered/smile.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt rastered/smile.pdf rastered/smile1.pdf
+srr-make-inventory -o reproducibility_inventory.jsonl rastered/smile.pdf rastered/smile1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -23,4 +23,4 @@ wait
 [[ -f smile.pdf ]] || exit 1
 [[ -f rastered/smile.pdf ]] || exit 1
 [[ -f rastered/smile1.pdf ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

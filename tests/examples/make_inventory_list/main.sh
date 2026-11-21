@@ -15,5 +15,5 @@ wait
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
 [[ -f README.txt ]] || exit 1
-[[ -f inventory.txt ]] || exit 1
-mv inventory.txt current_inventory.txt
+[[ -f inventory.jsonl ]] || exit 1
+mv inventory.jsonl current_inventory.jsonl

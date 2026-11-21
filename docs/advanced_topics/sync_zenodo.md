@@ -36,6 +36,19 @@ SPDX-License-Identifier: CC-BY-SA-4.0
       so the `path_token`, `path_readme` and `paths` fields of the configuration file
       are no longer supported.
 
+    As of StepUp RepRep 4.2, which requires StepUp Core 4.2:
+
+    - The synchronization runs at every start of StepUp,
+      so it notices when you set or unset the token,
+      and it repairs a file that was deleted or changed in the draft by hand.
+      See [When the Synchronization Runs](#when-the-synchronization-runs).
+    - The files to upload are listed in an [inventory](inventory_files.md),
+      written by `make_inventory()` or `srr-make-inventory`,
+      which `sync_zenodo()` and `srr-sync-zenodo` take instead of the files themselves.
+    - The description file is a required argument of `srr-sync-zenodo` and `sync_zenodo()`,
+      and the configuration file no longer has a `description` field.
+    - `stepup build --offline` skips the synchronization.
+
 StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
 You can also provide metadata within your StepUp project,
@@ -105,11 +118,7 @@ as observed on 2026-08-31 in the loader that Zenodo runs,
   and an award by title, number and identifiers,
   while the legacy `grants` can only refer to an award that Zenodo already knows,
   written as `<funder DOI>::<award id>`.
-- `access.record` can be `restricted`,
-  while every legacy `access_right` results in a public record,
-  because `restricted` and `closed` restrict the files only.
-- `srr-sync-zenodo` also sets the order of the files
-  and the file shown in the preview,
+- `srr-sync-zenodo` also selects the file shown in the preview,
   which the legacy API does not store.
 
 ## Configure Your Zenodo Token
@@ -127,9 +136,12 @@ Save the token immediately, as it cannot be retrieved later.
 Because the token is a secret, it is not tracked by StepUp,
 so it never ends up in the workflow graph.
 Keep it out of your repository, for example by exporting it from a file that Git ignores.
+Instead, the synchronization step looks at the token at every start of StepUp,
+so it notices when you set or unset the token between two runs of `stepup build`.
 
-When `REPREP_ZENODO_TOKEN` is unset,
-`srr-sync-zenodo` validates the configuration file and exits without contacting Zenodo.
+When `REPREP_ZENODO_TOKEN` is unset or empty,
+`srr-sync-zenodo` validates the configuration file, prints a warning
+and exits without contacting Zenodo.
 Use the `--dry-run` option to validate the configuration offline on purpose.
 
 The endpoint is not an environment variable but a field of the configuration file,
@@ -143,52 +155,106 @@ Every field of this file is documented in
 [The `srr-sync-zenodo` Configuration File](../reference/sync_zenodo_config.md),
 which also holds a template to start from.
 
+The description of the dataset is written in a separate Markdown or HTML file,
+for which `zenodo_description.md` is the recommended name.
+Markdown is converted to HTML before it is sent to Zenodo.
+A description is required, but a single sentence will do.
+
 ## Synchronize Your Dataset
 
 The command `srr-sync-zenodo` will create or synchronize the online dataset
 and store the record ID in the file named by the `path_record_id` field.
 This way, future calls will update this record instead of creating a new dataset on Zenodo.
 
-The files to be uploaded are not listed in the configuration file
-but are given as arguments after the configuration file.
-The `--description` option takes a Markdown or HTML file with the description of the dataset.
-Once you have all the files you need, execute the script:
+The files to be uploaded are not listed in the configuration file,
+but in an [inventory](inventory_files.md), which also holds the MD5 checksum of each file.
+`srr-sync-zenodo` compares these checksums with the ones that Zenodo reports,
+and uploads only the files that differ.
+In a StepUp workflow, the inventory is written and kept up to date by a separate step.
 
-```bash
-srr-sync-zenodo sync_zenodo.yaml file1 sub/file2 \
-  --description=zenodo_description.md
-```
+### In a StepUp Workflow
 
-The files will appear in the draft in the same order
-and the first is always selected as the default preview file.
-
-Add the `--dry-run` option to check the configuration without contacting Zenodo.
-It validates the configuration file, resolves the description,
-prints the metadata that would be sent to Zenodo and exits.
-This works with or without a token,
-so it is the way to review the metadata before the first upload.
-
-```bash
-srr-sync-zenodo sync_zenodo.yaml file1 sub/file2 \
-  --description=zenodo_description.md --dry-run
-```
-
-You can also include this command as a step in your `plan.py` file:
+Include the inventory and the synchronization in your `plan.py` file:
 
 ```python
 from stepup.core.api import static
-from stepup.reprep.api import sync_zenodo
+from stepup.reprep.api import make_inventory, sync_zenodo
 
 static("sync_zenodo.yaml", "zenodo_description.md", "file1", "sub/file2")
-sync_zenodo(
-    "sync_zenodo.yaml",
-    ["file1", "sub/file2"],
-    path_description="zenodo_description.md",
-)
+make_inventory("file1", "sub/file2", "zenodo_inventory.jsonl")
+sync_zenodo("sync_zenodo.yaml", "zenodo_description.md", "zenodo_inventory.jsonl")
 ```
 
-Because the files and the description are given as arguments,
-StepUp knows all inputs of this step when the plan is made.
+This defines two steps:
+
+1. `srr-make-inventory file1 sub/file2 -o zenodo_inventory.jsonl`
+   writes the inventory.
+   StepUp runs it again only when one of the files has changed.
+2. `srr-sync-zenodo sync_zenodo.yaml zenodo_description.md
+   zenodo_inventory.jsonl --no-check-md5`
+   synchronizes the dataset.
+   It runs at every start of StepUp, as explained in
+   [When the Synchronization Runs](#when-the-synchronization-runs).
+
+The first file of the inventory is always selected as the default preview file.
+Pass that file explicitly to `make_inventory()` to put it first,
+because the matches of an inventory definition are sorted.
+The order of the other files has no effect on Zenodo.
+As of November 2026, the Zenodo API does not store an order of the files,
+and the landing page of a record lists them alphabetically.
+Choose the file names accordingly when their order matters.
+
+The paths in the inventory are relative to its parent directory,
+so the inventory can be put in any directory.
+The `--no-check-md5` option tells `srr-sync-zenodo` to trust the checksums in the inventory,
+because StepUp keeps the inventory up to date.
+A start of StepUp without local changes therefore computes no checksums.
+When the inventory is not built in the same workflow, e.g. for an external dataset,
+pass `check_md5=True` to `sync_zenodo()`,
+so that the checksums are computed again before anything is uploaded.
+
+### Requirements for the Inventory
+
+`srr-sync-zenodo` accepts only an inventory that can be uploaded as it is:
+
+- The digests must be MD5 checksums, because Zenodo reports these.
+  This is the default of `make_inventory()` and `srr-make-inventory`.
+- The inventory must not contain symbolic links, because Zenodo has no links.
+- The inventory must list at least one file,
+  because Zenodo publishes no record without files
+  and does not offer metadata only records.
+- The files must meet the limitations of Zenodo, see below.
+
+An inventory that does not meet these requirements is refused before Zenodo is contacted.
+
+### By Hand
+
+Outside a workflow, a synchronization takes two commands:
+the first one writes the inventory, and the second one synchronizes the dataset.
+
+```bash
+srr-make-inventory file1 sub/file2 -o zenodo_inventory.jsonl
+srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl
+```
+
+Without `--no-check-md5`, `srr-sync-zenodo` computes the checksums of the files again,
+and stops before it contacts Zenodo when one of them differs from the inventory.
+Run `srr-make-inventory` again after every change of the files,
+or run `stepup build` in a project that uses `sync_zenodo()`.
+
+Add the `--dry-run` option to check the configuration without contacting Zenodo.
+It validates the configuration file, the description and the inventory,
+prints the metadata that would be sent to Zenodo and exits.
+This works with or without a token,
+so it is the way to review the metadata before the first upload.
+It needs the inventory as well, so it also takes two commands:
+
+```bash
+srr-make-inventory file1 sub/file2 -o zenodo_inventory.jsonl
+srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --dry-run
+```
+
+### Limitations of Zenodo
 
 Zenodo does not support subdirectories,
 so files are uploaded without reference to their parent directory.
@@ -197,7 +263,66 @@ cannot both be included.
 Zenodo also limits the number of files in a record to 100.
 If you run into either limitation,
 consider uploading a ZIP archive instead of separate files.
-`srr-sync-zenodo` rejects both cases before it contacts Zenodo.
+`srr-sync-zenodo` rejects both cases before Zenodo is contacted.
+
+### Files to Commit
+
+The record ID file belongs in Git.
+Commit it as soon as `srr-sync-zenodo` has written it,
+because a clone without it creates a second record at its first start with the token.
+An inventory written by `make_inventory()` does not belong in Git,
+because it is an output of the build.
+
+## When the Synchronization Runs
+
+The synchronization step runs once at every start of StepUp.
+Within the same run of `stepup build`, e.g. in watch mode,
+it runs again after every change of its inputs:
+the inventory, the files it lists, the configuration file and the description.
+
+With a token, it compares the files with the checksums that Zenodo reports,
+uploads the ones that differ or are missing online,
+and sends the metadata again,
+because Zenodo normalizes some values, so a comparison is not worth the effort.
+For example, as observed on 2026-11-21, Zenodo strips the trailing newline of the description
+and prefixes arXiv identifiers with `arXiv:`.
+A file that was deleted or changed in the draft through the web interface
+is therefore uploaded again at the next start, also when nothing changed locally.
+Without a token, the step prints a warning at every start and sends nothing.
+
+### Working Assumptions
+
+This behavior rests on two practices:
+
+- **A synchronization is a deliberate act.**
+  Set the token only for a build that should synchronize,
+  e.g. a `stepup build` with `REPREP_ZENODO_TOKEN` set after a round of edits.
+  While a draft is in progress, do this regularly,
+  so that your co-authors can review a recent build and the metadata.
+- **One person in a team uploads.**
+  Only this person sets the token, and the others review the draft without one.
+  Two clones that synchronize the same record overwrite each other's files at every start
+  when their builds are not identical,
+  and a new version made from one clone leaves the record ID file of the other one stale.
+
+### Offline Builds and Failures
+
+With a token, a build fails when Zenodo cannot be reached.
+Such a build passes with `stepup build --offline` or without the token.
+With `--offline`, the synchronization step does not run merely because StepUp started.
+When it runs because one of its inputs changed,
+it says that the build is offline and sends nothing.
+The next start without `--offline` synchronizes again.
+Offline builds are explained in the documentation of StepUp Core, in
+[Working Offline](https://reproducible-reporting.github.io/stepup-core/advanced_topics/remote_data/#working-offline).
+
+### Published Records
+
+When the record ID file names a published record with the version in the configuration file,
+every start with the token puts the record in edit mode,
+sends the metadata and publishes the record again,
+with the same metadata unless the configuration file or the description changed.
+Unset the token when a published record needs no further updates.
 
 ## Inspect and Reset a Dataset
 
@@ -205,28 +330,12 @@ Add the `--verbose` option to print every request that `srr-sync-zenodo` sends t
 and every response it receives.
 The token is never printed, so the output can be shared when reporting a problem.
 
-The `--clean` option is a blunt instrument to start over,
-which is mostly useful while you are still finding out what works on the sandbox instance.
-It deletes **every draft of the account that owns the token**,
-not only the drafts of the dataset at hand,
-and it also removes the file named by `path_record_id`.
-Published records are never deleted, because Zenodo does not allow that.
-
-```bash
-srr-sync-zenodo sync_zenodo.yaml file1 --clean
-```
-
-Two consequences are worth knowing before you use it:
-
-- Drafts of unrelated datasets on the same account are deleted as well,
-  including a new version of a published dataset that is not published yet.
-- When `path_record_id` names a record that is already published,
-  the file is removed while the record survives,
-  so the next run creates a new dataset instead of a new version of the existing one.
-  Restore the file from Git if this happens by accident.
-
-Because of the first point, use `--clean` on the sandbox instance,
-and think twice before using it on an account that holds work of other projects.
+To start over with a draft that was never published,
+discard it in the web interface of Zenodo and remove the file named by `path_record_id`.
+The next run then creates a new dataset.
+To drop a new version that is not published yet,
+discard it in the web interface and put the id of the latest published version
+back in the file named by `path_record_id`.
 
 ## Related Work
 
@@ -243,10 +352,11 @@ Set up `sync_zenodo()` early,
 ideally when you start a publication from the RepRep
 [Template Tutorial](../from_template/introduction.md),
 instead of preparing the dataset only after the manuscript is finished.
-Review the metadata with `--dry-run`, create the draft,
-and let every build refresh it afterwards.
+Review the metadata with `--dry-run` and create the draft.
+After every round of edits, run a build with the token to refresh the draft,
+and repeat this regularly while the draft is in progress.
 
 Share the draft with your co-authors as soon as it exists.
-They then always have access to the most recent build of the publication PDFs,
+They then have access to a recent build of the publication PDFs,
 and they can review and correct the metadata while the work is still in progress,
 which avoids a rush of last-minute corrections just before publication.

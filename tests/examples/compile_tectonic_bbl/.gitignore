@@ -2,7 +2,7 @@
 generated.tex
 current_*
 paper.pdf
-paper-inventory.txt
+paper-inventory.jsonl
 paper1.pdf
 journal_abbreviation_cache.json
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

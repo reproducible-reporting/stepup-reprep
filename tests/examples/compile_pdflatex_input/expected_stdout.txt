@@ -2,15 +2,15 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
-DEFERRED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+DEFERRED │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
 ────────────────────────── Unavailable dynamic inputs ──────────────────────────
 generated.tex
 ────────────────────────────────────────────────────────────────────────────────
    START │ echo 'Hi there!' > generated.tex
  SUCCESS │ echo 'Hi there!' > generated.tex
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
 DIRECTOR │ Ran 4 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch
@@ -21,8 +21,8 @@ DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and 
    PHASE │ build
    START │ echo 'Hi there!' > generated.tex
  SUCCESS │ echo 'Hi there!' > generated.tex
-   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
- SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.txt
+   START │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
+ SUCCESS │ srr-compile-latex paper.tex --run-bibtex --inventory=paper-inventory.jsonl
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

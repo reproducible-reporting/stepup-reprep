@@ -13,7 +13,7 @@ mv diff.tex diff1.tex
 stepup wait -d diff.tex
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt diff.tex diff1.tex
+srr-make-inventory -o reproducibility_inventory.jsonl diff.tex diff1.tex
 
 # Wait for background processes, if any.
 wait
@@ -22,4 +22,4 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f diff.tex ]] || exit 1
 [[ -f diff1.tex ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
- SUCCESS │ srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+   START │ srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+ SUCCESS │ srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────
@@ -13,8 +13,8 @@ DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
 DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
  DELETED │ paper.pdf
    PHASE │ build
-   START │ srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
- SUCCESS │ srr-compile-tectonic --inventory=paper-inventory.txt paper.tex
+   START │ srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
+ SUCCESS │ srr-compile-tectonic --inventory=paper-inventory.jsonl paper.tex
 ──────────────────────────────── Standard error ────────────────────────────────
 (stripped)
 ────────────────────────────────────────────────────────────────────────────────

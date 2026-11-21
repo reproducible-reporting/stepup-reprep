@@ -2,10 +2,10 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
- SUCCESS │ srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-   START │ srr-zip-inventory inventory.txt upload.zip
- SUCCESS │ srr-zip-inventory inventory.txt upload.zip
+   START │ srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
+ SUCCESS │ srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
+   START │ srr-zip-inventory inventory.jsonl upload.zip
+ SUCCESS │ srr-zip-inventory inventory.jsonl upload.zip
 DIRECTOR │ Ran 3 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

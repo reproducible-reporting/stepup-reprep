@@ -19,7 +19,149 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-(no changes yet)
+This release lets the Zenodo synchronization run at every start of StepUp,
+using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
+Inventories have a new format, in JSON Lines,
+which also lists the files that `srr-sync-zenodo` uploads.
+
+### Added
+
+- `srr-make-inventory` has a new option `--hash` to select the hash algorithm,
+  with MD5 as the default, and a new option `--mode` to record the permission bits.
+  [`make_inventory()`][stepup.reprep.api.make_inventory] has the corresponding arguments
+  `hash_algorithm` and `mode`.
+  See [Inventory Files](advanced_topics/inventory_files.md).
+- `stepup.reprep.inventory` has a streaming reader of inventories, `open_inventory()`,
+  which validates every line and reports problems with their line numbers.
+  It reads one line at a time with a cap on the line length,
+  so a data file given where an inventory belongs is refused without loading it.
+- [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] has a new argument `check_md5`,
+  which suits an inventory that is not built in the same workflow.
+- `srr-sync-zenodo` has a new option `--no-check-md5`,
+  which trusts the checksums in the inventory without computing them again.
+  Without it, `srr-sync-zenodo` stops before it contacts Zenodo
+  when a file differs from the inventory.
+- `srr-sync-zenodo` sends nothing when `STEPUP_BUILD_OFFLINE` is `1`,
+  as set by `stepup build --offline`, and says so in its output.
+
+### Changed
+
+- StepUp Core 4.2 or newer is required.
+- Breaking change: `access.record` is removed from the Zenodo configuration file.
+  Zenodo refuses restricted records, so the record is always public.
+  Delete the `record` key from the `access` section if it is present.
+  Use `access.files: restricted` to restrict the files only.
+- Breaking change: inventories are written in a new format, JSON Lines with suffix `.jsonl`,
+  instead of the fixed-width text format with suffix `.txt`.
+  The first line is a header, which names the hash algorithm,
+  and every other line is a JSON object describing one file.
+  The old format can no longer be read,
+  so write existing inventories again with `srr-make-inventory`.
+  Compared to the old format:
+    - The default hash algorithm is MD5 instead of SHA-256.
+      Use `--hash sha256` when deliberate tampering must be detected.
+    - The permission bits are only recorded with `--mode`,
+      and without the file type character, e.g. `rw-r--r--` instead of `-rw-r--r--`.
+    - A symbolic link is recorded with its target instead of a digest of the target.
+    - The files keep the order in which they are given:
+      first the explicit paths, then the sorted matches of the inventory definition.
+      Duplicates are dropped.
+      Before, all paths were sorted.
+- Breaking change: `srr-make-inventory`, `srr-check-inventory` and `srr-zip-inventory`
+  require the `.jsonl` suffix.
+  The option `-o/--inventory-txt` of `srr-make-inventory` is renamed to `-o/--output`.
+  With `-i X.def` and without `-o`, the output is `X.jsonl`.
+- Breaking change: the `inventory=True` argument of
+  [`compile_latex()`][stepup.reprep.api.compile_latex],
+  [`compile_tectonic()`][stepup.reprep.api.compile_tectonic] and
+  [`compile_typst()`][stepup.reprep.api.compile_typst]
+  writes `{stem}-inventory.jsonl` instead of `{stem}-inventory.txt`.
+- Breaking change: `FileSummary`, `get_summary()`, `format_summary()`, `parse_summary()`,
+  `check_summary()` and `SYMLINK_MODE` are removed from `stepup.reprep.inventory`.
+  They are replaced by `FileRecord`, `LinkRecord`, `InventoryHeader`, `compute_record()`,
+  `check_record()`, `format_header()` and `format_record()`.
+- Breaking change: `iter_inventory()` is removed from `stepup.reprep.check_inventory`.
+  Use `open_inventory()` from `stepup.reprep.inventory` instead.
+- Breaking change: `write_inventory()` in `stepup.reprep.make_inventory`
+  takes `hash_algorithm`, `mode` and `do_amend` as keyword-only arguments,
+  writes the records in the given order and drops duplicate paths.
+- Breaking change: [`make_inventory()`][stepup.reprep.api.make_inventory]
+  keeps the order of the explicit paths, which come before the matches of `path_def`.
+- `run_example()` in `stepup.reprep.pytest` checks the inventories
+  `reproducibility_*inventory.jsonl` instead of `reproducibility_*inventory.txt`.
+- [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] runs at every start of StepUp
+  and after every change of its inputs,
+  so it notices when the token is set or unset,
+  and it uploads a file again that was deleted or changed in the draft by hand.
+  See [When the Synchronization Runs](advanced_topics/sync_zenodo.md#when-the-synchronization-runs)
+  for the consequences:
+    - With the token, every start compares the files with the checksums that Zenodo reports,
+      uploads the files that differ and sends the metadata again.
+      A published record is therefore published again at every start with the token.
+    - Without the token, every start prints a warning.
+    - A build with the token fails when Zenodo cannot be reached,
+      and passes with `stepup build --offline` or without the token.
+    - The token is meant to be set only for a build that should synchronize,
+      and by only one person in a team.
+- Breaking change: the files to upload are listed in an inventory,
+  written by [`make_inventory()`][stepup.reprep.api.make_inventory] or `srr-make-inventory`
+  with MD5 digests, which is the default.
+  The order of the inventory is the order of the upload,
+  and its first file is shown in the preview on Zenodo.
+  Its paths are relative to its parent directory.
+  An inventory with other digests or with symbolic links is refused.
+    - `sync_zenodo()` takes the description file and the inventory,
+      i.e. `sync_zenodo(path_config, path_description, path_inventory)`
+      instead of `sync_zenodo(path_config, paths, path_description=...)`.
+      A `plan.py` calls `make_inventory()` followed by `sync_zenodo()`.
+    - `srr-sync-zenodo` takes the description file and the inventory
+      instead of the files to upload,
+      i.e. `srr-sync-zenodo CONFIG DESCRIPTION INVENTORY`
+      instead of `srr-sync-zenodo CONFIG PATHS... [--description=DESCRIPTION]`.
+      The old command line fails before a request is sent.
+      A synchronization by hand therefore takes two commands,
+      `srr-make-inventory` and `srr-sync-zenodo`, also for `--dry-run`.
+- Breaking change: a description is required,
+  and it can only be given as a Markdown or HTML file.
+  The `description` field of the configuration file is no longer supported.
+- An empty `REPREP_ZENODO_TOKEN` is treated like an unset one, with a warning of its own,
+  instead of sending requests that Zenodo refuses.
+- The record ID file should be committed to Git as soon as `srr-sync-zenodo` has written it,
+  because a clone without it creates a second record at its first synchronization with the token.
+
+### Removed
+
+- Breaking change: the `--clean` option of `srr-sync-zenodo` is removed.
+  It deleted the drafts of unrelated datasets on the same account,
+  it missed a pending edit of a published record,
+  and after deleting a new version that was not published yet,
+  the same run created a new dataset instead of a new version.
+  Discard a draft in the web interface of Zenodo instead.
+
+### Fixed
+
+- `srr-zip-inventory` refuses an inventory with a file outside its directory,
+  i.e. with a path starting with `../`,
+  instead of storing that path in the ZIP file.
+- `srr-sync-zenodo` no longer sends an order of the files,
+  because Zenodo silently drops it and lists the files alphabetically.
+  The documentation no longer claims that the files appear in the order of the inventory.
+- `srr-sync-zenodo` sends the metadata of a draft once, after the files are uploaded,
+  so that the first file of the inventory is selected as the default preview.
+  Before, the metadata was also sent before the upload,
+  with a default preview that Zenodo silently dropped
+  when the first file of the inventory was new or renamed.
+- `srr-sync-zenodo` refuses an inventory that lists no files,
+  also with `--dry-run` and offline.
+  Zenodo does not offer metadata only records and publishes no record without files.
+  Before, an empty inventory deleted the files of the draft
+  and left a draft that cannot be published,
+  because Zenodo silently ignores a request to disable the files.
+- `srr-sync-zenodo` fails with the problems that Zenodo lists in its response to a metadata update,
+  and no longer publishes a record with such problems again.
+  Zenodo accepts metadata that violates its schema, drops the offending field,
+  and reports the problem only in the response.
+  Before, these problems went unnoticed until the draft was published by hand.
 
 ## [4.1.1][] - 2026-11-20 {: #v4.1.1 }
 

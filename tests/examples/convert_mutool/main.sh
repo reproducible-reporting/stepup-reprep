@@ -13,7 +13,7 @@ mv example.png example1.png
 stepup wait -d example.png
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt example.png example1.png
+srr-make-inventory -o reproducibility_inventory.jsonl example.png example1.png
 
 # Wait for background processes, if any.
 wait
@@ -23,4 +23,4 @@ wait
 [[ -f example.pdf ]] || exit 1
 [[ -f example.png ]] || exit 1
 [[ -f example1.png ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

@@ -7,7 +7,8 @@ with the (draft of) this dataset on Zenodo.
 This simplifies your interaction with Zenodo to the following steps:
 
 1. Prepare a personal token
-2. Write metadata in a configuration file, in YAML, JSON or TOML format.
+2. Write metadata in a configuration file, in YAML, JSON or TOML format,
+   and a description of the dataset in a Markdown or HTML file.
 3. Include this script in your workflow to automatically sync data.
 4. Publish the dataset through the Zenodo web interface.
 
@@ -34,6 +35,7 @@ and some of the features implemented in this module were deduced from the Zenodo
 """
 
 import argparse
+import contextlib
 import datetime as dt
 import functools
 import hashlib
@@ -59,8 +61,12 @@ from markdown_it import MarkdownIt
 from rich.console import Console
 from rich.json import JSON
 
+from stepup.core.api import amend
+from stepup.core.exceptions import PathError
 from stepup.core.path import Path
-from stepup.reprep.utils import MAX_NUM_ZENODO_FILES, check_zenodo_paths
+from stepup.core.utils import open_regular_file
+from stepup.reprep.inventory import LinkRecord, open_inventory
+from stepup.reprep.utils import check_zenodo_paths
 
 __all__ = ("main",)
 
@@ -74,6 +80,22 @@ This bounds the wait for the connection and the wait for the next byte of the re
 not the time it takes to send the body of an upload,
 so a large file may well take longer than this to transfer.
 """
+
+
+@attrs.define(frozen=True)
+class UploadFile:
+    """A file to upload to Zenodo, with its MD5 checksum."""
+
+    path: Path = attrs.field(converter=Path)
+    """The local file, relative to the current working directory."""
+
+    md5: str = attrs.field()
+    """The MD5 checksum of the file, as 32 lowercase hexadecimal digits."""
+
+    @property
+    def name(self) -> str:
+        """The name of the file on Zenodo, which is the last component of the path."""
+        return self.path.name
 
 
 # Comparison is left to `Exception`, which compares by identity,
@@ -421,15 +443,8 @@ class Access:
     """A subset of InvenioRDM Access.
 
     https://inveniordm.docs.cern.ch/reference/metadata/#access
-    """
 
-    record: str = attrs.field(
-        default="public",
-        validator=attrs.validators.in_(["public", "restricted"]),
-    )
-    """The access level of the record.
-
-    Public means that the record is visible to everyone.
+    The record itself is always public, because Zenodo does not allow restricted records.
     """
 
     files: str = attrs.field(
@@ -444,7 +459,7 @@ class Access:
     def to_zenodo(self) -> dict[str, str]:
         """Convert the access configuration to a dictionary suitable for Zenodo."""
         return {
-            "record": self.record,
+            "record": "public",
             "files": self.files,
         }
 
@@ -574,10 +589,6 @@ def _convert_license(arg):
     return [lic.lower() for lic in arg]
 
 
-MIN_DESCRIPTION_LEN = 3
-"""The shortest description Zenodo accepts."""
-
-
 @attrs.define
 class Metadata:
     """A subset of InvenioRDM metadata.
@@ -638,20 +649,17 @@ class Metadata:
     )
     """A list of ISO 639-3 language codes, e.g. `eng` for English or `fra` for French."""
 
-    description: str | None = attrs.field(
-        default=None,
-        validator=attrs.validators.optional(attrs.validators.min_len(MIN_DESCRIPTION_LEN)),
-    )
-
     related: list[Related] = attrs.field(factory=list)
 
     funding: list[Funding] = attrs.field(factory=list)
 
-    def to_zenodo(self, publication_date: str | None = None) -> dict[str, Any]:
+    def to_zenodo(self, description: str, publication_date: str | None = None) -> dict[str, Any]:
         """Convert the metadata to a dictionary suitable for Zenodo.
 
         Parameters
         ----------
+        description
+            The description of the dataset, in HTML.
         publication_date
             The publication date to send to Zenodo, in ISO format.
             When `None`, today's date is used,
@@ -668,7 +676,7 @@ class Metadata:
             rights=[{"id": lic} for lic in self.license],
             copyright=self.copyright,
             languages=[{"id": lang} for lang in self.languages],
-            description=self.description,
+            description=description,
             creators=[creator.to_zenodo() for creator in self.creators],
             publication_date=publication_date,
             related_identifiers=[rel.to_zenodo() for rel in self.related],
@@ -1045,29 +1053,47 @@ class Config:
     custom_fields: CustomFields = attrs.field(factory=CustomFields)
     access: Access = attrs.field(factory=Access)
 
-    def to_zenodo(self, paths: list[Path], publication_date: str | None = None) -> dict[str, Any]:
+    def to_zenodo(
+        self,
+        description: str,
+        files: Sequence[UploadFile],
+        publication_date: str | None = None,
+    ) -> dict[str, Any]:
         """Convert the configuration to a dictionary suitable for Zenodo.
+
+        No order of the files is sent.
+        As of 2026-11-21, observed on the Zenodo sandbox,
+        Zenodo accepts `files.order` in a metadata update and silently drops it.
+        Its landing page then lists the files alphabetically.
 
         Parameters
         ----------
-        paths
+        description
+            The description of the dataset, in HTML.
+        files
             The files to be uploaded to Zenodo.
+            The first one is selected as the default preview.
+            When it is not among the files of the record yet,
+            Zenodo drops the preview with a soft error instead of refusing the request,
+            as observed on the Zenodo sandbox on 2026-11-21.
+            Pass an empty sequence to select no default preview.
         publication_date
             The publication date to send to Zenodo, in ISO format.
             When `None`, today's date is used.
+
+        Notes
+        -----
+        The files are always enabled, because Zenodo has no metadata only records.
         """
-        data = {
+        files_options: dict[str, Any] = {"enabled": True}
+        if len(files) > 0:
+            files_options["default_preview"] = files[0].name
+        return {
             "access": self.access.to_zenodo(),
-            "metadata": self.metadata.to_zenodo(publication_date),
+            "metadata": self.metadata.to_zenodo(description, publication_date),
             "custom_fields": self.custom_fields.to_zenodo(),
-            "files": {
-                "enabled": len(paths) > 0,
-                "order": [path.name for path in paths],
-            },
+            "files": files_options,
         }
-        if len(paths) > 0:
-            data["files"]["default_preview"] = paths[0].name
-        return data
 
 
 INVENIORDM_MIMETYPE = "application/vnd.inveniordm.v1+json"
@@ -1139,13 +1165,13 @@ class ZenodoWrapper:
 
     # Main API methods
 
-    def create_new_record(self, config: Config, paths: list[Path]) -> dict[str, Any]:
+    def create_new_record(self, config: Config, description: str) -> dict[str, Any]:
         """Create a new record on Zenodo, which remains in draft until it is published manually.
 
-        The files are declared here, even though none of them is uploaded yet,
-        because Zenodo refuses an upload to a record whose files it does not have enabled.
+        The new record has no files and no default preview.
         """
-        return self.rest.post("records", json=config.to_zenodo(paths))
+        data = config.to_zenodo(description, [])
+        return self.rest.post("records", json=data)
 
     def get_record(self, rid: str) -> dict[str, Any]:
         """Get an (un)published record with given id.
@@ -1153,6 +1179,8 @@ class ZenodoWrapper:
         The draft is preferred, because it carries the changes that are not published yet.
         Only a record without a draft is read as a published one,
         so that a refused or lost request is not mistaken for a published dataset.
+        An open edit of a published record is returned as a draft
+        that still reports `is_published: true`.
         """
         try:
             res = self.rest.get(f"records/{rid}/draft")
@@ -1163,7 +1191,12 @@ class ZenodoWrapper:
         return res
 
     def update_metadata(
-        self, rid: str, config: Config, paths: list[Path], publication_date: str | None = None
+        self,
+        rid: str,
+        config: Config,
+        description: str,
+        files: Sequence[UploadFile],
+        publication_date: str | None = None,
     ) -> dict[str, Any]:
         """Update the metadata of a record.
 
@@ -1171,8 +1204,11 @@ class ZenodoWrapper:
         The publication date of a record that is already published
         must be passed in, because it is not part of the local configuration
         and a metadata update would otherwise move it to today.
+        The first of the `files` is selected as the default preview,
+        as explained in `Config.to_zenodo()`.
         """
-        return self.rest.put(f"records/{rid}/draft", json=config.to_zenodo(paths, publication_date))
+        data = config.to_zenodo(description, files, publication_date)
+        return self.rest.put(f"records/{rid}/draft", json=data)
 
     def edit_record(self, rid: str):
         """Put a published record into edit mode."""
@@ -1182,32 +1218,32 @@ class ZenodoWrapper:
         """Publish a draft record or a record in edit mode."""
         self.rest.post(f"records/{rid}/draft/actions/publish")
 
-    def start_uploads(self, rid: str, paths: list[Path]):
-        """Declare the files that will be uploaded to a record in draft mode.
+    def start_uploads(self, rid: str, files: Sequence[UploadFile]):
+        """Declare the files that will be uploaded to a record in draft mode."""
+        self.rest.post(f"records/{rid}/draft/files", json=[{"key": file.name} for file in files])
 
-        Nothing is sent when there are no files,
-        because Zenodo rejects a request that declares none.
+    def upload_file(self, rid: str, file: UploadFile):
+        """Upload a file to a record that is in draft mode.
+
+        The checksum that Zenodo computed is compared to the one in the inventory,
+        which detects both a damaged upload
+        and a file that changed after the inventory was written.
         """
-        if len(paths) == 0:
-            return
-        self.rest.post(f"records/{rid}/draft/files", json=[{"key": path.name} for path in paths])
-
-    def upload_file(self, rid: str, path: Path):
-        """Upload a file to a record that is in draft mode."""
-        loc = _file_loc(rid, path.name)
-        with open(path, "rb") as fh:
+        loc = _file_loc(rid, file.name)
+        with open(file.path, "rb") as fh:
             self.rest.put(f"{loc}/content", data=fh)
         res = self.rest.post(f"{loc}/commit")
-        if res.get("size") != path.size:
+        size = file.path.size
+        if res.get("size") != size:
             raise ZenodoError(
-                f"File size mismatch for {path.name}: "
-                f"expected {path.size}, got {res.get('size')} bytes."
+                f"File size mismatch for {file.name}: expected {size}, got {res.get('size')} bytes."
             )
-        local_md5 = _compute_md5(path)
         online_md5 = _entry_md5(res)
-        if local_md5 != online_md5:
+        if file.md5 != online_md5:
             raise ZenodoError(
-                f"MD5 checksum mismatch for {path.name}, local {local_md5}, online {online_md5}."
+                f"MD5 checksum mismatch for {file.path}, "
+                f"inventory {file.md5}, online {online_md5}. "
+                "The upload was damaged, or the file changed after the inventory was written."
             )
 
     def delete_file(self, rid: str, name: str):
@@ -1265,16 +1301,6 @@ class ZenodoWrapper:
         """
         return self.get_all_pages(f"records/{rid}/versions")
 
-    def get_user_records(self) -> list[dict[str, Any]]:
-        """Get all records owned by the user of the token, published or not.
-
-        Returns
-        -------
-        records
-            The latest version of every dataset of the user, in the order Zenodo returns them.
-        """
-        return self.get_all_pages("user/records")
-
     def create_new_version(self, rid: str) -> dict[str, Any]:
         """Create a new version of a published record.
 
@@ -1287,6 +1313,17 @@ NO_TOKEN_WARNING = """\
 [yellow]The REPREP_ZENODO_TOKEN environment variable is not set.
 Exiting early without interacting with the Zenodo endpoint.
 Use --dry-run to validate the config file offline on purpose.[/yellow]
+"""
+
+EMPTY_TOKEN_WARNING = """\
+[yellow]The REPREP_ZENODO_TOKEN environment variable is empty.
+Exiting early without interacting with the Zenodo endpoint.
+Use --dry-run to validate the config file offline on purpose.[/yellow]
+"""
+
+OFFLINE_MESSAGE = """\
+[yellow]The build is offline (STEPUP_BUILD_OFFLINE=1).
+Exiting early without interacting with the Zenodo endpoint.[/yellow]
 """
 
 
@@ -1316,41 +1353,122 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def _run(args: argparse.Namespace):
-    """Validate the configuration and synchronize the dataset with Zenodo."""
-    try:
-        paths = check_zenodo_paths(args.paths)
-    except ValueError as exc:
-        raise ZenodoError(str(exc)) from exc
-    missing = [path for path in paths if not path.is_file()]
-    if len(missing) > 0:
-        raise ZenodoError(f"The following files to upload do not exist: {', '.join(missing)}.")
+    """Validate the configuration and synchronize the dataset with Zenodo.
+
+    Everything that can be checked locally is checked before the early exits,
+    so that every run reports a configuration that cannot be synchronized,
+    also offline, without a token and with `--dry-run`.
+    """
     data = _load_config_data(args.config)
     _check_outdated_config(data, args.config)
     config = _make_converter().structure(data, Config)
-
-    if args.description is not None:
-        if config.metadata.description is not None:
-            raise ZenodoError(
-                "The 'description' cannot be given twice. "
-                "It is given in the config file and the --description command line argument."
-            )
-        config.metadata.description = _load_description(args.description)
+    description = _load_description(args.description)
+    files = _load_files(args.inventory)
 
     if args.dry_run:
         CONSOLE.print("[b]The following metadata would be sent to Zenodo:[/b]")
-        CONSOLE.print(JSON.from_data(config.to_zenodo(paths)))
+        CONSOLE.print(JSON.from_data(config.to_zenodo(description, files)))
+        return
+
+    # This variable is not tracked by StepUp, so that a start with `--offline`
+    # does not make the step pending, following the conventions for extensions of StepUp Core.
+    if os.environ.get("STEPUP_BUILD_OFFLINE") == "1":
+        CONSOLE.print(OFFLINE_MESSAGE)
         return
 
     # The token is not tracked by StepUp to keep sensitive information out of the workflow graph.
-    token = os.getenv("REPREP_ZENODO_TOKEN")
+    token = os.environ.get("REPREP_ZENODO_TOKEN")
     if token is None:
         CONSOLE.print(NO_TOKEN_WARNING)
         return
-    zenodo = ZenodoWrapper(token, config.endpoint, verbose=args.verbose)
+    if token == "":
+        CONSOLE.print(EMPTY_TOKEN_WARNING)
+        return
 
-    if args.clean:
-        _clean_online(zenodo, config)
-    _update_online(zenodo, config, paths)
+    if not args.no_check_md5:
+        _check_local_md5(files, args.inventory)
+    zenodo = ZenodoWrapper(token, config.endpoint, verbose=args.verbose)
+    _update_online(zenodo, config, description, files)
+
+
+def _load_files(path_inventory: str) -> list[UploadFile]:
+    """Load the files to upload from the inventory and check that they exist.
+
+    The files are amended as inputs of the current step,
+    so that StepUp knows them also when this step exits early.
+
+    Raises
+    ------
+    ZenodoError
+        When the inventory cannot be used, when it lists no files,
+        or when a file it lists does not exist.
+    InputNotFoundError
+        When StepUp has to build a file before it can be uploaded.
+    """
+    path_inventory = Path(path_inventory)
+    root = path_inventory.parent
+    files = []
+    try:
+        with open_inventory(path_inventory) as reader:
+            if reader.header.hash_algorithm != "md5":
+                raise ZenodoError(
+                    f"The inventory {path_inventory} has {reader.header.hash_algorithm} digests, "
+                    "while Zenodo reports MD5 checksums. "
+                    "Write it with `srr-make-inventory --hash md5`, which is the default."
+                )
+            for record in reader:
+                if isinstance(record, LinkRecord):
+                    raise ZenodoError(
+                        f"The inventory {path_inventory} lists the symbolic link {record.path}, "
+                        "which cannot be uploaded, because Zenodo has no symbolic links."
+                    )
+                files.append(UploadFile((root / record.path).normpath(), record.digest))
+    except ValueError as exc:
+        raise ZenodoError(
+            f"{exc} The inventory is the third argument of `srr-sync-zenodo`, "
+            "after the config file and the description."
+        ) from exc
+    if len(files) == 0:
+        raise ZenodoError(
+            f"The inventory {path_inventory} lists no files. "
+            "Zenodo publishes no record without files, "
+            "and it does not offer metadata only records."
+        )
+    try:
+        check_zenodo_paths([file.path for file in files])
+    except ValueError as exc:
+        raise ZenodoError(f"The inventory {path_inventory} cannot be used. {exc}") from exc
+    # A missing file is reported below, together with all other missing files.
+    with contextlib.suppress(PathError):
+        amend(inp=[file.path for file in files])
+    missing = [file.path for file in files if not file.path.is_file()]
+    if len(missing) > 0:
+        raise ZenodoError(f"The following files to upload do not exist: {', '.join(missing)}.")
+    return files
+
+
+def _compute_md5(path: Path) -> str:
+    """Compute the MD5 checksum of a local file, as 32 lowercase hexadecimal digits."""
+    with open(path, "rb", opener=open_regular_file) as fh:
+        return hashlib.file_digest(fh, "md5").hexdigest()
+
+
+def _check_local_md5(files: Sequence[UploadFile], path_inventory: str):
+    """Check that the inventory describes the current contents of the local files.
+
+    Raises
+    ------
+    ZenodoError
+        When the MD5 checksum of a file differs from the one in the inventory.
+    """
+    for file in files:
+        if _compute_md5(file.path) != file.md5:
+            raise ZenodoError(
+                f"The file {file.path} has changed after the inventory {path_inventory} "
+                "was written. Run `stepup build` to bring the inventory up to date, "
+                "or, when you run the sync without StepUp, "
+                "write the inventory again with `srr-make-inventory`."
+            )
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -1364,17 +1482,15 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help=f"Configuration file. The format is selected by its suffix: {_format_suffixes()}.",
     )
     parser.add_argument(
-        "paths",
-        nargs="*",
-        help="The files to upload to Zenodo. "
-        "They must all have different names and there can be at most "
-        f"{MAX_NUM_ZENODO_FILES} of them.",
+        "description",
+        help="A Markdown (.md) or HTML (.html) file describing the dataset. "
+        "Markdown is converted to HTML before it is sent to Zenodo.",
     )
     parser.add_argument(
-        "--description",
-        help="A Markdown or HTML file describing the dataset. "
-        "If not provided, the description will be taken from the config file. "
-        "Markdown files are converted to HTML before uploading to Zenodo.",
+        "inventory",
+        help="The inventory written by srr-make-inventory, "
+        "which lists the files to upload to Zenodo, with their MD5 checksums. "
+        "The first file is shown in the preview on Zenodo.",
     )
     parser.add_argument(
         "--verbose",
@@ -1384,18 +1500,19 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Show details of communication with Zenodo endpoint.",
     )
     parser.add_argument(
-        "--clean",
-        default=False,
-        action="store_true",
-        help="Remove all draft data sets before proceeding. "
-        "This also deletes the record ID json file.",
-    )
-    parser.add_argument(
         "--dry-run",
         default=False,
         action="store_true",
         help="Validate the configuration, print the metadata that would be sent to Zenodo "
         "and exit without contacting Zenodo.",
+    )
+    parser.add_argument(
+        "--no-check-md5",
+        default=False,
+        action="store_true",
+        help="Trust the MD5 checksums in the inventory without computing them again. "
+        "A StepUp workflow that builds the inventory passes this option, "
+        "because it keeps the inventory up to date.",
     )
     return parser.parse_args(argv)
 
@@ -1478,9 +1595,9 @@ def _load_config_data(path: str | Path) -> dict[str, Any]:
 
 
 REPLACED_CONFIG_KEYS = {
-    "paths": "Specify the files to upload as command line arguments instead.",
+    "paths": "List the files to upload in an inventory, written by srr-make-inventory.",
     "path_token": "Set the REPREP_ZENODO_TOKEN environment variable instead.",
-    "path_readme": "Specify the description file with the --description option instead.",
+    "path_readme": "Pass the description file as the second argument of srr-sync-zenodo instead.",
     "code_repository": "Move it into the 'custom_fields' section.",
 }
 """Keys that older config files may still contain, with a hint on how to replace them."""
@@ -1640,8 +1757,12 @@ def _format_error(exc: BaseException, type_: type | None) -> str:
     return cattrs.v.format_exception(exc, type_)
 
 
+MIN_DESCRIPTION_LEN = 3
+"""The shortest description Zenodo accepts."""
+
+
 def _load_description(path: str | Path) -> str:
-    """Load the description from a Markdown or HTML file."""
+    """Load the description from a Markdown or HTML file, and return it as HTML."""
     path = Path(path)
     suffix = path.suffix.lower()
     if suffix not in (".md", ".html"):
@@ -1660,22 +1781,9 @@ def _load_description(path: str | Path) -> str:
     return description
 
 
-def _clean_online(zenodo: ZenodoWrapper, config: Config):
-    """Remove all draft data sets on Zenodo."""
-    for record in zenodo.get_user_records():
-        rid = _record_id(record)
-        if _is_published(record):
-            CONSOLE.print(f"[yellow]Record {rid} is already published, skipping.[/yellow]")
-            continue
-        CONSOLE.print(f"Deleting draft record {rid}.")
-        try:
-            zenodo.rest.delete(f"records/{rid}/draft")
-        except RESTError as exc:
-            CONSOLE.print(f"[red]Failed to delete record {rid}: {exc}[/red]")
-    config.path_record_id.remove_p()
-
-
-def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
+def _update_online(
+    zenodo: ZenodoWrapper, config: Config, description: str, files: Sequence[UploadFile]
+):
     """Make the online data set up to date with the local information.
 
     Parameters
@@ -1684,8 +1792,10 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
         The Zenodo wrapper.
     config
         The configuration loaded from the config file.
-    paths
-        The files to upload to Zenodo, validated with `check_zenodo_paths`.
+    description
+        The description of the dataset, in HTML.
+    files
+        The files to upload to Zenodo, as listed in the inventory.
     """
     rid = None
     if config.path_record_id.exists():
@@ -1693,9 +1803,9 @@ def _update_online(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
         if len(rid) == 0:
             raise ZenodoError(f"The record ID file {config.path_record_id} is empty.")
     if rid is None:
-        _upload_new_record(zenodo, config, paths)
+        _upload_new_record(zenodo, config, description, files)
     else:
-        _refresh_existing_record(zenodo, rid, config, paths)
+        _refresh_existing_record(zenodo, rid, config, description, files)
 
 
 def _write_record_id(path: Path, rid: str):
@@ -1722,41 +1832,41 @@ def _write_record_id(path: Path, rid: str):
         raise ZenodoError(
             f"Cannot write the record ID file {path}: {exc}. "
             f"Record {rid} exists on Zenodo, so put its id in that file by hand, "
-            "or remove the draft with --clean."
+            "or discard the draft in the web interface of Zenodo."
         ) from exc
 
 
-def _upload_new_record(zenodo: ZenodoWrapper, config: Config, paths: list[Path]):
-    """Create a new record on Zenodo and upload the files to it.
+def _upload_new_record(
+    zenodo: ZenodoWrapper, config: Config, description: str, files: Sequence[UploadFile]
+):
+    """Create a new record on Zenodo and fill it like any other draft.
 
     The record id is stored before the files are uploaded,
     so a failed upload leaves a draft that the next run completes,
-    instead of an orphan that only `--clean` can remove.
+    instead of an orphan that has to be discarded by hand.
     """
-    record = zenodo.create_new_record(config, paths)
+    record = zenodo.create_new_record(config, description)
     rid = _record_id(record)
     _write_record_id(config.path_record_id, rid)
     CONSOLE.print(f"[b]New record:[/b] {_record_url(zenodo, record)}")
-
-    # Declare the files to be uploaded.
-    zenodo.start_uploads(rid, paths)
-
-    # Actual uploads, one by one.
-    for path in paths:
-        CONSOLE.print(f"[green]Uploading:[/green] {path}")
-        zenodo.upload_file(rid, path)
-    if len(paths) > 0:
-        # The metadata is sent again, now that the files exist,
-        # so that Zenodo applies the order and the default preview to them.
-        zenodo.update_metadata(rid, config, paths)
+    _refresh_draft(zenodo, rid, record, config, description, files)
 
 
-def _refresh_existing_record(zenodo: ZenodoWrapper, rid: str, config: Config, paths: list[Path]):
+def _refresh_existing_record(
+    zenodo: ZenodoWrapper,
+    rid: str,
+    config: Config,
+    description: str,
+    files: Sequence[UploadFile],
+):
     """Refresh an existing record on Zenodo.
 
     The metadata is always sent again, without comparing it to what is online,
-    because the API does not return all the metadata it accepts,
-    as observed in June 2025.
+    because Zenodo normalizes some values, so a comparison is not worth the effort.
+    As observed on 2026-11-21, it strips the trailing newline of the description,
+    prefixes arXiv identifiers with `arXiv:`,
+    adds the scheme to identifiers sent without one,
+    and fills in the names of ROR funders and the details of awards given by id.
     """
     # When a dataset exists, the actions depend on the current status of the record.
     record = zenodo.get_record(rid)
@@ -1765,26 +1875,33 @@ def _refresh_existing_record(zenodo: ZenodoWrapper, rid: str, config: Config, pa
     if _is_published(record):
         _check_version_chain(zenodo, record, config)
         if config.metadata.version == _get_record_version(record):
-            named_paths = {path.name: path for path in paths}
-            _check_record_md5(record, named_paths, config.metadata.version)
-            _republish_metadata(zenodo, rid, config, paths, _record_publication_date(record))
+            named_files = {file.name: file for file in files}
+            _check_record_md5(record, named_files, config.metadata.version)
+            publication_date = _record_publication_date(record)
+            _republish_metadata(zenodo, rid, config, description, files, publication_date)
         else:
             record = _create_new_version(zenodo, rid, config)
             rid = _record_id(record)
             _write_record_id(config.path_record_id, rid)
-            _refresh_draft(zenodo, rid, record, config, paths)
+            _refresh_draft(zenodo, rid, record, config, description, files)
     else:
-        _refresh_draft(zenodo, rid, record, config, paths)
+        _refresh_draft(zenodo, rid, record, config, description, files)
 
 
 def _refresh_draft(
-    zenodo: ZenodoWrapper, rid: str, record: dict[str, Any], config: Config, paths: list[Path]
+    zenodo: ZenodoWrapper,
+    rid: str,
+    record: dict[str, Any],
+    config: Config,
+    description: str,
+    files: Sequence[UploadFile],
 ):
     """Bring the files and the metadata of a draft record up to date.
 
-    The metadata is sent before and after the files are refreshed,
-    because Zenodo only accepts an upload to a record whose metadata has enabled the files,
-    and it only applies their order and default preview once they exist.
+    The files are refreshed first,
+    so that the metadata update can select the first file as the default preview.
+    Zenodo drops a default preview whose file is deleted,
+    so a preview left over from an earlier run never blocks the refresh of the files.
 
     Parameters
     ----------
@@ -1796,16 +1913,62 @@ def _refresh_draft(
         The draft record as returned by the Zenodo API.
     config
         The configuration loaded from the config file.
-    paths
-        The files to upload to Zenodo, validated with `check_zenodo_paths`.
+    description
+        The description of the dataset, in HTML.
+    files
+        The files to upload to Zenodo, as listed in the inventory.
     """
+    named_files = {file.name: file for file in files}
+    _refresh_files(zenodo, rid, record, named_files, config.metadata.version)
     CONSOLE.print("Updating metadata of draft record.")
-    zenodo.update_metadata(rid, config, paths)
-    named_paths = {path.name: path for path in paths}
-    _refresh_files(zenodo, rid, record, named_paths, config.metadata.version)
-    if len(paths) > 0:
-        CONSOLE.print("Updating file order of draft record.")
-        zenodo.update_metadata(rid, config, paths)
+    _check_draft_errors(zenodo.update_metadata(rid, config, description, files), rid)
+
+
+def _check_draft_errors(response: dict[str, Any], rid: str):
+    """Report the problems that Zenodo found in the metadata of a draft.
+
+    Zenodo accepts a metadata update with a schema violation,
+    and lists the problem in the `errors` of the response instead of refusing the request.
+    The offending field is dropped from the stored draft,
+    so the problem only shows up when the draft is published.
+    This was observed on the Zenodo sandbox on 2026-11-21,
+    for example for a title that is too short or a missing publisher.
+
+    Call this only on a response to a metadata update of a draft that has all its files,
+    because Zenodo also lists the missing files of a draft as an error.
+
+    Parameters
+    ----------
+    response
+        The response of Zenodo to the metadata update.
+    rid
+        The id of the draft record, used in the message.
+
+    Raises
+    ------
+    ZenodoError
+        When the response lists at least one error.
+        The message lists every field with its messages.
+        The draft is kept on Zenodo, so the next run can repair it.
+    """
+    errors = response.get("errors") if isinstance(response, dict) else None
+    if not errors:
+        return
+    lines = []
+    for error in errors if isinstance(errors, list) else [errors]:
+        if isinstance(error, dict) and "field" in error:
+            messages = error.get("messages")
+            if isinstance(messages, list):
+                messages = " ".join(str(message) for message in messages)
+            lines.append(f"- {error['field']}: {messages}")
+        else:
+            lines.append(f"- {error!r}")
+    raise ZenodoError(
+        f"Zenodo found problems in the metadata of the draft of record {rid}:\n"
+        + "\n".join(lines)
+        + "\nThe draft is kept on Zenodo. "
+        "Correct the configuration, and the next run will repair the draft."
+    )
 
 
 def _check_version_chain(zenodo: ZenodoWrapper, record: dict[str, Any], config: Config):
@@ -1858,12 +2021,6 @@ def _check_version_chain(zenodo: ZenodoWrapper, record: dict[str, Any], config: 
             f"this dataset, while the latest published version has {_describe_version(latest)}. "
             "Put a version in the config file that was not published before."
         )
-
-
-def _compute_md5(path: Path) -> str:
-    """Compute the MD5 sum of a local file, as a hexadecimal string."""
-    with open(path, "rb") as fh:
-        return hashlib.file_digest(fh, hashlib.md5).hexdigest()
 
 
 def _entry_md5(entry: dict[str, Any]) -> str:
@@ -1947,8 +2104,8 @@ def _is_published(record: dict[str, Any]) -> bool:
     Raises
     ------
     ZenodoError
-        When the record does not say, because acting on a guess would either
-        delete a record or try to change the files of a published one.
+        When the record does not say, because acting on a guess would send
+        the requests meant for a draft to a published record, or vice versa.
     """
     is_published = record.get("is_published")
     if not isinstance(is_published, bool):
@@ -2053,6 +2210,61 @@ def _get_record_files(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return files.get("entries", {})
 
 
+@attrs.define(frozen=True)
+class FileDiff:
+    """The comparison of the online file entries of a record with the local files.
+
+    Every name occurs in exactly one of the fields, and the names within a field are in the order
+    of the online entries, except for `missing`, which follows the order of the local files.
+    """
+
+    missing: tuple[str, ...] = attrs.field(converter=tuple)
+    """Names of local files that do not exist online."""
+
+    extra: tuple[str, ...] = attrs.field(converter=tuple)
+    """Names of online files that do not exist locally."""
+
+    changed: tuple[str, ...] = attrs.field(converter=tuple)
+    """Names of files whose online checksum differs from the local MD5 checksum."""
+
+    same: tuple[str, ...] = attrs.field(converter=tuple)
+    """Names of files whose online checksum equals the local MD5 checksum."""
+
+    incomplete: tuple[str, ...] = attrs.field(converter=tuple)
+    """Names of local files that Zenodo knows without content, hence without checksum."""
+
+
+def _diff_files(record: dict[str, Any], files: dict[str, UploadFile]) -> FileDiff:
+    """Compare the file entries of a record with the local files, without side effects.
+
+    Parameters
+    ----------
+    record
+        A record as returned by the Zenodo API.
+    files
+        The files to upload to Zenodo, keyed by file name.
+
+    Returns
+    -------
+    diff
+        The names classified by how the online and local files relate.
+        An online entry without checksum that has a local counterpart is `incomplete`.
+    """
+    entries = _get_record_files(record)
+    extra, changed, same, incomplete = [], [], [], []
+    for name, entry in entries.items():
+        if name not in files:
+            extra.append(name)
+        elif entry.get("checksum") is None:
+            incomplete.append(name)
+        elif files[name].md5 != _entry_md5(entry):
+            changed.append(name)
+        else:
+            same.append(name)
+    missing = [name for name in files if name not in entries]
+    return FileDiff(missing, extra, changed, same, incomplete)
+
+
 PUBLISHED_FILE_MISMATCH_HINT = (
     "The files of a published version cannot be changed. "
     "Put a version in the config file that was not published before, "
@@ -2060,14 +2272,14 @@ PUBLISHED_FILE_MISMATCH_HINT = (
 )
 
 
-def _check_record_md5(record: dict[str, Any], paths: dict[str, Path], version: str):
+def _check_record_md5(record: dict[str, Any], files: dict[str, UploadFile], version: str):
     """Check that the files of a published record are identical to the local ones.
 
     Parameters
     ----------
     record
         The published record as returned by the Zenodo API.
-    paths
+    files
         The files to upload to Zenodo, keyed by file name.
     version
         The version of the dataset, used in the messages.
@@ -2078,31 +2290,40 @@ def _check_record_md5(record: dict[str, Any], paths: dict[str, Path], version: s
         When a file exists on only one side, or when two files with the same name differ.
     """
     entries = _get_record_files(record)
-    for name, entry in entries.items():
+    for name in entries:
         CONSOLE.print(f"[cyan]Checking MD5:[/cyan] {name} ({version}, published)")
-        if name not in paths:
-            raise ZenodoError(
-                f"File {name} exists online but not locally ({version}, published). "
-                f"{PUBLISHED_FILE_MISMATCH_HINT}"
-            )
-        path = paths[name]
-        local_md5 = _compute_md5(path)
-        online_md5 = _entry_md5(entry)
-        if local_md5 != online_md5:
-            raise ZenodoError(
-                f"MD5 checksum mismatch for {path} ({version}, published), "
-                f"local: {local_md5}, online: {online_md5}. {PUBLISHED_FILE_MISMATCH_HINT}"
-            )
-    for name in paths:
-        if name not in entries:
-            raise ZenodoError(
-                f"File {name} exists locally but not online ({version}, published). "
-                f"{PUBLISHED_FILE_MISMATCH_HINT}"
-            )
+    diff = _diff_files(record, files)
+    if diff.extra:
+        raise ZenodoError(
+            f"File {diff.extra[0]} exists online but not locally ({version}, published). "
+            f"{PUBLISHED_FILE_MISMATCH_HINT}"
+        )
+    if diff.changed:
+        name = diff.changed[0]
+        raise ZenodoError(
+            f"MD5 checksum mismatch for {files[name].path} ({version}, published), "
+            f"local: {files[name].md5}, online: {_entry_md5(entries[name])}. "
+            f"{PUBLISHED_FILE_MISMATCH_HINT}"
+        )
+    if diff.incomplete:
+        raise ZenodoError(
+            f"File {diff.incomplete[0]} has no checksum online ({version}, published). "
+            f"{PUBLISHED_FILE_MISMATCH_HINT}"
+        )
+    if diff.missing:
+        raise ZenodoError(
+            f"File {diff.missing[0]} exists locally but not online ({version}, published). "
+            f"{PUBLISHED_FILE_MISMATCH_HINT}"
+        )
 
 
 def _republish_metadata(
-    zenodo: ZenodoWrapper, rid: str, config: Config, paths: list[Path], publication_date: str | None
+    zenodo: ZenodoWrapper,
+    rid: str,
+    config: Config,
+    description: str,
+    files: Sequence[UploadFile],
+    publication_date: str | None,
 ):
     """Put a record in edit mode, update the metadata and publish again.
 
@@ -2113,27 +2334,32 @@ def _republish_metadata(
         f"Editing metadata and publishing same version ({config.metadata.version}) again."
     )
     zenodo.edit_record(rid)
-    zenodo.update_metadata(rid, config, paths, publication_date)
+    response = zenodo.update_metadata(rid, config, description, files, publication_date)
+    _check_draft_errors(response, rid)
     zenodo.publish_record(rid)
 
 
 def _create_new_version(zenodo: ZenodoWrapper, rid: str, config: Config) -> dict[str, Any]:
     """Create a new version of the dataset."""
-    CONSOLE.print(f"Creating a new version ({config.metadata.version})")
-    return zenodo.create_new_version(rid)
+    draft = zenodo.create_new_version(rid)
+    CONSOLE.print(
+        f"Preparing the draft of a new version ({config.metadata.version}): {draft.get('id')}"
+    )
+    return draft
 
 
 def _refresh_files(
     zenodo: ZenodoWrapper,
     rid: str,
     record: dict[str, Any],
-    paths: dict[str, Path],
+    files: dict[str, UploadFile],
     version: str,
 ):
     """Refresh the online files.
 
     Only files that do not exist online yet or have changed locally are uploaded.
     Files that are no longer listed locally are removed online.
+    The files to upload are declared together in one request.
 
     Parameters
     ----------
@@ -2143,34 +2369,30 @@ def _refresh_files(
         The id of the draft record.
     record
         The draft record as returned by the Zenodo API.
-    paths
+    files
         The files to upload to Zenodo, keyed by file name.
     version
         The version of the dataset, used in the messages.
     """
-    entries = _get_record_files(record)
-    for name, entry in entries.items():
-        if name not in paths:
-            CONSOLE.print(f"[red]Deleting:[/red] {name} ({version}, draft)")
-            zenodo.delete_file(rid, name)
-        else:
-            path = paths[name]
-            if entry.get("checksum") is None:
-                # The file is declared already, so only its content has to be sent.
-                CONSOLE.print(f"[green]Completing:[/green] {path} ({version}, draft)")
-                zenodo.upload_file(rid, path)
-            elif _compute_md5(path) != _entry_md5(entry):
-                CONSOLE.print(f"[yellow]Replacing:[/yellow] {path} ({version}, draft)")
-                zenodo.delete_file(rid, name)
-                zenodo.start_uploads(rid, [path])
-                zenodo.upload_file(rid, path)
-            else:
-                CONSOLE.print(f"[cyan]Same MD5:[/cyan] {path} ({version}, draft)")
-    for name, path in paths.items():
-        if name not in entries:
-            CONSOLE.print(f"[green]Uploading:[/green] {path} ({version}, draft)")
-            zenodo.start_uploads(rid, [path])
-            zenodo.upload_file(rid, path)
+    diff = _diff_files(record, files)
+    for name in diff.extra:
+        CONSOLE.print(f"[red]Deleting:[/red] {name} ({version}, draft)")
+        zenodo.delete_file(rid, name)
+    for name in diff.incomplete:
+        # The file is declared already, so only its content has to be sent.
+        CONSOLE.print(f"[green]Completing:[/green] {files[name].path} ({version}, draft)")
+        zenodo.upload_file(rid, files[name])
+    for name in diff.changed:
+        CONSOLE.print(f"[yellow]Replacing:[/yellow] {files[name].path} ({version}, draft)")
+        zenodo.delete_file(rid, name)
+    for name in diff.same:
+        CONSOLE.print(f"[cyan]Same MD5:[/cyan] {files[name].path} ({version}, draft)")
+    new_files = [files[name] for name in (*diff.changed, *diff.missing)]
+    if len(new_files) > 0:
+        zenodo.start_uploads(rid, new_files)
+        for file in new_files:
+            CONSOLE.print(f"[green]Uploading:[/green] {file.path} ({version}, draft)")
+            zenodo.upload_file(rid, file)
 
 
 if __name__ == "__main__":

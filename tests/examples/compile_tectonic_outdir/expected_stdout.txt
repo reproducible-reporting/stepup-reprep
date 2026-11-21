@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
- SUCCESS │ srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.txt sub/paper.tex
+   START │ srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.jsonl sub/paper.tex
+ SUCCESS │ srr-compile-tectonic --outdir=out/ --inventory=sub/paper-inventory.jsonl sub/paper.tex
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

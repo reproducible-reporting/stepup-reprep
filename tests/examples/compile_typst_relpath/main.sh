@@ -16,6 +16,6 @@ wait
 [[ -f plan.py ]] || exit 1
 [[ -f out.pdf ]] || exit 1
 [[ -f source/document.deps.json ]] || exit 1
-[[ -f source/document-inventory.txt ]] || exit 1
-grep '../out.pdf' source/document-inventory.txt
-[[ $(wc -l < source/document-inventory.txt) -eq 4 ]] || exit 1
+[[ -f source/document-inventory.jsonl ]] || exit 1
+grep '../out.pdf' source/document-inventory.jsonl
+[[ $(wc -l < source/document-inventory.jsonl) -eq 5 ]] || exit 1

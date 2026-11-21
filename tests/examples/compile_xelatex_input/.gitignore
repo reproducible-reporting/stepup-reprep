@@ -6,7 +6,7 @@ paper.pdf
 paper.log
 paper.aux
 paper.fls
-paper-inventory.txt
+paper-inventory.jsonl
 paper.out
 paper1.pdf
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

@@ -5,4 +5,4 @@ main.log
 main.aux
 main.out
 main.fls
-main-inventory.txt
+main-inventory.jsonl

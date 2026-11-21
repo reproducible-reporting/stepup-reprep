@@ -3,4 +3,4 @@ current_*
 sub/generated.tex
 sub/paper.pdf
 sub/paper.dep
-sub/paper-inventory.txt
+sub/paper-inventory.jsonl

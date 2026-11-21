@@ -17,19 +17,19 @@ step:./plan.py
              product   file:paper.tex
              product   file:smile.pdf
              product   step:echo 'Hi there!' > generated.tex
-             product   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             product   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.tex
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
 file:smile.pdf
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
-step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_TECTONIC [dynamic]
@@ -39,27 +39,27 @@ step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
               source   file:generated.tex [dynamic]
               source   file:paper.tex
               source   file:smile.pdf [dynamic]
-             product   file:paper-inventory.txt
+             product   file:paper-inventory.jsonl
              product   file:paper.dep
              product   file:paper.pdf
-                sink   file:paper-inventory.txt
+                sink   file:paper-inventory.jsonl
                 sink   file:paper.dep
                 sink   file:paper.pdf
 
-file:paper-inventory.txt
+file:paper-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.dep
                state = BUILT
-             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
 file:paper.pdf
                state = BUILT
-             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
-              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+             creator   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
+              source   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex
 
 step:echo 'Hi there!' > generated.tex
                state = SUCCEEDED
@@ -72,4 +72,4 @@ file:generated.tex
                state = BUILT
              creator   step:echo 'Hi there!' > generated.tex
               source   step:echo 'Hi there!' > generated.tex
-                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.txt paper.tex
+                sink   step:srr-compile-tectonic --keep-deps --inventory=paper-inventory.jsonl paper.tex

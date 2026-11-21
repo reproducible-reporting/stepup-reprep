@@ -17,49 +17,49 @@ step:./plan.py
              product   file:data/fine.out
              product   file:data/sub/deeper/nested.out
              product   file:data/sub/works.out
-             product   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-             product   step:srr-zip-inventory inventory.txt upload.zip
+             product   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
+             product   step:srr-zip-inventory inventory.jsonl upload.zip
 
 file:data/fine.out
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
 
 file:data/sub/deeper/nested.out
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
 
 file:data/sub/works.out
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+                sink   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
 
-step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
+step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
               source   file:data/fine.out
               source   file:data/sub/deeper/nested.out
               source   file:data/sub/works.out
-             product   file:inventory.txt
-                sink   file:inventory.txt
+             product   file:inventory.jsonl
+                sink   file:inventory.jsonl
 
-file:inventory.txt
+file:inventory.jsonl
                state = BUILT
-             creator   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-              source   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.txt
-                sink   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
+              source   step:srr-make-inventory data/fine.out data/sub/deeper/nested.out data/sub/works.out -o inventory.jsonl
+                sink   step:srr-zip-inventory inventory.jsonl upload.zip
 
-step:srr-zip-inventory inventory.txt upload.zip
+step:srr-zip-inventory inventory.jsonl upload.zip
                state = SUCCEEDED
                 need = DEFAULT
              creator   step:./plan.py
-              source   file:inventory.txt
+              source   file:inventory.jsonl
              product   file:upload.zip
                 sink   file:upload.zip
 
 file:upload.zip
                state = BUILT
-             creator   step:srr-zip-inventory inventory.txt upload.zip
-              source   step:srr-zip-inventory inventory.txt upload.zip
+             creator   step:srr-zip-inventory inventory.jsonl upload.zip
+              source   step:srr-zip-inventory inventory.jsonl upload.zip

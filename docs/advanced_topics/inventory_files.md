@@ -1,6 +1,6 @@
 ---
 description: >-
-  The inventory.txt and inventory.def file formats,
+  The inventory.jsonl and inventory.def file formats,
   and the tools that create, validate and zip an inventory of files to be archived.
 ---
 
@@ -11,28 +11,69 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Inventory Files
 
-StepUp RepRep uses `inventory.txt` to collect metadata to prepare a ZIP archive.
-Inventory files can either be created manually (for an external dataset)
-or automatically (for datasets created within a StepUp workflow.)
+An inventory lists files together with their sizes and digests.
+StepUp RepRep uses inventories to prepare reproducible ZIP archives,
+to check the integrity of a dataset, and to upload files to Zenodo with
+[`sync_zenodo()`](sync_zenodo.md).
+Inventory files can either be created for an external dataset
+or within a StepUp workflow, for a dataset that the workflow builds.
 
 ## File Formats
 
-### Inventory Files (`inventory.txt`)
+### Inventory Files (`inventory.jsonl`)
 
-The `inventory.txt` file contains one line per file to be archived.
-Each line has four fields:
+An inventory is a [JSON Lines](https://jsonlines.org/) file
+with one JSON object per line, encoded in UTF-8.
+You do not write this type of file by hand.
+Instead, StepUp RepRep offers tools to make such files, see below.
+The following example lists a regular file and a symbolic link:
 
-- the file size,
-- the file mode, which is always `lrwxrwxrwx` for a symbolic link,
-  so that the inventory does not depend on the platform,
-- the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) hash
-  of the file contents (regular file) or link destination (symbolic link), and
-- the relative path to the file, starting from the parent of the inventory file.
+```json
+{"fields":["md5","path","size"],"format":"stepup-reprep-inventory","version":1}
+{"md5":"b1946ac92492d2347c6235b4d2611184","path":"README.txt","size":6}
+{"link":"README.txt","path":"README.md"}
+```
 
-A fixed column width is used.
-You do not create this type of file manually.
-Instead, StepUp RepRep offers tools to make such files.
-(See below.)
+The first line is the header, with the following keys:
+
+- `format` is always `"stepup-reprep-inventory"`,
+  which tells an inventory apart from other JSON files.
+- `version` is the version of the format, currently `1`.
+  It changes with every incompatible change of the format.
+- `fields` is the sorted list of keys of the line of a regular file.
+
+Every other line describes one file.
+For a regular file, the keys are exactly those listed in `fields`:
+
+- `path` is the location of the file, see below.
+- `size` is the size of the file in bytes.
+- The digest of the file contents in lowercase hexadecimal digits,
+  under the name of the hash algorithm, e.g. `md5` or `sha256`.
+  All files in one inventory are hashed with the same algorithm.
+- `mode` is only present when the inventory was made with `--mode`.
+  It holds the permission bits of the file, e.g. `rw-r--r--`.
+
+A symbolic link is never followed.
+Its line has exactly two keys, whatever `fields` says:
+`path` is the location of the link, and `link` is the target as stored in the link.
+The target may be a directory.
+
+A path is relative to the parent directory of the inventory file,
+it is normalized and it uses `/` as separator on every platform.
+It may start with `../` for a file outside that directory.
+Directories themselves are never listed.
+
+Files appear in the order in which they were given:
+first the paths given explicitly, in the given order,
+then the matches of the inventory definition, sorted.
+When a path occurs twice, only its first occurrence is kept.
+This order matters for [`sync_zenodo()`](sync_zenodo.md),
+which uploads the files in the order of the inventory
+and selects the first one for the preview on Zenodo.
+
+The contents of an inventory only depend on the files it lists.
+It contains no time stamps, so StepUp does not rerun the steps that use it
+when the files did not change.
 
 ### Inventory Definitions (`inventory.def`)
 
@@ -68,14 +109,24 @@ The following rules are supported:
 If any of these rules produces directories, they will not be included in the inventory.
 An exception is raised when no matching paths are found.
 
-## Creating `inventory.txt` Files
+## Creating `inventory.jsonl` Files
 
 ### Command-Line Tool `srr-make-inventory`
 
 One can create an inventory file on the command-line as follows:
 
 ```bash
-srr-make-inventory -i inventory.def -o inventory.txt
+srr-make-inventory -i inventory.def -o inventory.jsonl
+```
+
+The output must have the suffix `.jsonl`.
+With `-i X.def` and without `-o`, the inventory is written to `X.jsonl`.
+The inventory definition and the output must be in the same directory.
+Files can also be listed on the command line, before the options,
+with or without an inventory definition:
+
+```bash
+srr-make-inventory README.txt data/table.csv -o inventory.jsonl
 ```
 
 See `srr-make-inventory --help` for more details.
@@ -88,42 +139,75 @@ One may include a [`make_inventory()`][stepup.reprep.api.make_inventory] step in
 ```python
 from stepup.reprep.api import make_inventory
 
-make_inventory("file1.txt", "file2.txt", "inventory.txt")
+make_inventory("file1.txt", "file2.txt", "inventory.jsonl")
 ```
 
+The last argument is the inventory file to write.
 This step is mainly useful for creating an inventory file of a dataset generated by your StepUp workflow.
 It can also be combined with `stepup.core.glob` for building datasets from static files,
-or one may provide an inventory definition files as follows:
+or one may provide an inventory definition file as follows:
 
 ```python
 from stepup.reprep.api import make_inventory
 
-make_inventory("inventory.txt", path_def="inventory.def")
+make_inventory("inventory.jsonl", path_def="inventory.def")
 ```
 
-## Creating a ZIP Archive from a `inventory.txt` File
+The options below are the arguments `hash_algorithm` and `mode` of `make_inventory()`.
+
+### Hash Algorithm
+
+The option `--hash` selects the hash algorithm for the digests of the files.
+Any algorithm in Python's
+[`hashlib.algorithms_guaranteed`](https://docs.python.org/3/library/hashlib.html#hashlib.algorithms_guaranteed)
+can be used, except the `shake_*` algorithms, whose digests have no fixed length.
+
+The default is MD5, because Zenodo reports MD5 checksums,
+so an inventory with the default algorithm can be passed to [`sync_zenodo()`](sync_zenodo.md).
+MD5 reliably detects accidental changes, such as a damaged transfer or bit rot:
+for accidental changes, a collision is equally unlikely with MD5 and SHA-256.
+Use `--hash sha256` when deliberate tampering with the files must be detected,
+because files with the same MD5 digest can be crafted on purpose.
+
+### Permission Bits
+
+The size and the digest of a regular file are always recorded.
+The permission bits are only recorded with the option `--mode`,
+e.g. to make sure that a script remains executable.
+They are then also checked by `srr-check-inventory` and `srr-zip-inventory`.
+
+Files have no permission bits on Windows,
+where Python derives them from the read-only attribute and the file name.
+`srr-make-inventory --mode` prints a warning on Windows,
+and the permission bits in an inventory are not checked on Windows.
+
+## Creating a ZIP Archive from an `inventory.jsonl` File
 
 ### Command-Line Tool `srr-zip-inventory`
 
-Given an `inventory.txt` file, the corresponding ZIP file is created with:
+Given an `inventory.jsonl` file, the corresponding ZIP file is created with:
 
 ```bash
-srr-zip-inventory inventory.txt
+srr-zip-inventory inventory.jsonl
 ```
 
 This is a command-line wrapper around the `zip_inventory` function discussed below.
 
 ### StepUp RepRep Function `zip_inventory`
 
-The function [`zip_inventory()`][stepup.reprep.api.zip_inventory] takes a `inventory.txt` file as input
+The function [`zip_inventory()`][stepup.reprep.api.zip_inventory]
+takes an `inventory.jsonl` file as input
 and creates a ZIP file containing all the files listed in the inventory.
 It differs from the conventional `zip` program in the following ways:
 
-- File hashes are checked before adding files to the archive,
+- Every file is checked against the inventory before it is added to the archive,
   which is mostly useful for external datasets.
-- The `inventory.txt` file is included in the resulting ZIP file.
+- The paths in the ZIP file are those in the inventory.
+  A file outside the directory of the inventory, with a path starting with `../`,
+  cannot be archived, so such an inventory is refused.
+- The inventory file is the last file in the resulting ZIP file.
 - The ZIP file is reproducible: all time stamps in the ZIP file are set to January 1st, 1980.
-- By default, symbolic links are added as links, instead of the contents they point to.
+- Symbolic links are added as links, instead of the contents they point to.
 
 ### Unpacking the ZIP File
 
@@ -140,12 +224,15 @@ for more details on Python's (lacking) support for symbolic links in ZIP files.
 
 ## Validate an Inventory File
 
-If you just want to check the file sizes, modes and hashes of an inventory, run:
+If you just want to check the files listed in an inventory, run:
 
 ```bash
-srr-check-inventory inventory.txt
+srr-check-inventory inventory.jsonl
 ```
 
+This compares the size and the digest of every regular file,
+its permission bits when the inventory has them,
+and the target of every symbolic link.
 This can be useful in the following cases:
 
 - When you work with a remote dataset, you can check if the files in the inventory have changed.

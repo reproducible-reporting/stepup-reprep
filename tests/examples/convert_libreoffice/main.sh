@@ -13,7 +13,7 @@ mv slide.pdf slide1.pdf
 stepup wait -d slide.pdf
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory_skip.txt slide.pdf slide1.pdf
+srr-make-inventory -o reproducibility_inventory_skip.jsonl slide.pdf slide1.pdf
 
 # Wait for background processes, if any.
 wait
@@ -23,4 +23,4 @@ wait
 [[ -f slide.odp ]] || exit 1
 [[ -f slide.pdf ]] || exit 1
 [[ -f slide1.pdf ]] || exit 1
-[[ -f reproducibility_inventory_skip.txt ]] || exit 1
+[[ -f reproducibility_inventory_skip.jsonl ]] || exit 1

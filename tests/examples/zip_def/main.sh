@@ -22,6 +22,6 @@ wait
 
 # Check files that are expected to be present and/or missing.
 [[ -f plan.py ]] || exit 1
-[[ -f inventory.txt ]] || exit 1
+[[ -f inventory.jsonl ]] || exit 1
 [[ -f upload.zip ]] || exit 1
-[[ $(wc -l < inventory.txt) -eq 5 ]] || exit 1
+[[ $(wc -l < inventory.jsonl) -eq 6 ]] || exit 1

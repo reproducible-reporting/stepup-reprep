@@ -4,9 +4,11 @@
 
 There are two kinds of inventory files:
 
-- ``inventory.def`` defines rules to include and exclude files to be archived.
-- ``inventory.txt`` is the result of a processing a ``inventory.def`` file with this script.
-  It contains every individual file, together with its size in bytes and its SHA-256 hexdigest.
+- `inventory.def` defines rules to include and exclude files.
+- `inventory.jsonl` is the result of processing an `inventory.def` file with this script,
+  or of listing the files on the command line.
+  It describes every individual file, with its size and digest,
+  in the format defined in `stepup.reprep.inventory`.
 """
 
 import argparse
@@ -20,9 +22,16 @@ from stepup.core.api import amend
 from stepup.core.enums import FileState
 from stepup.core.extapi import run_subprocess
 from stepup.core.nglob import NamedGlob
-from stepup.core.path import Path
+from stepup.core.path import Path, StrPath
+from stepup.core.platform.oscompat import file_modes_available
 
-from .inventory import format_summary, get_summary
+from .inventory import (
+    HASH_ALGORITHMS,
+    InventoryHeader,
+    compute_record,
+    format_header,
+    format_record,
+)
 
 __all__ = ("main", "write_inventory")
 
@@ -30,49 +39,65 @@ __all__ = ("main", "write_inventory")
 def main(argv: Sequence[str] | None = None):
     """Main program."""
     parser = argparse.ArgumentParser(
-        prog="srr-make-inventory", description="Make an inventory.txt file."
+        prog="srr-make-inventory", description="Make an inventory file in JSON Lines format."
     )
     parser.add_argument(
         "paths",
         nargs="*",
-        help="File to include in the inventory. "
-        "(Added after processing the inventory definition if any.)",
+        help="Files to include in the inventory, in the given order. "
+        "They come before the files matched by the inventory definition, if any.",
     )
     parser.add_argument("-i", "--inventory-def", help="An inventory definition file.", default=None)
-    parser.add_argument("-o", "--inventory-txt", help="An inventory output file.", default=None)
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="The inventory file to write, with suffix .jsonl. "
+        "It is optional with -i X.def, in which case X.jsonl is written.",
+        default=None,
+    )
+    parser.add_argument(
+        "--hash",
+        dest="hash_algorithm",
+        choices=HASH_ALGORITHMS,
+        default="md5",
+        help="The hash algorithm for the digests of the files. [default=%(default)s]",
+    )
+    parser.add_argument(
+        "--mode",
+        default=False,
+        action="store_true",
+        help="Also record the permission bits of the files.",
+    )
     args = parser.parse_args(argv)
+    if args.inventory_def is None:
+        if len(args.paths) == 0:
+            parser.error("At least -i inventory.def or a list of files is needed as input.")
+        if args.output is None:
+            parser.error("Without -i inventory.def, the -o option is required.")
     make_inventory(args)
 
 
 def make_inventory(args: argparse.Namespace):
-    if args.inventory_def is None:
-        if len(args.paths) == 0:
-            raise ValueError("At least inventory.def or a list of files are needed as input.")
-        if args.inventory_txt is None:
-            raise ValueError("Without -i inventory.def, the -o option is no longer optional.")
-    else:
+    if args.inventory_def is not None:
         if not args.inventory_def.endswith(".def"):
             raise ValueError("The inventory definition file must end with .def")
-        if args.inventory_txt is None:
-            args.inventory_txt = args.inventory_def[:-4] + ".txt"
-        elif Path(args.inventory_txt).parent != Path(args.inventory_def).parent:
+        if args.output is None:
+            args.output = args.inventory_def[:-4] + ".jsonl"
+        elif Path(args.output).parent != Path(args.inventory_def).parent:
             raise ValueError(
-                "The inventory_def and inventory_txt files must have the same parent directory."
+                "The inventory definition and the output must have the same parent directory."
             )
-    if not args.inventory_txt.endswith(".txt"):
-        raise ValueError("The inventory output file must end with .txt")
 
-    path_inventory_txt = Path(args.inventory_txt)
-    root = path_inventory_txt.parent.normpath()
-    if args.inventory_def is None:
-        paths = set()
-    else:
+    path_out = Path(args.output)
+    paths = list(args.paths)
+    if args.inventory_def is not None:
+        root = path_out.parent.normpath()
         with open(args.inventory_def, encoding="utf-8") as fh:
             lines = fh.readlines()
         with contextlib.chdir(root):
-            paths = {root / path for path in parse_inventory_def(lines)}
-    paths.update(args.paths)
-    write_inventory(path_inventory_txt, sorted(paths))
+            paths_def = parse_inventory_def(lines)
+        paths.extend(root / path for path in sorted(paths_def))
+    write_inventory(path_out, paths, hash_algorithm=args.hash_algorithm, mode=args.mode)
 
 
 def get_file_list_nglob(i: int, args: list[str]) -> Collection[Path]:
@@ -174,38 +199,71 @@ def parse_inventory_def(lines: list[str], paths: list[str] | None = None) -> set
     return paths
 
 
-def write_inventory(path_txt: str, paths: Collection[str], do_amend: bool = True):
+def write_inventory(
+    path_out: StrPath,
+    paths: Sequence[StrPath],
+    *,
+    hash_algorithm: str = "md5",
+    mode: bool = False,
+    do_amend: bool = True,
+):
     """Write an inventory file.
+
+    The files are hashed and written one at a time, so only the list of paths is kept in memory.
 
     Parameters
     ----------
-    path_txt
-        The location of the inventory file to be written.
+    path_out
+        The location of the inventory file to be written, with suffix `.jsonl`.
     paths
-        A collection of paths to be included in the inventory.
+        The paths to be included in the inventory, in the order of the records.
         These must be paths relative to the current working directory.
         They will be written to the inventory file
         as paths relative to the parent of the inventory file.
+        When two of them are the same after this conversion, only the first one is kept.
+    hash_algorithm
+        The name of the `hashlib` algorithm that digests the regular files.
+    mode
+        When True, the permission bits of the regular files are recorded.
+        A warning is printed on a platform where files have no permission bits.
     do_amend
         When True, `paths` are amended as inputs of the current step,
         so that the inventory is rebuilt when they change.
         Set this to False when the step already declares these files itself,
         because the extra amendment may then introduce a cyclic dependency.
     """
+    path_out = Path(path_out)
+    if not path_out.endswith(".jsonl"):
+        raise ValueError(f"The inventory file must have a `.jsonl` extension. Got {path_out}")
+    header = InventoryHeader(hash_algorithm, mode)
+    if mode and not file_modes_available():
+        print(
+            "WARNING: Files have no permission bits on this platform. "
+            "The recorded modes are derived from the read-only attribute and the file name.",
+            file=sys.stderr,
+        )
+
+    root = path_out.parent.normpath()
+    unique_paths = []
+    seen = set()
+    for path in paths:
+        path = Path(path)
+        relpath = path.relpath(root).normpath()
+        if relpath not in seen:
+            seen.add(relpath)
+            unique_paths.append(path)
+
     if do_amend:
-        inp_paths = []
-        for path in paths:
-            path = Path(path)
+        for path in unique_paths:
             if path.endswith("/") or path.is_dir():
                 raise ValueError(f"Directories are not allowed in the inventory: {path}")
-            inp_paths.append(path)
-        amend(inp=inp_paths)
+        amend(inp=unique_paths)
 
-    path_txt = Path(path_txt)
-    root = path_txt.parent.normpath()
-    with open(path_txt, "w", encoding="utf-8", newline="\n") as fh:
-        for path in paths:
-            print(format_summary(get_summary(path, root)), file=fh)
+    with open(path_out, "w", encoding="utf-8", newline="\n") as fh:
+        print(format_header(header), file=fh)
+        for path in unique_paths:
+            record = compute_record(path, root, hash_algorithm, mode)
+            print(format_record(record, header), file=fh)
 
 
 if __name__ == "__main__":

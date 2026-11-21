@@ -17,24 +17,24 @@ step:./plan.py
              product   file:sub/references.bib
              product   file:sub/smile.pdf
              product   step:echo 'Hi there!' > generated.tex  # wd=sub
-             product   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             product   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.tex
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/references.bib
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/smile.pdf
                state = CONFIRMED
              creator   step:./plan.py
-                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
-step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
                state = SUCCEEDED
                 need = DEFAULT
            using_env = REPREP_BIBTEX [dynamic]
@@ -45,38 +45,38 @@ step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventor
               source   file:sub/paper.tex
               source   file:sub/references.bib [dynamic]
               source   file:sub/smile.pdf [dynamic]
-             product   file:sub/paper-inventory.txt
+             product   file:sub/paper-inventory.jsonl
              product   file:sub/paper.aux
              product   file:sub/paper.bbl
              product   file:sub/paper.fls
              product   file:sub/paper.log
              product   file:sub/paper.pdf
-                sink   file:sub/paper-inventory.txt
+                sink   file:sub/paper-inventory.jsonl
                 sink   file:sub/paper.aux
                 sink   file:sub/paper.bbl [dynamic]
                 sink   file:sub/paper.fls
                 sink   file:sub/paper.log [dynamic]
                 sink   file:sub/paper.pdf
 
-file:sub/paper-inventory.txt
+file:sub/paper-inventory.jsonl
                state = BUILT
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.aux
                state = BUILT
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.fls
                state = BUILT
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.pdf
                state = BUILT
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 step:echo 'Hi there!' > generated.tex  # wd=sub
                state = SUCCEEDED
@@ -89,14 +89,14 @@ file:sub/generated.tex
                state = BUILT
              creator   step:echo 'Hi there!' > generated.tex  # wd=sub
               source   step:echo 'Hi there!' > generated.tex  # wd=sub
-                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+                sink   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.bbl
                state = BUILT
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
 
 file:sub/paper.log
                state = VOLATILE
-             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
-              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.txt
+             creator   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl
+              source   step:srr-compile-latex sub/paper.tex --run-bibtex --inventory=sub/paper-inventory.jsonl

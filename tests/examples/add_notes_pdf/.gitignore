@@ -2,4 +2,4 @@
 current_*
 dst.pdf
 dst1.pdf
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

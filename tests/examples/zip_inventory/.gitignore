@@ -1,7 +1,7 @@
 .stepup
 current_*
 built.txt
-inventory.txt
+inventory.jsonl
 upload.zip
 upload1.zip
-reproducibility_inventory.txt
+reproducibility_inventory.jsonl

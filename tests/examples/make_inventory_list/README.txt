@@ -1,1 +1,1 @@
-Simple example showing how to make a inventory.txt file from scratch.
+Simple example showing how to make an inventory.jsonl file from scratch.

@@ -12,7 +12,6 @@ from stepup.core.api import getenv, run, shq, subs_env_vars
 from stepup.core.path import Path, StrPath, coerce_path, coerce_paths, coerce_str, make_path_out
 from stepup.core.stepinfo import StepInfo
 from stepup.core.utils import to_bool
-from stepup.reprep.utils import check_zenodo_paths
 
 __all__ = (
     "add_notes_pdf",
@@ -174,7 +173,7 @@ def _process_inventory(
     if inventory is None:
         inventory = to_bool(getenv(f"REPREP_{prog}_INVENTORY", "0"))
     if inventory is True:
-        inventory = f"{stem}-inventory.txt"
+        inventory = f"{stem}-inventory.jsonl"
     if inventory is not False:
         parts.append(f"--inventory={shq(inventory)}")
         paths_out.append(inventory)
@@ -220,7 +219,7 @@ def compile_latex(
     inventory
         If set to a `str`, it specifies the inventory file to write.
         If set to  `True`, the inventory file is written to the default location,
-        which is the stem of the source file with `-inventory.txt` appended.
+        which is the stem of the source file with `-inventory.jsonl` appended.
         When the environment variable `REPREP_LATEX_INVENTORY` is set to `1`,
         the inventory file is always written, unless this argument is set to `False`.
     optional
@@ -332,7 +331,7 @@ def compile_tectonic(
     inventory
         If set to a `str`, it specifies the inventory file to write.
         If set to  `True`, the inventory file is written to the default location,
-        which is the stem of the source file with `-inventory.txt` appended.
+        which is the stem of the source file with `-inventory.jsonl` appended.
         When the environment variable `REPREP_TECTONIC_INVENTORY` is set to `1`,
         the inventory file is always written, unless this argument is set to `False`.
     optional
@@ -464,7 +463,7 @@ def compile_typst(
     inventory
         If set to a `str`, it specifies the inventory file to write.
         If set to  `True`, the inventory file is written to the default location,
-        which is the stem of the source file with `-inventory.txt` appended.
+        which is the stem of the source file with `-inventory.jsonl` appended.
         When the environment variable `REPREP_TYPST_INVENTORY` is set to `1`,
         the inventory file is always written, unless this argument is set to `False`.
     optional
@@ -1244,21 +1243,35 @@ def flatten_latex(
 
 
 def make_inventory(
-    *paths: Collection[StrPath],
+    *paths: StrPath,
     path_def: StrPath | None = None,
+    hash_algorithm: str = "md5",
+    mode: bool = False,
     optional: bool = False,
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,
 ) -> StepInfo:
-    """Create an `inventory.txt` file.
+    """Create an inventory file, in JSON Lines format with suffix `.jsonl`.
+
+    The format is explained in the documentation of StepUp RepRep, under "Inventory Files".
 
     Parameters
     ----------
     paths
-        Paths to include in the `inventory.txt` file,
+        Paths to include in the inventory, in the given order,
         except for the last, which is the inventory file to write.
+        They come before the files matched by `path_def`.
     path_def
-        An inventory definitions file, used to constructe the list of files.
+        An inventory definition file, used to construct a sorted list of files.
+        It must be in the same directory as the inventory file.
+    hash_algorithm
+        The name of the `hashlib` algorithm for the digests of the files.
+        The default, `md5`, is the one that Zenodo reports and that `sync_zenodo()` requires.
+        Use `sha256` when deliberate tampering with the files must be detected.
+    mode
+        When True, the permission bits of the files are recorded and checked.
+        Files have no permission bits on Windows,
+        where the recorded modes depend on the read-only attribute and the file names.
     optional
         If `True`, the step is only executed when needed by other steps.
     resources
@@ -1284,6 +1297,10 @@ def make_inventory(
         parts.append(f"-i {shq(path_def)}")
         paths_inp.append(path_def)
     parts.append(f"-o {shq(path_out)}")
+    if hash_algorithm != "md5":
+        parts.append(f"--hash {shq(hash_algorithm)}")
+    if mode:
+        parts.append("--mode")
     return run(
         " ".join(parts),
         inp=paths_inp,
@@ -1492,33 +1509,44 @@ def sanitize_bibtex(
 
 def sync_zenodo(
     path_config: StrPath,
-    paths: StrPath | Collection[StrPath] = (),
+    path_description: StrPath,
+    path_inventory: StrPath,
     *,
-    path_description: StrPath | None = None,
+    check_md5: bool = False,
     verbose: bool = False,
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,
 ) -> StepInfo:
     """Synchronize data with a draft dataset on Zenodo.
 
+    The step runs at every start of StepUp and after every change of its inputs,
+    and it contacts Zenodo only when the `REPREP_ZENODO_TOKEN` environment variable is set.
+
     Parameters
     ----------
     path_config
         The configuration file for the Zenodo upload, in YAML, JSON or TOML format.
-    paths
-        The files to upload to Zenodo.
-        Zenodo does not support directory layouts,
-        so all files must have different names.
+    path_description
+        A Markdown (`.md`) or HTML (`.html`) file with the description of the dataset.
+        Markdown is converted to HTML before it is sent to Zenodo.
+    path_inventory
+        The inventory of the files to upload, usually written by `make_inventory()`
+        with the default hash algorithm, MD5.
+        The paths in the inventory are relative to its parent directory.
+        Zenodo does not support directory layouts or symbolic links,
+        so all files must be regular files with different names.
         At most 100 files can be uploaded to a single record.
         The first file is selected for preview on Zenodo.
-    path_description
-        The path to a Markdown or HTML file with the description of the dataset.
-        Markdown is converted to HTML before it is sent to Zenodo.
-        The `description` field in the configuration file must be unset when this is given.
+    check_md5
+        When True, the MD5 checksums of the local files are computed again
+        and compared to those in the inventory before anything is uploaded.
+        This suits an inventory that is not built in the same workflow.
+        An inventory built by `make_inventory()` is always up to date,
+        so the check is then redundant.
     verbose
         Set to True to print Zenodo API requests and responses to the standard output.
     resources
-        Named resources required to run this step, e.g. `{"gpu": 1}`.
+        Named resources required to run this step, e.g. `{"zenodo": 1}`.
         See `stepup.core.api.step()` for details.
     duration
         An initial estimate of the step's wall time in seconds.
@@ -1529,17 +1557,23 @@ def sync_zenodo(
     step_info
         Holds relevant information of the step, useful for defining follow-up steps.
     """
-    paths = check_zenodo_paths(paths)
-    parts = [f"srr-sync-zenodo {shq(path_config)}"]
-    paths_inp = [path_config, *paths]
-    if len(paths) > 0:
-        parts.append(shq(paths))
-    if path_description is not None:
-        parts.append(f"--description={shq(path_description)}")
-        paths_inp.append(path_description)
+    parts = [
+        "srr-sync-zenodo",
+        shq(path_config),
+        shq(path_description),
+        shq(path_inventory),
+    ]
+    if not check_md5:
+        parts.append("--no-check-md5")
     if verbose:
         parts.append("--verbose")
-    return run(" ".join(parts), inp=paths_inp, resources=resources, duration=duration)
+    return run(
+        " ".join(parts),
+        inp=[path_config, path_description, path_inventory],
+        env="STEPUP_DIRECTOR_I",
+        resources=resources,
+        duration=duration,
+    )
 
 
 def unplot(
@@ -1688,13 +1722,16 @@ def zip_inventory(
     resources: dict[str, int] | str | None = None,
     duration: float | None = None,
 ) -> StepInfo:
-    """Create a ZIP file with all files listed in a `inventory.txt` file + check digests before zip.
+    """Create a ZIP file with all files listed in an inventory, after checking them.
 
     Parameters
     ----------
     path_inventory
-        A file created with the `make_inventory` API or with the command-line script
-        `srr-make-inventory`.
+        An inventory file with suffix `.jsonl`,
+        created with `make_inventory()` or with the command-line script `srr-make-inventory`.
+        The files are stored in the ZIP file under the paths of their records,
+        which must therefore be inside the directory of the inventory.
+        The inventory itself is the last file in the ZIP file.
     path_zip
         The output ZIP file
     optional

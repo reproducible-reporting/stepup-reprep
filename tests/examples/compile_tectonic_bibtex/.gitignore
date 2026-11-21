@@ -1,8 +1,8 @@
 .stepup
 current_*
 paper.pdf
-paper-inventory.txt
+paper-inventory.jsonl
 paper1.pdf
 journal_abbreviation_cache.json
-reproducibility_pdf_inventory.txt
-reproducibility_bbl_inventory.txt
+reproducibility_pdf_inventory.jsonl
+reproducibility_bbl_inventory.jsonl

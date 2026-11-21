@@ -2,8 +2,8 @@
    PHASE │ build
    START │ ./plan.py
  SUCCESS │ ./plan.py
-   START │ srr-make-inventory README.txt -o inventory.txt
- SUCCESS │ srr-make-inventory README.txt -o inventory.txt
+   START │ srr-make-inventory README.txt -o inventory.jsonl
+ SUCCESS │ srr-make-inventory README.txt -o inventory.jsonl
 DIRECTOR │ Ran 2 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch

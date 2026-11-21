@@ -14,7 +14,7 @@ mv sub/demo.html sub/demo1.html
 stepup wait -d sub/demo.html
 stepup rebuild
 stepup join
-srr-make-inventory -o reproducibility_inventory.txt sub/demo.html sub/demo1.html
+srr-make-inventory -o reproducibility_inventory.jsonl sub/demo.html sub/demo1.html
 
 # Wait for background processes, if any.
 set +e; wait $PID; RETURNCODE=$?; set -e
@@ -25,4 +25,4 @@ set +e; wait $PID; RETURNCODE=$?; set -e
 [[ -f sub/demo.md ]] || exit 1
 [[ -f sub/demo.html ]] || exit 1
 [[ -f sub/demo1.html ]] || exit 1
-[[ -f reproducibility_inventory.txt ]] || exit 1
+[[ -f reproducibility_inventory.jsonl ]] || exit 1

@@ -21,12 +21,14 @@ from stepup.core.path import Path
 from stepup.reprep.inventory import FileRecord, InventoryHeader, format_header, format_record
 from stepup.reprep.make_inventory import write_inventory
 from stepup.reprep.sync_zenodo import (
-    DEFAULT_ENDPOINT,
+    ACCESS_DENIED_STATUS_CODES,
     INVENIORDM_MIMETYPE,
     MAX_NUM_ZENODO_FILES,
     MAX_SEARCH_PAGES,
+    PRODUCTION_ENDPOINT,
     REPLACED_CONFIG_KEYS,
     REQUEST_TIMEOUT,
+    SANDBOX_ENDPOINT,
     SEARCH_PAGE_SIZE,
     VOCABULARIES_FILENAME,
     Access,
@@ -773,10 +775,11 @@ def test_load_config_data_empty(tmp_path):
     assert "empty" in str(exc_info.value)
 
 
-def test_config_endpoint_default(tmp_path):
+def test_config_endpoint_missing(tmp_path):
+    """No instance is the default, because each one has its own tokens and record ids."""
     text = CONFIG_YAML.replace("endpoint: https://zenodo.org/api\n", "")
-    config = _write_config(tmp_path, "sync_zenodo.yaml", text)
-    assert config.endpoint == DEFAULT_ENDPOINT
+    with pytest.raises(ClassValidationError):
+        _write_config(tmp_path, "sync_zenodo.yaml", text)
 
 
 @pytest.mark.parametrize("endpoint", ["zenodo.org/api", "https://zenodo", ""])
@@ -814,6 +817,7 @@ def test_config_replaced_key_other_section():
 
 CONFIG_YAML_SCALARS = """\
 path_record_id: .zenodo-record-id.txt
+endpoint: https://zenodo.org/api
 metadata:
   title: 'A title'
   version: '1.0.0'
@@ -830,6 +834,7 @@ custom_fields:
 
 CONFIG_YAML_LISTS = """\
 path_record_id: .zenodo-record-id.txt
+endpoint: https://zenodo.org/api
 metadata:
   title: 'A title'
   version: '1.0.0'
@@ -1356,7 +1361,7 @@ class _FakeRest:
 def test_get_versions_pagination(num):
     """The version chain is collected from all pages of the search result."""
     hits = [{"id": rid} for rid in range(num)]
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeRest(hits)
     assert zenodo.get_versions("3") == hits
     num_pages = num // SEARCH_PAGE_SIZE + 1
@@ -1912,7 +1917,7 @@ def test_check_version_chain_stale_record_without_version(tmp_path):
 
 
 def test_start_uploads_declares_every_file(tmp_path):
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeRest([])
     files = [_local_file(tmp_path, "one.txt", "hello"), _local_file(tmp_path, "two.txt", "bye")]
     zenodo.start_uploads("7", files)
@@ -1957,7 +1962,7 @@ def test_create_new_record_failed_upload(tmp_path):
 def test_create_new_record_without_preview(tmp_path):
     """A new record has no files yet, so it is created without a default preview."""
     config = _config_with_version(tmp_path, "1.0.0")
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeRest([])
     zenodo.create_new_record(config, DESCRIPTION)
     assert zenodo.rest.posted[0][0] == "records"
@@ -1993,7 +1998,7 @@ class _FakeGetRest:
 
 def test_get_record_draft_first():
     """The draft carries the changes that are not published yet, so it is preferred."""
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeGetRest({"records/7/draft": {"id": 7, "is_published": False}})
     assert zenodo.get_record("7") == {"id": 7, "is_published": False}
     assert zenodo.rest.calls == ["records/7/draft"]
@@ -2001,7 +2006,7 @@ def test_get_record_draft_first():
 
 def test_get_record_published_without_draft():
     """A record without a draft is read as a published one."""
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeGetRest({"records/7": {"id": 7, "is_published": True}})
     assert zenodo.get_record("7") == {"id": 7, "is_published": True}
     assert zenodo.rest.calls == ["records/7/draft", "records/7"]
@@ -2010,7 +2015,7 @@ def test_get_record_published_without_draft():
 @pytest.mark.parametrize("status_code", [401, 403, 429, 500, 502, None])
 def test_get_record_other_error(status_code):
     """A refused or lost request is not mistaken for a record without a draft."""
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeGetRest({}, status_code)
     with pytest.raises(RESTError) as exc_info:
         zenodo.get_record("7")
@@ -2110,7 +2115,7 @@ def test_config_endpoint_trailing_slash(tmp_path):
 
 def test_get_all_pages_endless():
     """A search result that never ends is refused instead of collected forever."""
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakeRest([{"id": rid} for rid in range(SEARCH_PAGE_SIZE * MAX_SEARCH_PAGES + 1)])
     with pytest.raises(ZenodoError) as exc_info:
         zenodo.get_versions("3")
@@ -2129,7 +2134,7 @@ def test_entry_md5_without_checksum(entry):
 def test_upload_file_without_size(tmp_path):
     """A commit response without a size is reported as a message, not as a KeyError."""
     file = _local_file(tmp_path, "one.txt", "hello")
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakePutRest({})
     with pytest.raises(ZenodoError) as exc_info:
         zenodo.upload_file("7", file)
@@ -2156,7 +2161,7 @@ def test_record_url_without_link():
 
 
 def test_record_url_with_link():
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     record = {"id": 7, "links": {"self_html": "https://zenodo.org/records/7"}}
     assert _record_url(zenodo, record) == "https://zenodo.org/records/7"
 
@@ -2398,6 +2403,43 @@ def test_sequence_unreachable(monkeypatch, capsys):
 
 
 @pytest.mark.parametrize(
+    ("status_code", "hinted"),
+    [*((code, True) for code in ACCESS_DENIED_STATUS_CODES), (400, False), (None, False)],
+)
+@pytest.mark.usefixtures("project", "no_hashing")
+def test_sequence_access_denied(monkeypatch, capsys, status_code, hinted):
+    """Denied access comes with a hint on the token, because Zenodo does not name the cause."""
+    zenodo = _FakeZenodo()
+
+    def fail(config, description):
+        raise RESTError(f"Failed POST https://zenodo.org/api/records: {status_code}", status_code)
+
+    zenodo.create_new_record = fail
+    _use_fake_zenodo(monkeypatch, zenodo)
+    assert main(SYNC_ARGS) == 1
+    err = capsys.readouterr().err
+    assert "Failed POST https://zenodo.org/api/records" in err
+    assert ("Zenodo at zenodo.org denied access" in err) == hinted
+    assert ("deposit:write" in err) == hinted
+
+
+@pytest.mark.parametrize("extra", [[], ["--dry-run"]])
+@pytest.mark.usefixtures("project")
+def test_main_endpoint_missing(monkeypatch, capsys, extra):
+    """A config file without an endpoint is refused before Zenodo is contacted."""
+    text = CONFIG_YAML.replace("endpoint: https://zenodo.org/api\n", "")
+    Path("sync_zenodo.yaml").write_text(text, encoding="utf-8")
+    endpoints = _use_fake_zenodo(monkeypatch, _FakeZenodo())
+    assert main([*SYNC_ARGS, *extra]) == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "has no 'endpoint' field" in captured.err
+    assert PRODUCTION_ENDPOINT in captured.err
+    assert SANDBOX_ENDPOINT in captured.err
+    assert endpoints == []
+
+
+@pytest.mark.parametrize(
     ("token", "expected"),
     [(None, "is not set"), ("", "is empty")],
 )
@@ -2562,7 +2604,7 @@ def test_old_command_line_two_files(monkeypatch, capsys, paths, expected):
 def test_upload_file_inventory_md5(tmp_path, no_hashing):
     """An upload is checked against the inventory, without hashing the local file."""
     file = _local_file(tmp_path, "one.txt", "hello")
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakePutRest({"size": 5, "checksum": f"md5:{_md5('hello')}"})
     zenodo.upload_file("7", file)
 
@@ -2571,7 +2613,7 @@ def test_upload_file_stale_inventory(tmp_path):
     """A file that changed after the inventory was written is caught when it is uploaded."""
     path = Path(tmp_path) / "one.txt"
     path.write_text("bye!!", encoding="utf-8")
-    zenodo = ZenodoWrapper("token")
+    zenodo = ZenodoWrapper("token", PRODUCTION_ENDPOINT)
     zenodo.rest = _FakePutRest({"size": 5, "checksum": f"md5:{_md5('bye!!')}"})
     with pytest.raises(ZenodoError) as exc_info:
         zenodo.upload_file("7", UploadFile(path, _md5("hello")))

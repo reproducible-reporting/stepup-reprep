@@ -1030,10 +1030,15 @@ def _convert_endpoint(arg: str) -> str:
     return arg.rstrip("/")
 
 
-DEFAULT_ENDPOINT = "https://sandbox.zenodo.org/api"
-"""The Zenodo instance to talk to when the config file names none.
+PRODUCTION_ENDPOINT = "https://zenodo.org/api"
+"""The endpoint of the Zenodo instance on which datasets are published."""
 
-This is the sandbox, so that a first run cannot deposit anything on the production instance.
+SANDBOX_ENDPOINT = "https://sandbox.zenodo.org/api"
+"""The endpoint of the Zenodo instance meant for testing.
+
+As stated in the Testing section of https://developers.zenodo.org/ in November 2026,
+it issues test DOIs, its records may be deleted at any time,
+and it has accounts and tokens of its own.
 """
 
 
@@ -1046,9 +1051,7 @@ class Config:
 
     path_record_id: Path = attrs.field(converter=Path)
     metadata: Metadata = attrs.field()
-    endpoint: str = attrs.field(
-        default=DEFAULT_ENDPOINT, converter=_convert_endpoint, validator=_validate_url
-    )
+    endpoint: str = attrs.field(converter=_convert_endpoint, validator=_validate_url)
     custom_fields: CustomFields = attrs.field(factory=CustomFields)
     access: Access = attrs.field(factory=Access)
 
@@ -1149,7 +1152,7 @@ class ZenodoWrapper:
     """Python interface to a subset of the Zenodo API."""
 
     token: str = attrs.field()
-    endpoint: str = attrs.field(default=DEFAULT_ENDPOINT)
+    endpoint: str = attrs.field()
     verbose: bool = attrs.field(default=False)
     rest: RESTWrapper = attrs.field(init=False)
 
@@ -1325,6 +1328,21 @@ OFFLINE_MESSAGE = """\
 Exiting early without interacting with the Zenodo endpoint.[/yellow]
 """
 
+ACCESS_DENIED_STATUS_CODES = (401, 403)
+"""The status codes with which Zenodo refuses a request that the token does not permit."""
+
+ACCESS_DENIED_HINT = """\
+Zenodo at {host} denied access. \
+Check that REPREP_ZENODO_TOKEN holds a token created on {host}, \
+because zenodo.org and sandbox.zenodo.org do not accept each other's tokens, \
+and that the token has the deposit:write and deposit:actions scopes."""
+"""Advice appended to an error with one of the `ACCESS_DENIED_STATUS_CODES`.
+
+As observed on 2026-11-21 on both zenodo.org and sandbox.zenodo.org,
+Zenodo answers a token it does not know with status 403 and the message "Permission denied.",
+so a token of the other instance looks like a token without the right scopes.
+"""
+
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Main program.
@@ -1362,6 +1380,7 @@ def _run(args: argparse.Namespace):
     """
     data = _load_config_data(args.config)
     _check_outdated_config(data, args.config)
+    _check_endpoint_present(data, args.config)
     config = _make_converter().structure(data, Config)
     description = _load_description(args.description)
     files = _load_files(args.inventory)
@@ -1389,7 +1408,13 @@ def _run(args: argparse.Namespace):
     if not args.no_check_md5:
         _check_local_md5(files, args.inventory)
     zenodo = ZenodoWrapper(token, config.endpoint, verbose=args.verbose)
-    _update_online(zenodo, config, description, files)
+    try:
+        _update_online(zenodo, config, description, files)
+    except RESTError as exc:
+        if exc.status_code not in ACCESS_DENIED_STATUS_CODES:
+            raise
+        hint = ACCESS_DENIED_HINT.format(host=urlparse(config.endpoint).hostname)
+        raise ZenodoError(f"{exc}\n{hint}") from exc
 
 
 def _load_files(path_inventory: str) -> list[UploadFile]:
@@ -1658,6 +1683,20 @@ def _check_outdated_config(data: dict[str, Any], config_path: str):
                 f"The config file {config_path} is outdated. "
                 f"The '{key}' key is no longer used. {hint}"
             )
+
+
+def _check_endpoint_present(data: dict[str, Any], config_path: str):
+    """Raise an informative error when the config file does not name a Zenodo instance."""
+    if "endpoint" not in data:
+        raise ZenodoError(
+            f"The config file {config_path} has no 'endpoint' field. "
+            f"Set it to {PRODUCTION_ENDPOINT} for a dataset to publish, "
+            f"or to {SANDBOX_ENDPOINT} for a trial on the Zenodo sandbox, "
+            "which issues test DOIs and may delete its records at any time. "
+            "The token in REPREP_ZENODO_TOKEN must be created on the same instance. "
+            "Before StepUp RepRep 4.2, a missing endpoint meant the sandbox, "
+            "so an existing record ID file then refers to a record on the sandbox."
+        )
 
 
 def _make_converter() -> cattrs.Converter:

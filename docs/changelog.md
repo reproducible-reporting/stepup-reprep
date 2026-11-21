@@ -24,14 +24,6 @@ using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
-### Changed
-
-- Breaking change: `srr-zip-inventory` and [`zip_inventory()`][stepup.reprep.api.zip_inventory]
-  no longer add the inventory to the ZIP file, which only contains the listed files.
-  Such a ZIP file can be submitted to arXiv or a publisher without an unexpected `.jsonl` file.
-  For archival, upload the inventory as a separate file together with the ZIP file.
-  Unpack the ZIP file next to its inventory to check the files with `srr-check-inventory`.
-
 ## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
 
 Release candidate 1 of StepUp RepRep 4.2.
@@ -63,6 +55,13 @@ Release candidate 1 of StepUp RepRep 4.2.
   Zenodo refuses restricted records, so the record is always public.
   Delete the `record` key from the `access` section if it is present.
   Use `access.files: restricted` to restrict the files only.
+- Breaking change: the `endpoint` field of the Zenodo configuration file is required.
+  It used to default to `https://sandbox.zenodo.org/api`,
+  which Zenodo meant for testing, and which needs a token of its own.
+  Add `endpoint: https://zenodo.org/api` for a dataset that you intend to publish.
+  A configuration file that relied on the old default
+  needs `endpoint: https://sandbox.zenodo.org/api`
+  to keep working with the record named in its record ID file.
 - Breaking change: inventories are written in a new format, JSON Lines with suffix `.jsonl`,
   instead of the fixed-width text format with suffix `.txt`.
   The first line is a header, which names the hash algorithm,
@@ -99,6 +98,11 @@ Release candidate 1 of StepUp RepRep 4.2.
   writes the records in the given order and drops duplicate paths.
 - Breaking change: [`make_inventory()`][stepup.reprep.api.make_inventory]
   keeps the order of the explicit paths, which come before the matches of `path_def`.
+- Breaking change: `srr-zip-inventory` and [`zip_inventory()`][stepup.reprep.api.zip_inventory]
+  no longer add the inventory to the ZIP file, which only contains the listed files.
+  Such a ZIP file can be submitted to arXiv or a publisher without an unexpected `.jsonl` file.
+  For archival, upload the inventory as a separate file together with the ZIP file.
+  Unpack the ZIP file next to its inventory to check the files with `srr-check-inventory`.
 - `run_example()` in `stepup.reprep.pytest` checks the inventories
   `reproducibility_*inventory.jsonl` instead of `reproducibility_*inventory.txt`.
 - [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] runs at every start of StepUp
@@ -137,6 +141,11 @@ Release candidate 1 of StepUp RepRep 4.2.
   The `description` field of the configuration file is no longer supported.
 - An empty `REPREP_ZENODO_TOKEN` is treated like an unset one, with a warning of its own,
   instead of sending requests that Zenodo refuses.
+- When Zenodo denies access, `srr-sync-zenodo` names the instance of the endpoint
+  and reminds you that the token must be created on that instance
+  with the `deposit:write` and `deposit:actions` scopes.
+  Zenodo answers a token of the other instance with the same "Permission denied."
+  as a token without these scopes.
 - The record ID file should be committed to Git as soon as `srr-sync-zenodo` has written it,
   because a clone without it creates a second record at its first synchronization with the token.
 

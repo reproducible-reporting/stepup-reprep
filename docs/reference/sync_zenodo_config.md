@@ -32,7 +32,7 @@ More details are given in the sections below.
 
 ```yaml
 path_record_id: .zenodo-record-id.txt  # required
-endpoint: https://sandbox.zenodo.org/api  # our default
+endpoint: https://zenodo.org/api  # required
 metadata:
   title: 'A title'        # required
   version: '1.0.0'        # required
@@ -176,12 +176,20 @@ because a clone without it creates a second record at its first synchronization 
 Changes to this file are not tracked by StepUp,
 but the synchronization step reads it again at every start of StepUp.
 
-## `endpoint` *(optional)*
+## `endpoint` *(required)*
 
-The API endpoint to interact with.
-It defaults to `https://sandbox.zenodo.org/api`.
-Remove the `sandbox.` prefix for production uploads.
+The API endpoint of the Zenodo instance to interact with:
 
+- `https://zenodo.org/api` for a dataset that you intend to publish.
+- `https://sandbox.zenodo.org/api` for a trial run, e.g. to try out `srr-sync-zenodo`.
+  Zenodo meant its sandbox for testing.
+  As stated in the [Testing](https://developers.zenodo.org/#testing) section
+  of its developer documentation in November 2026,
+  the sandbox issues test DOIs instead of real ones,
+  and its records may be deleted at any time.
+
+Each instance has its own accounts and tokens,
+so the token in `REPREP_ZENODO_TOKEN` must be created on the instance named here.
 A record ID only means something on the instance that issued it,
 so start from a fresh `path_record_id` file when you switch endpoints.
 

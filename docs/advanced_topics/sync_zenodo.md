@@ -48,6 +48,8 @@ SPDX-License-Identifier: CC-BY-SA-4.0
     - The description file is a required argument of `srr-sync-zenodo` and `sync_zenodo()`,
       and the configuration file no longer has a `description` field.
     - `stepup build --offline` skips the synchronization.
+    - The `endpoint` field of the configuration file is required.
+      It used to default to the Zenodo Sandbox, which Zenodo meant for testing.
 
 StepUp RepRep can create a draft dataset in Zenodo on your behalf,
 and automatically update it when the local versions of your files have changed.
@@ -128,10 +130,22 @@ from the `REPREP_ZENODO_TOKEN` environment variable.
 This is the token itself, not the path to a file containing it.
 
 To create the token, go to the settings of your
-[Zenodo account](https://zenodo.org/account/settings/applications/tokens/new/) or
-[Zenodo Sandbox account](https://sandbox.zenodo.org/account/settings/applications/tokens/new/).
+[Zenodo account](https://zenodo.org/account/settings/applications/tokens/new/).
 Enable the `deposit:actions` and `deposit:write` scopes when creating a new token.
 Save the token immediately, as it cannot be retrieved later.
+
+For a trial run, e.g. to try out `srr-sync-zenodo`, you can use the Zenodo Sandbox instead,
+which Zenodo meant for testing.
+It has accounts and tokens of its own,
+so create the token in the settings of your
+[Zenodo Sandbox account](https://sandbox.zenodo.org/account/settings/applications/tokens/new/),
+and set the `endpoint` field of the configuration file to `https://sandbox.zenodo.org/api`.
+The [configuration reference](../reference/sync_zenodo_config.md) explains
+under `endpoint` why the sandbox is not suitable for a dataset that you intend to publish.
+
+As observed in November 2026, Zenodo answers a token of the other instance
+with the same "Permission denied." as a token without the right scopes.
+When Zenodo denies access, `srr-sync-zenodo` therefore reminds you of both causes.
 
 Because the token is a secret, it is not tracked by StepUp,
 so it never ends up in the workflow graph.
@@ -144,8 +158,9 @@ When `REPREP_ZENODO_TOKEN` is unset or empty,
 and exits without contacting Zenodo.
 Use the `--dry-run` option to validate the configuration offline on purpose.
 
-The endpoint is not an environment variable but a field of the configuration file,
-so that StepUp notices when you switch between the sandbox and the production instance.
+The endpoint is not an environment variable but a required field of the configuration file,
+so that StepUp notices when you switch between the sandbox and the production instance,
+and so that the configuration file shows on which instance its record lives.
 
 ## Configure a Zenodo Dataset
 

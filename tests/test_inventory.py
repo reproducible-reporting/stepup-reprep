@@ -7,7 +7,6 @@ import hashlib
 import json
 import os
 import stat
-import sys
 import zipfile
 
 import pytest
@@ -81,10 +80,7 @@ def test_compute_record_mode(path_tmp):
 
 
 def test_compute_record_directory(path_tmp):
-    # On Windows, os.open() cannot open a directory and raises PermissionError,
-    # before the check for a regular file is reached.
-    match = "Permission denied" if sys.platform == "win32" else "Not a regular file"
-    with pytest.raises(OSError, match=match):
+    with pytest.raises(OSError, match="Not a regular file"):
         compute_record(path_tmp, path_tmp.parent)
 
 

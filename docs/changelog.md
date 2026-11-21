@@ -24,6 +24,14 @@ using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
+### Changed
+
+- Breaking change: `srr-zip-inventory` and [`zip_inventory()`][stepup.reprep.api.zip_inventory]
+  no longer add the inventory to the ZIP file, which only contains the listed files.
+  Such a ZIP file can be submitted to arXiv or a publisher without an unexpected `.jsonl` file.
+  For archival, upload the inventory as a separate file together with the ZIP file.
+  Unpack the ZIP file next to its inventory to check the files with `srr-check-inventory`.
+
 ## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
 
 Release candidate 1 of StepUp RepRep 4.2.

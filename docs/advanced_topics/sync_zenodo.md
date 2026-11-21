@@ -262,7 +262,10 @@ This also means that two files with the same name in different subdirectories
 cannot both be included.
 Zenodo also limits the number of files in a record to 100.
 If you run into either limitation,
-consider uploading a ZIP archive instead of separate files.
+consider uploading a ZIP archive made with [`zip_inventory()`][stepup.reprep.api.zip_inventory]
+instead of separate files.
+Upload the inventory of the ZIP archive as well,
+because the ZIP archive does not contain it and it is needed to check the unpacked files.
 `srr-sync-zenodo` rejects both cases before Zenodo is contacted.
 
 ### Files to Commit

@@ -186,6 +186,10 @@ There are two options, the latter of which is preferable:
         srr-zip-inventory inventory-main-latest.jsonl main-latest.zip
         ```
 
+        The ZIP file does not contain the inventory,
+        so archive `inventory-main-latest.jsonl` together with `main-latest.zip`.
+        It is needed to check the unpacked files with `srr-check-inventory`.
+
 ### Archiving Source and Output Files from the Last Commit
 
 This is similar to the previous section, but now with a larger set of files.

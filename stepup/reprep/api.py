@@ -1731,7 +1731,8 @@ def zip_inventory(
         created with `make_inventory()` or with the command-line script `srr-make-inventory`.
         The files are stored in the ZIP file under the paths of their records,
         which must therefore be inside the directory of the inventory.
-        The inventory itself is the last file in the ZIP file.
+        The inventory itself is not included in the ZIP file.
+        Keep it next to the ZIP file to check the unpacked files with `srr-check-inventory`.
     path_zip
         The output ZIP file
     optional

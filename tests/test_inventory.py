@@ -367,22 +367,20 @@ def test_zip_inventory(path_tmp):
         Path("sub").mkdir()
         write_text("sub/dest.txt", "Hello")
         Path("link.txt").symlink_to(os.path.normpath("sub/dest.txt"))
-        make_main(["-o", "inventory2.jsonl", "--mode", "sub/dest.txt", "link.txt"])
+        make_main(["-o", "inventory.jsonl", "--mode", "sub/dest.txt", "link.txt"])
         # The target of a link is recorded and archived with `/`, also on Windows.
         assert compute_record("link.txt", ".") == LinkRecord("link.txt", "sub/dest.txt")
-        check_main(["inventory2.jsonl"])
-        zip_main(["inventory2.jsonl", "archive.zip"])
+        check_main(["inventory.jsonl"])
+        zip_main(["inventory.jsonl", "archive.zip"])
         with zipfile.ZipFile("archive.zip") as fz:
-            assert fz.namelist() == ["sub/dest.txt", "link.txt", "inventory2.jsonl"]
+            assert fz.namelist() == ["sub/dest.txt", "link.txt"]
             assert fz.read("link.txt") == b"sub/dest.txt"
             assert fz.getinfo("link.txt").external_attr >> 16 == LINK_MODE
         Path("sub/dest.txt").remove()
         Path("sub/").rmdir()
         Path("link.txt").remove()
-        Path("inventory2.jsonl").move("inventory1.jsonl")
         extract_zip("archive.zip")
-        check_main(["inventory1.jsonl"])
-        check_main(["inventory2.jsonl"])
+        check_main(["inventory.jsonl"])
 
 
 def test_zip_outside(path_tmp):

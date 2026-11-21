@@ -17,13 +17,10 @@ def test_simple_chdir(path_tmp):
             fh.write("Bbb")
         write_inventory("inventory.jsonl", ["a.txt", "b.txt"])
         zip_inventory("inventory.jsonl", "test.zip")
-        contents = {}
         with zipfile.ZipFile("test.zip", "r") as fz:
-            for name in fz.namelist():
-                contents[name] = fz.read(name).decode("utf-8")
-        assert contents["a.txt"] == "Aaa"
-        assert contents["b.txt"] == "Bbb"
-        assert "inventory.jsonl" in contents
+            assert fz.namelist() == ["a.txt", "b.txt"]
+            assert fz.read("a.txt") == b"Aaa"
+            assert fz.read("b.txt") == b"Bbb"
 
 
 def test_simple(path_tmp):
@@ -33,10 +30,7 @@ def test_simple(path_tmp):
         fh.write("Bbb")
     write_inventory(path_tmp / "inventory.jsonl", [path_tmp / "a.txt", path_tmp / "b.txt"])
     zip_inventory(path_tmp / "inventory.jsonl")
-    contents = {}
     with zipfile.ZipFile(path_tmp / "inventory.zip", "r") as fz:
-        for name in fz.namelist():
-            contents[name] = fz.read(name).decode("utf-8")
-    assert contents["a.txt"] == "Aaa"
-    assert contents["b.txt"] == "Bbb"
-    assert "inventory.jsonl" in contents
+        assert fz.namelist() == ["a.txt", "b.txt"]
+        assert fz.read("a.txt") == b"Aaa"
+        assert fz.read("b.txt") == b"Bbb"

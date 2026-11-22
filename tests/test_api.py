@@ -89,7 +89,7 @@ def test_sync_zenodo(run_calls: list[tuple[str, dict]]):
             "--no-check-md5",
             {
                 "inp": ["sync_zenodo.yaml", "zenodo_description.md", "zenodo_inventory.jsonl"],
-                "env": "STEPUP_DIRECTOR_I",
+                "recheck": True,
                 "resources": {"zenodo": 1},
                 "duration": 60.0,
             },
@@ -105,7 +105,7 @@ def test_sync_zenodo_minimal(run_calls: list[tuple[str, dict]]):
             "srr-sync-zenodo sub/other.toml sub/other.html sub/files.jsonl --no-check-md5",
             {
                 "inp": ["sub/other.toml", "sub/other.html", "sub/files.jsonl"],
-                "env": "STEPUP_DIRECTOR_I",
+                "recheck": True,
                 "resources": None,
                 "duration": None,
             },

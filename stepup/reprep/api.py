@@ -1519,8 +1519,11 @@ def sync_zenodo(
 ) -> StepInfo:
     """Synchronize data with a draft dataset on Zenodo.
 
-    The step runs at every start of StepUp and after every change of its inputs,
-    and it contacts Zenodo only when the `REPREP_ZENODO_TOKEN` environment variable is set.
+    The step runs at every start of StepUp, after every change of its inputs,
+    and in watch mode after the `R` key or `stepup rebuild --recheck`,
+    as a step with `recheck=True` in StepUp Core.
+    It contacts Zenodo only when the `REPREP_ZENODO_TOKEN` environment variable is set
+    and StepUp does not run offline.
 
     Parameters
     ----------
@@ -1570,7 +1573,7 @@ def sync_zenodo(
     return run(
         " ".join(parts),
         inp=[path_config, path_description, path_inventory],
-        env="STEPUP_DIRECTOR_I",
+        recheck=True,
         resources=resources,
         duration=duration,
     )

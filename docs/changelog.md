@@ -20,7 +20,7 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 ## [Unreleased][]
 
 This release lets the Zenodo synchronization run at every start of StepUp,
-using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
+using `recheck=True` and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
@@ -30,9 +30,15 @@ which also lists the files that `srr-sync-zenodo` uploads.
   a name that is not tied to StepUp RepRep.
   Inventories written by 4.2.0rc1 can no longer be read and must be created again.
 - `scipy` is no longer a dependency, because no module of StepUp RepRep uses it.
+- StepUp Core 4.2.0rc3 or newer is required.
 
 ### Fixed
 
+- With StepUp Core 4.2.0rc3, the step of [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]
+  no longer ran at every start of StepUp,
+  because it depended on `STEPUP_DIRECTOR_I`, which StepUp Core renamed.
+  The step is now defined with `recheck=True`,
+  so it also runs again after the `R` key or `stepup rebuild --recheck` in watch mode.
 - `beautifulsoup4` is a declared dependency, because `srr-check-hrefs` imports it.
   Before, it was only installed as a dependency of `nbconvert`.
 - The `include-workflow` recipe in [Archive a Git Repository](advanced_topics/archive_git.md)

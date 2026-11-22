@@ -41,7 +41,7 @@ unset REPREP_ZENODO_TOKEN
 grep -q 'START.*srr-sync-zenodo' .stepup/success.log
 ! grep -q 'START.*srr-make-inventory' .stepup/success.log || exit 1
 
-# Third start, offline: STEPUP_DIRECTOR_I keeps its value, so no step runs.
+# Third start, offline: no step runs merely because StepUp started.
 rm .stepup/*.log
 sb -w -j 1 --offline & # > current_stdout3.txt &
 PID=$!

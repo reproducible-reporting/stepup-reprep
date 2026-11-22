@@ -1,4 +1,4 @@
-DIRECTOR │ Working offline, STEPUP_DIRECTOR_I stays at 2
+DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 2
  STARTUP │ Watching 1 directory
  STARTUP │ Checking 5 file(s) for changes
  UPDATED │ README.txt (digest c3259252 ➜ b59ce3a5, size 255 ➜ 293)

@@ -52,7 +52,7 @@ file:zenodo_inventory.jsonl
 step:srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --no-check-md5
                state = SUCCEEDED
                 need = DEFAULT
-           using_env = STEPUP_DIRECTOR_I
+           using_env = STEPUP_STARTUP_I
              creator   step:./plan.py
               source   file:README.txt [dynamic]
               source   file:sync_zenodo.yaml

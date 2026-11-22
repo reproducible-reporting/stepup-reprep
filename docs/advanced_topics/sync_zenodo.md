@@ -155,7 +155,7 @@ Keep the token out of your repository, for example by exporting it from a file t
 When `REPREP_ZENODO_TOKEN` is unset or empty,
 `srr-sync-zenodo` validates the configuration file, prints a warning
 and exits without contacting Zenodo.
-Use the `--dry-run` option to validate the configuration offline on purpose.
+Use the `--dry-run` option to only validate the configuration, without this warning.
 
 The endpoint is not an environment variable but a required field of the configuration file,
 so that StepUp notices when you switch between the sandbox and the production instance,

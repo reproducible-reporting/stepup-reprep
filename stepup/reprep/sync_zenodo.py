@@ -61,7 +61,7 @@ from markdown_it import MarkdownIt
 from rich.console import Console
 from rich.json import JSON
 
-from stepup.core.api import amend
+from stepup.core.api import amend, is_offline
 from stepup.core.exceptions import PathError
 from stepup.core.path import Path
 from stepup.core.utils import open_regular_file
@@ -1313,13 +1313,13 @@ class ZenodoWrapper:
 NO_TOKEN_WARNING = """\
 [yellow]The REPREP_ZENODO_TOKEN environment variable is not set.
 Exiting early without interacting with the Zenodo endpoint.
-Use --dry-run to validate the config file offline on purpose.[/yellow]
+Use --dry-run to only validate the config file, without this warning.[/yellow]
 """
 
 EMPTY_TOKEN_WARNING = """\
 [yellow]The REPREP_ZENODO_TOKEN environment variable is empty.
 Exiting early without interacting with the Zenodo endpoint.
-Use --dry-run to validate the config file offline on purpose.[/yellow]
+Use --dry-run to only validate the config file, without this warning.[/yellow]
 """
 
 OFFLINE_MESSAGE = """\
@@ -1389,9 +1389,7 @@ def _run(args: argparse.Namespace):
         CONSOLE.print(JSON.from_data(config.to_zenodo(description, files)))
         return
 
-    # This variable is not tracked by StepUp, so that a start with `--offline`
-    # does not make the step pending, following the conventions for extensions of StepUp Core.
-    if os.environ.get("STEPUP_BUILD_OFFLINE") == "1":
+    if is_offline():
         CONSOLE.print(OFFLINE_MESSAGE)
         return
 

@@ -9,7 +9,7 @@
 ─────────────────────────────── Standard output ────────────────────────────────
 The REPREP_ZENODO_TOKEN environment variable is not set.
 Exiting early without interacting with the Zenodo endpoint.
-Use --dry-run to validate the config file offline on purpose.
+Use --dry-run to only validate the config file, without this warning.
 ────────────────────────────────────────────────────────────────────────────────
 DIRECTOR │ Ran 3 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)

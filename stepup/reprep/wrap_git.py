@@ -17,7 +17,9 @@ __all__ = ("main",)
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        prog="srr-wrap-git", description="Run git commands that depend on the current commit id."
+        prog="srr-wrap-git",
+        description="Deprecated, use run(..., recheck=True) of StepUp Core instead. "
+        "Run git commands that depend on the current commit id.",
     )
     parser.add_argument(
         "--stdout",

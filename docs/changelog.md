@@ -32,6 +32,13 @@ which also lists the files that `srr-sync-zenodo` uploads.
 - `scipy` is no longer a dependency, because no module of StepUp RepRep uses it.
 - StepUp Core 4.2.0rc3 or newer is required.
 
+### Deprecated
+
+- [`wrap_git()`][stepup.reprep.api.wrap_git] and `srr-wrap-git` are deprecated
+  and will be removed in a future release.
+  Use `run()` of StepUp Core with `recheck=True` instead,
+  as shown in the documentation of `wrap_git()`.
+
 ### Fixed
 
 - With StepUp Core 4.2.0rc3, the step of [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]

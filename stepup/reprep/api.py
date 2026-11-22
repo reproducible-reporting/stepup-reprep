@@ -1637,6 +1637,24 @@ def wrap_git(
 ) -> StepInfo:
     """Create a step to run a git command.
 
+    !!! warning "Deprecated"
+
+        `wrap_git()` is deprecated and will be removed in a future release.
+        Use `run()` from StepUp Core with `recheck=True` instead,
+        which needs no `static(".git/")` and supports every ref storage format:
+
+        ```python
+        run(
+            "git log -n1 --pretty='format:%cs (%h)' > gitlog.txt",
+            shell=True,
+            out="gitlog.txt",
+            recheck=True,
+        )
+        ```
+
+        The command then runs at every start of StepUp,
+        and steps using its output are skipped when the output has not changed.
+
     To provide the necessary input for StepUp, git is called through a wrapper script.
     This wrapper amends the input dependencies with the files in the git directory
     that determine the current commit:

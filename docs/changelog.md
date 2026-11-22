@@ -37,6 +37,11 @@ which also lists the files that `srr-sync-zenodo` uploads.
   Before, it was only installed as a dependency of `nbconvert`.
 - The `include-workflow` recipe in [Archive a Git Repository](advanced_topics/archive_git.md)
   selects the `graph.db` files of the StepUp workflows, which `srr-make-inventory` requires.
+- On Python 3.11 and 3.12.0 to 3.12.6, the arguments after `--` are no longer rejected
+  by `srr-compile-typst`, `srr-convert-inkscape` and `srr-compile-tectonic`
+  when an option comes after the input file.
+  This made `compile_typst()` fail when combining `typst_args` with `sysinp` or `dest`,
+  and `convert_inkscape()` when combining `inkscape_args` with `inkscape`.
 
 ## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
 

@@ -13,6 +13,8 @@ from stepup.core.api import amend, getenv
 from stepup.core.extapi import filter_dependencies, run_subprocess
 from stepup.core.path import Path
 
+from .argparse_compat import parse_passthrough_args
+
 __all__ = ("main",)
 
 
@@ -69,7 +71,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="The inkscape executable to use. "
         "Defaults to `${REPREP_INKSCAPE}` variable or `inkscape` if the variable is unset.",
     )
-    return parser.parse_args(argv)
+    return parse_passthrough_args(parser, argv)
 
 
 def search_svg_deps(src: str) -> list[str]:

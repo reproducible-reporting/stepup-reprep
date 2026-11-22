@@ -19,6 +19,7 @@ from stepup.core.extapi import filter_dependencies, run_subprocess
 from stepup.core.path import Path
 from stepup.core.utils import to_bool
 
+from .argparse_compat import parse_passthrough_args
 from .make_inventory import write_inventory
 
 __all__ = ("main",)
@@ -173,7 +174,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Additional arguments to be passed to tectonic. "
         "The defaults is `${REPREP_TECTONIC_ARGS}`, if the environment variable is defined.",
     )
-    return parser.parse_args(argv)
+    return parse_passthrough_args(parser, argv)
 
 
 if __name__ == "__main__":

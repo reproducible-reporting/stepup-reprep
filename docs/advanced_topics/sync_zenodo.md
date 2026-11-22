@@ -38,7 +38,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
     As of StepUp RepRep 4.2, which requires StepUp Core 4.2:
 
-    - The synchronization runs at every start of StepUp,
+    - The synchronization runs at every start of StepUp and after a recheck in watch mode,
       so it notices when you set or unset the token,
       and it repairs a file that was deleted or changed in the draft by hand.
       See [When the Synchronization Runs](#when-the-synchronization-runs).
@@ -207,7 +207,7 @@ This defines two steps:
 2. `srr-sync-zenodo sync_zenodo.yaml zenodo_description.md
    zenodo_inventory.jsonl --no-check-md5`
    synchronizes the dataset.
-   It runs at every start of StepUp, as explained in
+   It runs at every start of StepUp and after a recheck, as explained in
    [When the Synchronization Runs](#when-the-synchronization-runs).
 
 The first file of the inventory is always selected as the default preview file.
@@ -292,10 +292,17 @@ because it is an output of the build.
 
 ## When the Synchronization Runs
 
-The synchronization step runs once at every start of StepUp.
+The synchronization step runs once at every start of StepUp,
+because `sync_zenodo()` defines it with `recheck=True`,
+as explained in StepUp Core's [Running a Step at Every Start][core-recheck].
 Within the same run of `stepup build`, e.g. in watch mode,
 it runs again after every change of its inputs:
 the inventory, the files it lists, the configuration file and the description.
+In watch mode, press `R` or run `stepup rebuild --recheck` in another terminal
+to run it again without a restart,
+e.g. after a file was changed or deleted in the draft through the web interface.
+
+[core-recheck]: https://reproducible-reporting.github.io/stepup-core/advanced_topics/external_data/#running-a-step-at-every-start
 
 With a token, it compares the files with the checksums that Zenodo reports,
 uploads the ones that differ or are missing online,
@@ -304,8 +311,19 @@ because Zenodo normalizes some values, so a comparison is not worth the effort.
 For example, as observed on 2026-11-21, Zenodo strips the trailing newline of the description
 and prefixes arXiv identifiers with `arXiv:`.
 A file that was deleted or changed in the draft through the web interface
-is therefore uploaded again at the next start, also when nothing changed locally.
-Without a token, the step prints a warning at every start and sends nothing.
+is therefore uploaded again at the next start or recheck, also when nothing changed locally.
+Without a token, the step prints a warning every time it runs and sends nothing.
+
+A recheck has two consequences that are easily overlooked:
+
+- **A recheck does not see a new token.**
+  The steps get the environment that StepUp had when it started,
+  so a token exported after `stepup build` started is ignored until StepUp restarts.
+  Likewise, a token that was unset after the start is still used.
+- **With the token set, `R` synchronizes.**
+  When Caps Lock is on, a press of `r`, which only rebuilds, becomes `R`.
+  For a published record, a synchronization puts the record in edit mode and publishes it again,
+  as described in [Published Records](#published-records).
 
 ### Working Assumptions
 
@@ -318,7 +336,7 @@ This behavior rests on two practices:
   so that your co-authors can review a recent build and the metadata.
 - **One person in a team uploads.**
   Only this person sets the token, and the others review the draft without one.
-  Two clones that synchronize the same record overwrite each other's files at every start
+  Two clones that synchronize the same record overwrite each other's files at every synchronization
   when their builds are not identical,
   and a new version made from one clone leaves the record ID file of the other one stale.
 
@@ -326,17 +344,20 @@ This behavior rests on two practices:
 
 With a token, a build fails when Zenodo cannot be reached.
 Such a build passes with `stepup build --offline` or without the token.
-With `--offline`, the synchronization step does not run merely because StepUp started.
+With `--offline`, the synchronization step does not run merely because StepUp started,
+and pressing `R` or running `stepup rebuild --recheck` has the same effect as `r`.
 When it runs because one of its inputs changed,
 it says that the build is offline and sends nothing.
 The next start without `--offline` synchronizes again.
 Offline builds are explained in the documentation of StepUp Core, in
-[Working Offline](https://reproducible-reporting.github.io/stepup-core/advanced_topics/remote_data/#working-offline).
+[Working Offline][core-offline].
+
+[core-offline]: https://reproducible-reporting.github.io/stepup-core/advanced_topics/external_data/#working-offline
 
 ### Published Records
 
 When the record ID file names a published record with the version in the configuration file,
-every start with the token puts the record in edit mode,
+every synchronization with the token puts the record in edit mode,
 sends the metadata and publishes the record again,
 with the same metadata unless the configuration file or the description changed.
 Unset the token when a published record needs no further updates.

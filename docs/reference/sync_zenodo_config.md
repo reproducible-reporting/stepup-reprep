@@ -174,7 +174,8 @@ unless you created or discarded new records manually through the Zenodo web inte
 Commit this file to Git as soon as `srr-sync-zenodo` has written it,
 because a clone without it creates a second record at its first synchronization with the token.
 Changes to this file are not tracked by StepUp,
-but the synchronization step reads it again at every start of StepUp.
+but the synchronization step reads it again every time it runs, see
+[When the Synchronization Runs](../advanced_topics/sync_zenodo.md#when-the-synchronization-runs).
 
 ## `endpoint` *(required)*
 

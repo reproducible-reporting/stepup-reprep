@@ -15,4 +15,16 @@ DIRECTOR │ Ran 3 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
    PHASE │ watch
 DIRECTOR │ Wrote graph to current_graph.txt, current_graph_provenance.dot and current_graph_dependency.dot
+ UPDATED │ STEPUP_STARTUP_I ='1' ➜ ='2'
+   PHASE │ build
+   START │ srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --no-check-md5
+ SUCCESS │ srr-sync-zenodo sync_zenodo.yaml zenodo_description.md zenodo_inventory.jsonl --no-check-md5
+─────────────────────────────── Standard output ────────────────────────────────
+The REPREP_ZENODO_TOKEN environment variable is not set.
+Exiting early without interacting with the Zenodo endpoint.
+Use --dry-run to only validate the config file, without this warning.
+────────────────────────────────────────────────────────────────────────────────
+DIRECTOR │ Ran 1 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
 DIRECTOR │ See you!

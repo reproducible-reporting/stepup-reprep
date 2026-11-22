@@ -1,6 +1,11 @@
-DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 2
+DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 3
  STARTUP │ Watching 1 directory
  STARTUP │ Checking 5 file(s) for changes
+   PHASE │ build
+DIRECTOR │ Ran 0 job(s).
+DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)
+   PHASE │ watch
+DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 3
    PHASE │ build
 DIRECTOR │ Ran 0 job(s).
 DIRECTOR │ Trying to remove 0 deletable file(s) and empty director(y|ies)

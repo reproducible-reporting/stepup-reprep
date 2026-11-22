@@ -1,7 +1,7 @@
-DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 2
+DIRECTOR │ Working offline, STEPUP_STARTUP_I stays at 3
  STARTUP │ Watching 1 directory
  STARTUP │ Checking 5 file(s) for changes
- UPDATED │ README.txt (digest c3259252 ➜ b59ce3a5, size 255 ➜ 293)
+ UPDATED │ README.txt (digest 7b3e150f ➜ 4fda4e95, size 352 ➜ 390)
    PHASE │ build
    START │ srr-make-inventory README.txt -o zenodo_inventory.jsonl
  SUCCESS │ srr-make-inventory README.txt -o zenodo_inventory.jsonl

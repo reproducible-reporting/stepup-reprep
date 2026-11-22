@@ -12,6 +12,12 @@ PID=$!
 # Get the graph after completion of the pending steps.
 stepup wait
 stepup graph current_graph
+
+# A recheck runs only the sync again, as after a new start of StepUp.
+stepup rebuild --recheck
+stepup wait
+grep -q 'START.*srr-sync-zenodo' .stepup/success.log
+! grep -q 'START.*srr-make-inventory' .stepup/success.log || exit 1
 stepup join
 
 # Wait for background processes, if any.
@@ -47,11 +53,16 @@ sb -w -j 1 --offline & # > current_stdout3.txt &
 PID=$!
 
 stepup wait
+! grep -qw START .stepup/success.log || exit 1
+
+# Offline, a recheck runs nothing either.
+stepup rebuild --recheck
+stepup wait
+! grep -qw START .stepup/success.log || exit 1
 stepup join
 
 set +e; wait $PID; RETURNCODE=$?; set -e
 [[ "${RETURNCODE}" -eq 0 ]] || exit 1
-! grep -qw START .stepup/success.log || exit 1
 
 # Fourth start, offline, after a change of the file to upload:
 # the inventory is written again, and the sync says that the build is offline.

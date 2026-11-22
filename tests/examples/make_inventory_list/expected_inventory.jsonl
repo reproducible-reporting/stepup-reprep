@@ -1,2 +1,2 @@
-{"fields":["md5","path","size"],"format":"stepup-reprep-inventory","version":1}
+{"fields":["md5","path","size"],"format":"stepup-inventory","version":1}
 {"md5":"750b2773c82b77ef427a85721d5d96a6","path":"README.txt","size":73}

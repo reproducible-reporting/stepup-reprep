@@ -29,14 +29,14 @@ Instead, StepUp RepRep offers tools to make such files, see below.
 The following example lists a regular file and a symbolic link:
 
 ```json
-{"fields":["md5","path","size"],"format":"stepup-reprep-inventory","version":1}
+{"fields":["md5","path","size"],"format":"stepup-inventory","version":1}
 {"md5":"b1946ac92492d2347c6235b4d2611184","path":"README.txt","size":6}
 {"link":"README.txt","path":"README.md"}
 ```
 
 The first line is the header, with the following keys:
 
-- `format` is always `"stepup-reprep-inventory"`,
+- `format` is always `"stepup-inventory"`,
   which tells an inventory apart from other JSON files.
 - `version` is the version of the format, currently `1`.
   It changes with every incompatible change of the format.

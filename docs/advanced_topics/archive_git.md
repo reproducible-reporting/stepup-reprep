@@ -197,7 +197,7 @@ that will include all files recorded by Git and all outputs of the StepUp workfl
 
 ```text
 include-git
-include-workflow BUILT */.stepup/workflow.mpk.gz
+include-workflow BUILT */.stepup/graph.db
 ```
 
 (It is assumed that all static files are already checked into the Git repository.)

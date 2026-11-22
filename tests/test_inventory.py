@@ -58,7 +58,7 @@ def read_records(path: str) -> list[FileRecord | LinkRecord]:
 
 MD5_AAA = hashlib.md5(b"aaa\n").hexdigest()
 MD5_BBB = hashlib.md5(b"bbb\n").hexdigest()
-MD5_HEADER = '{"fields":["md5","path","size"],"format":"stepup-reprep-inventory","version":1}\n'
+MD5_HEADER = '{"fields":["md5","path","size"],"format":"stepup-inventory","version":1}\n'
 
 
 def test_compute_record(path_tmp):
@@ -198,7 +198,7 @@ def test_hash_unknown(path_tmp):
 
 
 MODE_INVENTORY = f"""\
-{{"fields":["md5","mode","path","size"],"format":"stepup-reprep-inventory","version":1}}
+{{"fields":["md5","mode","path","size"],"format":"stepup-inventory","version":1}}
 {{"md5":"{MD5_AAA}","mode":"rw-r--r--","path":"a.txt","size":4}}
 """
 
@@ -262,7 +262,7 @@ def test_format_record_mode_mismatch():
 
 def test_format_header():
     assert format_header(InventoryHeader("sha256", mode=True)) == (
-        '{"fields":["mode","path","sha256","size"],"format":"stepup-reprep-inventory","version":1}'
+        '{"fields":["mode","path","sha256","size"],"format":"stepup-inventory","version":1}'
     )
 
 
@@ -423,7 +423,7 @@ def test_read_missing(path_tmp):
         "\n",
         "not json\n",
         "[]\n",
-        '"stepup-reprep-inventory"\n',
+        '"stepup-inventory"\n',
         '{"format":"other","version":1,"fields":["md5","path","size"]}\n',
         '{"files":[],"format":"stepup-reprep-manifest","version":"1"}\n',
         MD5_HEADER.strip(),
@@ -473,7 +473,7 @@ def test_read_long_line(path_tmp):
 
 @pytest.mark.parametrize("version", [2, 0, "1", 1.0, True, None])
 def test_read_other_version(path_tmp, version):
-    header = {"fields": ["md5", "path", "size"], "format": "stepup-reprep-inventory"}
+    header = {"fields": ["md5", "path", "size"], "format": "stepup-inventory"}
     if version is not None:
         header["version"] = version
     path = write_inventory_text(path_tmp, json.dumps(header) + "\n")

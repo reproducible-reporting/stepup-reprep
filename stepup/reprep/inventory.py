@@ -36,7 +36,7 @@ __all__ = (
 )
 
 
-INVENTORY_FORMAT = "stepup-reprep-inventory"
+INVENTORY_FORMAT = "stepup-inventory"
 """The value of the `format` key in the header, which tells an inventory apart from other files."""
 
 INVENTORY_VERSION = 1

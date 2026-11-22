@@ -1,4 +1,4 @@
-{"fields":["md5","path","size"],"format":"stepup-reprep-inventory","version":1}
+{"fields":["md5","path","size"],"format":"stepup-inventory","version":1}
 {"md5":"50ed792bc94623ceba6747f5891970e3","path":"plan.py","size":237}
 {"md5":"1fa34c29f3c0394c7764315f7b712f47","path":"sub/article.tex","size":165}
 {"md5":"fe4bd6b2a6991a64d77b8a7310096a5f","path":"sub/article_structured.tex","size":168}

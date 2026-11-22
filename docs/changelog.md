@@ -24,6 +24,20 @@ using the `STEPUP_DIRECTOR_I` variable and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
+### Changed
+
+- Breaking change: the `format` key in the header of an inventory is `"stepup-inventory"`,
+  a name that is not tied to StepUp RepRep.
+  Inventories written by 4.2.0rc1 can no longer be read and must be created again.
+- `scipy` is no longer a dependency, because no module of StepUp RepRep uses it.
+
+### Fixed
+
+- `beautifulsoup4` is a declared dependency, because `srr-check-hrefs` imports it.
+  Before, it was only installed as a dependency of `nbconvert`.
+- The `include-workflow` recipe in [Archive a Git Repository](advanced_topics/archive_git.md)
+  selects the `graph.db` files of the StepUp workflows, which `srr-make-inventory` requires.
+
 ## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
 
 Release candidate 1 of StepUp RepRep 4.2.

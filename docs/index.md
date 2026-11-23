@@ -25,6 +25,11 @@ and targets the last mile of the publication process:
 the creation of a publication from raw research results.
 <!-- snipwise.md END abstract -->
 
+!!! note "StepUp RepRep 4.2 is the last release before the package is split."
+
+    Its features will move to smaller packages.
+    See [Package Split](split.md) for the current status.
+
 To get started,
 we recommend to follow the [Template Tutorial](from_template/introduction.md) in this documentation.
 StepUp RepRep will be installed in your instance of the template, as part of the setup.

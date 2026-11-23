@@ -21,6 +21,7 @@ CLAUDE.md
 
 nav = [
   { "Home" = "index.md" },
+  "split.md",
   "installation.md",
   { "Template Tutorial" = [
     "from_template/introduction.md",

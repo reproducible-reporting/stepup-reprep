@@ -24,6 +24,10 @@ and targets the last mile of the publication process:
 the creation of a publication from raw research results.
 <!-- snipwise.md END abstract -->
 
+> **Note:** StepUp RepRep 4.2 is the last release before the package is split into smaller packages.
+> See [the announcement](https://reproducible-reporting.github.io/stepup-reprep/split/)
+> for the current status.
+
 For more information, consult the [documentation](http://reproducible-reporting.github.io/stepup-reprep).
 
 A screen recording for a quick visual impression of StepUp RepRep in action:

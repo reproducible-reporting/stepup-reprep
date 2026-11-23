@@ -1,6 +1,7 @@
 ---
 description: >-
-  Install StepUp RepRep with pip on Linux, macOS or Windows, on Python 3.11 or later,
+  Install StepUp RepRep from PyPI or conda-forge, with pip, uv, pixi or conda,
+  on Linux, macOS or Windows,
   which also installs StepUp Core,
   and find out which functions are tested on Windows and what they need there.
 ---
@@ -21,22 +22,36 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 - [Python](https://www.python.org/) ≥ 3.11.
   On Windows, StepUp Core recommends a minimal patch release for security reasons,
   see its [installation instructions][core-installation].
-- [Pip](https://pip.pypa.io/)
+- A package manager, such as [pip](https://pip.pypa.io/), [uv](https://docs.astral.sh/uv/),
+  [pixi](https://pixi.prefix.dev/) or [conda](https://docs.conda.io/).
 
-It is assumed you know how to use [Pip](https://pip.pypa.io/).
-We recommend performing the installation
-in a [Python virtual environment](https://docs.python.org/3/library/venv.html)
-and activating such environments with [direnv](https://direnv.net/).
+StepUp RepRep is published on both [PyPI](https://pypi.org/)
+and [conda-forge](https://conda-forge.org/), under the same package name `stepup-reprep`.
+Both also install StepUp Core as a dependency.
 
-## Minimal Installation
+We recommend installing into an isolated environment,
+such as a [Python virtual environment](https://docs.python.org/3/library/venv.html)
+or a pixi workspace,
+and activating it with [direnv](https://direnv.net/).
 
-The RepRep extension (for reproducible reporting) is installed with:
+## Installing from PyPI
+
+Use one of the following commands:
 
 ```bash
-pip install stepup-reprep
+pip install stepup-reprep     # in an activated virtual environment
+uv pip install stepup-reprep  # same, with uv
+uv add stepup-reprep          # in a uv project
 ```
 
-(This will also install [StepUp Core](https://reproducible-reporting.github.io/stepup-core/).)
+## Installing from conda-forge
+
+Use one of the following commands:
+
+```bash
+pixi add stepup-reprep                      # in a pixi workspace
+conda install -c conda-forge stepup-reprep  # in an activated conda environment
+```
 
 ## Windows
 
@@ -108,7 +123,8 @@ so this URL may reach LibreOffice in a form that it cannot use.
 
 [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint] uses WeasyPrint,
 which loads the Pango and GLib libraries of GTK, and the HarfBuzz-Subset library.
-Pip does not install these libraries.
+Pip and uv do not install these libraries,
+but conda-forge installs Pango and GLib together with WeasyPrint.
 As of WeasyPrint 70.0, a missing HarfBuzz-Subset library only causes a `DeprecationWarning`,
 but future versions of WeasyPrint will require it.
 On Debian and Ubuntu, it is provided by the package `libharfbuzz-subset0`.

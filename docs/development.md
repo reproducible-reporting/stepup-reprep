@@ -31,7 +31,7 @@ uv sync --extra dev
 pre-commit install
 ```
 
-Put the following two lines in `.envrc`:
+Put the following lines in `.envrc`:
 
 ```bash
 source .venv/bin/activate

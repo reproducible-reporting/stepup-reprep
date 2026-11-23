@@ -64,12 +64,13 @@ Some conventions specific to this codebase:
     - Use single backticks for all inline code, not double backticks.
     - Use triple backticks for code blocks,
       and specify the language for syntax highlighting (e.g., ```python).
-- Lines are wrapped using semantic breaks, per [Semantic Line Breaks](#semantic-line-breaks) above.
+- Lines are wrapped using semantic breaks, per [Semantic Line Breaks](#semantic-line-breaks) below.
 - Use the imperative mood for function descriptions
   (e.g., "Compute the hash of a file."),
   except for `@property` getters where the description should be a noun phrase
   (e.g., "The parent directory path.").
-- Do not repeat type annotations in the docstring — they are already in the function signature.
+- Do not repeat type annotations in the docstring,
+  because they are already in the function signature.
 - In `Parameters` sections, use the **parameter name** as the heading for each parameter.
   Grouping closely related parameters under a combined heading
   (e.g., `stdout, stderr`) is allowed when parameters are better described together.
@@ -84,7 +85,7 @@ Some conventions specific to this codebase:
     parent
         The parent directory path.
 
-    # wrong — the type is already in the signature
+    # wrong, because the type is already in the signature
     Returns
     -------
     Path
@@ -163,5 +164,5 @@ is meant to import.
   part of the contract.
 - Do not re-export: a name in `__all__` must be defined in that same module.
   Import a name from the module that defines it, not from a module that happens to import it.
-- `__all__ = ()` is a real claim — nothing outside the module may import from it —
-  and is correct only for leaf modules.
+- `__all__ = ()` is a real claim, meaning that nothing outside the module may import from it.
+  It is correct only for leaf modules.

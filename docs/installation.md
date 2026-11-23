@@ -12,12 +12,6 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Installation
 
-!!! warning "The installation instructions are listed here for completeness."
-
-    If you are new to StepUp RepRep,
-    we recommend that you follow the [Template Tutorial](from_template/introduction.md) instead.
-    One of the steps in that tutorial is to install StepUp RepRep in a suitable virtual environment.
-
 ## Requirements
 
 - Linux, macOS or Windows.

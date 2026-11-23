@@ -387,8 +387,7 @@ and it talks to the InvenioRDM API.
 ## Recommended Workflow
 
 Set up `sync_zenodo()` early,
-ideally when you start a publication from the RepRep
-[Template Tutorial](../from_template/introduction.md),
+ideally when you start a publication,
 instead of preparing the dataset only after the manuscript is finished.
 Review the metadata with `--dry-run` and create the draft.
 After every round of edits, run a build with the token to refresh the draft,

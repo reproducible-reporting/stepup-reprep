@@ -867,6 +867,15 @@ def convert_mutool(
 ) -> StepInfo:
     """Convert a PDF to a bitmap with mutool (from MuPDF).
 
+    !!! warning "Deprecated"
+
+        `convert_mutool()` is deprecated and will be removed in a future release.
+        Use `run()` from StepUp Core instead:
+
+        ```python
+        run("mutool draw -q -o figure.png -r 100 figure.pdf", inp="figure.pdf", out="figure.png")
+        ```
+
     Parameters
     ----------
     path_pdf
@@ -917,6 +926,15 @@ def convert_mutool_png(
     duration: float | None = None,
 ) -> StepInfo:
     """Shorthand for `convert_mutool` with the output file derived from the PDF file.
+
+    !!! warning "Deprecated"
+
+        `convert_mutool_png()` is deprecated and will be removed in a future release.
+        Use `run()` from StepUp Core instead:
+
+        ```python
+        run("mutool draw -q -o figure.png -r 100 figure.pdf", inp="figure.pdf", out="figure.png")
+        ```
 
     The `dest` argument can be `None`, a directory or a file. See `make_path_out`.
     """
@@ -1000,6 +1018,12 @@ def convert_odf_pdf(
     duration: float | None = None,
 ) -> StepInfo:
     """Convert a file in OpenDocument format to PDF.
+
+    !!! warning "Deprecated"
+
+        `convert_odf_pdf()` is deprecated and will be removed in a future release.
+        Export the PDF from the office application and add it to your sources.
+        If you need automation, call LibreOffice with `run()` from StepUp Core instead.
 
     Parameters
     ----------
@@ -1144,6 +1168,19 @@ def execute_papermill(
     duration: float | None = None,
 ) -> StepInfo:
     """Execute a Jupyter Notebook with papermill and save the notebook with outputs as a new file.
+
+    !!! warning "Deprecated"
+
+        `execute_papermill()` is deprecated and will be removed in a future release.
+        Use [`convert_jupyter()`][stepup.reprep.api.convert_jupyter] instead,
+        which also writes an executed notebook when the output has the extension `.ipynb`:
+
+        ```python
+        convert_jupyter("analysis.ipynb", "analysis-out.ipynb", parameters={"n": 10})
+        ```
+
+        Unlike papermill, `convert_jupyter()` raises an error when `parameters` is given
+        and the notebook has no cell tagged `parameters`.
 
     Parameters
     ----------

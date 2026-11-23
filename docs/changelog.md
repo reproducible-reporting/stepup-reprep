@@ -24,6 +24,22 @@ using `recheck=True` and the offline mode of StepUp Core 4.2.
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
 
+### Deprecated
+
+- [`execute_papermill()`][stepup.reprep.api.execute_papermill] and `srr-execute-papermill`
+  are deprecated and will be removed in a future release.
+  Use [`convert_jupyter()`][stepup.reprep.api.convert_jupyter] instead.
+- [`convert_mutool()`][stepup.reprep.api.convert_mutool]
+  and [`convert_mutool_png()`][stepup.reprep.api.convert_mutool_png]
+  are deprecated and will be removed in a future release.
+  Use `run()` of StepUp Core to call `mutool draw` instead,
+  as shown in the documentation of `convert_mutool()`.
+- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] is deprecated
+  and will be removed in a future release.
+  Export the PDF from the office application,
+  or call LibreOffice with `run()` of StepUp Core.
+- `srr-normalize-pdf` is deprecated and will be removed in a future release.
+
 ## [4.2.0rc2][] - 2026-11-22 {: #v4.2.0rc2 }
 
 Release candidate 2 of StepUp RepRep 4.2.

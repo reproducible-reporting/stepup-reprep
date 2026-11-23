@@ -43,7 +43,9 @@ def main(argv: Sequence[str] | None = None):
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        prog="srr-execute-papermill", description="Execute a Jupyter notebook with papermill."
+        prog="srr-execute-papermill",
+        description="Deprecated, use convert_jupyter() instead. "
+        "Execute a Jupyter notebook with papermill.",
     )
     parser.add_argument(
         "path_inp", help="Path of the Jupyter notebook to execute and convert.", type=Path

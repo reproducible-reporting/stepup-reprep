@@ -22,7 +22,11 @@ def main(argv: Sequence[str] | None = None):
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(prog="srr-normalize-pdf", description="Normalize a PDF file.")
+    parser = argparse.ArgumentParser(
+        prog="srr-normalize-pdf",
+        description="Deprecated, this command will be removed in a future release. "
+        "Normalize a PDF file.",
+    )
     parser.add_argument("path_pdf", help="The pdf to be normalized (in place).")
     return parser.parse_args(argv)
 

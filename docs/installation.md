@@ -64,7 +64,7 @@ with Tectonic 0.17 and Typst 0.15 as the only external programs:
 - [`compile_typst()`][stepup.reprep.api.compile_typst]
 - [`convert_jupyter()`][stepup.reprep.api.convert_jupyter]
 - [`convert_markdown()`][stepup.reprep.api.convert_markdown]
-- [`execute_papermill()`][stepup.reprep.api.execute_papermill]
+- [`execute_papermill()`][stepup.reprep.api.execute_papermill] (deprecated)
 - [`flatten_latex()`][stepup.reprep.api.flatten_latex]
 - [`make_inventory()`][stepup.reprep.api.make_inventory]
 - [`nup_pdf()`][stepup.reprep.api.nup_pdf]
@@ -88,9 +88,9 @@ because the programs or libraries they need are not installed for the tests:
   need Inkscape.
 - [`convert_mutool()`][stepup.reprep.api.convert_mutool]
   and [`convert_mutool_png()`][stepup.reprep.api.convert_mutool_png]
-  need `mutool` from MuPDF.
+  need `mutool` from MuPDF (both are deprecated).
 - [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf]
-  needs LibreOffice and a [POSIX shell](#posix-shell).
+  needs LibreOffice and a [POSIX shell](#posix-shell) (deprecated).
 - [`convert_weasyprint()`][stepup.reprep.api.convert_weasyprint]
   needs the [libraries of WeasyPrint](#weasyprint).
 - [`diff_latex()`][stepup.reprep.api.diff_latex]
@@ -123,7 +123,7 @@ Install them as explained in the [documentation of WeasyPrint][weasyprint-window
 ### Jupyter Kernels
 
 [`convert_jupyter()`][stepup.reprep.api.convert_jupyter]
-and [`execute_papermill()`][stepup.reprep.api.execute_papermill]
+and the deprecated [`execute_papermill()`][stepup.reprep.api.execute_papermill]
 communicate with their Jupyter kernel through ZeroMQ.
 On Linux and macOS, they use IPC sockets in a private temporary directory.
 On Windows, they use TCP ports on `127.0.0.1`,

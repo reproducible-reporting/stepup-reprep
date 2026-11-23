@@ -40,7 +40,6 @@ ideally using your operating system's software installation tool
     - [Inkscape](https://inkscape.org/) >= 1.2
       (Only needed when the source contains SVG files.
       [It must be executable as `inkscape` on the command-line](https://stackoverflow.com/a/22085247/494584).)
-    - `mutool` from [MuPDF](https://mupdf.com/)
     - [TexLive](https://tug.org/texlive/) >= 2022
     - [direnv](https://direnv.net/)
     - A Text editor compatible with [editorconfig](https://editorconfig.org/)
@@ -63,9 +62,7 @@ On Ubuntu 22, the required and recommended software can be installed using the f
       texlive-full \
       git \
       git-lfs \
-      direnv \
-      mupdf-tools \
-      libreoffice
+      direnv
     ```
 
 2. Fira fonts (used for presentations) must be installed manually,
@@ -106,8 +103,6 @@ sudo dnf install \
   git \
   git-lfs \
   direnv \
-  mupdf \
-  libreoffice \
   mozilla-fira* \
   texlive-fira*
 ```

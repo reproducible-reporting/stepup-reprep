@@ -19,66 +19,18 @@ and this project adheres to [Effort-based Versioning](https://jacobtomlinson.dev
 
 ## [Unreleased][]
 
-This release lets the Zenodo synchronization run at every start of StepUp,
-using `recheck=True` and the offline mode of StepUp Core 4.2.
+## [4.2.0][] - 2026-11-23 {: #v4.2.0 }
+
+This is the last release of StepUp RepRep.
+Its features will move to smaller packages, as explained in [Package Split](split.md).
+The features that will not move are deprecated in this release.
+
 Inventories have a new format, in JSON Lines,
 which also lists the files that `srr-sync-zenodo` uploads.
-
-### Deprecated
-
-- [`execute_papermill()`][stepup.reprep.api.execute_papermill] and `srr-execute-papermill`
-  are deprecated and will be removed in a future release.
-  Use [`convert_jupyter()`][stepup.reprep.api.convert_jupyter] instead.
-- [`convert_mutool()`][stepup.reprep.api.convert_mutool]
-  and [`convert_mutool_png()`][stepup.reprep.api.convert_mutool_png]
-  are deprecated and will be removed in a future release.
-  Use `run()` of StepUp Core to call `mutool draw` instead,
-  as shown in the documentation of `convert_mutool()`.
-- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf] is deprecated
-  and will be removed in a future release.
-  Export the PDF from the office application,
-  or call LibreOffice with `run()` of StepUp Core.
-- `srr-normalize-pdf` is deprecated and will be removed in a future release.
-
-## [4.2.0rc2][] - 2026-11-22 {: #v4.2.0rc2 }
-
-Release candidate 2 of StepUp RepRep 4.2.
-
-### Changed
-
-- Breaking change: the `format` key in the header of an inventory is `"stepup-inventory"`,
-  a name that is not tied to StepUp RepRep.
-  Inventories written by 4.2.0rc1 can no longer be read and must be created again.
-- `scipy` is no longer a dependency, because no module of StepUp RepRep uses it.
-- StepUp Core 4.2.0rc4 or newer is required.
-
-### Deprecated
-
-- [`wrap_git()`][stepup.reprep.api.wrap_git] and `srr-wrap-git` are deprecated
-  and will be removed in a future release.
-  Use `run()` of StepUp Core with `recheck=True` instead,
-  as shown in the documentation of `wrap_git()`.
-
-### Fixed
-
-- With StepUp Core 4.2.0rc3, the step of [`sync_zenodo()`][stepup.reprep.api.sync_zenodo]
-  no longer ran at every start of StepUp,
-  because it depended on `STEPUP_DIRECTOR_I`, which StepUp Core renamed.
-  The step is now defined with `recheck=True`,
-  so it also runs again after the `R` key or `stepup rebuild --recheck` in watch mode.
-- `beautifulsoup4` is a declared dependency, because `srr-check-hrefs` imports it.
-  Before, it was only installed as a dependency of `nbconvert`.
-- The `include-workflow` recipe in [Archive a Git Repository](advanced_topics/archive_git.md)
-  selects the `graph.db` files of the StepUp workflows, which `srr-make-inventory` requires.
-- On Python 3.11 and 3.12.0 to 3.12.6, the arguments after `--` are no longer rejected
-  by `srr-compile-typst`, `srr-convert-inkscape` and `srr-compile-tectonic`
-  when an option comes after the input file.
-  This made `compile_typst()` fail when combining `typst_args` with `sysinp` or `dest`,
-  and `convert_inkscape()` when combining `inkscape_args` with `inkscape`.
-
-## [4.2.0rc1][] - 2026-11-21 {: #v4.2.0rc1 }
-
-Release candidate 1 of StepUp RepRep 4.2.
+The Zenodo synchronization runs at every start of StepUp,
+using `recheck=True` and the offline mode of StepUp Core 4.2.
+Both changes break existing workflows that use inventories or `sync_zenodo()`,
+so read the breaking changes below before upgrading.
 
 ### Added
 
@@ -91,33 +43,22 @@ Release candidate 1 of StepUp RepRep 4.2.
   which validates every line and reports problems with their line numbers.
   It reads one line at a time with a cap on the line length,
   so a data file given where an inventory belongs is refused without loading it.
-- [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] has a new argument `check_md5`,
-  which suits an inventory that is not built in the same workflow.
-- `srr-sync-zenodo` has a new option `--no-check-md5`,
-  which trusts the checksums in the inventory without computing them again.
-  Without it, `srr-sync-zenodo` stops before it contacts Zenodo
-  when a file differs from the inventory.
-- `srr-sync-zenodo` sends nothing when `STEPUP_BUILD_OFFLINE` is `1`,
-  as set by `stepup build --offline`, and says so in its output.
+- `srr-sync-zenodo` computes the MD5 checksums of the files again
+  and stops before it contacts Zenodo when a file differs from the inventory.
+  The new option `--no-check-md5` skips this check and trusts the inventory.
+  [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] skips the check by default,
+  because an inventory built by `make_inventory()` in the same workflow is always up to date.
+  Its new argument `check_md5=True` enables the check for an inventory built elsewhere.
 
 ### Changed
 
-- StepUp Core 4.2 or newer is required.
-- Breaking change: `access.record` is removed from the Zenodo configuration file.
-  Zenodo refuses restricted records, so the record is always public.
-  Delete the `record` key from the `access` section if it is present.
-  Use `access.files: restricted` to restrict the files only.
-- Breaking change: the `endpoint` field of the Zenodo configuration file is required.
-  It used to default to `https://sandbox.zenodo.org/api`,
-  which Zenodo meant for testing, and which needs a token of its own.
-  Add `endpoint: https://zenodo.org/api` for a dataset that you intend to publish.
-  A configuration file that relied on the old default
-  needs `endpoint: https://sandbox.zenodo.org/api`
-  to keep working with the record named in its record ID file.
-- Breaking change: inventories are written in a new format, JSON Lines with suffix `.jsonl`,
+Breaking changes for inventories:
+
+- Inventories are written in a new format, JSON Lines with suffix `.jsonl`,
   instead of the fixed-width text format with suffix `.txt`.
-  The first line is a header, which names the hash algorithm,
-  and every other line is a JSON object describing one file.
+  The first line is a header, whose `format` key is `"stepup-inventory"`
+  and which names the hash algorithm.
+  Every other line is a JSON object describing one file.
   The old format can no longer be read,
   so write existing inventories again with `srr-make-inventory`.
   Compared to the old format:
@@ -130,53 +71,46 @@ Release candidate 1 of StepUp RepRep 4.2.
       first the explicit paths, then the sorted matches of the inventory definition.
       Duplicates are dropped.
       Before, all paths were sorted.
-- Breaking change: `srr-make-inventory`, `srr-check-inventory` and `srr-zip-inventory`
-  require the `.jsonl` suffix.
-  The option `-o/--inventory-txt` of `srr-make-inventory` is renamed to `-o/--output`.
-  With `-i X.def` and without `-o`, the output is `X.jsonl`.
-- Breaking change: the `inventory=True` argument of
-  [`compile_latex()`][stepup.reprep.api.compile_latex],
-  [`compile_tectonic()`][stepup.reprep.api.compile_tectonic] and
-  [`compile_typst()`][stepup.reprep.api.compile_typst]
-  writes `{stem}-inventory.jsonl` instead of `{stem}-inventory.txt`.
-- Breaking change: `FileSummary`, `get_summary()`, `format_summary()`, `parse_summary()`,
-  `check_summary()` and `SYMLINK_MODE` are removed from `stepup.reprep.inventory`.
-  They are replaced by `FileRecord`, `LinkRecord`, `InventoryHeader`, `compute_record()`,
-  `check_record()`, `format_header()` and `format_record()`.
-- Breaking change: `iter_inventory()` is removed from `stepup.reprep.check_inventory`.
-  Use `open_inventory()` from `stepup.reprep.inventory` instead.
-- Breaking change: `write_inventory()` in `stepup.reprep.make_inventory`
-  takes `hash_algorithm`, `mode` and `do_amend` as keyword-only arguments,
-  writes the records in the given order and drops duplicate paths.
-- Breaking change: [`make_inventory()`][stepup.reprep.api.make_inventory]
-  keeps the order of the explicit paths, which come before the matches of `path_def`.
-- Breaking change: `srr-zip-inventory` and [`zip_inventory()`][stepup.reprep.api.zip_inventory]
+      This applies to `srr-make-inventory`
+      and [`make_inventory()`][stepup.reprep.api.make_inventory] alike.
+- File names and options follow the new suffix:
+    - `srr-make-inventory`, `srr-check-inventory` and `srr-zip-inventory`
+      require the `.jsonl` suffix.
+    - The option `-o/--inventory-txt` of `srr-make-inventory` is renamed to `-o/--output`.
+      With `-i X.def` and without `-o`, the output is `X.jsonl`.
+    - The `inventory=True` argument of
+      [`compile_latex()`][stepup.reprep.api.compile_latex],
+      [`compile_tectonic()`][stepup.reprep.api.compile_tectonic] and
+      [`compile_typst()`][stepup.reprep.api.compile_typst]
+      writes `{stem}-inventory.jsonl` instead of `{stem}-inventory.txt`.
+    - `run_example()` in `stepup.reprep.pytest` checks the inventories
+      `reproducibility_*inventory.jsonl` instead of `reproducibility_*inventory.txt`.
+- `srr-zip-inventory` and [`zip_inventory()`][stepup.reprep.api.zip_inventory]
   no longer add the inventory to the ZIP file, which only contains the listed files.
   Such a ZIP file can be submitted to arXiv or a publisher without an unexpected `.jsonl` file.
   For archival, upload the inventory as a separate file together with the ZIP file.
   Unpack the ZIP file next to its inventory to check the files with `srr-check-inventory`.
-- `run_example()` in `stepup.reprep.pytest` checks the inventories
-  `reproducibility_*inventory.jsonl` instead of `reproducibility_*inventory.txt`.
-- [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] runs at every start of StepUp
-  and after every change of its inputs,
-  so it notices when the token is set or unset,
-  and it uploads a file again that was deleted or changed in the draft by hand.
-  See [When the Synchronization Runs](advanced_topics/sync_zenodo.md#when-the-synchronization-runs)
-  for the consequences:
-    - With the token, every start compares the files with the checksums that Zenodo reports,
-      uploads the files that differ and sends the metadata again.
-      A published record is therefore published again at every start with the token.
-    - Without the token, every start prints a warning.
-    - A build with the token fails when Zenodo cannot be reached,
-      and passes with `stepup build --offline` or without the token.
-    - The token is meant to be set only for a build that should synchronize,
-      and by only one person in a team.
-- Breaking change: the files to upload are listed in an inventory,
+- The Python API of the inventory modules changed:
+    - `FileSummary`, `get_summary()`, `format_summary()`, `parse_summary()`,
+      `check_summary()` and `SYMLINK_MODE` are removed from `stepup.reprep.inventory`.
+      They are replaced by `FileRecord`, `LinkRecord`, `InventoryHeader`, `compute_record()`,
+      `check_record()`, `format_header()` and `format_record()`.
+    - `iter_inventory()` is removed from `stepup.reprep.check_inventory`.
+      Use `open_inventory()` from `stepup.reprep.inventory` instead.
+    - `write_inventory()` in `stepup.reprep.make_inventory`
+      takes `hash_algorithm`, `mode` and `do_amend` as keyword-only arguments.
+
+Breaking changes for the Zenodo synchronization:
+
+- The files to upload are listed in an inventory,
   written by [`make_inventory()`][stepup.reprep.api.make_inventory] or `srr-make-inventory`
   with MD5 digests, which is the default.
-  The first file of the inventory is shown in the preview on Zenodo.
-  Its paths are relative to its parent directory.
+  Its paths are relative to its parent directory,
+  and its first file is shown in the preview on Zenodo.
   An inventory with other digests or with symbolic links is refused.
+  The description is also required,
+  and it can only be given as a Markdown or HTML file.
+  The `description` field of the configuration file is no longer supported.
     - `sync_zenodo()` takes the description file and the inventory,
       i.e. `sync_zenodo(path_config, path_description, path_inventory)`
       instead of `sync_zenodo(path_config, paths, path_description=...)`.
@@ -188,9 +122,40 @@ Release candidate 1 of StepUp RepRep 4.2.
       The old command line fails before a request is sent.
       A synchronization by hand therefore takes two commands,
       `srr-make-inventory` and `srr-sync-zenodo`, also for `--dry-run`.
-- Breaking change: a description is required,
-  and it can only be given as a Markdown or HTML file.
-  The `description` field of the configuration file is no longer supported.
+- [`sync_zenodo()`][stepup.reprep.api.sync_zenodo] runs at every start of StepUp,
+  after every change of its inputs,
+  and in watch mode after the `R` key or `stepup rebuild --recheck`,
+  because its step is defined with `recheck=True`.
+  It therefore notices when the token is set or unset,
+  and it uploads a file again that was deleted or changed in the draft by hand.
+  See [When the Synchronization Runs](advanced_topics/sync_zenodo.md#when-the-synchronization-runs)
+  for the consequences:
+    - With the token, every start compares the files with the checksums that Zenodo reports,
+      uploads the files that differ and sends the metadata again.
+      A published record is therefore published again at every start with the token.
+    - Without the token, every start prints a warning.
+    - A build with the token fails when Zenodo cannot be reached.
+      It passes without the token or with `stepup build --offline`,
+      which sets `STEPUP_BUILD_OFFLINE=1`,
+      so that `srr-sync-zenodo` sends nothing and says so in its output.
+    - The token is meant to be set only for a build that should synchronize,
+      and by only one person in a team.
+- `access.record` is removed from the Zenodo configuration file.
+  Zenodo refuses restricted records, so the record is always public.
+  Delete the `record` key from the `access` section if it is present.
+  Use `access.files: restricted` to restrict the files only.
+- The `endpoint` field of the Zenodo configuration file is required.
+  It used to default to `https://sandbox.zenodo.org/api`,
+  which Zenodo meant for testing, and which needs a token of its own.
+  Add `endpoint: https://zenodo.org/api` for a dataset that you intend to publish.
+  A configuration file that relied on the old default
+  needs `endpoint: https://sandbox.zenodo.org/api`
+  to keep working with the record named in its record ID file.
+
+Other changes:
+
+- StepUp Core 4.2 or newer is required.
+- `scipy` is no longer a dependency, because no module of StepUp RepRep uses it.
 - An empty `REPREP_ZENODO_TOKEN` is treated like an unset one, with a warning of its own,
   instead of sending requests that Zenodo refuses.
 - When Zenodo denies access, `srr-sync-zenodo` names the instance of the endpoint
@@ -198,22 +163,54 @@ Release candidate 1 of StepUp RepRep 4.2.
   with the `deposit:write` and `deposit:actions` scopes.
   Zenodo answers a token of the other instance with the same "Permission denied."
   as a token without these scopes.
-- The record ID file should be committed to Git as soon as `srr-sync-zenodo` has written it,
+- The documentation recommends committing the record ID file to Git
+  as soon as `srr-sync-zenodo` has written it,
   because a clone without it creates a second record at its first synchronization with the token.
+
+### Deprecated
+
+The following features are deprecated, because they will not move to the packages
+that replace StepUp RepRep.
+See [Package Split](split.md).
+
+- [`convert_mutool()`][stepup.reprep.api.convert_mutool]
+  and [`convert_mutool_png()`][stepup.reprep.api.convert_mutool_png].
+  Use `run()` of StepUp Core to call `mutool draw` instead,
+  as shown in the documentation of `convert_mutool()`.
+- [`convert_odf_pdf()`][stepup.reprep.api.convert_odf_pdf].
+  Export the PDF from the office application,
+  or call LibreOffice with `run()` of StepUp Core.
+- [`execute_papermill()`][stepup.reprep.api.execute_papermill] and `srr-execute-papermill`.
+  Use [`convert_jupyter()`][stepup.reprep.api.convert_jupyter] instead.
+- `srr-normalize-pdf`.
+- [`wrap_git()`][stepup.reprep.api.wrap_git] and `srr-wrap-git`.
+  Use `run()` of StepUp Core with `recheck=True` instead,
+  as shown in the documentation of `wrap_git()`.
 
 ### Removed
 
-- Breaking change: the `--clean` option of `srr-sync-zenodo` is removed.
+These removals are breaking changes.
+
+- The `--clean` option of `srr-sync-zenodo` is removed.
   It deleted the drafts of unrelated datasets on the same account,
   it missed a pending edit of a published record,
   and after deleting a new version that was not published yet,
   the same run created a new dataset instead of a new version.
   Discard a draft in the web interface of Zenodo instead.
-- Breaking change: the module `stepup.reprep.utils` is removed.
+- The module `stepup.reprep.utils` is removed.
   Its function `check_zenodo_paths()` is now internal to `srr-sync-zenodo`.
 
 ### Fixed
 
+- `beautifulsoup4` is a declared dependency, because `srr-check-hrefs` imports it.
+  Before, it was only installed as a dependency of `nbconvert`.
+- On Python 3.11 and 3.12.0 to 3.12.6, the arguments after `--` are no longer rejected
+  by `srr-compile-typst`, `srr-convert-inkscape` and `srr-compile-tectonic`
+  when an option comes after the input file.
+  This made `compile_typst()` fail when combining `typst_args` with `sysinp` or `dest`,
+  and `convert_inkscape()` when combining `inkscape_args` with `inkscape`.
+- The `include-workflow` recipe in [Archive a Git Repository](advanced_topics/archive_git.md)
+  selects the `graph.db` files of the StepUp workflows, which `srr-make-inventory` requires.
 - `srr-zip-inventory` refuses an inventory with a file outside its directory,
   i.e. with a path starting with `../`,
   instead of storing that path in the ZIP file.
@@ -224,11 +221,11 @@ Release candidate 1 of StepUp RepRep 4.2.
   so that the first file of the inventory is selected as the default preview.
   Before, the metadata was also sent before the upload,
   with a default preview that Zenodo silently dropped
-  when the first file of the inventory was new or renamed.
+  when the first file was new or renamed.
 - `srr-sync-zenodo` refuses an inventory that lists no files,
   also with `--dry-run` and offline.
   Zenodo does not offer metadata only records and publishes no record without files.
-  Before, an empty inventory deleted the files of the draft
+  Before, an empty list of files deleted the files of the draft
   and left a draft that cannot be published,
   because Zenodo silently ignores a request to disable the files.
 - `srr-sync-zenodo` fails with the problems that Zenodo lists in its response to a metadata update,
@@ -1221,8 +1218,7 @@ This is the first release of StepUp RepRep that is compatible with StepUp Core 2
 Initial release
 
 [Unreleased]: https://github.com/reproducible-reporting/stepup-reprep
-[4.2.0rc2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.2.0rc2
-[4.2.0rc1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.2.0rc1
+[4.2.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.2.0
 [4.1.1]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.1
 [4.1.0]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.1.0
 [4.0.2]: https://github.com/reproducible-reporting/stepup-reprep/releases/tag/v4.0.2
